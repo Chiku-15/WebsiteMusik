@@ -1,5 +1,6 @@
 {
- "last_updated": 1793900891,
- "mode": "seed+backfill",
- "note": "Grafik dari tanggal rilis diisi estimasi (ditandai). Titik terukur dari YouTube Data API menimpanya setiap putaran Actions."
+ "last_updated": 1793901912,
+ "mode": "scrape",
+ "duration_sec": 333,
+ "quota_note": "scraping publik"
 }
