@@ -169,6 +169,9 @@
   .sect h3{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:16px 2px 10px}
   .chartbox{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;position:relative}
   .chartbox canvas{width:100%!important;height:260px!important}
+  .rangewrap{display:flex;gap:6px;margin:0 2px 10px;flex-wrap:wrap}
+  .rangebtn{border:1px solid var(--border);background:var(--chip);color:var(--muted);font:600 11.5px var(--font);padding:5px 12px;border-radius:999px;cursor:pointer}
+  .rangebtn.active{background:var(--text);color:var(--bg);border-color:var(--text)}
   .note{color:var(--muted);font-size:12px;margin:8px 2px 0;line-height:1.5}
   table.ms{width:100%;border-collapse:collapse;font-size:13.5px}
   table.ms th{color:var(--muted);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.6px;padding:8px 10px;border-bottom:1px solid var(--border)}
@@ -277,6 +280,14 @@ function ageDays(iso) {
 function esc(s) {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
+/* apakah rentang N hari terakhir masih memuat titik estimasi? → tanda (est.) pada delta */
+function recentEst(h, days) {
+  if (!h || !h.length) return false;
+  const cutoff = h[h.length - 1].t - days * 86400 * 1.6;
+  for (let i = h.length - 1; i >= 0 && h[i].t >= cutoff; i--) if (h[i].e === 1) return true;
+  return false;
+}
+function isEst(h) { return !!(h && h.length && h[h.length - 1].e === 1); }
 function cssVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
 
 /* selisih vs titik ~N hari lalu (toleransi) */
@@ -292,7 +303,8 @@ function deltaDays(history, days) {
   }
   if (!best || bestDiff > days * 1.6 * 86400) return null;
   const elapsed = Math.max(1, last.t - best.t) / 86400;
-  return { delta: last.v - best.v, rate: (last.v - best.v) / elapsed, days };
+  const deltaS = (last.s != null && best.s != null) ? last.s - best.s : null;
+  return { delta: last.v - best.v, deltaS, rate: (last.v - best.v) / elapsed, days };
 }
 function deltaLikes(history, days) {
   if (!history || history.length < 2) return null;
@@ -311,9 +323,9 @@ function deltaLikes(history, days) {
 
 function sparkSVG(history, color, key) {
   const pts = history.slice(-60);
-  if (pts.length < 2) return `<div class="wait" style="padding:10px">Grafik muncul setelah 2 hari data.</div>`;
+  if (pts.length < 2) return `<div class="wait" style="padding:10px">Belum cukup titik untuk grafik.</div>`;
   const vals = pts.map((p) => p[key]).filter((x) => x != null);
-  if (vals.length < 2) return `<div class="wait" style="padding:10px">Grafik muncul setelah 2 hari data.</div>`;
+  if (vals.length < 2) return `<div class="wait" style="padding:10px">Belum cukup titik untuk grafik.</div>`;
   const min = Math.min(...vals), max = Math.max(...vals);
   const W = 400, H = 64, pad = 3;
   const xs = [], ys = [];
@@ -354,7 +366,9 @@ const state = {
   config: null, videos: null, channels: null, meta: null,
   artist: localStorage.getItem("py.artist") || null,
   filter: "all", sort: "views", query: "",
-  charts: [],
+  charts: { daily: null, cum: null },
+  dailyRange: localStorage.getItem("py.range") || "60",
+  detailVid: null,
 };
 
 async function loadData() {
@@ -394,6 +408,7 @@ function renderChannel() {
   const d1 = deltaDays(h, 1), d7 = deltaDays(h, 7);
   const nextSub = nextMilestones(last.s || 0, SUB_MS, 1)[0];
   const rate7 = d7 ? d7.rate : 0;
+  const rateS7 = d7 && d7.deltaS != null ? d7.deltaS / 7 : 0;
   sec.innerHTML = `
     <div class="chcard" style="--artist-color:${art.color}">
       <div class="chtop">
@@ -407,14 +422,14 @@ function renderChannel() {
         <div class="stat">
           <div class="k">Subscriber</div>
           <div class="v">${fmtCompact(last.s)}</div>
-          <div class="d ${d1 && d1.s !== undefined ? "" : ""}">
-            ${d1 && last.s != null ? `<span class="up">${fmtDelta(d1.s)}</span> hari ini` : "–"}
+          <div class="d ${d1 && d1.deltaS != null ? "" : ""}">
+            ${d1 && last.s != null && d1.deltaS != null ? `<span class="up">${fmtDelta(d1.deltaS)}</span> hari ini${recentEst(h, 1) ? " (est.)" : ""}` : "–"}
           </div>
         </div>
         <div class="stat">
           <div class="k">Total ditonton</div>
           <div class="v">${fmtCompact(last.v)}</div>
-          <div class="d">${d7 ? `<span class="up">${fmtDelta(d7.delta)}</span> minggu ini` : "–"}</div>
+          <div class="d">${d7 ? `<span class="up">${fmtDelta(d7.delta)}</span> minggu ini${recentEst(h, 7) ? " (est.)" : ""}` : "–"}</div>
         </div>
         <div class="stat">
           <div class="k">Jumlah video</div>
@@ -423,7 +438,7 @@ function renderChannel() {
         </div>
       </div>
       <div class="sparkwrap">
-        <div class="k">Pertumbuhan subscriber ${nextSub ? `· menuju ${fmtCompact(nextSub)} ${etaText(nextSub, last.s || 0, rate7)}` : ""}</div>
+        <div class="k">Pertumbuhan subscriber ${nextSub ? `· menuju ${fmtCompact(nextSub)} ${etaText(nextSub, last.s || 0, rateS7 || rate7)}` : ""}</div>
         ${sparkSVG(h.map((p) => ({ t: p.t, v: p.s })), art.color, "v")}
       </div>
     </div>`;
@@ -488,7 +503,7 @@ function renderVideos() {
           </div>
           <div class="vright">
             <div class="g ${d7 && d7.delta >= 0 ? "up" : ""}">${d7 ? fmtDelta(d7.delta) : "–"}</div>
-            <div class="l">7 hari terakhir</div>
+            <div class="l">7 hari terakhir${recentEst(v.history, 7) ? " (est.)" : ""}</div>
           </div>
         </div>
       </div>
@@ -501,11 +516,15 @@ function renderVideos() {
 }
 
 /* ===================== detail overlay ===================== */
-function destroyCharts() { state.charts.forEach((c) => c.destroy()); state.charts = []; }
+function destroyCharts() {
+  if (state.charts.daily) { state.charts.daily.destroy(); state.charts.daily = null; }
+  if (state.charts.cum) { state.charts.cum.destroy(); state.charts.cum = null; }
+}
 
 function openDetail(vid) {
   const v = state.videos[vid];
   if (!v) return;
+  state.detailVid = vid;
   const art = artistOf(v.channel) || { color: "#6a78ff", name: "" };
   const h = v.history || [];
   const last = h.length ? h[h.length - 1] : { v: 0, l: null };
@@ -515,10 +534,12 @@ function openDetail(vid) {
   const rateAll = allAge ? (last.v - h[0].v) / allAge : 0;
   const rate = (d7 && d7.rate) || (d30 && d30.rate) || rateAll;
   const per1000 = last.v ? (last.l / last.v) * 1000 : null;
-  const watched = h.length > 1 ? Math.round((h[h.length - 1].t - h[0].t) / 86400) : 0;
   const age = ageDays(v.published);
   const msList = nextMilestones(last.v || 0, VIEW_MS, 4);
   const srcBase = (location.pathname.replace(/\/[^\/]*$/, "/"));
+  const est = recentEst(h, 7);
+  const realPts = h.filter((p) => p.e !== 1);
+  const watched = realPts.length > 1 ? Math.round((realPts[realPts.length - 1].t - realPts[0].t) / 86400) : (realPts.length === 1 ? 0 : null);
 
   $("#sheet").innerHTML = `
     <button class="close" id="closeBtn" aria-label="Tutup">✕</button>
@@ -533,16 +554,16 @@ function openDetail(vid) {
         </div>
         <div class="dsub" style="margin-top:6px">
           <a class="pill" href="https://www.youtube.com/watch?v=${vid}" target="_blank" rel="noopener">Tonton di YouTube</a>
-          ${watched ? `<span class="pill">dipantau ${watched} hari</span>` : ""}
+          ${watched != null ? `<span class="pill">${watched >= 1 ? `dipantau ${watched} hari` : "baru mulai dipantau"}</span>` : ""}
         </div>
       </div>
     </div>
 
     <div class="dbig">
       <div class="stat"><div class="k">Views</div><div class="v">${fmtExact(last.v)}</div>
-        <div class="d">${d1 ? `<span class="up">${fmtDelta(d1.delta)}</span> kemarin` : "menunggu data hari kedua"}</div></div>
+        <div class="d">${d1 ? `<span class="up">${fmtDelta(d1.delta)}</span> kemarin${recentEst(h, 1) ? " (est.)" : ""}` : "menunggu data berikutnya"}</div></div>
       <div class="stat"><div class="k">Rata-rata / hari</div><div class="v">${d7 ? fmtCompact(Math.round(d7.rate)) : "–"}</div>
-        <div class="d">${d7 ? "7 hari terakhir" : "–"}</div></div>
+        <div class="d">${d7 ? `7 hari terakhir${est ? " (est.)" : ""}` : "–"}</div></div>
       <div class="stat"><div class="k">Likes</div><div class="v">${last.l != null ? fmtCompact(last.l) : "–"}</div>
         <div class="d">${d1 && last.l != null && d1.likes !== undefined && deltaLikes(h, 1) != null ? `<span class="up">${fmtDelta(deltaLikes(h, 1))}</span> kemarin` : (last.l != null ? "likes" : "–")}</div></div>
       <div class="stat"><div class="k">Likes / 1.000 views</div><div class="v">${per1000 ? per1000.toLocaleString("id-ID", { maximumFractionDigits: 1 }) : "–"}</div>
@@ -551,18 +572,24 @@ function openDetail(vid) {
 
     <div class="sect">
       <h3>Views ditambahkan per hari</h3>
+      <div class="rangewrap" id="dailyRange">
+        <button class="rangebtn ${state.dailyRange === "60" ? "active" : ""}" data-r="60">60 hari</button>
+        <button class="rangebtn ${state.dailyRange === "365" ? "active" : ""}" data-r="365">1 tahun</button>
+        <button class="rangebtn ${state.dailyRange === "all" ? "active" : ""}" data-r="all">Sejak rilis</button>
+      </div>
       <div class="chartbox"><canvas id="chartDaily"></canvas></div>
     </div>
 
     <div class="sect">
-      <h3>Total views</h3>
+      <h3>Total views (sejak rilis)</h3>
       <div class="chartbox"><canvas id="chartCum"></canvas></div>
+      <p class="note">Batang transparan dan garis putus-putus = <b>estimasi</b> — dihitung dari tanggal rilis + views terkini (sebagian dari arsip Wayback Machine bila tersedia). Titik/batang solid = pengukuran nyata yang terus menimpa estimasi setiap putaran GitHub Actions.</p>
     </div>
 
     <div class="sect">
       <h3>Milestone & prediksi</h3>
       <div class="chartbox" style="padding:6px 10px">
-        ${h.length < 2 ? `<div class="wait">Prediksi bisa dibuat setelah ada data beberapa hari (butuh rata-rata pertumbuhan 7 hari).</div>` : `
+        ${h.length < 2 ? `<div class="wait">Prediksi tersedia setelah data pertama terekam.</div>` : `
         <table class="ms">
           <thead><tr><th>Target</th><th class="num">Sisa</th><th class="num">Perkiraan tercapai</th></tr></thead>
           <tbody>
@@ -570,7 +597,7 @@ function openDetail(vid) {
               <tr><td>${fmtExact(t)} views</td><td class="num">${fmtCompact(t - last.v)}</td><td class="num">${etaText(t, last.v, rate)}</td></tr>`).join("")}
           </tbody>
         </table>
-        <p class="note">Prediksi = garis lurus dari rata-rata ${d7 ? "7" : "30"} hari terakhir (${d7 ? fmtCompact(Math.round(rate)) : fmtCompact(Math.round(rateAll))}/hari). Sebenarnya pertumbuhan MV menurun seiring waktu, jadi tanggal nyata biasanya lebih lama.</p>`}
+        <p class="note">Prediksi = garis lurus dari rata-rata ${d7 ? "7" : "30"} hari terakhir (${d7 ? fmtCompact(Math.round(rate)) : fmtCompact(Math.round(rateAll))}/hari)${est ? " — angka awal memakai estimasi sejak rilis, makin akurat setelah beberapa hari data API" : ""}. Sebenarnya pertumbuhan MV menurun seiring waktu, jadi tanggal nyata biasanya lebih lama.</p>`}
       </div>
     </div>
   `;
@@ -579,11 +606,24 @@ function openDetail(vid) {
   $("#closeBtn").addEventListener("click", closeDetail);
   location.hash = "v=" + vid;
 
+  const rangeWrap = $("#dailyRange");
+  if (rangeWrap) {
+    rangeWrap.querySelectorAll(".rangebtn").forEach((b) =>
+      b.addEventListener("click", () => {
+        state.dailyRange = b.dataset.r;
+        localStorage.setItem("py.range", state.dailyRange);
+        rangeWrap.querySelectorAll(".rangebtn").forEach((x) => x.classList.toggle("active", x === b));
+        if (state.charts.daily) { state.charts.daily.destroy(); state.charts.daily = null; }
+        buildDailyChart(h, art.color);
+      })
+    );
+  }
+
   if (h.length >= 2) {
     buildDailyChart(h, art.color);
     buildCumChart(h, art.color);
   } else {
-    const msg = `<div class="wait">Grafik akan muncul setelah data beberapa hari terekam oleh GitHub Actions (butuh minimal 3 hari untuk grafik harian).<br>Kembali lagi besok atau lusa ya!</div>`;
+    const msg = `<div class="wait">Grafik belum tersedia — menunggu pengukuran pertama dari GitHub Actions.</div>`;
     const boxD = $("#chartDaily") ? $("#chartDaily").closest(".chartbox") : null;
     const boxC = $("#chartCum") ? $("#chartCum").closest(".chartbox") : null;
     if (boxD) boxD.innerHTML = msg;
@@ -600,7 +640,7 @@ function downsample(h, maxPts) {
   return out;
 }
 
-function chartOpts() {
+function chartOpts(tooltipLabel) {
   return {
     responsive: true,
     maintainAspectRatio: false,
@@ -610,6 +650,7 @@ function chartOpts() {
       tooltip: {
         backgroundColor: cssVar("--card"), titleColor: cssVar("--text"), bodyColor: cssVar("--text"),
         borderColor: cssVar("--border"), borderWidth: 1, padding: 10, displayColors: false,
+        ...(tooltipLabel ? { callbacks: { label: tooltipLabel } } : {}),
       },
     },
     scales: {
@@ -622,38 +663,68 @@ function chartOpts() {
   };
 }
 
+function weekKeyOf(key) {
+  const d = new Date(key + "T00:00:00");
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // mulai Senin
+  return d.toISOString().slice(0, 10);
+}
+
 function buildDailyChart(h, color) {
-  // agregasi per hari kalender (WIB): nilai = views akhir hari - views akhir hari sebelumnya
+  const box = $("#chartDaily") ? $("#chartDaily").closest(".chartbox") : null;
+  // agregasi nilai akhir per hari kalender (WIB)
   const byDay = new Map();
   for (const p of h) {
-    const d = new Date(p.t * 1000);
-    const key = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jakarta", year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
+    const key = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jakarta", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(p.t * 1000));
     const prev = byDay.get(key);
-    if (!prev || p.t >= prev.t) byDay.set(key, { t: p.t, key, v: p.v });
+    if (!prev || p.t >= prev.t) byDay.set(key, { t: p.t, key, v: p.v, e: p.e === 1 });
   }
   const days = [...byDay.values()].sort((a, b) => a.t - b.t);
-  const series = [];
+  const daily = [];
   for (let i = 1; i < days.length; i++) {
-    const diff = days[i].v - days[i - 1].v;
-    series.push({ key: days[i].key, diff });
+    daily.push({ key: days[i].key, diff: Math.max(0, days[i].v - days[i - 1].v), est: days[i].e || days[i - 1].e });
   }
-  const recent = series.slice(-60);
-  if (recent.length < 2) { $("#chartDaily").closest(".chartbox").innerHTML = `<div class="wait">Butuh minimal 3 hari data untuk grafik harian.</div>`; return; }
-  const ctx = $("#chartDaily");
-  state.charts.push(new Chart(ctx, {
+  if (daily.length < 2) {
+    if (box) box.innerHTML = `<div class="wait">Belum cukup data untuk grafik harian.</div>`;
+    return;
+  }
+  let buckets, labels;
+  if (state.dailyRange === "60") {
+    buckets = daily.slice(-60).map((d) => ({ v: d.diff, est: d.est, first: d.key }));
+    labels = buckets.map((d) => d.first.slice(8, 10) + "/" + d.first.slice(5, 7));
+  } else {
+    const monthly = state.dailyRange === "all";
+    const map = new Map();
+    for (const d of daily) {
+      const k = monthly ? d.key.slice(0, 7) : weekKeyOf(d.key);
+      const b = map.get(k) || { v: 0, est: false, first: d.key };
+      b.v += d.diff;
+      b.est = b.est || d.est;
+      map.set(k, b);
+    }
+    buckets = [...map.values()];
+    labels = buckets.map((b) => monthly
+      ? MF.format(new Date(b.first + "T00:00:00"))
+      : b.first.slice(8, 10) + "/" + b.first.slice(5, 7));
+  }
+  const estFlags = buckets.map((b) => b.est);
+  state.charts.daily = new Chart($("#chartDaily"), {
     type: "bar",
     data: {
-      labels: recent.map((r) => r.key.slice(8, 10) + "/" + r.key.slice(5, 7)),
-      datasets: [{ data: recent.map((r) => Math.max(0, r.diff)), backgroundColor: color, borderRadius: 4, maxBarThickness: 22 }],
+      labels,
+      datasets: [{
+        data: buckets.map((b) => b.v),
+        backgroundColor: (c) => (estFlags[c.dataIndex] ? color + "45" : color),
+        borderRadius: 4, maxBarThickness: 22,
+      }],
     },
-    options: chartOpts(),
-  }));
+    options: chartOpts((c) => NF.format(c.parsed.y) + " views" + (estFlags[c.dataIndex] ? " (estimasi)" : "")),
+  });
 }
 
 function buildCumChart(h, color) {
   const pts = downsample(h, 160);
-  const ctx = $("#chartCum");
-  state.charts.push(new Chart(ctx, {
+  const estFlags = pts.map((p) => p.e === 1);
+  state.charts.cum = new Chart($("#chartCum"), {
     type: "line",
     data: {
       labels: pts.map((p) => {
@@ -663,6 +734,10 @@ function buildCumChart(h, color) {
       datasets: [{
         data: pts.map((p) => p.v),
         borderColor: color, borderWidth: 2.4, pointRadius: 0, pointHitRadius: 12, tension: 0.25,
+        segment: {
+          borderColor: (c) => (estFlags[c.p0DataIndex] || estFlags[c.p1DataIndex]) ? color + "55" : color,
+          borderDash: (c) => (estFlags[c.p0DataIndex] || estFlags[c.p1DataIndex]) ? [5, 4] : undefined,
+        },
         fill: true, backgroundColor: (ctx2) => {
           const g = ctx2.chart.ctx.createLinearGradient(0, 0, 0, ctx2.chart.height || 260);
           g.addColorStop(0, color + "55"); g.addColorStop(1, color + "00");
@@ -670,8 +745,8 @@ function buildCumChart(h, color) {
         },
       }],
     },
-    options: chartOpts(),
-  }));
+    options: chartOpts((c) => fmtExact(c.parsed.y) + " views" + (estFlags[c.dataIndex] ? " (estimasi)" : "")),
+  });
 }
 
 function closeDetail() {

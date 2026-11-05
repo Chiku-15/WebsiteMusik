@@ -9,7 +9,8 @@ Statistik YouTube dua artis — **BABYMONSTER** dan **TREASURE** — direkam oto
 - **Dua artis** dalam satu situs (tab BABYMONSTER / TREASURE) — mudah ditambah artis lain
 - **Kartu channel**: subscriber, total ditonton, jumlah video + grafik mini pertumbuhan
 - **120+ video terpantau**: MV, Dance Performance, dan Dance Practice resmi
-- **Grafik per video**: views kumulatif + views ditambahkan per hari
+- **Grafik per video SEJAK TANGGAL RILIS**: views kumulatif + views ditambahkan per hari (60 hari / 1 tahun / sejak rilis)
+- **Pembeda data nyata vs estimasi**: garis putus-putus/batang transparan = estimasi, titik solid = pengukuran nyata
 - **Milestone & prediksi**: perkiraan tanggal tembus 500 jt, 1 M dsb. (berdasarkan rata-rata 7 hari)
 - **Mode gelap/terang** dengan tombol toggle
 - Seluruh antarmuka berbahasa Indonesia
@@ -33,8 +34,9 @@ GitHub Pages menayangkan index.html yang membaca data/*.json
 | `index.html` | Situs (satu file, tanpa build) |
 | `config.json` | Daftar artis, channel, dan video yang dipantau |
 | `collect.js` | Skrip pengambil data (Node.js, tanpa dependensi) |
-| `data/videos.json` | Riwayat views & likes per video |
+| `data/videos.json` | Riwayat views & likes per video (harian sejak rilis) |
 | `data/channels.json` | Riwayat subscriber & total views per channel |
+| `data/backfill/` | Penanda video yang sudah dibackfill dari arsip |
 | `data/meta.json` | Info pembaruan terakhir |
 | `.github/workflows/collect.yml` | Jadwal pengambilan data (2× sehari) |
 
@@ -92,13 +94,31 @@ Edit `.github/workflows/collect.yml` bagian `cron` (zona UTC):
 - 1× sehari → hapus salah satu baris cron (sisakan `0 0 * * *` = 07:00 WIB)
 - 4× sehari → tambah `0 6 * * *` dan `0 18 * * *`
 
+## Memperbarui repo yang sudah terpasang (versi lama → versi ini)
+
+1. Unduh ZIP terbaru, lalu **ganti semua file** di repo (termasuk seluruh isi `data/`). Cara termudah: hapus file lama di repo, unggah semua file baru.
+2. Jalankan sekali *Actions → Kumpulkan data YouTube → Run workflow*.
+3. Selesai — grafik langsung penuh sejak tanggal rilis; angka presisi dari API menimpa estimasi mulai putaran pertama.
+
+> Riwayat nyata yang sempat terekam di repo lama akan ikut tergantikan — tidak masalah, karena Actions langsung merekam ulang dengan angka presisi 2× sehari.
+
+## Tentang data historis (backfill)
+
+YouTube **tidak menyediakan** riwayat views harian lewat API — hanya angka saat ini. Supaya grafik tetap terisi dari tanggal rilis:
+
+1. **Titik pengukuran nyata** (solid) — direkam 2× sehari oleh Actions selama situs berjalan.
+2. **Titik estimasi** (putus-putus/transparan, diberi tanda "(est.)") — dihitung dari tanggal rilis + views terkini memakai model pertumbuhan MV (spike awal → mereda → ekor panjang).
+3. **Jangkar arsip** — setiap putaran Actions, `collect.js` mencoba mengambil ±6 snapshot lama tiap video dari **Wayback Machine** (web.archive.org) sebagai titik nyata tambahan, maksimal 25 video per putaran (bertahap, dicache di `data/backfill/`). Video yang sudah punya cukup data nyata dilewati otomatis.
+
+Setiap kali Actions merekam angka baru, estimasi pada hari itu **ditimpa data nyata** — makin lama situs berjalan, makin banyak titik solid dan prediksi makin akurat.
+
 ## Pertanyaan umum
 
 **Apakah API key saya aman?** Ya — key disimpan sebagai *repository secret*, tidak ikut ter-commit, dan hanya dipakai di Actions. Situs publik tidak pernah menyentuh key karena data sudah dikumpulkan ke `data/*.json`.
 
-**Kenapa grafik masih kosong?** Riwayat terkumpul mulai hari pertama dipasang. Semakin lama semakin lengkap — biarkan Actions bekerja beberapa hari.
+**Grafik sekarang langsung penuh.** Sejak versi ini riwayat diisi dari tanggal rilis memakai estimasi (lihat "Tentang data historis"). Tanda **(est.)** pada kartu/tooltip berarti angka itu masih berbasis estimasi.
 
-**Angka di awal sedikit meleset (subscriber dibulatkan, tanggal rilis perkiraan)?** Titik data pertama berasal dari cuplikan halaman publik YouTube yang dibulatkan (mis. "425 jt views", "2 years ago"). Begitu workflow pertama dijalankan dengan API key, semua angka dan tanggal rilis otomatis diperbarui ke nilai persis dari YouTube Data API.
+**Angka di awal sedikit meleset (subscriber dibulatkan, tanggal rilis perkiraan)?** Titik data awal berasal dari cuplikan halaman publik YouTube yang dibulatkan (mis. "425 jt views"). Begitu workflow dijalankan dengan API key, semua angka dan tanggal rilis diperbarui ke nilai persis dari YouTube Data API dan seluruh kurva menyesuaikan otomatis.
 
 ---
 Dibuat dengan GitHub Actions + GitHub Pages
