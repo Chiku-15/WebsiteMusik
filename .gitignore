@@ -1,0 +1,8 @@
+# sistem
+.DS_Store
+Thumbs.db
+
+# log & sementara
+*.log
+*.tmp
+node_modules/

@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pemantau YouTube — BABYMONSTER × TREASURE</title>
+<meta name="description" content="Statistik YouTube BABYMONSTER & TREASURE: views, likes, subscriber, pertumbuhan harian, milestone & prediksi. Data direkam otomatis oleh GitHub Actions.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%23ff4d6d"/><path d="M26 20l18 12-18 12z" fill="white"/></svg>'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --radius:16px;
+    --font:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  }
+  html[data-theme="dark"]{
+    --bg:#0a0d13; --bg2:#0e1219; --card:#121826; --card2:#161d2d; --border:#1f2839;
+    --text:#e9edf5; --muted:#8a93a8; --chip:#1a2233; --shadow:0 10px 30px rgba(0,0,0,.35);
+    --chart-grid:rgba(255,255,255,.07); --chart-text:#93a0b4; --overlay:rgba(5,8,14,.78);
+  }
+  html[data-theme="light"]{
+    --bg:#f5f7fb; --bg2:#eef1f7; --card:#ffffff; --card2:#f8fafd; --border:#e2e7f0;
+    --text:#141a26; --muted:#5f6879; --chip:#eef2f8; --shadow:0 10px 30px rgba(23,32,55,.08);
+    --chart-grid:rgba(20,26,38,.08); --chart-text:#5a6474; --overlay:rgba(240,243,248,.8);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--text); font-family:var(--font);
+    background-image:radial-gradient(1200px 500px at 80% -10%, rgba(106,120,255,.10), transparent 60%),
+                     radial-gradient(900px 420px at 10% -10%, rgba(255,77,109,.08), transparent 60%);
+    min-height:100vh;
+  }
+  a{color:inherit}
+  /* ---------- header ---------- */
+  header{
+    position:sticky; top:0; z-index:50; backdrop-filter:blur(14px);
+    background:color-mix(in srgb, var(--bg) 78%, transparent);
+    border-bottom:1px solid var(--border);
+  }
+  .hwrap{max-width:1180px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:.2px}
+  .logo .dot{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#ff4d6d,#6a78ff);display:flex;align-items:center;justify-content:center;flex:none}
+  .logo .dot svg{width:16px;height:16px;fill:#fff}
+  .logo small{display:block;font-size:10.5px;font-weight:600;color:var(--muted);letter-spacing:.4px}
+  .spacer{flex:1}
+  .tabs{display:flex;background:var(--chip);border:1px solid var(--border);border-radius:12px;padding:4px;gap:4px}
+  .tab{
+    border:none;background:transparent;color:var(--muted);font:inherit;font-weight:700;font-size:13.5px;
+    padding:8px 16px;border-radius:9px;cursor:pointer;transition:.18s;
+  }
+  .tab:hover{color:var(--text)}
+  .tab.active{background:var(--card);color:var(--text);box-shadow:var(--shadow)}
+  .iconbtn{
+    width:38px;height:38px;border-radius:11px;border:1px solid var(--border);background:var(--card);
+    color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.18s;
+  }
+  .iconbtn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+  .iconbtn svg{width:18px;height:18px;fill:currentColor}
+  /* ---------- layout ---------- */
+  main{max-width:1180px;margin:0 auto;padding:22px 20px 40px}
+  .topline{color:var(--muted);font-size:12.5px;margin:2px 2px 16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .pulse{width:8px;height:8px;border-radius:50%;background:#2fd57b;box-shadow:0 0 0 3px rgba(47,213,123,.18)}
+  .banner{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:26px;text-align:center;color:var(--muted);margin:14px 0;
+  }
+  /* ---------- channel card ---------- */
+  .chgrid{display:grid;gap:14px;grid-template-columns:1fr}
+  .chcard{
+    background:linear-gradient(180deg,var(--card),var(--card2));
+    border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);
+    position:relative;overflow:hidden;
+  }
+  .chcard::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--artist-color,#6a78ff)}
+  .chtop{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .chava{width:58px;height:58px;border-radius:50%;border:2px solid var(--border);object-fit:cover;background:var(--chip)}
+  .chname{font-size:19px;font-weight:800}
+  .chhandle{color:var(--muted);font-size:12.5px;font-weight:600}
+  .chstats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+  .stat{
+    background:var(--bg2);border:1px solid var(--border);border-radius:13px;padding:13px 15px;
+    min-width:0;
+  }
+  .stat .k{color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px}
+  .stat .v{font-size:21px;font-weight:800;margin-top:5px;letter-spacing:.3px}
+  .stat .d{font-size:12px;margin-top:3px;color:var(--muted);font-weight:600}
+  .up{color:#2fd57b!important}
+  .down{color:#ff6b81!important}
+  .sparkwrap{margin-top:14px;border:1px solid var(--border);border-radius:13px;background:var(--bg2);padding:10px 12px 4px}
+  .sparkwrap .k{color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+  .spark{width:100%;height:64px;display:block}
+  /* ---------- toolbar ---------- */
+  .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:26px 2px 14px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{
+    border:1px solid var(--border);background:var(--card);color:var(--muted);font:inherit;
+    font-size:12.5px;font-weight:700;padding:7px 14px;border-radius:999px;cursor:pointer;transition:.15s;
+  }
+  .chip:hover{color:var(--text)}
+  .chip.active{color:#fff;border-color:transparent}
+  .toolbar .grow{flex:1}
+  .search{
+    display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);
+    border-radius:11px;padding:8px 12px;min-width:180px;
+  }
+  .search svg{width:15px;height:15px;fill:var(--muted);flex:none}
+  .search input{
+    border:none;outline:none;background:transparent;color:var(--text);font:inherit;font-size:13.5px;width:100%;
+  }
+  select.sort{
+    background:var(--card);border:1px solid var(--border);color:var(--text);font:inherit;font-size:13px;
+    font-weight:600;border-radius:11px;padding:9px 12px;outline:none;cursor:pointer;
+  }
+  /* ---------- video grid ---------- */
+  .vgrid{display:grid;gap:14px;grid-template-columns:repeat(auto-fill,minmax(255px,1fr))}
+  .vcard{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    overflow:hidden;cursor:pointer;transition:.18s;display:flex;flex-direction:column;
+  }
+  .vcard:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--artist-color,#6a78ff) 45%,var(--border))}
+  .thumbwrap{position:relative;aspect-ratio:16/9;background:var(--bg2)}
+  .thumbwrap img{width:100%;height:100%;object-fit:cover;display:block}
+  .badge{
+    position:absolute;left:10px;top:10px;font-size:10.5px;font-weight:800;letter-spacing:.5px;
+    padding:4px 9px;border-radius:999px;color:#fff;text-transform:uppercase;
+  }
+  .b-mv{background:#ff4d6d}.b-dance_performance{background:#8b5cf6}.b-dance_practice{background:#f59e0b}
+  .vbody{padding:13px 15px 15px;display:flex;flex-direction:column;gap:9px;flex:1}
+  .vtitle{
+    font-size:13.5px;font-weight:700;line-height:1.35;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.7em;
+  }
+  .vmeta{display:flex;justify-content:space-between;gap:8px;align-items:flex-end;margin-top:auto}
+  .vviews .n{font-size:17px;font-weight:800}
+  .vviews .l{font-size:10.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+  .vright{text-align:right}
+  .vright .g{font-size:12.5px;font-weight:700}
+  .vright .l{font-size:10.5px;color:var(--muted);font-weight:600}
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--border);color:var(--muted);font-size:12.5px}
+  .fwrap{max-width:1180px;margin:0 auto;padding:18px 20px;display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}
+  footer a{color:var(--muted)}
+  /* ---------- detail overlay ---------- */
+  .overlay{
+    position:fixed;inset:0;background:var(--overlay);z-index:100;display:none;
+    align-items:flex-start;justify-content:center;overflow-y:auto;padding:4vh 16px 6vh;
+  }
+  .overlay.open{display:flex}
+  .sheet{
+    width:100%;max-width:920px;background:var(--bg2);border:1px solid var(--border);
+    border-radius:20px;box-shadow:var(--shadow);padding:22px;position:relative;
+    animation:pop .22s ease;
+  }
+  @keyframes pop{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+  .close{
+    position:absolute;right:16px;top:14px;width:34px;height:34px;border-radius:10px;border:1px solid var(--border);
+    background:var(--card);color:var(--text);font-size:16px;cursor:pointer;font-weight:700;line-height:1;
+  }
+  .dhead{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;padding-right:40px}
+  .dthumb{width:210px;aspect-ratio:16/9;border-radius:12px;object-fit:cover;border:1px solid var(--border)}
+  .dtitle{font-size:19px;font-weight:800;line-height:1.3;margin:0 0 6px}
+  .dsub{color:var(--muted);font-size:12.5px;font-weight:600;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .pill{background:var(--chip);border-radius:999px;padding:3px 10px;font-size:11.5px}
+  .dbig{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:18px 0}
+  .dbig .stat .v{font-size:24px}
+  .sect{margin-top:8px}
+  .sect h3{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:16px 2px 10px}
+  .chartbox{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;position:relative}
+  .chartbox canvas{width:100%!important;height:260px!important}
+  .note{color:var(--muted);font-size:12px;margin:8px 2px 0;line-height:1.5}
+  table.ms{width:100%;border-collapse:collapse;font-size:13.5px}
+  table.ms th{color:var(--muted);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.6px;padding:8px 10px;border-bottom:1px solid var(--border)}
+  table.ms td{padding:9px 10px;border-bottom:1px solid var(--border);font-weight:600}
+  table.ms tr:last-child td{border-bottom:none}
+  table.ms td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .wait{color:var(--muted);font-size:13px;background:var(--bg2);border:1px dashed var(--border);border-radius:12px;padding:18px;text-align:center}
+  @media (max-width:640px){
+    .chstats{grid-template-columns:1fr 1fr}
+    .dthumb{width:100%}
+    .logo small{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hwrap">
+    <div class="logo">
+      <span class="dot"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg></span>
+      <span id="siteTitle">Pemantau YouTube<small id="siteSubtitle">—</small></span>
+    </div>
+    <div class="spacer"></div>
+    <nav class="tabs" id="artistTabs" aria-label="Pilih artis"></nav>
+    <button class="iconbtn" id="themeBtn" title="Ganti tema" aria-label="Ganti tema">
+      <svg id="iconMoon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      <svg id="iconSun" viewBox="0 0 24 24" style="display:none"><path d="M12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0 2a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1zm0-18a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0V2a1 1 0 0 1 1-1zm10 10a1 1 0 0 1-1 1h-2a1 1 0 1 1 0-2h2a1 1 0 0 1 1 1zM5 12a1 1 0 0 1-1 1H2a1 1 0 1 1 0-2h2a1 1 0 0 1 1 1zm13.66-6.66a1 1 0 0 1 0 1.41l-1.41 1.42a1 1 0 1 1-1.42-1.42l1.42-1.41a1 1 0 0 1 1.41 0zM8.17 15.83a1 1 0 0 1 0 1.41l-1.41 1.42A1 1 0 1 1 5.34 17l1.41-1.41a1 1 0 0 1 1.42 0zm10.49 2.83a1 1 0 0 1-1.41 0l-1.42-1.42a1 1 0 0 1 1.42-1.41l1.41 1.41a1 1 0 0 1 0 1.42zM8.17 8.17a1 1 0 0 1-1.42 0L5.34 6.75a1 1 0 0 1 1.41-1.41l1.42 1.41a1 1 0 0 1 0 1.42z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="topline" id="topline"><span class="pulse"></span><span id="toplineText">Memuat data…</span></div>
+
+  <section class="chgrid" id="channelSection"></section>
+
+  <div class="toolbar" id="toolbar" style="display:none">
+    <div class="chips" id="catChips"></div>
+    <div class="grow"></div>
+    <div class="search">
+      <svg viewBox="0 0 24 24"><path d="M10 2a8 8 0 1 0 4.9 14.3l5 5a1 1 0 0 0 1.4-1.4l-5-5A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12z"/></svg>
+      <input id="searchBox" type="text" placeholder="Cari judul…" aria-label="Cari video">
+    </div>
+    <select class="sort" id="sortSel" aria-label="Urutkan">
+      <option value="views">Views terbanyak</option>
+      <option value="growth">Pertumbuhan 7 hari</option>
+      <option value="newest">Rilis terbaru</option>
+    </select>
+  </div>
+
+  <section class="vgrid" id="videoGrid"></section>
+</main>
+
+<footer>
+  <div class="fwrap">
+    <span id="footLeft">Data direkam otomatis oleh GitHub Actions</span>
+    <span><a id="repoLink" href="#" target="_blank" rel="noopener">Repo GitHub</a></span>
+  </div>
+</footer>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true">
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<script>
+"use strict";
+
+/* ===================== util ===================== */
+const $ = (s) => document.querySelector(s);
+const NF = new Intl.NumberFormat("id-ID");
+const DF = new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric" });
+const DFW = new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Jakarta" });
+const TF = new Intl.DateTimeFormat("id-ID", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" });
+const MF = new Intl.DateTimeFormat("id-ID", { month: "short", year: "numeric" });
+
+function fmtExact(n) { return (n === null || n === undefined) ? "–" : NF.format(n); }
+function fmtCompact(n) {
+  if (n === null || n === undefined) return "–";
+  if (Math.abs(n) >= 1e9) return (n / 1e9).toLocaleString("id-ID", { maximumFractionDigits: 2 }) + " mlr";
+  if (Math.abs(n) >= 1e6) return (n / 1e6).toLocaleString("id-ID", { maximumFractionDigits: 2 }) + " jt";
+  if (Math.abs(n) >= 1e4) return (n / 1e3).toLocaleString("id-ID", { maximumFractionDigits: 1 }) + " rb";
+  return NF.format(n);
+}
+function fmtDelta(n) {
+  if (n === null || n === undefined) return "–";
+  const sign = n > 0 ? "+" : n < 0 ? "−" : "";
+  const a = Math.abs(n);
+  if (a >= 1e6) return sign + fmtCompact(a);
+  return sign + NF.format(a);
+}
+function fmtDate(iso) {
+  if (!iso) return "–";
+  const d = new Date(iso.length <= 10 ? iso + "T00:00:00" : iso);
+  return isNaN(d) ? iso : DF.format(d);
+}
+function fmtTs(t) {
+  const d = new Date(t * 1000);
+  return DFW.format(d) + " " + TF.format(d) + " WIB";
+}
+function ageDays(iso) {
+  if (!iso) return null;
+  const d = new Date(iso.length <= 10 ? iso + "T00:00:00" : iso);
+  if (isNaN(d)) return null;
+  return Math.max(0, Math.floor((Date.now() - d.getTime()) / 86400000));
+}
+function esc(s) {
+  return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+function cssVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+/* selisih vs titik ~N hari lalu (toleransi) */
+function deltaDays(history, days) {
+  if (!history || history.length < 2) return null;
+  const last = history[history.length - 1];
+  const targetT = last.t - days * 86400;
+  let best = null, bestDiff = Infinity;
+  for (let i = history.length - 2; i >= 0; i--) {
+    const diff = Math.abs(history[i].t - targetT);
+    if (diff < bestDiff) { bestDiff = diff; best = history[i]; }
+    if (history[i].t < targetT - days * 1.6 * 86400) break;
+  }
+  if (!best || bestDiff > days * 1.6 * 86400) return null;
+  const elapsed = Math.max(1, last.t - best.t) / 86400;
+  return { delta: last.v - best.v, rate: (last.v - best.v) / elapsed, days };
+}
+function deltaLikes(history, days) {
+  if (!history || history.length < 2) return null;
+  const last = history[history.length - 1];
+  const targetT = last.t - days * 86400;
+  let best = null, bestDiff = Infinity;
+  for (let i = history.length - 2; i >= 0; i--) {
+    if (history[i].l == null) continue;
+    const diff = Math.abs(history[i].t - targetT);
+    if (diff < bestDiff) { bestDiff = diff; best = history[i]; }
+    if (history[i].t < targetT - days * 1.6 * 86400) break;
+  }
+  if (!best) return null;
+  return last.l - best.l;
+}
+
+function sparkSVG(history, color, key) {
+  const pts = history.slice(-60);
+  if (pts.length < 2) return `<div class="wait" style="padding:10px">Grafik muncul setelah 2 hari data.</div>`;
+  const vals = pts.map((p) => p[key]).filter((x) => x != null);
+  if (vals.length < 2) return `<div class="wait" style="padding:10px">Grafik muncul setelah 2 hari data.</div>`;
+  const min = Math.min(...vals), max = Math.max(...vals);
+  const W = 400, H = 64, pad = 3;
+  const xs = [], ys = [];
+  pts.forEach((p, i) => {
+    if (p[key] == null) return;
+    xs.push(pad + (i / (pts.length - 1)) * (W - 2 * pad));
+    ys.push(H - pad - ((p[key] - min) / Math.max(1, max - min)) * (H - 2 * pad));
+  });
+  const line = xs.map((x, i) => `${i ? "L" : "M"}${x.toFixed(1)},${ys[i].toFixed(1)}`).join(" ");
+  const area = line + ` L${xs[xs.length - 1].toFixed(1)},${H} L${xs[0].toFixed(1)},${H} Z`;
+  const gid = "g" + Math.random().toString(36).slice(2, 8);
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${color}" stop-opacity=".35"/><stop offset="1" stop-color="${color}" stop-opacity="0"/>
+    </linearGradient></defs>
+    <path d="${area}" fill="url(#${gid})"/>
+    <path d="${line}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+  </svg>`;
+}
+
+/* milestone util — ambil N target berikutnya */
+function nextMilestones(current, list, count) {
+  return list.filter((t) => t > current).slice(0, count);
+}
+const VIEW_MS = [1e4,5e4,1e5,2.5e5,5e5,1e6,2e6,3e6,4e6,5e6,7.5e6,1e7,1.5e7,2e7,3e7,4e7,5e7,6e7,7e7,8e7,9e7,1e8,1.5e8,2e8,2.5e8,3e8,4e8,5e8,6e8,7e8,8e8,9e8,1e9,1.5e9,2e9];
+const SUB_MS  = [1e5,5e5,1e6,2e6,3e6,4e6,5e6,6e6,7e6,8e6,9e6,1e7,1.1e7,1.2e7,1.3e7,1.4e7,1.5e7,2e7];
+function etaText(target, current, ratePerDay) {
+  if (!ratePerDay || ratePerDay <= 0) return "–";
+  const days = (target - current) / ratePerDay;
+  if (days < 0.25) return "segera";
+  const d = new Date(Date.now() + days * 86400000);
+  if (days > 1500) return "± " + d.getFullYear();
+  return "≈ " + DF.format(d);
+}
+
+/* ===================== state ===================== */
+const state = {
+  config: null, videos: null, channels: null, meta: null,
+  artist: localStorage.getItem("py.artist") || null,
+  filter: "all", sort: "views", query: "",
+  charts: [],
+};
+
+async function loadData() {
+  const bust = "?v=" + Date.now();
+  const [cfg, vids, chans, meta] = await Promise.all([
+    fetch("config.json" + bust).then((r) => r.json()),
+    fetch("data/videos.json" + bust).then((r) => r.json()).catch(() => ({})),
+    fetch("data/channels.json" + bust).then((r) => r.json()).catch(() => ({})),
+    fetch("data/meta.json" + bust).then((r) => r.json()).catch(() => null),
+  ]);
+  state.config = cfg; state.videos = vids; state.channels = chans; state.meta = meta;
+}
+
+function artistOf(id) { return state.config.artists.find((a) => a.id === id); }
+
+/* ===================== render: tabs & channel ===================== */
+function renderTabs() {
+  const nav = $("#artistTabs");
+  nav.innerHTML = state.config.artists.map((a) =>
+    `<button class="tab ${a.id === state.artist ? "active" : ""}" data-id="${a.id}" style="--c:${a.color}">${esc(a.name)}</button>`
+  ).join("");
+  nav.querySelectorAll(".tab").forEach((b) =>
+    b.addEventListener("click", () => { state.artist = b.dataset.id; localStorage.setItem("py.artist", state.artist); renderAll(); })
+  );
+}
+
+function renderChannel() {
+  const art = artistOf(state.artist);
+  const sec = $("#channelSection");
+  sec.style.setProperty("--artist-color", art.color);
+  const ch = state.channels[state.artist];
+  if (!ch || !ch.history || !ch.history.length) {
+    sec.innerHTML = `<div class="banner">Belum ada data channel untuk ${esc(art.name)}. Jalankan sekali workflow “Kumpulkan data YouTube” di tab Actions, lalu muat ulang halaman.</div>`;
+    return;
+  }
+  const h = ch.history, last = h[h.length - 1];
+  const d1 = deltaDays(h, 1), d7 = deltaDays(h, 7);
+  const nextSub = nextMilestones(last.s || 0, SUB_MS, 1)[0];
+  const rate7 = d7 ? d7.rate : 0;
+  sec.innerHTML = `
+    <div class="chcard" style="--artist-color:${art.color}">
+      <div class="chtop">
+        ${ch.avatar ? `<img class="chava" src="${esc(ch.avatar)}" alt="Logo ${esc(art.name)}" loading="lazy">` : ""}
+        <div>
+          <div class="chname">${esc(ch.name || art.name)}</div>
+          <div class="chhandle">${esc(ch.handle || "")} · <a href="https://www.youtube.com/${esc((ch.handle || "").replace("@", "@"))}" target="_blank" rel="noopener">buka YouTube</a></div>
+        </div>
+      </div>
+      <div class="chstats">
+        <div class="stat">
+          <div class="k">Subscriber</div>
+          <div class="v">${fmtCompact(last.s)}</div>
+          <div class="d ${d1 && d1.s !== undefined ? "" : ""}">
+            ${d1 && last.s != null ? `<span class="up">${fmtDelta(d1.s)}</span> hari ini` : "–"}
+          </div>
+        </div>
+        <div class="stat">
+          <div class="k">Total ditonton</div>
+          <div class="v">${fmtCompact(last.v)}</div>
+          <div class="d">${d7 ? `<span class="up">${fmtDelta(d7.delta)}</span> minggu ini` : "–"}</div>
+        </div>
+        <div class="stat">
+          <div class="k">Jumlah video</div>
+          <div class="v">${fmtExact(last.c)}</div>
+          <div class="d">di channel YouTube</div>
+        </div>
+      </div>
+      <div class="sparkwrap">
+        <div class="k">Pertumbuhan subscriber ${nextSub ? `· menuju ${fmtCompact(nextSub)} ${etaText(nextSub, last.s || 0, rate7)}` : ""}</div>
+        ${sparkSVG(h.map((p) => ({ t: p.t, v: p.s })), art.color, "v")}
+      </div>
+    </div>`;
+}
+
+/* ===================== render: videos ===================== */
+function videoList() {
+  const out = [];
+  for (const [id, v] of Object.entries(state.videos || {})) {
+    if (v.channel !== state.artist) continue;
+    out.push({ id, ...v });
+  }
+  let list = out;
+  if (state.filter !== "all") list = list.filter((v) => v.category === state.filter);
+  if (state.query) {
+    const q = state.query.toLowerCase();
+    list = list.filter((v) => (v.title || "").toLowerCase().includes(q));
+  }
+  const rate7 = (v) => { const d = deltaDays(v.history, 7); return d ? d.rate : -1; };
+  if (state.sort === "views") list.sort((a, b) => lastV(b) - lastV(a));
+  else if (state.sort === "growth") list.sort((a, b) => rate7(b) - rate7(a));
+  else if (state.sort === "newest") list.sort((a, b) => (b.published || "").localeCompare(a.published || ""));
+  return list;
+}
+function lastV(v) { return v.history && v.history.length ? v.history[v.history.length - 1].v : 0; }
+
+function renderVideos() {
+  const art = artistOf(state.artist);
+  const chips = $("#catChips");
+  const counts = {};
+  for (const [id, v] of Object.entries(state.videos || {})) if (v.channel === state.artist) counts[v.category] = (counts[v.category] || 0) + 1;
+  const cats = [["all", "Semua"], ...Object.entries(state.config.categories)];
+  chips.innerHTML = cats.map(([k, label]) => {
+    const n = k === "all" ? Object.values(counts).reduce((a, b) => a + b, 0) : counts[k] || 0;
+    return `<button class="chip ${state.filter === k ? "active" : ""}" data-k="${k}" ${state.filter === k ? `style="background:${art.color}"` : ""}>${esc(label)} (${n})</button>`;
+  }).join("");
+  chips.querySelectorAll(".chip").forEach((c) =>
+    c.addEventListener("click", () => { state.filter = c.dataset.k; renderVideos(); })
+  );
+
+  const grid = $("#videoGrid");
+  const list = videoList();
+  if (!list.length) {
+    grid.innerHTML = `<div class="banner" style="grid-column:1/-1">Tidak ada video yang cocok. Data belum terekam atau filter terlalu sempit.</div>`;
+    return;
+  }
+  grid.innerHTML = list.map((v) => {
+    const last = v.history && v.history.length ? v.history[v.history.length - 1] : { v: 0, l: null };
+    const d7 = deltaDays(v.history, 7);
+    return `
+    <article class="vcard" data-id="${v.id}" style="--artist-color:${art.color}" tabindex="0" role="button" aria-label="${esc(v.title)}">
+      <div class="thumbwrap">
+        <img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy">
+        <span class="badge b-${v.category}">${esc(state.config.categories[v.category] || v.category)}</span>
+      </div>
+      <div class="vbody">
+        <div class="vtitle">${esc(v.title)}</div>
+        <div class="vmeta">
+          <div class="vviews">
+            <div class="n">${fmtCompact(last.v)}</div>
+            <div class="l">views${last.l != null ? " · " + fmtCompact(last.l) + " likes" : ""}</div>
+          </div>
+          <div class="vright">
+            <div class="g ${d7 && d7.delta >= 0 ? "up" : ""}">${d7 ? fmtDelta(d7.delta) : "–"}</div>
+            <div class="l">7 hari terakhir</div>
+          </div>
+        </div>
+      </div>
+    </article>`;
+  }).join("");
+  grid.querySelectorAll(".vcard").forEach((c) => {
+    c.addEventListener("click", () => openDetail(c.dataset.id));
+    c.addEventListener("keydown", (e) => { if (e.key === "Enter") openDetail(c.dataset.id); });
+  });
+}
+
+/* ===================== detail overlay ===================== */
+function destroyCharts() { state.charts.forEach((c) => c.destroy()); state.charts = []; }
+
+function openDetail(vid) {
+  const v = state.videos[vid];
+  if (!v) return;
+  const art = artistOf(v.channel) || { color: "#6a78ff", name: "" };
+  const h = v.history || [];
+  const last = h.length ? h[h.length - 1] : { v: 0, l: null };
+  const d1 = deltaDays(h, 1), d7 = deltaDays(h, 7);
+  const d30 = deltaDays(h, 30);
+  const allAge = h.length > 1 ? Math.max(1, (h[h.length - 1].t - h[0].t) / 86400) : 0;
+  const rateAll = allAge ? (last.v - h[0].v) / allAge : 0;
+  const rate = (d7 && d7.rate) || (d30 && d30.rate) || rateAll;
+  const per1000 = last.v ? (last.l / last.v) * 1000 : null;
+  const watched = h.length > 1 ? Math.round((h[h.length - 1].t - h[0].t) / 86400) : 0;
+  const age = ageDays(v.published);
+  const msList = nextMilestones(last.v || 0, VIEW_MS, 4);
+  const srcBase = (location.pathname.replace(/\/[^\/]*$/, "/"));
+
+  $("#sheet").innerHTML = `
+    <button class="close" id="closeBtn" aria-label="Tutup">✕</button>
+    <div class="dhead">
+      <img class="dthumb" src="https://i.ytimg.com/vi/${vid}/hqdefault.jpg" alt="">
+      <div>
+        <h2 class="dtitle">${esc(v.title)}</h2>
+        <div class="dsub">
+          <span class="pill" style="background:${art.color};color:#fff;border-radius:999px">${esc(art.name)}</span>
+          <span class="pill">${esc(state.config.categories[v.category] || v.category)}</span>
+          <span>Rilis ${fmtDate(v.published)}${age != null ? ` · ${NF.format(age)} hari lalu` : ""}</span>
+        </div>
+        <div class="dsub" style="margin-top:6px">
+          <a class="pill" href="https://www.youtube.com/watch?v=${vid}" target="_blank" rel="noopener">Tonton di YouTube</a>
+          ${watched ? `<span class="pill">dipantau ${watched} hari</span>` : ""}
+        </div>
+      </div>
+    </div>
+
+    <div class="dbig">
+      <div class="stat"><div class="k">Views</div><div class="v">${fmtExact(last.v)}</div>
+        <div class="d">${d1 ? `<span class="up">${fmtDelta(d1.delta)}</span> kemarin` : "menunggu data hari kedua"}</div></div>
+      <div class="stat"><div class="k">Rata-rata / hari</div><div class="v">${d7 ? fmtCompact(Math.round(d7.rate)) : "–"}</div>
+        <div class="d">${d7 ? "7 hari terakhir" : "–"}</div></div>
+      <div class="stat"><div class="k">Likes</div><div class="v">${last.l != null ? fmtCompact(last.l) : "–"}</div>
+        <div class="d">${d1 && last.l != null && d1.likes !== undefined && deltaLikes(h, 1) != null ? `<span class="up">${fmtDelta(deltaLikes(h, 1))}</span> kemarin` : (last.l != null ? "likes" : "–")}</div></div>
+      <div class="stat"><div class="k">Likes / 1.000 views</div><div class="v">${per1000 ? per1000.toLocaleString("id-ID", { maximumFractionDigits: 1 }) : "–"}</div>
+        <div class="d">rasio interaksi</div></div>
+    </div>
+
+    <div class="sect">
+      <h3>Views ditambahkan per hari</h3>
+      <div class="chartbox"><canvas id="chartDaily"></canvas></div>
+    </div>
+
+    <div class="sect">
+      <h3>Total views</h3>
+      <div class="chartbox"><canvas id="chartCum"></canvas></div>
+    </div>
+
+    <div class="sect">
+      <h3>Milestone & prediksi</h3>
+      <div class="chartbox" style="padding:6px 10px">
+        ${h.length < 2 ? `<div class="wait">Prediksi bisa dibuat setelah ada data beberapa hari (butuh rata-rata pertumbuhan 7 hari).</div>` : `
+        <table class="ms">
+          <thead><tr><th>Target</th><th class="num">Sisa</th><th class="num">Perkiraan tercapai</th></tr></thead>
+          <tbody>
+            ${msList.map((t) => `
+              <tr><td>${fmtExact(t)} views</td><td class="num">${fmtCompact(t - last.v)}</td><td class="num">${etaText(t, last.v, rate)}</td></tr>`).join("")}
+          </tbody>
+        </table>
+        <p class="note">Prediksi = garis lurus dari rata-rata ${d7 ? "7" : "30"} hari terakhir (${d7 ? fmtCompact(Math.round(rate)) : fmtCompact(Math.round(rateAll))}/hari). Sebenarnya pertumbuhan MV menurun seiring waktu, jadi tanggal nyata biasanya lebih lama.</p>`}
+      </div>
+    </div>
+  `;
+  $("#overlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+  $("#closeBtn").addEventListener("click", closeDetail);
+  location.hash = "v=" + vid;
+
+  if (h.length >= 2) {
+    buildDailyChart(h, art.color);
+    buildCumChart(h, art.color);
+  } else {
+    const msg = `<div class="wait">Grafik akan muncul setelah data beberapa hari terekam oleh GitHub Actions (butuh minimal 3 hari untuk grafik harian).<br>Kembali lagi besok atau lusa ya!</div>`;
+    const boxD = $("#chartDaily") ? $("#chartDaily").closest(".chartbox") : null;
+    const boxC = $("#chartCum") ? $("#chartCum").closest(".chartbox") : null;
+    if (boxD) boxD.innerHTML = msg;
+    if (boxC) boxC.innerHTML = msg;
+  }
+}
+
+function downsample(h, maxPts) {
+  if (h.length <= maxPts) return h;
+  const step = Math.ceil(h.length / maxPts);
+  const out = [];
+  for (let i = 0; i < h.length; i += step) out.push(h[i]);
+  if (out[out.length - 1] !== h[h.length - 1]) out.push(h[h.length - 1]);
+  return out;
+}
+
+function chartOpts() {
+  return {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { intersect: false, mode: "index" },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: cssVar("--card"), titleColor: cssVar("--text"), bodyColor: cssVar("--text"),
+        borderColor: cssVar("--border"), borderWidth: 1, padding: 10, displayColors: false,
+      },
+    },
+    scales: {
+      x: { grid: { color: cssVar("--chart-grid") }, ticks: { color: cssVar("--chart-text"), maxTicksLimit: 8, font: { size: 10.5 } } },
+      y: {
+        grid: { color: cssVar("--chart-grid") },
+        ticks: { color: cssVar("--chart-text"), font: { size: 10.5 }, callback: (v) => fmtCompact(v) },
+      },
+    },
+  };
+}
+
+function buildDailyChart(h, color) {
+  // agregasi per hari kalender (WIB): nilai = views akhir hari - views akhir hari sebelumnya
+  const byDay = new Map();
+  for (const p of h) {
+    const d = new Date(p.t * 1000);
+    const key = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jakarta", year: "numeric", month: "2-digit", day: "2-digit" }).format(d);
+    const prev = byDay.get(key);
+    if (!prev || p.t >= prev.t) byDay.set(key, { t: p.t, key, v: p.v });
+  }
+  const days = [...byDay.values()].sort((a, b) => a.t - b.t);
+  const series = [];
+  for (let i = 1; i < days.length; i++) {
+    const diff = days[i].v - days[i - 1].v;
+    series.push({ key: days[i].key, diff });
+  }
+  const recent = series.slice(-60);
+  if (recent.length < 2) { $("#chartDaily").closest(".chartbox").innerHTML = `<div class="wait">Butuh minimal 3 hari data untuk grafik harian.</div>`; return; }
+  const ctx = $("#chartDaily");
+  state.charts.push(new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: recent.map((r) => r.key.slice(8, 10) + "/" + r.key.slice(5, 7)),
+      datasets: [{ data: recent.map((r) => Math.max(0, r.diff)), backgroundColor: color, borderRadius: 4, maxBarThickness: 22 }],
+    },
+    options: chartOpts(),
+  }));
+}
+
+function buildCumChart(h, color) {
+  const pts = downsample(h, 160);
+  const ctx = $("#chartCum");
+  state.charts.push(new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: pts.map((p) => {
+        const d = new Date(p.t * 1000);
+        return new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short" }).format(d);
+      }),
+      datasets: [{
+        data: pts.map((p) => p.v),
+        borderColor: color, borderWidth: 2.4, pointRadius: 0, pointHitRadius: 12, tension: 0.25,
+        fill: true, backgroundColor: (ctx2) => {
+          const g = ctx2.chart.ctx.createLinearGradient(0, 0, 0, ctx2.chart.height || 260);
+          g.addColorStop(0, color + "55"); g.addColorStop(1, color + "00");
+          return g;
+        },
+      }],
+    },
+    options: chartOpts(),
+  }));
+}
+
+function closeDetail() {
+  destroyCharts();
+  $("#overlay").classList.remove("open");
+  document.body.style.overflow = "";
+  if (location.hash.startsWith("#v=")) history.replaceState(null, "", location.pathname + location.search);
+}
+$("#overlay").addEventListener("click", (e) => { if (e.target === $("#overlay")) closeDetail(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDetail(); });
+window.addEventListener("hashchange", () => {
+  const m = /^#v=([\w-]+)$/.exec(location.hash);
+  if (m && state.videos && state.videos[m[1]]) openDetail(m[1]);
+});
+
+/* ===================== theme ===================== */
+function applyTheme(t) {
+  document.documentElement.dataset.theme = t;
+  localStorage.setItem("py.theme", t);
+  $("#iconMoon").style.display = t === "dark" ? "block" : "none";
+  $("#iconSun").style.display = t === "light" ? "block" : "none";
+}
+$("#themeBtn").addEventListener("click", () => {
+  const t = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+  applyTheme(t);
+  if ($("#overlay").classList.contains("open")) {
+    const vid = (/^#v=([\w-]+)$/.exec(location.hash) || [])[1];
+    if (vid && state.videos[vid]) { destroyCharts(); openDetail(vid); }
+  }
+});
+
+/* ===================== init ===================== */
+function renderAll() {
+  renderTabs();
+  renderChannel();
+  $("#toolbar").style.display = "";
+  renderVideos();
+  renderTopline();
+}
+
+function renderTopline() {
+  const el = $("#toplineText");
+  const n = Object.keys(state.videos || {}).length;
+  if (state.meta && state.meta.last_updated) {
+    el.innerHTML = `Terakhir diperbarui <b>${fmtTs(state.meta.last_updated)}</b> · ${n} video dipantau · data direkam 2× sehari oleh GitHub Actions`;
+  } else {
+    el.textContent = "Data belum tersedia — jalankan sekali workflow “Kumpulkan data YouTube” di tab Actions.";
+  }
+}
+
+(async function init() {
+  const saved = localStorage.getItem("py.theme");
+  applyTheme(saved || "dark");
+
+  function guessRepoUrl() {
+    const h = location.hostname;
+    if (h.endsWith(".github.io")) {
+      const user = h.split(".")[0];
+      const repo = (location.pathname.split("/").filter(Boolean)[0]) || "";
+      return repo ? `https://github.com/${user}/${repo}` : `https://github.com/${user}`;
+    }
+    return "#";
+  }
+  $("#repoLink").href = guessRepoUrl();
+
+  try {
+    await loadData();
+  } catch (e) {
+    $("#toplineText").textContent = "Gagal memuat data. Pastikan folder data/ sudah ada dan workflow pernah dijalankan.";
+    $("#channelSection").innerHTML = `<div class="banner">Data belum bisa dimuat (${esc(e.message)}). Jalankan tab <b>Actions → Kumpulkan data YouTube → Run workflow</b> satu kali, lalu muat ulang.</div>`;
+    return;
+  }
+
+  // judul situs dari config
+  $("#siteTitle").childNodes[0].textContent = state.config.site.title + " ";
+  $("#siteSubtitle").textContent = state.config.site.subtitle;
+  document.title = `${state.config.site.title} — ${state.config.site.subtitle}`;
+  if (state.config.site.repo_url) $("#repoLink").href = state.config.site.repo_url;
+
+  if (!state.artist || !artistOf(state.artist)) state.artist = state.config.artists[0].id;
+
+  renderAll();
+
+  const m = /^#v=([\w-]+)$/.exec(location.hash);
+  if (m && state.videos[m[1]]) openDetail(m[1]);
+
+  $("#searchBox").addEventListener("input", (e) => { state.query = e.target.value.trim(); renderVideos(); });
+  $("#sortSel").addEventListener("change", (e) => { state.sort = e.target.value; renderVideos(); });
+})();
+</script>
+</body>
+</html>
