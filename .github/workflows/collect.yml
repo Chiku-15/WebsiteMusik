@@ -1,0 +1,45 @@
+name: Kumpulkan data YouTube
+
+on:
+  schedule:
+    # 00:00 UTC = 07:00 WIB  |  12:00 UTC = 19:00 WIB
+    - cron: "0 0 * * *"
+    - cron: "0 12 * * *"
+  workflow_dispatch: # tombol jalankan manual di tab Actions
+
+permissions:
+  contents: write
+
+concurrency:
+  group: collect-data
+  cancel-in-progress: false
+
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Ambil kode
+        uses: actions/checkout@v4
+
+      - name: Pasang Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Kumpulkan data (YouTube API)
+        env:
+          YT_API_KEY: ${{ secrets.YT_API_KEY }}
+        run: node collect.js
+
+      - name: Simpan data ke repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/ config.json
+          if git diff --cached --quiet; then
+            echo "Tidak ada perubahan data."
+          else
+            git commit -m "data: update $(TZ=Asia/Jakarta date +'%d %b %Y %H:%M WIB')"
+            git push
+          fi
