@@ -1,5 +1,6 @@
 {
- "last_updated": 1793896669,
- "mode": "seed",
- "note": "Titik data awal (cuplikan publik, angka dibulatkan YouTube). Putaran GitHub Actions berikutnya menyimpan angka presisi dari YouTube Data API."
+ "last_updated": 1793898524,
+ "mode": "scrape",
+ "duration_sec": 255,
+ "quota_note": "scraping publik"
 }
