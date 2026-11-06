@@ -41,5 +41,17 @@ jobs:
             echo "Tidak ada perubahan data."
           else
             git commit -m "data: update $(TZ=Asia/Jakarta date +'%d %b %Y %H:%M WIB')"
-            git push
+          fi
+          ok=""
+          for i in 1 2 3; do
+            if git pull --rebase -X theirs origin main && git push; then
+              ok=1; break
+            fi
+            echo "Push gagal (percobaan $i/3), coba lagi..."
+            git rebase --abort 2>/dev/null || true
+            sleep 5
+          done
+          if [ -z "$ok" ]; then
+            echo "::error::Push tetap gagal setelah 3 percobaan."
+            exit 1
           fi
