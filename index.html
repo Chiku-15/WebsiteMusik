@@ -235,6 +235,52 @@
   .l-cta:hover{transform:translateY(-2px);filter:brightness(1.07)}
   .l-cta svg{width:17px;height:17px;fill:#fff}
   .l-foot{color:#6d7688;font-size:11.5px;margin:18px 0 0}
+  /* ---------- beranda ---------- */
+  .hero{
+    position:relative;border:1px solid var(--border);border-radius:20px;overflow:hidden;
+    background:linear-gradient(135deg,rgba(255,77,109,.15),rgba(138,92,246,.10) 48%,rgba(106,120,255,.16));
+    padding:28px 26px 22px;margin:4px 0 8px;
+  }
+  .hero::after{content:"";position:absolute;right:-90px;top:-110px;width:320px;height:320px;border-radius:50%;
+    background:radial-gradient(closest-side,rgba(255,77,109,.28),transparent);filter:blur(12px);pointer-events:none}
+  .hbadge{display:inline-block;font-size:10px;font-weight:800;letter-spacing:2.2px;color:var(--muted);
+    border:1px solid var(--border);border-radius:999px;padding:6px 14px;background:color-mix(in srgb,var(--card) 70%,transparent)}
+  .hero h1{font-size:clamp(23px,3.6vw,32px);font-weight:800;margin:14px 0 8px;line-height:1.22;letter-spacing:.2px}
+  .hero h1 .grad{background:linear-gradient(92deg,#ff4d6d,#a06bff 55%,#6a78ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{color:var(--muted);font-size:13.5px;line-height:1.65;margin:0;max-width:680px}
+  .hstats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px;position:relative;z-index:1}
+  .hstats .stat{background:color-mix(in srgb,var(--card) 85%,transparent)}
+  .sic{width:30px;height:30px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;
+    background:color-mix(in srgb,var(--c,#6a78ff) 18%,transparent);flex:none}
+  .sic svg{width:16px;height:16px;fill:var(--c,#6a78ff)}
+  .hsect{display:flex;align-items:center;gap:12px;margin:34px 2px 14px;flex-wrap:wrap}
+  .hsect h2{font-size:19px;font-weight:800;margin:0;display:flex;align-items:center;gap:10px}
+  .hsect .sub{color:var(--muted);font-size:12.5px;font-weight:600}
+  .chgrid.two{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+  /* papan peringkat */
+  .lb{display:flex;flex-direction:column;gap:10px}
+  .lbrow{
+    display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border);
+    border-radius:14px;padding:10px 14px;cursor:pointer;transition:.15s;min-width:0;
+  }
+  .lbrow:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--ac,#6a78ff) 45%,var(--border))}
+  .lbrank{width:36px;font-size:17px;font-weight:800;text-align:center;color:var(--muted);flex:none;font-variant-numeric:tabular-nums}
+  .lbrow.top3 .lbrank{font-size:21px;background:linear-gradient(135deg,#ff4d6d,#6a78ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lbthumb{width:98px;aspect-ratio:16/9;border-radius:9px;object-fit:cover;flex:none;border:1px solid var(--border);background:var(--bg2)}
+  .lbmain{flex:1;min-width:0}
+  .lbtitle{font-weight:700;font-size:13.5px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .lbmeta{display:flex;gap:8px;align-items:center;margin-top:6px;flex-wrap:wrap}
+  .apill{font-size:10.5px;font-weight:800;padding:3px 9px;border-radius:999px;color:#fff;letter-spacing:.3px}
+  .lbnum{color:var(--muted);font-size:12px;font-weight:600}
+  .lbstats{text-align:right;flex:none}
+  .lbstats .g{font-size:13px;font-weight:800}
+  .lbstats .l{font-size:10.5px;color:var(--muted);font-weight:600;margin-top:2px}
+  @media (max-width:640px){
+    .hstats{grid-template-columns:repeat(2,1fr)}
+    .lbthumb{width:76px}
+    .lbstats{display:none}
+    .hero{padding:22px 18px 18px}
+  }
   @media (max-width:640px){
     .l-feats{grid-template-columns:1fr}
     .l-inner{padding:36px 22px 30px}
@@ -297,6 +343,8 @@
 
 <main>
   <div class="topline" id="topline"><span class="pulse"></span><span id="toplineText">Memuat data…</span></div>
+
+  <section id="homeSection" style="display:none"></section>
 
   <section class="chgrid" id="channelSection"></section>
 
@@ -435,7 +483,8 @@ function etaText(target, current, ratePerDay) {
 /* ===================== state ===================== */
 const state = {
   config: null, videos: null, channels: null, meta: null,
-  artist: localStorage.getItem("py.artist") || null,
+  view: "home",            // "home" | artistId — beranda selalu tampil pertama
+  artist: null,
   filter: "all", sort: "views", query: "",
   charts: [], chartRegistry: [],
   dailyRange: localStorage.getItem("py.range") || "60",
@@ -480,15 +529,22 @@ async function loadData() {
 
 function artistOf(id) { return state.config.artists.find((a) => a.id === id); }
 
-/* ===================== render: tabs & channel ===================== */
+/* ===================== render: tabs & navigasi ===================== */
 function renderTabs() {
   const nav = $("#artistTabs");
-  nav.innerHTML = state.config.artists.map((a) =>
-    `<button class="tab ${a.id === state.artist ? "active" : ""}" data-id="${a.id}" style="--c:${a.color}">${esc(a.name)}</button>`
-  ).join("");
+  const btn = (id, label) => `<button class="tab ${state.view === id ? "active" : ""}" data-id="${id}">${esc(label)}</button>`;
+  nav.innerHTML = btn("home", "Beranda") + state.config.artists.map((a) => btn(a.id, a.name)).join("");
   nav.querySelectorAll(".tab").forEach((b) =>
-    b.addEventListener("click", () => { state.artist = b.dataset.id; localStorage.setItem("py.artist", state.artist); renderAll(); })
+    b.addEventListener("click", () => setView(b.dataset.id))
   );
+}
+
+function setView(v) {
+  if (v !== "home" && !artistOf(v)) return;
+  state.view = v;
+  if (v !== "home") state.artist = v;
+  renderAll();
+  window.scrollTo(0, 0);
 }
 
 function renderChannel() {
@@ -543,7 +599,161 @@ function renderChannel() {
   }
 }
 
-/* ===================== render: videos ===================== */
+/* ===================== render: BERANDA ===================== */
+function allVideosFlat() {
+  const watched = watchedIds();
+  const out = [];
+  for (const [id, v] of Object.entries(state.videos || {})) {
+    if (!v || typeof v !== "object" || !watched.has(id)) continue;
+    const art = artistOf(v.channel);
+    if (!art) continue;
+    out.push({ id, ...v, art });
+  }
+  return out;
+}
+
+function vcardHTML(v, color) {
+  const last = v.history && v.history.length ? v.history[v.history.length - 1] : { v: 0, l: null };
+  const lpt = lastLikePoint(v.history);
+  const d7 = deltaDays(v.history, 7);
+  return `
+  <article class="vcard" data-id="${v.id}" style="--artist-color:${color}" tabindex="0" role="button" aria-label="${esc(v.title)}">
+    <div class="thumbwrap">
+      <img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy">
+      <span class="badge b-${v.category}">${esc(state.config.categories[v.category] || v.category)}</span>
+    </div>
+    <div class="vbody">
+      <div class="vtitle">${esc(v.title)}</div>
+      <div class="vmeta">
+        <div class="vviews">
+          <div class="n">${fmtCompact(last.v)}</div>
+          <div class="l">views${lpt ? " · " + fmtCompact(lpt.l) + " likes" : ""}</div>
+        </div>
+        <div class="vright">
+          <div class="g ${d7 && d7.delta >= 0 ? "up" : ""}">${d7 ? fmtDelta(d7.delta) : "–"}</div>
+          <div class="l">7 hari terakhir${recentEst(v.history, 7) ? " (est.)" : ""}</div>
+        </div>
+      </div>
+    </div>
+  </article>`;
+}
+
+function bindCards(root) {
+  root.querySelectorAll("[data-id]").forEach((c) => {
+    c.addEventListener("click", () => openDetail(c.dataset.id));
+    c.addEventListener("keydown", (e) => { if (e.key === "Enter") openDetail(c.dataset.id); });
+  });
+}
+
+function renderHome() {
+  const sec = $("#homeSection");
+  const vids = allVideosFlat();
+  if (!vids.length) {
+    sec.innerHTML = `<div class="banner">Data belum tersedia. Jalankan sekali workflow “Kumpulkan data YouTube” di tab Actions, lalu muat ulang halaman.</div>`;
+    return;
+  }
+
+  let totV = 0, totS = 0, hasCh = false;
+  for (const a of state.config.artists) {
+    const ch = state.channels && state.channels[a.id];
+    const h = ch && ch.history;
+    if (h && h.length) { hasCh = true; totV += h[h.length - 1].v || 0; totS += h[h.length - 1].s || 0; }
+  }
+
+  const top = vids.filter((v) => v.category === "mv" && lastV(v) > 0)
+    .sort((a, b) => lastV(b) - lastV(a)).slice(0, 10);
+  const rate7 = (v) => { const d = deltaDays(v.history, 7); return d ? d.rate : 0; };
+  const trend = [...vids].filter((v) => rate7(v) > 0).sort((a, b) => rate7(b) - rate7(a)).slice(0, 8);
+  const newest = [...vids].sort((a, b) => (b.published || "").localeCompare(a.published || "")).slice(0, 8);
+
+  const sic = (c, p) => `<span class="sic" style="--c:${c}"><svg viewBox="0 0 24 24"><path d="${p}"/></svg></span>`;
+  const ICO_TROPHY = "M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z";
+  const ICO_FIRE = "M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z";
+  const ICO_NEW = "M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z";
+  const ICO_PEOPLE = "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z";
+  const sectHead = (c, ico, title, sub) => `
+    <div class="hsect"><h2>${sic(c, ico)}${title}</h2>${sub ? `<span class="sub">${sub}</span>` : ""}</div>`;
+
+  const hero = `
+    <section class="hero">
+      <span class="hbadge">PEMANTAUAN OTOMATIS 2× SEHARI</span>
+      <h1>Lagu K-pop <span class="grad">paling banyak ditonton</span> hari ini</h1>
+      <p>Papan peringkat views terbaru dari MV &amp; video dance artis K-pop yang dipantau situs ini — lengkap dengan pertumbuhan mingguan, rilisan terbaru, dan profil channel. Klik video mana pun untuk melihat grafik harian &amp; prediksi milestone.</p>
+      <div class="hstats">
+        <div class="stat"><div class="k">Artis dipantau</div><div class="v">${state.config.artists.length}</div><div class="d">channel YouTube resmi</div></div>
+        <div class="stat"><div class="k">Video dipantau</div><div class="v">${watchedIds().size}</div><div class="d">MV, dance practice &amp; performance</div></div>
+        <div class="stat"><div class="k">Total views</div><div class="v">${hasCh ? fmtCompact(totV) : "–"}</div><div class="d">gabungan semua channel</div></div>
+        <div class="stat"><div class="k">Total subscriber</div><div class="v">${hasCh ? fmtCompact(totS) : "–"}</div><div class="d">gabungan semua channel</div></div>
+      </div>
+    </section>`;
+
+  const rows = top.map((v, i) => {
+    const lpt = lastLikePoint(v.history);
+    const d7 = deltaDays(v.history, 7);
+    return `
+    <article class="lbrow ${i < 3 ? "top3" : ""}" data-id="${v.id}" style="--ac:${v.art.color}" tabindex="0" role="button" aria-label="Peringkat ${i + 1}: ${esc(v.title)}">
+      <div class="lbrank">${i + 1}</div>
+      <img class="lbthumb" src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy">
+      <div class="lbmain">
+        <div class="lbtitle">${esc(v.title)}</div>
+        <div class="lbmeta">
+          <span class="apill" style="background:${v.art.color}">${esc(v.art.name)}</span>
+          <span class="lbnum">${fmtCompact(lastV(v))} views</span>
+          ${lpt ? `<span class="lbnum">· ${fmtCompact(lpt.l)} likes</span>` : ""}
+        </div>
+      </div>
+      <div class="lbstats">
+        <div class="g ${d7 && d7.delta >= 0 ? "up" : ""}">${d7 ? fmtDelta(d7.delta) : "–"}</div>
+        <div class="l">7 hari${recentEst(v.history, 7) ? " (est.)" : ""}</div>
+      </div>
+    </article>`;
+  }).join("");
+
+  const explore = state.config.artists.map((a) => {
+    const ch = state.channels && state.channels[a.id];
+    const h = ch && ch.history;
+    const last = h && h.length ? h[h.length - 1] : null;
+    const d7 = last ? deltaDays(h, 7) : null;
+    const n = vids.filter((v) => v.channel === a.id).length;
+    return `
+    <div class="chcard clickable" data-art="${a.id}" style="--artist-color:${a.color}" tabindex="0" role="button" aria-label="Buka halaman ${esc(a.name)}">
+      <div class="chtop">
+        ${ch && ch.avatar ? `<img class="chava" src="${esc(ch.avatar)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : ""}
+        <div>
+          <div class="chname">${esc(ch && ch.name ? ch.name : a.name)}</div>
+          <div class="chhandle">${esc((ch && ch.handle) || "")}</div>
+        </div>
+      </div>
+      <div class="chstats">
+        <div class="stat"><div class="k">Subscriber</div><div class="v">${last ? fmtCompact(last.s) : "–"}</div><div class="d">&nbsp;</div></div>
+        <div class="stat"><div class="k">Total ditonton</div><div class="v">${last ? fmtCompact(last.v) : "–"}</div><div class="d">${d7 ? `<span class="up">${fmtDelta(d7.delta)}</span> minggu ini` : "&nbsp;"}</div></div>
+        <div class="stat"><div class="k">Video dipantau</div><div class="v">${n}</div><div class="d">&nbsp;</div></div>
+      </div>
+      <div class="chhint"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>Lihat semua video &amp; grafik ${esc(a.name)}</div>
+    </div>`;
+  }).join("");
+
+  sec.innerHTML = `
+    ${hero}
+    ${sectHead("#ffb02e", ICO_TROPHY, "Lagu paling banyak ditonton", "Top 10 MV · semua artis yang dipantau")}
+    <div class="lb">${rows}</div>
+    <p class="note">Peringkat dihitung dari total views MV di semua artis yang dipantau, diperbarui otomatis 2× sehari.</p>
+    ${sectHead("#ff4d6d", ICO_FIRE, "Sedang tren minggu ini", "pertumbuhan views 7 hari tertinggi")}
+    <div class="vgrid">${trend.map((v) => vcardHTML(v, v.art.color)).join("")}</div>
+    ${sectHead("#8b5cf6", ICO_NEW, "Rilisan terbaru", "video terbaru dari semua artis")}
+    <div class="vgrid">${newest.map((v) => vcardHTML(v, v.art.color)).join("")}</div>
+    ${sectHead("#38bdf8", ICO_PEOPLE, "Jelajahi artis", "buka halaman lengkap per artis")}
+    <div class="chgrid two">${explore}</div>
+  `;
+  bindCards(sec);
+  sec.querySelectorAll("[data-art]").forEach((c) => {
+    const go = () => setView(c.dataset.art);
+    c.addEventListener("click", go);
+    c.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+  });
+}
+
+/* ===================== render: channel & videos (per artis) ===================== */
 function watchedIds() {
   const s = new Set();
   for (const a of state.config.artists) for (const v of a.videos) s.add(v.id);
@@ -601,35 +811,8 @@ function renderVideos() {
     grid.innerHTML = `<div class="banner" style="grid-column:1/-1">Tidak ada video yang cocok. Data belum terekam atau filter terlalu sempit.</div>`;
     return;
   }
-  grid.innerHTML = list.map((v) => {
-    const last = v.history && v.history.length ? v.history[v.history.length - 1] : { v: 0, l: null };
-    const lpt = lastLikePoint(v.history);
-    const d7 = deltaDays(v.history, 7);
-    return `
-    <article class="vcard" data-id="${v.id}" style="--artist-color:${art.color}" tabindex="0" role="button" aria-label="${esc(v.title)}">
-      <div class="thumbwrap">
-        <img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy">
-        <span class="badge b-${v.category}">${esc(state.config.categories[v.category] || v.category)}</span>
-      </div>
-      <div class="vbody">
-        <div class="vtitle">${esc(v.title)}</div>
-        <div class="vmeta">
-          <div class="vviews">
-            <div class="n">${fmtCompact(last.v)}</div>
-            <div class="l">views${lpt ? " · " + fmtCompact(lpt.l) + " likes" : ""}</div>
-          </div>
-          <div class="vright">
-            <div class="g ${d7 && d7.delta >= 0 ? "up" : ""}">${d7 ? fmtDelta(d7.delta) : "–"}</div>
-            <div class="l">7 hari terakhir${recentEst(v.history, 7) ? " (est.)" : ""}</div>
-          </div>
-        </div>
-      </div>
-    </article>`;
-  }).join("");
-  grid.querySelectorAll(".vcard").forEach((c) => {
-    c.addEventListener("click", () => openDetail(c.dataset.id));
-    c.addEventListener("keydown", (e) => { if (e.key === "Enter") openDetail(c.dataset.id); });
-  });
+  grid.innerHTML = list.map((v) => vcardHTML(v, art.color)).join("");
+  bindCards(grid);
 }
 
 /* ===================== detail overlay ===================== */
@@ -1072,8 +1255,9 @@ function hideLanding(instant) {
   if (instant || prefersReduced) {
     landing.remove();
   } else {
-    landing.classList.add("out");
-    setTimeout(() => landing.remove(), 500);
+    const el = landing;
+    el.classList.add("out");
+    setTimeout(() => el.remove(), 500);
   }
   landing = null;
   applySiteTitle();
@@ -1092,9 +1276,13 @@ document.addEventListener("keydown", (e) => {
 /* ===================== init ===================== */
 function renderAll() {
   renderTabs();
-  renderChannel();
-  $("#toolbar").style.display = "";
-  renderVideos();
+  const home = state.view === "home";
+  $("#homeSection").style.display = home ? "" : "none";
+  $("#channelSection").style.display = home ? "none" : "";
+  $("#toolbar").style.display = home ? "none" : "";
+  $("#videoGrid").style.display = home ? "none" : "";
+  if (home) renderHome();
+  else { renderChannel(); renderVideos(); }
   renderTopline();
 }
 
@@ -1138,6 +1326,7 @@ function renderTopline() {
 
   if (!state.artist || !artistOf(state.artist)) state.artist = state.config.artists[0].id;
 
+  state.view = "home";   // buka situs selalu mulai dari beranda
   renderAll();
 
   const mv = /^#v=([\w-]+)$/.exec(location.hash);
