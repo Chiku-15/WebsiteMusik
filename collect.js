@@ -30,6 +30,11 @@ const SCHEMA_VERSION = 3; // penanda format data; beda versi -> migrasi otomatis
 const EST_CAP = 380; // batas titik estimasi per video (hemat ukuran file)
 const EST_KEEP_DAILY = 100; // estimasi 100 hari terakhir selalu harian
 
+// milestone RESMI (kurasi manual dari pengumuman YG/media) — dipakai sbg jangkar nyata
+let OFFICIAL_MS = {};
+try { OFFICIAL_MS = JSON.parse(fs.readFileSync(path.join(DATA_DIR, "milestones.json"), "utf-8")).videos || {}; }
+catch { OFFICIAL_MS = {}; }
+
 // ---------- util ----------
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -320,6 +325,42 @@ function rebuildVideoEstimates(rec, id) {
     est = thinSeries(buildEstimatedSeries(rec.published, anchor.v, anchor.t, { g, seed: id }));
   }
   rec.history = mergeHistory(est, reals);
+}
+
+/*
+ * applyOfficialMilestones — sisipkan milestone resmi (data/milestones.json) sebagai titik
+ * NYATA (e:0, o:1) ke dalam history. Titik ini menjadi jangkar rebuildVideoEstimates sehingga
+ * kurva sebelum pemantauan mengikuti pencapaian resmi (mis. SHEESH 100 jt di hari ke-11),
+ * dan tabel milestone menampilkan hari yang sesuai pengumuman YG/media.
+ * Aman diulang: dilewati bila sudah ada titik nyata yang menutupi nilai tsb di hari yang sama,
+ * atau bila penyisipan akan merusak kemonotonan kurva.
+ */
+function applyOfficialMilestones(rec, id) {
+  const entry = OFFICIAL_MS[id];
+  if (!entry || !Array.isArray(entry.ms) || !rec) return false;
+  rec.history = rec.history || [];
+  const hist = rec.history;
+  const reals = hist.filter((p) => p.e !== 1); // hanya titik nyata; estimasi akan dibangun ulang
+  const lastReal = reals.length ? reals[reals.length - 1] : null;
+  const cur = lastReal ? lastReal.v : 0;
+  let changed = false;
+  for (const it of entry.ms) {
+    if (!it || !(it.m > 0) || !it.d) continue;
+    const t = new Date(it.d + "T00:00:00+07:00").getTime() / 1000;
+    if (!isFinite(t)) continue;
+    if (cur > 0 && it.m >= cur) continue; // belum tercapai / sama dgn titik terakhir
+    if (reals.some((p) => Math.abs(p.t - t) < 20 * 3600 && p.v >= it.m)) continue;
+    const prev = reals.filter((p) => p.t <= t).pop();
+    const next = reals.find((p) => p.t > t);
+    if (prev && prev.v > it.m) continue; // jangan patahkan kemonotonan
+    if (next && next.v < it.m) continue;
+    hist.push({ t, v: it.m, l: null, e: 0, o: 1 });
+    reals.push({ t, v: it.m, e: 0 });
+    reals.sort((a, b) => a.t - b.t);
+    changed = true;
+  }
+  if (changed) hist.sort((a, b) => a.t - b.t);
+  return changed;
 }
 
 /* regenerasi estimasi channel (subs/views/video) dari tanggal channel dibuat */
@@ -710,7 +751,10 @@ async function collectAPI() {
   try { await backfillFromWayback(videos, now); } catch (e) { log(`! modul backfill: ${e}`); }
 
   // bangun ulang estimasi sejak tanggal rilis (pakai jangkar terukur terbaru, termasuk Wayback)
-  for (const [id, rec] of Object.entries(videos)) rebuildVideoEstimates(rec, id);
+  for (const [id, rec] of Object.entries(videos)) {
+    try { applyOfficialMilestones(rec, id); } catch {}
+    rebuildVideoEstimates(rec, id);
+  }
 
   writeJSON("videos.json", videos);
   writeJSON("channels.json", channels);
@@ -981,7 +1025,10 @@ async function collectScrape() {
 
   try { await backfillFromWayback(videos, now); } catch (e) { log(`! modul backfill: ${e}`); }
 
-  for (const [id, rec] of Object.entries(videos)) rebuildVideoEstimates(rec, id);
+  for (const [id, rec] of Object.entries(videos)) {
+    try { applyOfficialMilestones(rec, id); } catch {}
+    rebuildVideoEstimates(rec, id);
+  }
 
   writeJSON("videos.json", videos);
   writeJSON("channels.json", channels);
@@ -1018,7 +1065,7 @@ if (require.main === module) main();
 
 module.exports = {
   main, appendHistory, mergeHistory, buildEstimatedSeries, buildChannelSeries, buildAnchoredSeries,
-  rebuildVideoEstimates, rebuildChannelEstimates, thinSeries, migrateIfNeeded,
+  rebuildVideoEstimates, rebuildChannelEstimates, thinSeries, migrateIfNeeded, applyOfficialMilestones,
   backfillFromWayback, waybackAnchors, classifyTitle, parseShortCount, scrapePlaylistPage,
   CONFIG, API_KEY, DATA_DIR, SCHEMA_VERSION,
 };

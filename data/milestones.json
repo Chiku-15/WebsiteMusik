@@ -1,0 +1,117 @@
+{
+  "_info": "Milestone RESMI hasil kurasi dari pengumuman YG Entertainment (ygfamily.com / yg-life.com) dan media (Yonhap, Korea Herald, Chosun, OSEN, allkpop). 'm' = views, 'd' = tanggal pencapaian (zona WIB), 'dd' = durasi resmi yang diumumkan (dihitung dari rilis KST), 'src' = sumber. Dipakai situs sebagai data otoritatif tabel milestone dan oleh collect.js sebagai jangkar data nyata (e:0) untuk melengkapi kurva sebelum pemantauan dimulai.",
+  "updated": "2026-11-06",
+  "videos": {
+    "olDWm2veCrM": {
+      "title": "BATTER UP",
+      "ms": [
+        { "m": 50000000, "d": "2023-12-01", "dd": "4 hari", "src": "YG Entertainment" },
+        { "m": 100000000, "d": "2023-12-15", "dd": "18 hari", "src": "YG Entertainment · Korea Herald" },
+        { "m": 200000000, "d": "2024-01-19", "dd": "53 hari", "src": "YG Entertainment · Yonhap" }
+      ]
+    },
+    "GsV1i0QHi-o": {
+      "title": "Stuck In The Middle",
+      "ms": [
+        { "m": 100000000, "d": "2024-03-10", "dd": "39 hari", "src": "YG Entertainment" }
+      ]
+    },
+    "2wA_b6YHjqQ": {
+      "title": "SHEESH",
+      "ms": [
+        { "m": 100000000, "d": "2024-04-11", "dd": "10 hari 11 jam (rilis KST 1 Apr)", "src": "YG Entertainment" },
+        { "m": 200000000, "d": "2024-05-04", "dd": "33 hari", "src": "YG Entertainment" },
+        { "m": 300000000, "d": "2024-10-04", "dd": "186 hari", "src": "YG Entertainment" },
+        { "m": 400000000, "d": "2026-04-17", "dd": "747 hari", "src": "YG Entertainment · OSEN" }
+      ]
+    },
+    "eJCHKjt0MPw": {
+      "title": "FOREVER",
+      "ms": [
+        { "m": 100000000, "d": "2024-07-28", "dd": "27 hari", "src": "YG Entertainment" }
+      ]
+    },
+    "Zp-Jhuhq0bQ": {
+      "title": "DRIP",
+      "ms": [
+        { "m": 100000000, "d": "2024-11-22", "dd": "21 hari", "src": "YG Entertainment" },
+        { "m": 400000000, "d": "2026-08-22", "src": "media (allkpop)" }
+      ]
+    },
+    "xn8mQqz2xmM": {
+      "title": "HOT SAUCE",
+      "ms": [
+        { "m": 100000000, "d": "2025-07-24", "dd": "23 hari", "src": "YG Entertainment" }
+      ]
+    },
+    "wlHwjkYpSr0": {
+      "title": "WE GO UP",
+      "ms": [
+        { "m": 100000000, "d": "2025-10-23", "dd": "13 hari (rilis KST 10 Okt)", "src": "YG Entertainment" }
+      ]
+    },
+    "yd_uG3TtREs": {
+      "title": "PSYCHO",
+      "ms": [
+        { "m": 100000000, "d": "2025-12-03", "dd": "15 hari", "src": "YG Entertainment" },
+        { "m": 200000000, "d": "2026-07-05", "src": "media · YG" }
+      ]
+    },
+    "x3eqqoZPV_E": {
+      "title": "CHOOM",
+      "ms": [
+        { "m": 100000000, "d": "2026-05-18", "dd": "13 hari 21 jam", "src": "YG Entertainment" }
+      ]
+    },
+    "naoGk-Zjc1s": {
+      "title": "SUGAR HONEY ICE TEA",
+      "ms": [
+        { "m": 100000000, "d": "2026-06-24", "dd": "17 hari", "src": "YG Entertainment" }
+      ]
+    },
+    "9cS2wv6AfHk": {
+      "title": "I LIKE IT",
+      "ms": [
+        { "m": 100000000, "d": "2026-10-13", "dd": "±100 hari", "src": "YG Entertainment" }
+      ]
+    },
+    "oC6brLXQe4I": {
+      "title": "DESERVE",
+      "ms": [
+        { "m": 100000000, "d": "2026-11-04", "dd": "11 hari 13 jam (rilis KST 23 Okt)", "src": "YG Entertainment" }
+      ]
+    },
+    "cxhqqpVk65Q": {
+      "title": "DRIP PERFORMANCE VIDEO",
+      "ms": [
+        { "m": 100000000, "d": "2025-04-02", "dd": "±148 hari", "src": "YG Entertainment · media" }
+      ]
+    },
+    "JSAfPh1A25E": {
+      "title": "BOY",
+      "ms": [
+        { "m": 1000000, "d": "2020-08-08", "dd": "26 jam", "src": "YG Entertainment" },
+        { "m": 20000000, "d": "2020-08-13", "dd": "6 hari", "src": "YG Entertainment" },
+        { "m": 100000000, "d": "2021-12-09", "dd": "488 hari 15 jam", "src": "YG Entertainment" }
+      ]
+    },
+    "_hFarg-Obuc": {
+      "title": "I LOVE YOU",
+      "ms": [
+        { "m": 100000000, "d": "2022-08-30", "dd": "711 hari 6 jam", "src": "YG Entertainment" }
+      ]
+    },
+    "ZJaKdBBzUYk": {
+      "title": "JIKJIN",
+      "ms": [
+        { "m": 100000000, "d": "2022-08-31", "dd": "196 hari 5 jam", "src": "YG Entertainment" }
+      ]
+    },
+    "QERKD90hG98": {
+      "title": "IF I",
+      "ms": [
+        { "m": 100000000, "d": "2026-06-13", "dd": "11 hari 22 jam", "src": "YG Entertainment" }
+      ]
+    }
+  }
+}

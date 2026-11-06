@@ -8,11 +8,19 @@ Situs statistik YouTube untuk artis K-pop — saat ini berisi **BABYMONSTER** da
 
 - **Halaman pembuka (landing) generik** bertema K-pop — tidak menampilkan artis mana pun sebelum tombol "Masuk Sekarang" ditekan
 - **Beranda portal** (tampilan pertama setelah masuk): papan peringkat **Top 10 lagu paling banyak ditonton** lintas artis, **Sedang tren minggu ini** (pertumbuhan 7 hari tertinggi), **Rilisan terbaru**, ringkasan total views/subscriber gabungan, dan kartu jelajah artis
+- **Halaman Milestone per artis** (tab "Milestone" di halaman BABYMONSTER / TREASURE, datanya terpisah per artis):
+  - **Tabel** — hari sejak rilis tiap video sampai menembus 10 jt / 20 jt / 50 jt / 100 jt / 150 jt / 200 jt / 300 jt / 400 jt / 500 jt views; tercepat per kolom ditandai ★; klik baris = buka detail video
+  - **Data resmi YG Entertainment / media** — milestone yang pernah diumumkan resmi (mis. SHEESH 100 jt di hari ke-11, BATTER UP 100 jt di hari ke-18, BOY 100 jt di hari ke-488, IF I 100 jt di hari ke-12) ditandai **✓ hijau** dengan tooltip sumber & tanggal pastinya; sel tanpa ✓ = hasil kurva pemantauan (est.)
+  - **Akan datang** — milestone berikutnya tiap video + perkiraan tanggal
+  - **Tercapai** — daftar semua milestone yang sudah ditembus, urut tanggal
+- **`data/milestones.json`** — kurasi manual milestone resmi (pengumuman YG Entertainment via ygfamily.com / yg-life.com, Yonhap, Korea Herald, Chosun, OSEN, allkpop). Dipakai dua arah: situs menampilkannya sebagai data otoritatif, dan `collect.js` menyisipkannya sebagai **jangkar data nyata** sehingga kurva sebelum pemantauan mengikuti pencapaian resmi (bukan sekadar model)
 - **Dua artis** dalam satu situs (tab Beranda / BABYMONSTER / TREASURE) — mudah ditambah artis lain
 - **Kartu channel bisa diklik** → modal detail channel: subscriber, total ditonton, jumlah video, rata-rata sub/hari
-- **Grafik pertumbuhan channel SEJAK CHANNEL DIBUAT** (BM 28 Des 2022, TREASURE 8 Feb 2019) — interaktif: hover tooltip, tombol rentang (60 hari / 1 tahun / sejak dibuat), zoom scroll & geser (tarik), metrik subscriber/total views
+- **Grafik pertumbuhan channel SEJAK CHANNEL DIBUAT** (BM 28 Des 2022, TREASURE 8 Feb 2019) — interaktif: hover tooltip, tombol rentang (7 hari / 60 hari / 1 tahun / sejak dibuat), zoom scroll & geser (tarik), metrik subscriber/total views
 - **81 video terpantau**: MV resmi + Dance Practice penuh + **video performa lagu sendiri** (Dance Performance / Performance Video / Exclusive & Special Performance Video) — tanpa video solo member, focus cut, cover lagu orang lain, stage practice, live/concert, versi JP/RAW, highlight, teaser, behind, dll.
-- **Grafik per video SEJAK TANGGAL RILIS ASLI**: views kumulatif + views ditambahkan per hari (60 hari / 1 tahun / sejak rilis)
+- **Grafik per video SEJAK TANGGAL RILIS ASLI**: views kumulatif + kurva likes (2 poros, muncul otomatis setelah perekaman likes berjalan) + views ditambahkan per hari/pekan/bulan (7 hari / 60 hari / 1 tahun / sejak rilis)
+- **Modal lagu ala bm-tracker**: views + delta, rata-rata/hari, likes + rasio per 1.000 views, **chip milestone tercapai beserta tanggalnya (✓ = resmi YG/media, lengkap "hari ke-N")**, tabel prediksi milestone berikutnya, dan **Semua versi lagu ini** (MV / Performance / Practice dari lagu yang sama, bisa diklik)
+- **Modal channel ala bm-tracker**: rentang 7 hari / 60 hari / 1 tahun / sejak dibuat, Views/hari, dan **tabel Milestone total views** (tanggal dicapai + jarak antar milestone + baris milestone berikutnya)
 - **Likes ditampilkan** sesuai YouTube (dari API; muncul begitu pengukuran pertama berhasil)
 - **Pembeda data nyata vs estimasi**: legenda + garis putus-putus/batang transparan = estimasi, titik solid = pengukuran nyata, plus catatan penjelas
 - **Milestone & prediksi**: perkiraan tanggal tembus 500 jt, 1 M dsb. (berdasarkan rata-rata 7 hari)

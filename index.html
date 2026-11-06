@@ -281,6 +281,30 @@
     .lbstats{display:none}
     .hero{padding:22px 18px 18px}
   }
+  /* ---------- tab Video/Milestone + halaman milestone ---------- */
+  .stabs{display:flex;gap:6px;flex-wrap:wrap}
+  .stab{border:1px solid var(--border);background:var(--card);color:var(--muted);font:700 13px var(--font);padding:9px 18px;border-radius:11px;cursor:pointer;transition:.15s}
+  .stab:hover{color:var(--text)}
+  .stab.active{color:#fff;border-color:transparent;background:var(--artist-color,#6a78ff)}
+  .tscroll{overflow-x:auto;border:1px solid var(--border);border-radius:14px;background:var(--card)}
+  .tscroll table.ms{margin:0}
+  .tscroll table.ms th,.tscroll table.ms td{white-space:nowrap}
+  .ms .sticky1{position:sticky;left:0;z-index:2;background:var(--card);text-align:left}
+  .st1t{max-width:270px;overflow:hidden;text-overflow:ellipsis;font-size:13px}
+  .st1m{color:var(--muted);font-size:11px;font-weight:600;margin-top:2px}
+  td.fastest{color:var(--artist-color,#2fd57b);font-weight:800}
+  .ms td.msoff{color:#2fd57b;font-weight:800}
+  .ms td.msoff.fastest{color:var(--artist-color,#2fd57b)}
+  .offck{font-size:.72em;font-weight:800;vertical-align:2px;margin-left:1px}
+  .cellno{color:var(--muted)}
+  tr[data-id]{cursor:pointer}
+  tr[data-id]:hover td{background:color-mix(in srgb,var(--artist-color,#6a78ff) 8%,transparent)}
+  tr[data-id]:hover td.sticky1{background:color-mix(in srgb,var(--artist-color,#6a78ff) 8%,var(--card))}
+  tr.msnext td{background:color-mix(in srgb,var(--artist-color,#6a78ff) 12%,transparent)}
+  .mschips{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 12px}
+  .msdone{background:color-mix(in srgb,#2fd57b 14%,transparent);border:1px solid color-mix(in srgb,#2fd57b 38%,transparent);color:#2fd57b;border-radius:999px;padding:4px 12px;font-size:11.5px;font-weight:800}
+  .msversion{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .verslink{font:inherit;color:var(--text)}
   @media (max-width:640px){
     .l-feats{grid-template-columns:1fr}
     .l-inner{padding:36px 22px 30px}
@@ -348,6 +372,8 @@
 
   <section class="chgrid" id="channelSection"></section>
 
+  <div class="stabs" id="viewTabs" style="display:none"></div>
+
   <div class="toolbar" id="toolbar" style="display:none">
     <div class="chips" id="catChips"></div>
     <div class="grow"></div>
@@ -363,6 +389,8 @@
   </div>
 
   <section class="vgrid" id="videoGrid"></section>
+
+  <section id="msSection" style="display:none"></section>
 </main>
 
 <footer>
@@ -480,14 +508,76 @@ function etaText(target, current, ratePerDay) {
   return "≈ " + DF.format(d);
 }
 
+/* ===================== milestone util ===================== */
+const MS_COLS = [1e7, 2e7, 5e7, 1e8, 1.5e8, 2e8, 3e8, 4e8, 5e8];
+const CHAN_MS = [];
+for (let m = 5e8; m <= 2e10; m += 5e8) CHAN_MS.push(m);
+
+function isoDate(tSec) { return new Date(tSec * 1000).toISOString().slice(0, 10); }
+function releaseEpoch(v) {
+  if (!v || !v.published) return null;
+  const t = Date.parse(v.published);
+  return isNaN(t) ? null : t / 1000;
+}
+/* kapan kurva history menembus sebuah milestone (interpolasi antar titik) */
+function crossPoint(history, milestone) {
+  if (!history || !history.length) return null;
+  let prev = history[0];
+  if (prev.v >= milestone) return { t: prev.t, est: prev.e === 1 };
+  for (let i = 1; i < history.length; i++) {
+    const p = history[i];
+    if (p.v >= milestone) {
+      const frac = p.v > prev.v ? (milestone - prev.v) / (p.v - prev.v) : 1;
+      return { t: prev.t + frac * (p.t - prev.t), est: prev.e === 1 || p.e === 1 };
+    }
+    prev = p;
+  }
+  return null;
+}
+function daysToReach(v, history, milestone) {
+  const rel = releaseEpoch(v);
+  const c = crossPoint(history, milestone);
+  if (!c || rel == null) return null;
+  return Math.max(1, Math.ceil((c.t - rel) / 86400));
+}
+function reachedMilestones(current, list) { return list.filter((m) => m <= current); }
+/* milestone RESMI (data/milestones.json — kurasi pengumuman YG/media) */
+function officialOf(vid, m) {
+  const rec = state.milestones && state.milestones[vid];
+  if (!rec || !Array.isArray(rec.ms)) return null;
+  return rec.ms.find((x) => x && x.m === m) || null;
+}
+function officialDays(v, m) {
+  const id = typeof v === "string" ? v : v && v.id;
+  const rec = typeof v === "string" ? state.videos[v] : v;
+  const off = officialOf(id, m);
+  if (!off || !off.d) return null;
+  const rel = releaseEpoch(rec);
+  if (rel == null) return null;
+  const t = Date.parse(off.d + "T00:00:00+07:00") / 1000;
+  if (!isFinite(t)) return null;
+  return Math.max(1, Math.ceil((t - rel) / 86400));
+}
+function officialTip(off, m) {
+  const dd = off.dd ? (off.dd.includes("rilis") ? ` (${off.dd})` : ` (${off.dd} sejak rilis KST)`) : "";
+  return `RESMI — ${off.src || "YG Entertainment"}: ${fmtCompact(m)} dicapai ${fmtDate(off.d)}${dd}`;
+}
+/* kunci lagu dari judul: bagian dalam kutip, mis. BABYMONSTER - 'SHEESH' M/V → "sheesh" */
+function songKeyOf(title) {
+  const m = /[\u2018\u2019"'](.+?)[\u2018\u2019"']/.exec(title || "");
+  return m ? m[1].trim().toLowerCase() : null;
+}
+
 /* ===================== state ===================== */
 const state = {
-  config: null, videos: null, channels: null, meta: null,
+  config: null, videos: null, channels: null, meta: null, milestones: {},
   view: "home",            // "home" | artistId — beranda selalu tampil pertama
   artist: null,
+  artistTab: "videos",     // "videos" | "milestones" — sub-tab di halaman artis
+  msTab: "table",          // "table" | "upcoming" | "reached"
   filter: "all", sort: "views", query: "",
   charts: [], chartRegistry: [],
-  dailyRange: localStorage.getItem("py.range") || "60",
+  dailyRange: localStorage.getItem("py.range") || "all",
   chanMetric: "s", chanRange: localStorage.getItem("py.chanrange") || "all",
   detailVid: null, detailMode: null, // {type:"video"|"channel", id}
 };
@@ -518,13 +608,15 @@ function resetAllZoom() { for (const c of state.chartRegistry) { try { c.resetZo
 
 async function loadData() {
   const bust = "?v=" + Date.now();
-  const [cfg, vids, chans, meta] = await Promise.all([
+  const [cfg, vids, chans, meta, ms] = await Promise.all([
     fetch("config.json" + bust).then((r) => r.json()),
     fetch("data/videos.json" + bust).then((r) => r.json()).catch(() => ({})),
     fetch("data/channels.json" + bust).then((r) => r.json()).catch(() => ({})),
     fetch("data/meta.json" + bust).then((r) => r.json()).catch(() => null),
+    fetch("data/milestones.json" + bust).then((r) => r.json()).catch(() => ({})),
   ]);
   state.config = cfg; state.videos = vids; state.channels = chans; state.meta = meta;
+  state.milestones = ms.videos || {};
 }
 
 function artistOf(id) { return state.config.artists.find((a) => a.id === id); }
@@ -542,9 +634,129 @@ function renderTabs() {
 function setView(v) {
   if (v !== "home" && !artistOf(v)) return;
   state.view = v;
-  if (v !== "home") state.artist = v;
+  if (v !== "home") { state.artist = v; state.artistTab = "videos"; state.msTab = "table"; }
   renderAll();
   window.scrollTo(0, 0);
+}
+
+/* ===================== render: tab Video / Milestone (per artis) ===================== */
+function renderViewTabs() {
+  const art = artistOf(state.artist);
+  const el = $("#viewTabs");
+  el.style.setProperty("--artist-color", art.color);
+  const n = allVideosFlat().filter((x) => x.channel === state.artist).length;
+  el.innerHTML = `
+    <button class="stab ${state.artistTab === "videos" ? "active" : ""}" data-t="videos">Video (${n})</button>
+    <button class="stab ${state.artistTab === "milestones" ? "active" : ""}" data-t="milestones">Milestone</button>`;
+  el.querySelectorAll(".stab").forEach((b) =>
+    b.addEventListener("click", () => { state.artistTab = b.dataset.t; renderAll(); })
+  );
+}
+
+const MS_NOTE = "Catatan: angka = hari sejak tanggal rilis (versi situs). Sel bertanda <b>✓</b> = <b>data resmi</b> dari pengumuman YG Entertainment / media — arahkan kursor untuk sumber &amp; tanggal pastinya. Sel tanpa ✓ = dihitung dari kurva pemantauan situs; bagian sebelum pemantauan dimulai bersumber estimasi model + arsip Wayback Machine (ditandai est.) — makin lama situs berjalan, makin akurat.";
+
+function msTableHTML(vids) {
+  if (!vids.length) return `<div class="banner">Belum ada video yang mencapai ${fmtCompact(MS_COLS[0])} views.</div>`;
+  const dayOf = (v, m) => { const o = officialDays(v, m); return o != null ? o : daysToReach(v, v.history, m); };
+  const fastest = {};
+  for (const v of vids) for (const m of MS_COLS) {
+    const d = dayOf(v, m);
+    if (d != null && (fastest[m] == null || d < fastest[m])) fastest[m] = d;
+  }
+  const rows = vids.map((v) => {
+    const cells = MS_COLS.map((m) => {
+      const d = dayOf(v, m);
+      if (d == null) return `<td class="num"><span class="cellno">–</span></td>`;
+      const f = d === fastest[m];
+      const off = officialOf(v.id, m);
+      if (off) return `<td class="num msoff${f ? " fastest" : ""}" title="${esc(officialTip(off, m))}">${NF.format(d)} <span class="offck">✓</span>${f ? " ★" : ""}</td>`;
+      const c = crossPoint(v.history, m);
+      return `<td class="num ${f ? "fastest" : ""}" title="${fmtCompact(m)} tercapai ${fmtDate(isoDate(c.t))}${c.est ? " (estimasi)" : ""}">${NF.format(d)}${f ? " ★" : ""}</td>`;
+    }).join("");
+    return `<tr data-id="${v.id}"><td class="sticky1"><div class="st1t"><b>${esc(v.title)}</b></div><div class="st1m">${fmtCompact(lastV(v))} views · rilis ${fmtDate(v.published)}</div></td>${cells}</tr>`;
+  }).join("");
+  return `
+    <div class="tscroll"><table class="ms">
+      <thead><tr><th class="sticky1">Video</th>${MS_COLS.map((m) => `<th class="num">${fmtCompact(m)}</th>`).join("")}</tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>
+    <p class="note">Angka = <b>hari sejak rilis</b> sampai video menembus milestone itu (klik baris untuk buka detail video). <b>Warna artis + ★</b> = tercepat di kolom tersebut. <b>✓</b> = data resmi YG/media. Tanda – = belum tercapai. ${MS_NOTE}</p>`;
+}
+
+function msUpcomingHTML(vids) {
+  const rows = [];
+  for (const v of vids) {
+    const cur = lastV(v);
+    const t = nextMilestones(cur, MS_COLS, 1)[0];
+    if (!t) continue;
+    const d7 = deltaDays(v.history, 7);
+    const r = d7 ? d7.rate : 0;
+    rows.push({ v, t, rem: t - cur, eta: etaText(t, cur, r), days: r > 0 ? (t - cur) / r : Infinity });
+  }
+  rows.sort((a, b) => a.days - b.days);
+  if (!rows.length) return `<div class="banner">Semua milestone sudah tercapai.</div>`;
+  const shown = rows.slice(0, 12);
+  return `
+    <div class="tscroll"><table class="ms">
+      <thead><tr><th class="sticky1">Video</th><th>Target berikutnya</th><th class="num">Sisa</th><th class="num">Ritme 7 hari</th><th class="num">Perkiraan tercapai</th></tr></thead>
+      <tbody>
+        ${shown.map((x, i) => `
+        <tr data-id="${x.v.id}" class="${i === 0 ? "msnext" : ""}"><td class="sticky1"><div class="st1t"><b>${esc(x.v.title)}</b></div><div class="st1m">${fmtCompact(lastV(x.v))} views · rilis ${fmtDate(x.v.published)}</div></td><td>${fmtCompact(x.t)}</td><td class="num">${fmtCompact(x.rem)}</td><td class="num">${x.days === Infinity ? "–" : fmtCompact(Math.round(x.days === Infinity ? 0 : x.days)) + "/hari"}</td><td class="num">${x.eta}</td></tr>`).join("")}
+      </tbody>
+    </table></div>
+    <p class="note">Perkiraan = garis lurus dari rata-rata pertumbuhan 7 hari terakhir — tanggal nyata bisa lebih cepat/lambat. ${MS_NOTE}</p>`;
+}
+
+function msReachedHTML(vids) {
+  const list = [];
+  for (const v of vids) for (const m of MS_COLS) {
+    const off = officialOf(v.id, m);
+    if (off && off.d) {
+      const t = Date.parse(off.d + "T00:00:00+07:00") / 1000;
+      if (isFinite(t)) { list.push({ v, m, t, est: false, off, days: officialDays(v, m) }); continue; }
+    }
+    const c = crossPoint(v.history, m);
+    if (c) list.push({ v, m, t: c.t, est: c.est, days: daysToReach(v, v.history, m) });
+  }
+  list.sort((a, b) => b.t - a.t);
+  if (!list.length) return `<div class="banner">Belum ada milestone yang tercapai.</div>`;
+  const shown = list.slice(0, 120);
+  return `
+    <div class="tscroll"><table class="ms">
+      <thead><tr><th>Tanggal dicapai</th><th class="sticky1">Video</th><th class="num">Milestone</th><th class="num">Hari ke-</th></tr></thead>
+      <tbody>
+        ${shown.map((x) => `
+        <tr data-id="${x.v.id}"><td${x.off ? ` title="${esc(officialTip(x.off, x.m))}"` : ""}>${fmtDate(isoDate(x.t))}${x.off ? ' <span class="offck">✓</span>' : x.est ? ' <span class="cellno">(est.)</span>' : ""}</td><td class="sticky1"><div class="st1t">${esc(x.v.title)}</div></td><td class="num">${fmtCompact(x.m)}</td><td class="num">${x.days != null ? NF.format(x.days) : "–"}</td></tr>`).join("")}
+      </tbody>
+    </table></div>
+    <p class="note">Diurutkan dari yang terbaru (maks. 120 terakhir). <b>✓</b> = data resmi YG/media. ${MS_NOTE}</p>`;
+}
+
+function renderMilestones() {
+  const art = artistOf(state.artist);
+  const sec = $("#msSection");
+  sec.style.setProperty("--artist-color", art.color);
+  const vids = allVideosFlat().filter((x) => x.channel === state.artist && lastV(x) > 0);
+  const over10 = vids.filter((x) => lastV(x) >= MS_COLS[0]).sort((a, b) => lastV(b) - lastV(a));
+  const nReached = over10.reduce((s, x) => s + reachedMilestones(lastV(x), MS_COLS).length, 0);
+  const chips = [
+    ["table", `Tabel (${over10.length})`],
+    ["upcoming", "Akan datang"],
+    ["reached", `Tercapai (${nReached})`],
+  ].map(([k, l]) => `<button class="stab ${state.msTab === k ? "active" : ""}" data-k="${k}">${l}</button>`).join("");
+  let body;
+  if (state.msTab === "upcoming") body = msUpcomingHTML(vids);
+  else if (state.msTab === "reached") body = msReachedHTML(over10);
+  else body = msTableHTML(over10);
+  sec.innerHTML = `
+    <div class="stabs" style="margin:24px 2px 14px">${chips}</div>
+    ${body}`;
+  sec.querySelectorAll(".stab").forEach((b) =>
+    b.addEventListener("click", () => { state.msTab = b.dataset.k; renderMilestones(); })
+  );
+  sec.querySelectorAll("tr[data-id]").forEach((tr) =>
+    tr.addEventListener("click", () => openDetail(tr.dataset.id))
+  );
 }
 
 function renderChannel() {
@@ -842,6 +1054,9 @@ function openDetail(vid) {
   const per1000 = lpt && lpt.v ? (lpt.l / lpt.v) * 1000 : null;
   const realPts = h.filter((p) => p.e !== 1);
   const watched = realPts.length > 1 ? Math.round((realPts[realPts.length - 1].t - realPts[0].t) / 86400) : (realPts.length === 1 ? 0 : null);
+  const reached = reachedMilestones(last.v || 0, MS_COLS);
+  const key = songKeyOf(v.title);
+  const versions = key ? allVideosFlat().filter((x) => x.channel === v.channel && x.id !== vid && songKeyOf(x.title) === key) : [];
 
   $("#sheet").innerHTML = `
     <button class="close" id="closeBtn" aria-label="Tutup">✕</button>
@@ -872,10 +1087,20 @@ function openDetail(vid) {
         <div class="d">rasio interaksi</div></div>
     </div>
 
+    ${versions.length ? `
     <div class="sect">
-      <h3>Views ditambahkan per hari</h3>
+      <h3>Semua versi lagu ini</h3>
+      <div class="msversion">
+        <span class="pill" style="background:${art.color};color:#fff">${esc(state.config.categories[v.category] || v.category)} · ${fmtCompact(last.v)} views</span>
+        ${versions.map((x) => `<button class="pill verslink" data-vid="${x.id}" style="cursor:pointer;border:none" title="Buka detail versi ini">${esc(state.config.categories[x.category] || x.category)} · ${fmtCompact(lastV(x))} views</button>`).join("")}
+      </div>
+    </div>` : ""}
+
+    <div class="sect">
+      <h3 id="dailyTitle">Views ditambahkan per hari</h3>
       <div class="legend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span><span><i class="sw" style="background:${art.color}55"></i>Estimasi</span></div>
       <div class="rangewrap" id="dailyRange">
+        <button class="rangebtn ${state.dailyRange === "7" ? "active" : ""}" data-r="7">7 hari</button>
         <button class="rangebtn ${state.dailyRange === "60" ? "active" : ""}" data-r="60">60 hari</button>
         <button class="rangebtn ${state.dailyRange === "365" ? "active" : ""}" data-r="365">1 tahun</button>
         <button class="rangebtn ${state.dailyRange === "all" ? "active" : ""}" data-r="all">Sejak rilis</button>
@@ -884,14 +1109,24 @@ function openDetail(vid) {
     </div>
 
     <div class="sect">
-      <h3>Total views (sejak rilis)</h3>
+      <h3>Total views &amp; likes (sejak rilis)</h3>
       <div class="legend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span><span><i class="sw" style="background:${art.color}55"></i>Estimasi</span></div>
       <div class="chartbox"><canvas id="chartCum"></canvas></div>
+      <p class="note" id="likeHint" style="margin-top:6px"></p>
       <p class="note">Batang/garis transparan &amp; putus-putus = <b>estimasi</b> — dibangun otomatis dari tanggal rilis + views terkini (sebagian berbekal arsip Wayback Machine). Batang/garis solid = <b>pengukuran nyata</b> yang diambil langsung dari YouTube tiap putaran GitHub Actions (2× sehari) dan menimpa estimasi. YouTube tidak menyediakan riwayat harian untuk publik (hanya pemilik channel bisa melihatnya di YouTube Studio), jadi masa sebelum pemantauan dimulai memang berupa estimasi — makin lama situs berjalan, makin panjang data nyatanya.${realPts.length ? `<br>Data nyata video ini mulai terekam: <b>${fmtTs(realPts[0].t)}</b>${watched != null ? ` — sejauh itu sudah ${NF.format(watched)} hari terpantau` : ""}.` : ""}</p>
     </div>
 
     <div class="sect">
       <h3>Milestone & prediksi</h3>
+      ${reached.length ? `<div class="mschips">${reached.map((m) => {
+        const off = officialOf(vid, m);
+        if (off && off.d) {
+          const od = officialDays(vid, m);
+          return `<span class="msdone" title="${esc(officialTip(off, m))}">${fmtCompact(m)} ✓ ${fmtDate(off.d)} · hari ke-${od != null ? NF.format(od) : "–"}</span>`;
+        }
+        const c = crossPoint(h, m);
+        return `<span class="msdone" title="${c && c.est ? "perkiraan (estimasi)" : "pengukuran nyata"}">${fmtCompact(m)} ✓ ${c ? fmtDate(isoDate(c.t)) : ""}</span>`;
+      }).join("")}</div>` : ""}
       <div class="chartbox" style="padding:6px 10px">
         ${h.length < 2 ? `<div class="wait">Prediksi tersedia setelah data pertama terekam.</div>` : `
         <table class="ms">
@@ -909,6 +1144,9 @@ function openDetail(vid) {
   document.body.style.overflow = "hidden";
   $("#closeBtn").addEventListener("click", closeDetail);
   location.hash = "v=" + vid;
+  $("#sheet").querySelectorAll(".verslink").forEach((b) =>
+    b.addEventListener("click", () => openDetail(b.dataset.vid))
+  );
 
   const rangeWrap = $("#dailyRange");
   if (rangeWrap) {
@@ -1026,6 +1264,82 @@ function makeLineChart(canvas, cum, color, cid, unit, gran) {
   }, cid);
 }
 
+/* grafik kumulatif dua metrik: views (poros kiri) + likes (poros kanan) */
+function makeDualLineChart(canvas, cum, likeMap, color, cid, gran) {
+  const estFlags = cum.map((p) => p.est);
+  const likeColor = "#b18cff";
+  const hasLikes = !!likeMap && likeMap.size > 1;
+  const datasets = [{
+    label: "Views",
+    data: cum.map((p) => p.v),
+    borderColor: color, borderWidth: 2.4, pointRadius: 0, pointHitRadius: 12, tension: 0.25,
+    segment: {
+      borderColor: (c) => (estFlags[c.p0DataIndex] || estFlags[c.p1DataIndex]) ? color + "55" : color,
+      borderDash: (c) => (estFlags[c.p0DataIndex] || estFlags[c.p1DataIndex]) ? [5, 4] : undefined,
+    },
+    fill: true, backgroundColor: (ctx2) => {
+      const g = ctx2.chart.ctx.createLinearGradient(0, 0, 0, ctx2.chart.height || 260);
+      g.addColorStop(0, color + "55"); g.addColorStop(1, color + "00");
+      return g;
+    },
+  }];
+  if (hasLikes) {
+    datasets.push({
+      label: "Likes",
+      data: cum.map((p) => likeMap.get(p.key) ?? null),
+      borderColor: likeColor, borderWidth: 1.8, pointRadius: 0, pointHitRadius: 10, tension: 0.25,
+      yAxisID: "y1", fill: false, spanGaps: true,
+    });
+  }
+  const zoomCfg = hasZoom ? {
+    pan: { enabled: !isCoarse, mode: "x", threshold: 8 },
+    zoom: { wheel: { enabled: !isCoarse }, pinch: { enabled: isCoarse }, mode: "x", panOnDrag: false },
+    limits: { x: { minRange: 3 * 86400 * 1000 } },
+  } : undefined;
+  return newChart(canvas, {
+    type: "line",
+    data: {
+      labels: cum.map((p) => bucketLabel(p.key, gran || "day")),
+      datasets,
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { intersect: false, mode: "index" },
+      animation: { duration: 250 },
+      plugins: {
+        legend: {
+          display: hasLikes,
+          labels: { color: cssVar("--chart-text"), boxWidth: 16, boxHeight: 4, font: { size: 11, weight: 700 } },
+        },
+        tooltip: {
+          backgroundColor: cssVar("--card"), titleColor: cssVar("--text"), bodyColor: cssVar("--text"),
+          borderColor: cssVar("--border"), borderWidth: 1, padding: 10, displayColors: false,
+          callbacks: {
+            label: (c) => c.datasetIndex === 0
+              ? fmtExact(c.parsed.y) + " views" + (estFlags[c.dataIndex] ? " (estimasi)" : "")
+              : fmtExact(c.parsed.y) + " likes",
+          },
+        },
+        ...(zoomCfg ? { zoom: zoomCfg } : {}),
+      },
+      scales: {
+        x: { grid: { color: cssVar("--chart-grid") }, ticks: { color: cssVar("--chart-text"), maxTicksLimit: 8, font: { size: 10.5 } } },
+        y: {
+          grid: { color: cssVar("--chart-grid") },
+          ticks: { color: cssVar("--chart-text"), font: { size: 10.5 }, callback: (v) => fmtCompact(v) },
+        },
+        ...(hasLikes ? {
+          y1: {
+            position: "right", grid: { drawOnChartArea: false },
+            ticks: { color: likeColor, font: { size: 10.5 }, callback: (v) => fmtCompact(v) },
+          },
+        } : {}),
+      },
+    },
+  }, cid);
+}
+
 function chartOpts(tooltipLabel, extra = {}) {
   const zoomCfg = hasZoom ? {
     pan: { enabled: !isCoarse, mode: "x", threshold: 8 },
@@ -1073,9 +1387,11 @@ function buildDailyChart(h, color) {
     if (box) box.innerHTML = `<div class="wait">Belum cukup data untuk grafik harian.</div>`;
     return;
   }
-  const gran = state.dailyRange === "60" ? "day" : state.dailyRange === "365" ? "week" : "month";
-  const sliced = state.dailyRange === "60" ? days.slice(-61) : days;
+  const gran = state.dailyRange === "7" || state.dailyRange === "60" ? "day" : state.dailyRange === "365" ? "week" : "month";
+  const sliced = state.dailyRange === "7" ? days.slice(-8) : state.dailyRange === "60" ? days.slice(-61) : days;
   const series = bucketize(sliced, gran);
+  const t = $("#dailyTitle");
+  if (t) t.textContent = gran === "month" ? "Views ditambahkan per bulan" : gran === "week" ? "Views ditambahkan per pekan" : "Views ditambahkan per hari";
   makeBarChart($("#chartDaily"), series.deltas, color, "daily", "views", gran);
 }
 
@@ -1086,9 +1402,20 @@ function buildCumChart(h, color) {
     if (box) box.innerHTML = `<div class="wait">Belum cukup data untuk grafik kumulatif.</div>`;
     return;
   }
-  const gran = granFor(days);
+  let gran = granFor(days);
+  const likeDays = daysFromHistory(h, "l");
+  /* kalau titik likes masih sedikit & habis tergerus bucket besar, perhalus granularitas supaya kurva likes tetap terlihat */
+  if (likeDays.length >= 2) {
+    if (bucketize(likeDays, gran).cum.length < 2) {
+      gran = "week";
+      if (bucketize(likeDays, gran).cum.length < 2) gran = "day";
+    }
+  }
   const series = bucketize(days, gran);
-  makeLineChart($("#chartCum"), series.cum, color, "cum", "views", gran);
+  const likeMap = likeDays.length >= 2 ? new Map(bucketize(likeDays, gran).cum.map((p) => [p.key, p.v])) : null;
+  const hint = $("#likeHint");
+  if (hint) hint.textContent = likeMap ? "" : "Kurva likes tampil otomatis setelah minimal 2 pengukuran likes terekam (perekaman likes baru berjalan — cek lagi besok).";
+  makeDualLineChart($("#chartCum"), series.cum, likeMap, color, "cum", gran);
 }
 
 /* ===================== modal detail CHANNEL ===================== */
@@ -1104,6 +1431,19 @@ function openChannel(artId) {
   const estRecent = recentEst(h, 7);
   const rateS7 = d7 && d7.deltaS != null ? d7.deltaS / 7 : 0;
   const msList = nextMilestones(last.s || 0, SUB_MS, 4);
+  const rateV7 = d7 ? d7.rate : 0;
+  const chNext = nextMilestones(last.v || 0, CHAN_MS, 1)[0] || null;
+  const chRows = [];
+  {
+    let prevT = null;
+    for (const m of CHAN_MS) {
+      const c = crossPoint(h, m);
+      if (!c) break;
+      chRows.push({ m, t: c.t, est: c.est, gap: prevT != null ? Math.max(1, Math.round((c.t - prevT) / 86400)) : null });
+      prevT = c.t;
+    }
+  }
+  const chShown = chRows.length > 14 ? chRows.slice(-14) : chRows;
 
   $("#sheet").innerHTML = `
     <button class="close" id="closeBtn" aria-label="Tutup">✕</button>
@@ -1131,6 +1471,8 @@ function openChannel(artId) {
         <div class="d">di channel YouTube</div></div>
       <div class="stat"><div class="k">Subscriber / hari</div><div class="v">${rateS7 ? fmtCompact(Math.round(rateS7)) : "–"}</div>
         <div class="d">rata-rata 7 hari${estRecent ? " (est.)" : ""}</div></div>
+      <div class="stat"><div class="k">Views / hari</div><div class="v">${rateV7 ? fmtCompact(Math.round(rateV7)) : "–"}</div>
+        <div class="d">rata-rata 7 hari${estRecent ? " (est.)" : ""}</div></div>
     </div>
 
     <div class="mtabs" id="chanMetricTabs">
@@ -1138,6 +1480,7 @@ function openChannel(artId) {
       <button class="mtab ${state.chanMetric === "v" ? "active" : ""}" data-m="v">Total ditonton</button>
     </div>
     <div class="rangewrap" id="chanRange">
+      <button class="rangebtn ${state.chanRange === "7" ? "active" : ""}" data-r="7">7 hari</button>
       <button class="rangebtn ${state.chanRange === "60" ? "active" : ""}" data-r="60">60 hari</button>
       <button class="rangebtn ${state.chanRange === "365" ? "active" : ""}" data-r="365">1 tahun</button>
       <button class="rangebtn ${state.chanRange === "all" ? "active" : ""}" data-r="all">Sejak channel dibuat</button>
@@ -1147,6 +1490,24 @@ function openChannel(artId) {
     <div class="chartbox" style="margin-bottom:12px"><canvas id="chanLine"></canvas></div>
     <div class="chartbox"><canvas id="chanBar"></canvas></div>
     <p class="note">Garis/batang transparan dan putus-putus = <b>estimasi</b> — dibangun dari tanggal channel dibuat + angka terkini (model pertumbuhan; BM 28 Des 2022, TREASURE 8 Feb 2019). Titik/batang solid = pengukuran nyata yang menimpa estimasi setiap putaran GitHub Actions.${hasZoom ? " Scroll di atas grafik = zoom, tarik = geser." : ""}</p>
+
+    <div class="sect">
+      <h3>Milestone total views</h3>
+      <div class="chartbox" style="padding:6px 10px">
+        ${chRows.length ? `
+        <table class="ms">
+          <thead><tr><th>Milestone</th><th class="num">Tanggal dicapai</th><th class="num">Jarak dari sebelumnya</th></tr></thead>
+          <tbody>
+            ${chShown.map((r) => `
+              <tr><td>${fmtExact(r.m)} views</td><td class="num">${fmtDate(isoDate(r.t))}${r.est ? ' <span class="cellno">(est.)</span>' : ""}</td><td class="num">${r.gap != null ? NF.format(r.gap) + " hari" : "–"}</td></tr>`).join("")}
+            ${chNext ? `
+              <tr class="msnext"><td>${fmtExact(chNext)} views</td><td class="num">${etaText(chNext, last.v || 0, rateV7)}</td><td class="num">sisa ${fmtCompact(chNext - (last.v || 0))}</td></tr>` : ""}
+          </tbody>
+        </table>
+        <p class="note">Baris terakhir (disorot) = milestone berikutnya + perkiraan dari ritme views 7 hari terakhir. "Jarak" = berapa lama dari milestone sebelumnya sampai milestone ini.${chRows.length > chShown.length ? ` Menampilkan ${chShown.length} milestone terbaru dari total ${chRows.length}.` : ""} Tanggal bertanda (est.) berasal dari kurva estimasi sejak channel dibuat.</p>`
+        : `<div class="wait">Milestone total views akan muncul setelah data pertama terekam.</div>`}
+      </div>
+    </div>
 
     <div class="sect">
       <h3>Milestone subscriber &amp; prediksi</h3>
@@ -1197,8 +1558,8 @@ function buildChanCharts(ch, color) {
   const unit = key === "v" ? "views" : "subscriber";
   const days = daysFromHistory(ch.history || [], key);
   if (days.length < 2) return;
-  const sliced = state.chanRange === "60" ? days.slice(-61) : days;
-  const gran = state.chanRange === "60" ? "day" : state.chanRange === "365" ? "week" : "month";
+  const sliced = state.chanRange === "7" ? days.slice(-8) : state.chanRange === "60" ? days.slice(-61) : days;
+  const gran = state.chanRange === "7" || state.chanRange === "60" ? "day" : state.chanRange === "365" ? "week" : "month";
   const series = bucketize(sliced, gran);
   makeLineChart($("#chanLine"), series.cum, color, "chanLine", unit, gran);
   makeBarChart($("#chanBar"), series.deltas, color, "chanBar", unit + "/hari", gran);
@@ -1277,12 +1638,20 @@ document.addEventListener("keydown", (e) => {
 function renderAll() {
   renderTabs();
   const home = state.view === "home";
+  const ms = !home && state.artistTab === "milestones";
   $("#homeSection").style.display = home ? "" : "none";
   $("#channelSection").style.display = home ? "none" : "";
-  $("#toolbar").style.display = home ? "none" : "";
-  $("#videoGrid").style.display = home ? "none" : "";
+  $("#viewTabs").style.display = home ? "none" : "";
+  $("#msSection").style.display = ms ? "" : "none";
+  $("#toolbar").style.display = home || ms ? "none" : "";
+  $("#videoGrid").style.display = home || ms ? "none" : "";
   if (home) renderHome();
-  else { renderChannel(); renderVideos(); }
+  else {
+    renderViewTabs();
+    renderChannel();
+    if (ms) renderMilestones();
+    else renderVideos();
+  }
   renderTopline();
 }
 
