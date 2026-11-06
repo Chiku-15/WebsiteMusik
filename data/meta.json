@@ -1,8 +1,8 @@
 {
- "last_updated": 1793933256,
+ "last_updated": 1793935574,
  "schema": 2,
- "mode": "seed",
- "duration_sec": 0,
- "quota_note": "nilai awal terpandu — dikoreksi otomatis oleh collect.js",
+ "mode": "scrape",
+ "duration_sec": 504,
+ "quota_note": "scraping publik",
  "note": "Grafik menyertakan estimasi harian sejak tanggal rilis video / tanggal channel dibuat (ditandai est.). Titik terukur menimpanya."
 }
