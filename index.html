@@ -10,6 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0/dist/chartjs-plugin-zoom.min.js"></script>
 <style>
   :root{
     --radius:16px;
@@ -74,6 +75,16 @@
     position:relative;overflow:hidden;
   }
   .chcard::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--artist-color,#6a78ff)}
+  .chcard.clickable{cursor:pointer;transition:.18s}
+  .chcard.clickable:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--artist-color,#6a78ff) 45%,var(--border))}
+  .chhint{display:inline-flex;align-items:center;gap:6px;margin-top:12px;color:var(--muted);font-size:12px;font-weight:700}
+  .chhint svg{width:14px;height:14px;fill:currentColor}
+  .mtabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 2px 10px}
+  .mtab{border:1px solid var(--border);background:var(--card);color:var(--muted);font:700 12.5px var(--font);padding:8px 16px;border-radius:999px;cursor:pointer;transition:.15s}
+  .mtab:hover{color:var(--text)}
+  .mtab.active{color:#fff;border-color:transparent;background:var(--artist-color,#6a78ff)}
+  .zoomreset{border:1px dashed var(--border);background:transparent;color:var(--muted);font:600 11.5px var(--font);padding:5px 12px;border-radius:999px;cursor:pointer}
+  .zoomreset:hover{color:var(--text)}
   .chtop{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .chava{width:58px;height:58px;border-radius:50%;border:2px solid var(--border);object-fit:cover;background:var(--chip)}
   .chname{font-size:19px;font-weight:800}
@@ -366,10 +377,35 @@ const state = {
   config: null, videos: null, channels: null, meta: null,
   artist: localStorage.getItem("py.artist") || null,
   filter: "all", sort: "views", query: "",
-  charts: { daily: null, cum: null },
+  charts: [], chartRegistry: [],
   dailyRange: localStorage.getItem("py.range") || "60",
-  detailVid: null,
+  chanMetric: "s", chanRange: localStorage.getItem("py.chanrange") || "all",
+  detailVid: null, detailMode: null, // {type:"video"|"channel", id}
 };
+
+/* deteksi plugin zoom (opsional; kalau CDN gagal, semua tetap jalan) */
+const hasZoom = (() => {
+  try { return typeof Chart !== "undefined" && !!Chart.registry.getPlugin("zoom"); }
+  catch { return false; }
+})();
+const isCoarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+
+function destroyChartById(cid) {
+  state.chartRegistry = state.chartRegistry.filter((c) => {
+    if (c.__cid === cid) { try { c.destroy(); } catch {} return false; }
+    return true;
+  });
+}
+
+function newChart(canvas, config, cid) {
+  const prev = (typeof Chart !== "undefined" && Chart.getChart) ? Chart.getChart(canvas) : null;
+  if (prev) { try { prev.destroy(); } catch {} }
+  const c = new Chart(canvas, config);
+  c.__cid = cid || null;
+  state.chartRegistry.push(c);
+  return c;
+}
+function resetAllZoom() { for (const c of state.chartRegistry) { try { c.resetZoom(); } catch {} } }
 
 async function loadData() {
   const bust = "?v=" + Date.now();
@@ -410,9 +446,9 @@ function renderChannel() {
   const rate7 = d7 ? d7.rate : 0;
   const rateS7 = d7 && d7.deltaS != null ? d7.deltaS / 7 : 0;
   sec.innerHTML = `
-    <div class="chcard" style="--artist-color:${art.color}">
+    <div class="chcard clickable" id="chcard" style="--artist-color:${art.color}" tabindex="0" role="button" aria-label="Lihat detail channel ${esc(art.name)}" title="Klik untuk melihat detail channel">
       <div class="chtop">
-        ${ch.avatar ? `<img class="chava" src="${esc(ch.avatar)}" alt="Logo ${esc(art.name)}" loading="lazy">` : ""}
+        ${ch.avatar ? `<img class="chava" src="${esc(ch.avatar)}" alt="Logo ${esc(art.name)}" loading="lazy" onerror="this.style.visibility='hidden'">` : ""}
         <div>
           <div class="chname">${esc(ch.name || art.name)}</div>
           <div class="chhandle">${esc(ch.handle || "")} · <a href="https://www.youtube.com/${esc((ch.handle || "").replace("@", "@"))}" target="_blank" rel="noopener">buka YouTube</a></div>
@@ -441,13 +477,30 @@ function renderChannel() {
         <div class="k">Pertumbuhan subscriber ${nextSub ? `· menuju ${fmtCompact(nextSub)} ${etaText(nextSub, last.s || 0, rateS7 || rate7)}` : ""}</div>
         ${sparkSVG(h.map((p) => ({ t: p.t, v: p.s })), art.color, "v")}
       </div>
+      <div class="chhint"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>Klik kartu ini untuk detail lengkap channel — grafik sejak channel dibuat</div>
     </div>`;
+  const card = $("#chcard");
+  if (card) {
+    const open = () => openChannel(state.artist);
+    card.addEventListener("click", open);
+    card.addEventListener("keydown", (e) => { if (e.key === "Enter") open(); });
+    const link = card.querySelector("a");
+    if (link) link.addEventListener("click", (e) => e.stopPropagation());
+  }
 }
 
 /* ===================== render: videos ===================== */
+function watchedIds() {
+  const s = new Set();
+  for (const a of state.config.artists) for (const v of a.videos) s.add(v.id);
+  return s;
+}
+
 function videoList() {
   const out = [];
+  const watched = watchedIds();
   for (const [id, v] of Object.entries(state.videos || {})) {
+    if (!v || typeof v !== "object" || !watched.has(id)) continue; // hanya video di config (buang data lama/yatim)
     if (v.channel !== state.artist) continue;
     out.push({ id, ...v });
   }
@@ -517,14 +570,15 @@ function renderVideos() {
 
 /* ===================== detail overlay ===================== */
 function destroyCharts() {
-  if (state.charts.daily) { state.charts.daily.destroy(); state.charts.daily = null; }
-  if (state.charts.cum) { state.charts.cum.destroy(); state.charts.cum = null; }
+  for (const c of state.chartRegistry) { try { c.destroy(); } catch {} }
+  state.chartRegistry = [];
 }
 
 function openDetail(vid) {
   const v = state.videos[vid];
   if (!v) return;
   state.detailVid = vid;
+  state.detailMode = { type: "video", id: vid };
   const art = artistOf(v.channel) || { color: "#6a78ff", name: "" };
   const h = v.history || [];
   const last = h.length ? h[h.length - 1] : { v: 0, l: null };
@@ -565,7 +619,7 @@ function openDetail(vid) {
       <div class="stat"><div class="k">Rata-rata / hari</div><div class="v">${d7 ? fmtCompact(Math.round(d7.rate)) : "–"}</div>
         <div class="d">${d7 ? `7 hari terakhir${est ? " (est.)" : ""}` : "–"}</div></div>
       <div class="stat"><div class="k">Likes</div><div class="v">${last.l != null ? fmtCompact(last.l) : "–"}</div>
-        <div class="d">${d1 && last.l != null && d1.likes !== undefined && deltaLikes(h, 1) != null ? `<span class="up">${fmtDelta(deltaLikes(h, 1))}</span> kemarin` : (last.l != null ? "likes" : "–")}</div></div>
+        <div class="d">${last.l != null ? (deltaLikes(h, 1) ? `<span class="up">${fmtDelta(deltaLikes(h, 1))}</span> kemarin` : "sesuai YouTube") : "menunggu pengukuran"}</div></div>
       <div class="stat"><div class="k">Likes / 1.000 views</div><div class="v">${per1000 ? per1000.toLocaleString("id-ID", { maximumFractionDigits: 1 }) : "–"}</div>
         <div class="d">rasio interaksi</div></div>
     </div>
@@ -613,10 +667,18 @@ function openDetail(vid) {
         state.dailyRange = b.dataset.r;
         localStorage.setItem("py.range", state.dailyRange);
         rangeWrap.querySelectorAll(".rangebtn").forEach((x) => x.classList.toggle("active", x === b));
-        if (state.charts.daily) { state.charts.daily.destroy(); state.charts.daily = null; }
+        destroyChartById("daily");
         buildDailyChart(h, art.color);
       })
     );
+    if (hasZoom) {
+      const zr = document.createElement("button");
+      zr.className = "zoomreset";
+      zr.textContent = "Reset zoom";
+      zr.title = "Kembalikan zoom (scroll = zoom, tarik = geser)";
+      zr.addEventListener("click", resetAllZoom);
+      rangeWrap.appendChild(zr);
+    }
   }
 
   if (h.length >= 2) {
@@ -631,20 +693,104 @@ function openDetail(vid) {
   }
 }
 
-function downsample(h, maxPts) {
-  if (h.length <= maxPts) return h;
-  const step = Math.ceil(h.length / maxPts);
-  const out = [];
-  for (let i = 0; i < h.length; i += step) out.push(h[i]);
-  if (out[out.length - 1] !== h[h.length - 1]) out.push(h[h.length - 1]);
-  return out;
+/* ---------- helper seri harian / bucket (dipakai modal video & channel) ---------- */
+function dayKeyOf(t) {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jakarta", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(t * 1000));
+}
+/* nilai akhir per hari kalender WIB utk metrik tertentu ("v" | "s") */
+function daysFromHistory(h, key) {
+  const byDay = new Map();
+  for (const p of h) {
+    if (p[key] == null) continue;
+    const k = dayKeyOf(p.t);
+    const prev = byDay.get(k);
+    if (!prev || p.t >= prev.t) byDay.set(k, { key: k, t: p.t, v: p[key], e: p.e === 1 });
+  }
+  return [...byDay.values()].sort((a, b) => a.t - b.t);
+}
+/* agregasi per bucket: day / week / month */
+function bucketize(days, gran) {
+  const bucketOf = (k) => (gran === "month" ? k.slice(0, 7) : gran === "week" ? weekKeyOf(k) : k);
+  const dailyDeltas = [];
+  for (let i = 1; i < days.length; i++) {
+    dailyDeltas.push({ v: Math.max(0, days[i].v - days[i - 1].v), est: days[i].e || days[i - 1].e, key: days[i].key });
+  }
+  const cumMap = new Map(), dMap = new Map();
+  for (const p of days) {
+    const k = bucketOf(p.key);
+    const b = cumMap.get(k);
+    if (!b) cumMap.set(k, { v: p.v, est: p.e, key: k, t: p.t });
+    else if (p.t > b.t) { b.v = p.v; b.t = p.t; b.est = b.est || p.e; }
+  }
+  for (const x of dailyDeltas) {
+    const k = bucketOf(x.key);
+    const b = dMap.get(k);
+    if (!b) dMap.set(k, { v: x.v, est: x.est, key: k });
+    else { b.v += x.v; b.est = b.est || x.est; }
+  }
+  return { cum: [...cumMap.values()], deltas: [...dMap.values()], gran };
+}
+function granFor(days) { return days.length < 90 ? "day" : days.length < 420 ? "week" : "month"; }
+function bucketLabel(key, gran) {
+  if (gran === "month") return MF.format(new Date(key + "-01T00:00:00"));
+  return key.slice(8, 10) + "/" + key.slice(5, 7);
 }
 
-function chartOpts(tooltipLabel) {
+function makeBarChart(canvas, deltas, color, cid, unit, gran) {
+  const estFlags = deltas.map((b) => b.est);
+  return newChart(canvas, {
+    type: "bar",
+    data: {
+      labels: deltas.map((b) => bucketLabel(b.key, gran || "day")),
+      datasets: [{
+        data: deltas.map((b) => b.v),
+        backgroundColor: (c) => (estFlags[c.dataIndex] ? color + "45" : color),
+        borderRadius: 4, maxBarThickness: 22,
+      }],
+    },
+    options: chartOpts((c) => NF.format(c.parsed.y) + " " + unit + (estFlags[c.dataIndex] ? " (estimasi)" : "")),
+  }, cid);
+}
+
+function makeLineChart(canvas, cum, color, cid, unit, gran) {
+  const estFlags = cum.map((p) => p.est);
+  return newChart(canvas, {
+    type: "line",
+    data: {
+      labels: cum.map((p) => bucketLabel(p.key, gran || "day")),
+      datasets: [{
+        data: cum.map((p) => p.v),
+        borderColor: color, borderWidth: 2.4, pointRadius: 0, pointHitRadius: 12, tension: 0.25,
+        segment: {
+          borderColor: (c) => (estFlags[c.p0DataIndex] || estFlags[c.p1DataIndex]) ? color + "55" : color,
+          borderDash: (c) => (estFlags[c.p0DataIndex] || estFlags[c.p1DataIndex]) ? [5, 4] : undefined,
+        },
+        fill: true, backgroundColor: (ctx2) => {
+          const g = ctx2.chart.ctx.createLinearGradient(0, 0, 0, ctx2.chart.height || 260);
+          g.addColorStop(0, color + "55"); g.addColorStop(1, color + "00");
+          return g;
+        },
+      }],
+    },
+    options: chartOpts((c) => fmtExact(c.parsed.y) + " " + unit + (estFlags[c.dataIndex] ? " (estimasi)" : "")),
+  }, cid);
+}
+
+function chartOpts(tooltipLabel, extra = {}) {
+  const zoomCfg = hasZoom ? {
+    pan: { enabled: !isCoarse, mode: "x", threshold: 8 },
+    zoom: {
+      wheel: { enabled: !isCoarse }, pinch: { enabled: isCoarse },
+      mode: "x", panOnDrag: false,
+    },
+    limits: { x: { minRange: 3 * 86400 * 1000 } },
+  } : undefined;
   return {
     responsive: true,
     maintainAspectRatio: false,
     interaction: { intersect: false, mode: "index" },
+    animation: { duration: 250 },
+    ...extra,
     plugins: {
       legend: { display: false },
       tooltip: {
@@ -652,6 +798,7 @@ function chartOpts(tooltipLabel) {
         borderColor: cssVar("--border"), borderWidth: 1, padding: 10, displayColors: false,
         ...(tooltipLabel ? { callbacks: { label: tooltipLabel } } : {}),
       },
+      ...(zoomCfg ? { zoom: zoomCfg } : {}),
     },
     scales: {
       x: { grid: { color: cssVar("--chart-grid") }, ticks: { color: cssVar("--chart-text"), maxTicksLimit: 8, font: { size: 10.5 } } },
@@ -671,95 +818,155 @@ function weekKeyOf(key) {
 
 function buildDailyChart(h, color) {
   const box = $("#chartDaily") ? $("#chartDaily").closest(".chartbox") : null;
-  // agregasi nilai akhir per hari kalender (WIB)
-  const byDay = new Map();
-  for (const p of h) {
-    const key = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Jakarta", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(p.t * 1000));
-    const prev = byDay.get(key);
-    if (!prev || p.t >= prev.t) byDay.set(key, { t: p.t, key, v: p.v, e: p.e === 1 });
-  }
-  const days = [...byDay.values()].sort((a, b) => a.t - b.t);
-  const daily = [];
-  for (let i = 1; i < days.length; i++) {
-    daily.push({ key: days[i].key, diff: Math.max(0, days[i].v - days[i - 1].v), est: days[i].e || days[i - 1].e });
-  }
-  if (daily.length < 2) {
+  const days = daysFromHistory(h, "v");
+  if (days.length < 3) {
     if (box) box.innerHTML = `<div class="wait">Belum cukup data untuk grafik harian.</div>`;
     return;
   }
-  let buckets, labels;
-  if (state.dailyRange === "60") {
-    buckets = daily.slice(-60).map((d) => ({ v: d.diff, est: d.est, first: d.key }));
-    labels = buckets.map((d) => d.first.slice(8, 10) + "/" + d.first.slice(5, 7));
-  } else {
-    const monthly = state.dailyRange === "all";
-    const map = new Map();
-    for (const d of daily) {
-      const k = monthly ? d.key.slice(0, 7) : weekKeyOf(d.key);
-      const b = map.get(k) || { v: 0, est: false, first: d.key };
-      b.v += d.diff;
-      b.est = b.est || d.est;
-      map.set(k, b);
-    }
-    buckets = [...map.values()];
-    labels = buckets.map((b) => monthly
-      ? MF.format(new Date(b.first + "T00:00:00"))
-      : b.first.slice(8, 10) + "/" + b.first.slice(5, 7));
-  }
-  const estFlags = buckets.map((b) => b.est);
-  state.charts.daily = new Chart($("#chartDaily"), {
-    type: "bar",
-    data: {
-      labels,
-      datasets: [{
-        data: buckets.map((b) => b.v),
-        backgroundColor: (c) => (estFlags[c.dataIndex] ? color + "45" : color),
-        borderRadius: 4, maxBarThickness: 22,
-      }],
-    },
-    options: chartOpts((c) => NF.format(c.parsed.y) + " views" + (estFlags[c.dataIndex] ? " (estimasi)" : "")),
-  });
+  const gran = state.dailyRange === "60" ? "day" : state.dailyRange === "365" ? "week" : "month";
+  const sliced = state.dailyRange === "60" ? days.slice(-61) : days;
+  const series = bucketize(sliced, gran);
+  makeBarChart($("#chartDaily"), series.deltas, color, "daily", "views", gran);
 }
 
 function buildCumChart(h, color) {
-  const pts = downsample(h, 160);
-  const estFlags = pts.map((p) => p.e === 1);
-  state.charts.cum = new Chart($("#chartCum"), {
-    type: "line",
-    data: {
-      labels: pts.map((p) => {
-        const d = new Date(p.t * 1000);
-        return new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short" }).format(d);
-      }),
-      datasets: [{
-        data: pts.map((p) => p.v),
-        borderColor: color, borderWidth: 2.4, pointRadius: 0, pointHitRadius: 12, tension: 0.25,
-        segment: {
-          borderColor: (c) => (estFlags[c.p0DataIndex] || estFlags[c.p1DataIndex]) ? color + "55" : color,
-          borderDash: (c) => (estFlags[c.p0DataIndex] || estFlags[c.p1DataIndex]) ? [5, 4] : undefined,
-        },
-        fill: true, backgroundColor: (ctx2) => {
-          const g = ctx2.chart.ctx.createLinearGradient(0, 0, 0, ctx2.chart.height || 260);
-          g.addColorStop(0, color + "55"); g.addColorStop(1, color + "00");
-          return g;
-        },
-      }],
-    },
-    options: chartOpts((c) => fmtExact(c.parsed.y) + " views" + (estFlags[c.dataIndex] ? " (estimasi)" : "")),
-  });
+  const box = $("#chartCum") ? $("#chartCum").closest(".chartbox") : null;
+  const days = daysFromHistory(h, "v");
+  if (days.length < 2) {
+    if (box) box.innerHTML = `<div class="wait">Belum cukup data untuk grafik kumulatif.</div>`;
+    return;
+  }
+  const gran = granFor(days);
+  const series = bucketize(days, gran);
+  makeLineChart($("#chartCum"), series.cum, color, "cum", "views", gran);
+}
+
+/* ===================== modal detail CHANNEL ===================== */
+function openChannel(artId) {
+  const art = artistOf(artId);
+  const ch = state.channels && state.channels[artId];
+  if (!art || !ch || !ch.history || !ch.history.length) return;
+  state.detailMode = { type: "channel", id: artId };
+  const h = ch.history, last = h[h.length - 1];
+  const d1 = deltaDays(h, 1), d7 = deltaDays(h, 7);
+  const created = ch.created || null;
+  const createdAge = created ? ageDays(created) : null;
+  const estRecent = recentEst(h, 7);
+  const rateS7 = d7 && d7.deltaS != null ? d7.deltaS / 7 : 0;
+  const msList = nextMilestones(last.s || 0, SUB_MS, 4);
+
+  $("#sheet").innerHTML = `
+    <button class="close" id="closeBtn" aria-label="Tutup">✕</button>
+    <div class="dhead">
+      ${ch.avatar ? `<img class="chava" style="width:84px;height:84px" src="${esc(ch.avatar)}" alt="" onerror="this.style.visibility='hidden'">` : ""}
+      <div>
+        <h2 class="dtitle">${esc(ch.name || art.name)}</h2>
+        <div class="dsub">
+          <span class="pill" style="background:${art.color};color:#fff;border-radius:999px">${esc(ch.handle || "")}</span>
+          ${created ? `<span>Channel dibuat ${fmtDate(created)}${createdAge != null ? ` · ${NF.format(createdAge)} hari lalu` : ""}</span>` : ""}
+        </div>
+        <div class="dsub" style="margin-top:6px">
+          <a class="pill" href="https://www.youtube.com/${esc(ch.handle || "@" + art.id)}" target="_blank" rel="noopener">Buka di YouTube</a>
+          <span class="pill">Detail channel</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dbig">
+      <div class="stat"><div class="k">Subscriber</div><div class="v">${fmtExact(last.s)}</div>
+        <div class="d">${d1 && d1.deltaS != null ? `<span class="up">${fmtDelta(d1.deltaS)}</span> hari ini${recentEst(h, 1) ? " (est.)" : ""}` : "menunggu data berikutnya"}</div></div>
+      <div class="stat"><div class="k">Total ditonton</div><div class="v">${fmtExact(last.v)}</div>
+        <div class="d">${d7 ? `<span class="up">${fmtDelta(d7.delta)}</span> minggu ini${estRecent ? " (est.)" : ""}` : "–"}</div></div>
+      <div class="stat"><div class="k">Jumlah video</div><div class="v">${fmtExact(last.c)}</div>
+        <div class="d">di channel YouTube</div></div>
+      <div class="stat"><div class="k">Subscriber / hari</div><div class="v">${rateS7 ? fmtCompact(Math.round(rateS7)) : "–"}</div>
+        <div class="d">rata-rata 7 hari${estRecent ? " (est.)" : ""}</div></div>
+    </div>
+
+    <div class="mtabs" id="chanMetricTabs">
+      <button class="mtab ${state.chanMetric === "s" ? "active" : ""}" data-m="s">Pertumbuhan subscriber</button>
+      <button class="mtab ${state.chanMetric === "v" ? "active" : ""}" data-m="v">Total ditonton</button>
+    </div>
+    <div class="rangewrap" id="chanRange">
+      <button class="rangebtn ${state.chanRange === "60" ? "active" : ""}" data-r="60">60 hari</button>
+      <button class="rangebtn ${state.chanRange === "365" ? "active" : ""}" data-r="365">1 tahun</button>
+      <button class="rangebtn ${state.chanRange === "all" ? "active" : ""}" data-r="all">Sejak channel dibuat</button>
+      ${hasZoom ? `<button class="zoomreset" id="chanZoomReset" title="Kembalikan zoom">Reset zoom</button>` : ""}
+    </div>
+    <div class="chartbox" style="margin-bottom:12px"><canvas id="chanLine"></canvas></div>
+    <div class="chartbox"><canvas id="chanBar"></canvas></div>
+    <p class="note">Garis/batang transparan dan putus-putus = <b>estimasi</b> — dibangun dari tanggal channel dibuat + angka terkini (model pertumbuhan; BM 28 Des 2022, TREASURE 8 Feb 2019). Titik/batang solid = pengukuran nyata yang menimpa estimasi setiap putaran GitHub Actions.${hasZoom ? " Scroll di atas grafik = zoom, tarik = geser." : ""}</p>
+
+    <div class="sect">
+      <h3>Milestone subscriber &amp; prediksi</h3>
+      <div class="chartbox" style="padding:6px 10px">
+        ${msList.length ? `
+        <table class="ms">
+          <thead><tr><th>Target</th><th class="num">Sisa</th><th class="num">Perkiraan tercapai</th></tr></thead>
+          <tbody>
+            ${msList.map((t) => `
+              <tr><td>${fmtExact(t)} subscriber</td><td class="num">${fmtCompact(t - (last.s || 0))}</td><td class="num">${etaText(t, last.s || 0, rateS7 || (d1 && d1.deltaS != null ? d1.deltaS : 0))}</td></tr>`).join("")}
+          </tbody>
+        </table>
+        <p class="note">Prediksi = garis lurus dari rata-rata 7 hari terakhir. Pertumbuhan subscriber naik-turun mengikuti jadwal comeback, jadi tanggal nyata bisa lebih cepat/lambat.</p>`
+        : `<div class="wait">Belum ada milestone berikutnya.</div>`}
+      </div>
+    </div>
+  `;
+  $("#overlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+  $("#closeBtn").addEventListener("click", closeDetail);
+  location.hash = "c=" + artId;
+
+  $("#chanMetricTabs").querySelectorAll(".mtab").forEach((b) =>
+    b.addEventListener("click", () => {
+      state.chanMetric = b.dataset.m;
+      $("#chanMetricTabs").querySelectorAll(".mtab").forEach((x) => x.classList.toggle("active", x === b));
+      buildChanCharts(ch, art.color);
+    })
+  );
+  $("#chanRange").querySelectorAll(".rangebtn").forEach((b) =>
+    b.addEventListener("click", () => {
+      state.chanRange = b.dataset.r;
+      localStorage.setItem("py.chanrange", state.chanRange);
+      $("#chanRange").querySelectorAll(".rangebtn").forEach((x) => x.classList.toggle("active", x === b));
+      buildChanCharts(ch, art.color);
+    })
+  );
+  const zr = $("#chanZoomReset");
+  if (zr) zr.addEventListener("click", resetAllZoom);
+
+  buildChanCharts(ch, art.color);
+}
+
+function buildChanCharts(ch, color) {
+  destroyChartById("chanLine");
+  destroyChartById("chanBar");
+  const key = state.chanMetric === "v" ? "v" : "s";
+  const unit = key === "v" ? "views" : "subscriber";
+  const days = daysFromHistory(ch.history || [], key);
+  if (days.length < 2) return;
+  const sliced = state.chanRange === "60" ? days.slice(-61) : days;
+  const gran = state.chanRange === "60" ? "day" : state.chanRange === "365" ? "week" : "month";
+  const series = bucketize(sliced, gran);
+  makeLineChart($("#chanLine"), series.cum, color, "chanLine", unit, gran);
+  makeBarChart($("#chanBar"), series.deltas, color, "chanBar", unit + "/hari", gran);
 }
 
 function closeDetail() {
   destroyCharts();
   $("#overlay").classList.remove("open");
   document.body.style.overflow = "";
-  if (location.hash.startsWith("#v=")) history.replaceState(null, "", location.pathname + location.search);
+  state.detailMode = null;
+  if (location.hash.startsWith("#v=") || location.hash.startsWith("#c=")) history.replaceState(null, "", location.pathname + location.search);
 }
 $("#overlay").addEventListener("click", (e) => { if (e.target === $("#overlay")) closeDetail(); });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDetail(); });
 window.addEventListener("hashchange", () => {
-  const m = /^#v=([\w-]+)$/.exec(location.hash);
-  if (m && state.videos && state.videos[m[1]]) openDetail(m[1]);
+  const mv = /^#v=([\w-]+)$/.exec(location.hash);
+  const mc = /^#c=([\w-]+)$/.exec(location.hash);
+  if (mv && state.videos && state.videos[mv[1]]) openDetail(mv[1]);
+  else if (mc && artistOf(mc[1])) openChannel(mc[1]);
 });
 
 /* ===================== theme ===================== */
@@ -772,9 +979,10 @@ function applyTheme(t) {
 $("#themeBtn").addEventListener("click", () => {
   const t = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
   applyTheme(t);
-  if ($("#overlay").classList.contains("open")) {
-    const vid = (/^#v=([\w-]+)$/.exec(location.hash) || [])[1];
-    if (vid && state.videos[vid]) { destroyCharts(); openDetail(vid); }
+  if ($("#overlay").classList.contains("open") && state.detailMode) {
+    destroyCharts();
+    if (state.detailMode.type === "video" && state.videos[state.detailMode.id]) openDetail(state.detailMode.id);
+    else if (state.detailMode.type === "channel") openChannel(state.detailMode.id);
   }
 });
 
@@ -789,7 +997,7 @@ function renderAll() {
 
 function renderTopline() {
   const el = $("#toplineText");
-  const n = Object.keys(state.videos || {}).length;
+  const n = watchedIds().size;
   if (state.meta && state.meta.last_updated) {
     el.innerHTML = `Terakhir diperbarui <b>${fmtTs(state.meta.last_updated)}</b> · ${n} video dipantau · data direkam 2× sehari oleh GitHub Actions`;
   } else {
@@ -830,8 +1038,10 @@ function renderTopline() {
 
   renderAll();
 
-  const m = /^#v=([\w-]+)$/.exec(location.hash);
-  if (m && state.videos[m[1]]) openDetail(m[1]);
+  const mv = /^#v=([\w-]+)$/.exec(location.hash);
+  const mc = /^#c=([\w-]+)$/.exec(location.hash);
+  if (mv && state.videos[mv[1]]) openDetail(mv[1]);
+  else if (mc && artistOf(mc[1])) openChannel(mc[1]);
 
   $("#searchBox").addEventListener("input", (e) => { state.query = e.target.value.trim(); renderVideos(); });
   $("#sortSel").addEventListener("change", (e) => { state.sort = e.target.value; renderVideos(); });
