@@ -23,10 +23,10 @@ const UA =
 
 const HISTORY_CAP = 4000; // maksimum titik data per video/channel
 const DISCOVERY_PAGES = 4; // halaman playlist uploads yang discan utk video baru (50/hal)
-const WAYBACK_MAX_VIDEOS = 25; // budget video yang dibackfill dari Wayback Machine per putaran
+const WAYBACK_MAX_VIDEOS = parseInt(process.env.WAYBACK_MAX || "25", 10) || 25; // budget backfill Wayback per putaran
 const WAYBACK_PER_VIDEO = 6; // maksimum snapshot arsip yang diambil per video
 const WAYBACK_SLEEP_MS = 1100; // jeda sopan antar permintaan ke web.archive.org
-const SCHEMA_VERSION = 2; // penanda format data; beda versi -> migrasi otomatis
+const SCHEMA_VERSION = 3; // penanda format data; beda versi -> migrasi otomatis
 const EST_CAP = 380; // batas titik estimasi per video (hemat ukuran file)
 const EST_KEEP_DAILY = 100; // estimasi 100 hari terakhir selalu harian
 
@@ -145,38 +145,89 @@ function jitter(seed, i) {
 }
 
 /*
- * buildEstimatedSeries — buat riwayat harian ESTIMASI (e:1) dari tanggal rilis s/d hari
- * sebelum pengukuran, di-anchor supaya kumulatif hari ini = currentV.
+ * buildEstimatedSeries — buat riwayat ESTIMASI (e:1) dari tanggal rilis s/d hari sebelum
+ * pengukuran, di-anchor supaya kumulatif di jangkar = currentV.
  * Model dua fase: spike awal peluruhan geometris (rasio hari-60 = k), lalu ekor panjang r2.
- * Ada noise ±8% (deterministik) supaya kurva terlihat alami.
+ * r2 dicari numerik agar LAJU HARIAN di ujung ekor ≈ g (laju terukur di jangkar) — sambungan
+ * ke data nyata jadi mulus; dibatasi [0.988, 0.9985] supaya bentuk tetap realistis dan
+ * bulan-bulan tengah tidak menggelembung (perbaikan grafik "views per hari").
+ * Noise ±6% deterministik supaya kurva terlihat alami.
+ * Output berbasis PERIODE: harian (100 hari terakhir), mingguan (s/d 2 tahun), bulanan
+ * (sisanya) — delta tiap bucket akurat tanpa penebangan titik.
  */
+/* Keluarkan titik kumulatif per hari pada batas kalender — aturan:
+ *   zona harian (100 hari terakhir)  -> titik tiap hari;
+ *   zona mingguan (s/d 2 tahun)      -> titik tiap Minggu DAN tiap akhir bulan;
+ *   zona bulanan (sisanya)           -> titik tiap akhir bulan.
+ * Selama titik ada di setiap akhir bulan, jumlah delta per bulan kalender di situs
+ * PASTI akurat (delta bulan = cum(akhir bln) - cum(akhir bln lalu)); titik Minggu
+ * membuat tampilan mingguan akurat. Tanpa titik akhir bulan di zona mingguan, bulan
+ * ber-5-Minggu mendapat delta 35 hari (batang +25%) dan bulan ber-4-Minggu 28 hari. */
+function emitCalendarBuckets(t0, D, cumAt, out, e) {
+  const monthIdx = (t) => { const x = new Date((t + 7 * 3600) * 1000); return x.getUTCFullYear() * 12 + x.getUTCMonth(); };
+  const weekday = (t) => { const x = new Date((t + 7 * 3600) * 1000); return (x.getUTCDay() + 6) % 7; }; // 0=Senin
+  for (let d = 0; d < D; d++) {
+    const tEnd = t0 + (d + 1) * 86400 - 1;
+    const tNext = t0 + (d + 1) * 86400;
+    const monthEnd = d + 1 >= D || monthIdx(tEnd) !== monthIdx(tNext);
+    const gran = d >= D - 100 ? "day" : d >= D - 730 ? "week" : "month";
+    const emit = gran === "day" || monthEnd || (gran === "week" && weekday(tEnd) === 6);
+    if (emit) out.push({ t: tEnd, v: Math.round(cumAt(d)), l: null, e });
+  }
+}
+
 function buildEstimatedSeries(publishedISO, currentV, measuredT, opts = {}) {
   const out = [];
   if (!publishedISO || !currentV || currentV <= 0) return out;
   const t0 = new Date(publishedISO + "T00:00:00+07:00").getTime() / 1000;
   if (!isFinite(t0) || t0 >= measuredT) return out;
-  const elapsed = (measuredT - t0) / 86400;
-  const D = Math.floor(elapsed);          // hari penuh yang sudah lewat (hari berjalan = D)
-  const frac = Math.max(0.05, Math.min(1, elapsed - D));
+  const D = Math.floor((measuredT - t0) / 86400); // hari penuh yang sudah lewat
   if (D < 2) return out;
-  const k = opts.k ?? 0.18;
-  const r2 = opts.r2 ?? 0.9985;
-  const r1 = Math.pow(k, 1 / 60);
+  const k = opts.k ?? 0.15;
   const seed = opts.seed || "v";
-  const w = [];
-  for (let d = 0; d <= D; d++) {
-    let base = d < 60 ? Math.pow(r1, d) : Math.pow(r1, 60) * Math.pow(r2, d - 60);
-    w.push(Math.max(1e-6, base * (1 + jitter(seed, d))));
+  const r1 = Math.pow(k, 1 / 60);
+  // target laju harian di jangkar: laju terukur (opts.g) dibatasi agar masuk akal
+  const avg = currentV / D;
+  const g = Math.max(1, Math.min(opts.g || avg, avg * 1.35, currentV * 0.04));
+  let w = null;
+  if (D > 60) {
+    const mk = (r2) => { const a = new Array(D); for (let d = 0; d < D; d++) a[d] = d < 60 ? Math.pow(r1, d) : Math.pow(r1, 60) * Math.pow(r2, d - 60); return a; };
+    let lo = 0.978, hi = 0.9985;
+    const sum = (a) => a.reduce((x, y) => x + y, 0);
+    for (let i = 0; i < 40; i++) {
+      const m = (lo + hi) / 2, a = mk(m);
+      if (currentV * (a[D - 1] / sum(a)) > g) hi = m; else lo = m; // ekor terlalu gemuk -> perkecil r2
+    }
+    const cand = mk((lo + hi) / 2);
+    // utk lagu tua: tolak bentuk yg terlalu terkonsentrasi (30 hari pertama > 30% total)
+    if (D > 400) {
+      let first30 = 0;
+      for (let d = 0; d < Math.min(30, D); d++) first30 += cand[d];
+      w = first30 / sum(cand) <= 0.3 ? cand : mk(0.9985);
+    } else w = cand; // lagu muda: utamakan sambungan mulus ke data nyata
+  } else {
+    // umur pendek: satu fase peluruhan geometris, r dicari agar nilai hari terakhir ≈ g
+    const mk = (r) => { const a = new Array(D); for (let d = 0; d < D; d++) a[d] = Math.pow(r, d); return a; };
+    let lo = 0.8, hi = 0.999999;
+    const sum = (a) => a.reduce((x, y) => x + y, 0);
+    for (let i = 0; i < 60; i++) {
+      const m = (lo + hi) / 2, a = mk(m);
+      if (a[D - 1] / sum(a) > g / currentV) hi = m; else lo = m;
+    }
+    const cand = mk((lo + hi) / 2);
+    w = cand[0] / sum(cand) <= 0.22 ? cand : mk(0.94);
   }
-  // normalisasi: hari berjalan baru sebagian terpakai saat pengukuran
+  for (let d = 0; d < D; d++) w[d] = Math.max(1e-9, w[d] * (1 + jitter(seed, d)));
   let total = 0;
   for (let d = 0; d < D; d++) total += w[d];
-  total += w[D] * frac;
-  let cum = 0;
-  for (let d = 0; d < D; d++) {
-    cum += w[d];
-    out.push({ t: t0 + (d + 1) * 86400 - 1, v: Math.round((currentV * cum) / total), l: null, e: 1 });
-  }
+  // views kumulatif per hari, lalu emisi per bucket kalender (delta bulan/minggu akurat)
+  const cumDays = new Array(D);
+  let run = 0;
+  for (let d = 0; d < D; d++) { run += w[d]; cumDays[d] = Math.round((currentV * run) / total); }
+  emitCalendarBuckets(t0, D, (i) => cumDays[i], out, 1);
+  // titik nol tepat sebelum hari rilis: supaya delta bucket pertama (bulan/hari rilis)
+  // muncul sebagai batang di grafik "views ditambahkan", bukan hilang begitu saja
+  out.unshift({ t: t0 - 1, v: 0, l: null, e: 1 });
   return out;
 }
 
@@ -238,6 +289,12 @@ function thinSeries(pts, cap = EST_CAP, keepRecent = EST_KEEP_DAILY) {
  * Jangkar = titik TERUKUR (API/scrape/Wayback). Estimasi menambal dari tanggal rilis
  * sampai jangkar pertama; antar jangkar diinterpolasi. Titik terukur tidak pernah diubah.
  */
+/* laju harian antara dua titik terukur (per hari, aman utk gap pendek) */
+function rateBetween(a, b) {
+  if (!a || !b || b.t <= a.t || b.v < a.v) return null;
+  return (b.v - a.v) / Math.max(1, (b.t - a.t) / 86400);
+}
+
 function rebuildVideoEstimates(rec, id) {
   const reals = (rec.history || []).filter((p) => p.e !== 1).sort((a, b) => a.t - b.t);
   if (!reals.length || !rec.published) return;
@@ -245,11 +302,14 @@ function rebuildVideoEstimates(rec, id) {
   if (!(last.v > 0)) return;
   let est;
   if (reals.length >= 3) {
-    const anchors = reals.slice(0, -1).map((p) => ({ t: p.t, v: p.v }));
-    est = thinSeries(buildAnchoredSeries(rec.published, anchors, last.v, last.t));
+    // laju harian terukur tepat setelah jangkar pertama -> sambungan estimasi mulus
+    const g = rateBetween(reals[0], reals[1]) || undefined;
+    const anchors = reals.slice(0, -1).map((p) => ({ t: p.t, v: p.v, w: p.w }));
+    est = thinSeries(buildAnchoredSeries(rec.published, anchors, last.v, last.t, { g, seed: id }));
   } else {
     const anchor = reals.find((p) => p.v > 0) || last;
-    est = thinSeries(buildEstimatedSeries(rec.published, anchor.v, anchor.t, { seed: id }));
+    const g = rateBetween(anchor, reals[reals.indexOf(anchor) + 1]) || undefined;
+    est = thinSeries(buildEstimatedSeries(rec.published, anchor.v, anchor.t, { g, seed: id }));
   }
   rec.history = mergeHistory(est, reals);
 }
@@ -272,63 +332,99 @@ function rebuildChannelEstimates(ch) {
 }
 
 /*
- * buildAnchoredSeries — seperti di atas, tapi titik SNAPSHOT ARSIP (Wayback) dipakai
- * sebagai jangkar nyata (e:0); antar jangkar diinterpolasi geometrik (e:1).
+ * pchipSeries — interpolasi kubik monoton (Fritsch–Carlson) di ruang LOG views.
+ * Dipakai untuk menyambung jangkar-jangkar arsip/pengukuran lama: laju harian berubah
+ * LEMBUT antar segmen (interpolasi geometrik per-segmen dulu bikin batang "melompat" 2x
+ * di bulan bergantian karena jarak antar jangkar tidak seragam).
+ * Monoton dijamin: nilai antara selalu di antara kedua jangkar.
  */
-function buildAnchoredSeries(publishedISO, anchors, currentV, measuredT) {
+function pchipSeries(nodes) {
+  const xs = nodes.map((n) => n.t);
+  const ys = nodes.map((n) => Math.log(n.v));
+  const n = xs.length;
+  if (n < 2) return () => (nodes.length ? nodes[nodes.length - 1].v : 0);
+  const h = [], d = [];
+  for (let i = 0; i < n - 1; i++) { h.push(xs[i + 1] - xs[i]); d.push((ys[i + 1] - ys[i]) / h[i]); }
+  const m = new Array(n).fill(0);
+  m[0] = d[0];
+  m[n - 1] = d[n - 2];
+  for (let i = 1; i < n - 1; i++) {
+    if (d[i - 1] * d[i] <= 0) m[i] = 0;
+    else {
+      const w1 = 2 * h[i] + h[i - 1], w2 = h[i] + 2 * h[i - 1];
+      m[i] = (w1 + w2) / (w1 / d[i - 1] + w2 / d[i]);
+    }
+  }
+  return (t) => {
+    if (t <= xs[0]) return Math.exp(ys[0] + m[0] * (t - xs[0]));
+    if (t >= xs[n - 1]) return Math.exp(ys[n - 1] + m[n - 1] * (t - xs[n - 1]));
+    let lo = 0;
+    while (lo < n - 2 && t > xs[lo + 1]) lo++;
+    const s = (t - xs[lo]) / h[lo];
+    const y = (2 * s * s * s - 3 * s * s + 1) * ys[lo] + (s * s * s - 2 * s * s + s) * h[lo] * m[lo]
+            + (-2 * s * s * s + 3 * s * s) * ys[lo + 1] + (s * s * s - s * s) * h[lo] * m[lo + 1];
+    return Math.exp(y);
+  };
+}
+
+/*
+ * buildAnchoredSeries — titik SNAPSHOT ARSIP (Wayback) / pengukuran lama dipakai sebagai
+ * jangkar nyata (e:0). Segmen rilis→jangkar pertama mengikuti kurva model (sambungan mulus
+ * di jangkar pertama); antar jangkar diinterpolasi PCHIP mulus (e:1), dikeluarkan per
+ * periode (harian 100 hari terakhir, mingguan s/d 2 tahun, bulanan sisanya) supaya jumlah
+ * per bucket akurat.
+ */
+function buildAnchoredSeries(publishedISO, anchors, currentV, measuredT, opts = {}) {
   if (!publishedISO || !currentV || currentV <= 0) return [];
   const t0 = new Date(publishedISO + "T00:00:00+07:00").getTime() / 1000;
   if (!isFinite(t0) || t0 >= measuredT) return [];
-  const model = buildEstimatedSeries(publishedISO, currentV, measuredT);
-  const nodes = [];
-  if (model.length) nodes.push({ t: model[0].t, v: model[0].v, e: 1 });
-  const sorted = [...(anchors || [])].sort((a, b) => a.t - b.t);
-  for (const a of sorted) {
-    const lastN = nodes[nodes.length - 1];
-    const minT = lastN ? lastN.t : t0;
-    const minV = lastN ? lastN.v : 0;
-    if (a.t <= minT || a.v <= minV || a.v >= currentV) continue;
-    nodes.push({ t: a.t, v: a.v, e: 0 });
-  }
-  nodes.push({ t: measuredT, v: currentV, e: 0 });
+  const sorted = [...(anchors || [])]
+    .filter((a) => a && a.t > t0 && a.t < measuredT && a.v > 0 && a.v < currentV)
+    .sort((a, b) => a.t - b.t);
   const out = [];
-  for (let i = 0; i < nodes.length; i++) {
-    if (i > 0) {
-      const b = nodes[i - 1], a = nodes[i];
-      const days = Math.max(1, Math.round((a.t - b.t) / 86400));
-      for (let d = 1; d < days; d++) {
-        const t = b.t + d * 86400 - 1;
-        if (t >= a.t) break;
-        out.push({ t, v: Math.round(b.v * Math.pow(a.v / b.v, d / days)), l: null, e: 1 });
-      }
-    }
-    out.push({ t: nodes[i].t, v: nodes[i].v, l: null, e: nodes[i].e });
+  if (sorted.length) {
+    // segmen pertama: model estimasi rilis -> jangkar pertama (kumulatif tepat = jangkar)
+    const model = buildEstimatedSeries(publishedISO, sorted[0].v, sorted[0].t, opts);
+    for (const p of model) if (p.t < sorted[0].t) out.push(p);
   }
+  // buang jangkar yang merusak kemonotonan (mis-parse arsip), lalu interpolasi PCHIP
+  const mono = [];
+  for (const nd of [...sorted, { t: measuredT, v: currentV }]) {
+    if (!mono.length || nd.v > mono[mono.length - 1].v) mono.push(nd);
+  }
+  if (mono.length >= 2) {
+    const f = pchipSeries(mono);
+    const T0 = mono[0].t;
+    const Dd = Math.max(1, Math.floor((measuredT - T0) / 86400));
+    emitCalendarBuckets(T0, Dd, (i) => f(T0 + (i + 1) * 86400 - 1), out, 1);
+  }
+  for (const nd of sorted) out.push({ t: nd.t, v: nd.v, l: null, e: 0, ...(nd.w ? { w: 1 } : {}) });
+  out.push({ t: measuredT, v: currentV, l: null, e: 0 });
   return out;
 }
 
 /* ---------- backfill dari Wayback Machine (berjalan di GitHub Actions) ---------- */
 function parseViewCountFromPage(html) {
+  // hanya pola TERSTRUKTUR — regex longgar bisa menangkap views video lain di halaman arsip
   let m = /"viewCount":"(\d+)"/.exec(html);
   if (m) return parseInt(m[1], 10);
   m = /itemprop="interactionCount" content="(\d+)"/.exec(html);
   if (m) return parseInt(m[1], 10);
   m = /"viewCount":\{"simpleText":"([\d,.]+)\s*views?"/.exec(html);
   if (m) return parseInt(m[1].replace(/[,.]/g, ""), 10) || null;
-  m = /([\d,]{4,})\s+views/.exec(html);
-  if (m) return parseInt(m[1].replace(/,/g, ""), 10) || null;
   return null;
 }
 
 /*
- * Migrasi otomatis: jika schema lama, buang titik lama yang tak terverifikasi
- * (data seed/dummy versi lama), buang video yang tak lagi dipantau, lalu hapus
- * marker backfill agar Wayback dijalankan ulang dengan tanggal rilis yang benar.
+ * Migrasi otomatis: jika schema lama, buang titik estimasi lama (dibangun ulang dgn model
+ * baru), buang video yang tak lagi dipantau, dan bersihkan titik terukur lama yang
+ * TERISOLASI (calon jangkar Wayback lama yang bisa salah baca) — titik API harian yang
+ * rapat tetap dipelihara. Marker backfill dihapus agar Wayback diulang dgn parser baru.
  */
 function migrateIfNeeded() {
   const meta = readJSON("meta.json", {});
   if (meta.schema === SCHEMA_VERSION) return;
-  log(`Migrasi schema ${meta.schema || 1} → ${SCHEMA_VERSION}: menjaga titik terukur 21 hari terakhir, membuang data lama yang tidak valid`);
+  log(`Migrasi schema ${meta.schema || 1} → ${SCHEMA_VERSION}: membangun ulang estimasi & membersihkan jangkar lama yang meragukan`);
   const cutoff = Math.floor(Date.now() / 1000) - 21 * 86400;
   const watched = new Set();
   for (const a of CONFIG.artists) for (const v of a.videos) watched.add(v.id);
@@ -336,7 +432,14 @@ function migrateIfNeeded() {
   const outV = {};
   for (const [id, rec] of Object.entries(videos)) {
     if (!watched.has(id)) continue;
-    outV[id] = { ...rec, history: (rec.history || []).filter((p) => p.e !== 1 && p.t >= cutoff) };
+    const pts = (rec.history || []).filter((p) => p.e !== 1).sort((a, b) => a.t - b.t);
+    const keep = pts.map((p, i) => {
+      if (p.t >= cutoff) return true;
+      const prevT = i > 0 ? pts[i - 1].t : -Infinity;
+      const nextT = i < pts.length - 1 ? pts[i + 1].t : Infinity;
+      return p.t - prevT < 36 * 3600 || nextT - p.t < 36 * 3600; // masih rapat = data API harian
+    });
+    outV[id] = { ...rec, history: pts.filter((_, i) => keep[i]) };
   }
   writeJSON("videos.json", outV);
   const channels = readJSON("channels.json", {});
@@ -407,10 +510,13 @@ async function backfillFromWayback(videos, now) {
       const anchors = await waybackAnchors(id, rec.published);
       if (anchors === null) { archiveAlive = false; break; }
       if (anchors.length) {
-        const series = buildAnchoredSeries(rec.published, anchors, last.v, last.t);
+        const series = buildAnchoredSeries(rec.published, anchors, last.v, last.t, { seed: id });
         if (series.length > 3) {
           const keptReal = rec.history.filter((p) => p.e !== 1);
           rec.history = mergeHistory(series, keptReal);
+          // tandai titik jangkar arsip (w:1) agar bisa dibedakan dari titik API harian
+          const tsSet = new Set(anchors.map((a) => a.t));
+          rec.history = rec.history.map((p) => (p.e !== 1 && tsSet.has(p.t) ? { ...p, w: 1 } : p));
           done++;
           log(`backfill ${id}: ${anchors.length} jangkar arsip → ${rec.history.length} titik`);
         }
@@ -431,16 +537,19 @@ function isoDurationToSeconds(iso) {
 }
 
 // ---------- klasifikasi judul ----------
-/* Konten non-MV / non-practice penuh TIDAK dipantau lagi (permintaan pengguna):
- * focus cut, solo practice/performance, choreography, dance cover, stage practice,
- * live/concert performance, performance video/film, versi JP/anime/RAW, dsb. */
+/* Konten non-MV / non-dance TIDAK dipantau (permintaan pengguna): focus cut, solo
+ * practice/performance, cover lagu orang lain, stage practice, live/concert performance,
+ * performance video/film/eksklusif/spesial, versi JP/anime/RAW, remix, behind, dsb.
+ * "DANCE PERFORMANCE VIDEO" lagu sendiri kini DIPANTAU (kategori dance_performance). */
 const RE_EXCLUDE =
-  /focus\s*cut|solo\s*dance|solo\s*performance|solo\s*ver\.?|choreography|dance\s*cover|stage\s*practice|stage\s*cam|fancam|live\s*performance|performance\s*video|performance\s*film|dance\s*performance|special\s*performance|japanese\s*ver\.?|-?jp\s*ver\.?|japan\s*ver\.?|raw\s*version|raw\s*ver\.?|anime|concert|making|behind|teaser|trailer|visual\s*film|jacket|mashup|reaction|highlight|reply\b|countdown|spoiler|preview\b|episode\b|commentary|shorts\b|out now|watch now|hits? \d+|回应|リリース/i;
+  /focus\s*cut|solo\s*dance|solo\s*performance|solo\s*ver\.?|choreography|dance\s*cover|stage\s*practice|stage\s*cam|fancam|live\s*performance|(?<!dance\s)performance\s*video|performance\s*film|special\s*performance|exclusive\s*performance|japanese\s*ver\.?|-?jp\s*ver\.?|japan\s*ver\.?|raw\s*version|raw\s*ver\.?|anime|concert|making|behind|teaser|trailer|visual\s*film|jacket|mashup|reaction|highlight|reply\b|countdown|spoiler|preview\b|episode\b|commentary|shorts\b|out now|watch now|remix|part\s*switch|eye\s*contact|drake|a\$ap|lil pump|timtim|jenny from the block|回应|リリース/i;
 const RE_MV = /\bm\s*\/\s*v\b/i;
 const RE_PRACTICE = /dance\s*practice|practice\s*video/i;
+const RE_DANCE_PERF = /dance\s*performance/i;
 
 function classifyTitle(title) {
   if (!title || RE_EXCLUDE.test(title)) return null;
+  if (RE_DANCE_PERF.test(title)) return "dance_performance";
   if (RE_MV.test(title)) return "mv";
   if (RE_PRACTICE.test(title)) return "dance_practice";
   return null;
@@ -630,10 +739,37 @@ function textOf(n) {
 }
 
 function parseShortCount(s) {
-  const m = /([\d.,]+)\s*([KMB])?/i.exec((s || "").replace(/,/g, ""));
+  const m = /([\d][\d.,]*)\s*(rb|jt|k|m|b)?/i.exec((s || "").trim());
   if (!m) return null;
-  const mult = { k: 1e3, m: 1e6, b: 1e9 }[(m[2] || "").toLowerCase()] || 1;
-  return Math.round(parseFloat(m[1]) * mult);
+  const unit = (m[2] || "").toLowerCase();
+  const mult = { rb: 1e3, jt: 1e6, k: 1e3, m: 1e6, b: 1e9 }[unit] || 1;
+  let num = m[1];
+  if (unit === "rb" || unit === "jt") num = num.replace(/\./g, "").replace(/,/g, "."); // "1,2 jt"
+  else if (/^\d{1,3}([.,]\d{3})+$/.test(num)) num = num.replace(/[.,]/g, ""); // 1.234.567 / 1,234,567
+  else num = num.replace(/,/g, "");
+  const v = parseFloat(num) * mult;
+  return isFinite(v) ? Math.round(v) : null;
+}
+
+/* likes tanpa API key: endpoint next publik -> "like this video along with N other people" */
+async function fetchLikesNext(vid) {
+  const body = {
+    context: { client: { clientName: "WEB", clientVersion: "2.20260101.00.00", hl: "en", gl: "US" } },
+    videoId: vid,
+  };
+  const j = await fetchJSON("https://www.youtube.com/youtubei/v1/next?prettyPrint=false", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const text = JSON.stringify(j);
+  let m = /like this video along with ([\d.,]+) other people/i.exec(text);
+  if (m) { const n = parseInt(m[1].replace(/[.,]/g, ""), 10); if (n) return n; }
+  m = /"accessibilityText":"([\d.,]+\s*[KMB]?)\s*likes?"/i.exec(text);
+  if (m) return parseShortCount(m[1]) || parseInt(m[1].replace(/[.,]/g, ""), 10) || null;
+  m = /"likeCount":"(\d+)"/.exec(text);
+  if (m) return parseInt(m[1], 10) || null;
+  return null;
 }
 
 async function scrapeChannel(handle) {
@@ -703,7 +839,8 @@ async function scrapePlaylistPage(plId, continuation, clientVersion) {
 }
 
 async function scrapeVideo(vid) {
-  // coba endpoint player (ringan), lalu halaman watch
+  // 1) endpoint player (ringan): views, judul, tanggal
+  let base = null;
   try {
     const body = {
       context: { client: { clientName: "WEB", clientVersion: "2.20260101.00.00", hl: "en", gl: "US" } },
@@ -717,10 +854,9 @@ async function scrapeVideo(vid) {
     const vd = j.videoDetails || {};
     if (vd.viewCount) {
       const mf = j.microformat?.playerMicroformatRenderer || {};
-      return {
+      base = {
         title: vd.title,
         views: parseInt(vd.viewCount, 10),
-        likes: null,
         duration: parseInt(vd.lengthSeconds || "0", 10) || null,
         published: (mf.publishDate || mf.uploadDate || "").slice(0, 10) || null,
       };
@@ -728,10 +864,14 @@ async function scrapeVideo(vid) {
   } catch (e) {
     log(`  player gagal utk ${vid}: ${String(e).slice(0, 80)}`);
   }
+  // 2) likes via endpoint next (ringan) — sebelumnya selalu null di mode scraping
+  let likes = null;
+  try { likes = await fetchLikesNext(vid); } catch (e) { log(`  likes gagal utk ${vid}: ${String(e).slice(0, 70)}`); }
+  if (base) return { ...base, likes };
   const html = await fetchText(`https://www.youtube.com/watch?v=${vid}&hl=en&gl=US`, {
     headers: { Cookie: "CONSENT=YES+cb; SOCS=CAI" },
   });
-  let title = null, views = null, likes = null, duration = null, published = null;
+  let title = null, views = null, likes2 = null, duration = null, published = null;
   const m = /var ytInitialPlayerResponse\s*=\s*(\{.*?\});/.exec(html);
   if (m) {
     try {
@@ -746,7 +886,7 @@ async function scrapeVideo(vid) {
   }
   const lm = /"accessibilityText":"([\d,.]+\s*(?:K|M|B)?)\s*likes?"/.exec(html) ||
     /"likeCount":"?(\d+)"?/.exec(html);
-  if (lm) likes = parseShortCount(lm[1]) || parseInt(lm[1], 10);
+  if (lm) likes2 = parseShortCount(lm[1]) || parseInt(lm[1], 10);
   if (!title) {
     const t = /<meta name="title" content="([^"]+)"/.exec(html);
     if (t) title = t[1];
@@ -755,7 +895,13 @@ async function scrapeVideo(vid) {
     const v = /"viewCount":"(\d+)"/.exec(html);
     if (v) views = parseInt(v[1], 10);
   }
-  return { title, views, likes, duration, published };
+  return {
+    title: base?.title || title,
+    views: base?.views || views,
+    likes: likes != null ? likes : likes2,
+    duration: base?.duration || duration,
+    published: base?.published || published,
+  };
 }
 
 async function collectScrape() {
@@ -819,6 +965,7 @@ async function collectScrape() {
       appendHistory(rec.history, { t: now, v: d.views, l: d.likes });
       videos[v.id] = rec;
       log(`[${i}/${total}] ${v.id} v=${d.views} l=${d.likes}`);
+      if (i % 10 === 0) writeJSON("videos.json", videos); // simpan bertahap (tahan terputus)
       await sleep(700);
     }
   }

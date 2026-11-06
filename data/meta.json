@@ -1,8 +1,8 @@
 {
- "last_updated": 1793935574,
- "schema": 2,
+ "last_updated": 1793939870,
+ "schema": 3,
  "mode": "scrape",
- "duration_sec": 504,
- "quota_note": "scraping publik",
+ "duration_sec": 0,
+ "quota_note": "scraping publik (endpoint next)",
  "note": "Grafik menyertakan estimasi harian sejak tanggal rilis video / tanggal channel dibuat (ditandai est.). Titik terukur menimpanya."
 }

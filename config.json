@@ -8,7 +8,8 @@
   "schema_note": "published = tanggal rilis UTC; dikoreksi otomatis dari YouTube API pada setiap putaran collect.js.",
   "categories": {
     "mv": "MV",
-    "dance_practice": "Dance Practice"
+    "dance_practice": "Dance Practice",
+    "dance_performance": "Dance Performance"
   },
   "artists": [
     {
@@ -20,9 +21,7 @@
       "created": "2022-12-28",
       "exclude_ids": [
         "46GMs-4TayE",
-        "4iw45qO3OsE",
         "8Gn8EksHj_8",
-        "B17yoLxkbPA",
         "B1gDCOTpDzA",
         "Cof2_dZwxY8",
         "FinTVHCeYBo",
@@ -44,13 +43,11 @@
         "cxhqqpVk65Q",
         "frV8cZ_yA_4",
         "gaDP9GDHeVw",
-        "gnJOBNz1q0A",
         "kOanBE5Wg24",
         "kmwrN2HDgJs",
         "o9V8HrgJgIg",
         "pvpRC17TbnM",
         "sdCLxCkXM1M",
-        "tDt7X6coxvs",
         "wqSHogLRtJI",
         "yAXnEHFKKaY"
       ],
@@ -168,6 +165,30 @@
           "category": "dance_practice",
           "published": "2025-07-15",
           "featured": false
+        },
+        {
+          "id": "B17yoLxkbPA",
+          "category": "dance_performance",
+          "published": "2023-12-05",
+          "featured": false
+        },
+        {
+          "id": "tDt7X6coxvs",
+          "category": "dance_performance",
+          "published": "2024-07-08",
+          "featured": false
+        },
+        {
+          "id": "gnJOBNz1q0A",
+          "category": "dance_performance",
+          "published": "2024-11-12",
+          "featured": false
+        },
+        {
+          "id": "4iw45qO3OsE",
+          "category": "dance_performance",
+          "published": "2025-07-09",
+          "featured": false
         }
       ]
     },
@@ -179,28 +200,17 @@
       "color": "#38bdf8",
       "created": "2019-02-08",
       "exclude_ids": [
-        "-3NRu9GB8zs",
-        "1662wSi7nes",
         "3E7rLh2Jd6Q",
         "4bBczzrciP0",
-        "9v32bIz4WGs",
-        "DIxRlfHq9Fo",
         "EKHd0OgwabY",
-        "GC0FRaUlsNQ",
-        "GCPK6u39ZK0",
         "GtCvi67kQ9Y",
-        "HBzzYDSDI-U",
         "J_1zJ4ka37A",
         "MEA62eluCuI",
         "M_J8awMzJ7Y",
         "OsdZxD3TCSs",
-        "Q5SIYzCRRv4",
         "UU8mic7Z1HY",
         "VOapML6KyWE",
         "Vke_Vl4DNfo",
-        "WL5PnZkZ7oM",
-        "bQN4aoknQg4",
-        "ehOVBOAtxU4",
         "fLifNUFAYOg",
         "g2i5hKKMaS0",
         "hhV1QDQoXCM",
@@ -210,9 +220,7 @@
         "rP8fq4x2tEo",
         "u01r0O5WsEo",
         "umW2XcyccRQ",
-        "uxmzwbGpH30",
         "v3SQVaG7ej0",
-        "vW-FVdrv_8Q",
         "w8iXV_2M62k",
         "xBncGmi7I_8",
         "xU9ZA4apPaU",
@@ -391,6 +399,84 @@
           "id": "nSKPJ2UmnqU",
           "category": "dance_practice",
           "published": "2026-07-01",
+          "featured": false
+        },
+        {
+          "id": "Q5SIYzCRRv4",
+          "category": "dance_performance",
+          "published": "2022-02-22",
+          "featured": false
+        },
+        {
+          "id": "9v32bIz4WGs",
+          "category": "dance_performance",
+          "published": "2022-03-01",
+          "featured": false
+        },
+        {
+          "id": "GCPK6u39ZK0",
+          "category": "dance_performance",
+          "published": "2022-04-15",
+          "featured": false
+        },
+        {
+          "id": "HBzzYDSDI-U",
+          "category": "dance_performance",
+          "published": "2022-10-25",
+          "featured": false
+        },
+        {
+          "id": "ehOVBOAtxU4",
+          "category": "dance_performance",
+          "published": "2023-05-02",
+          "featured": false
+        },
+        {
+          "id": "uxmzwbGpH30",
+          "category": "dance_performance",
+          "published": "2023-05-02",
+          "featured": false
+        },
+        {
+          "id": "bQN4aoknQg4",
+          "category": "dance_performance",
+          "published": "2023-09-01",
+          "featured": false
+        },
+        {
+          "id": "GC0FRaUlsNQ",
+          "category": "dance_performance",
+          "published": "2024-02-28",
+          "featured": false
+        },
+        {
+          "id": "DIxRlfHq9Fo",
+          "category": "dance_performance",
+          "published": "2024-10-10",
+          "featured": false
+        },
+        {
+          "id": "1662wSi7nes",
+          "category": "dance_performance",
+          "published": "2025-01-15",
+          "featured": false
+        },
+        {
+          "id": "-3NRu9GB8zs",
+          "category": "dance_performance",
+          "published": "2025-06-02",
+          "featured": false
+        },
+        {
+          "id": "vW-FVdrv_8Q",
+          "category": "dance_performance",
+          "published": "2025-09-20",
+          "featured": false
+        },
+        {
+          "id": "WL5PnZkZ7oM",
+          "category": "dance_performance",
+          "published": "2026-06-08",
           "featured": false
         }
       ]

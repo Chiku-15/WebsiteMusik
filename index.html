@@ -99,9 +99,6 @@
   .stat .d{font-size:12px;margin-top:3px;color:var(--muted);font-weight:600}
   .up{color:#2fd57b!important}
   .down{color:#ff6b81!important}
-  .sparkwrap{margin-top:14px;border:1px solid var(--border);border-radius:13px;background:var(--bg2);padding:10px 12px 4px}
-  .sparkwrap .k{color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
-  .spark{width:100%;height:64px;display:block}
   /* ---------- toolbar ---------- */
   .toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:26px 2px 14px}
   .chips{display:flex;gap:6px;flex-wrap:wrap}
@@ -317,44 +314,23 @@ function deltaDays(history, days) {
   const deltaS = (last.s != null && best.s != null) ? last.s - best.s : null;
   return { delta: last.v - best.v, deltaS, rate: (last.v - best.v) / elapsed, days };
 }
+/* selisih likes antara dua pengukuran terakhir yang benar-benar terukur (~N hari) */
 function deltaLikes(history, days) {
   if (!history || history.length < 2) return null;
-  const last = history[history.length - 1];
-  const targetT = last.t - days * 86400;
+  let lastL = null;
+  for (let i = history.length - 1; i >= 0; i--) if (history[i].l != null) { lastL = history[i]; break; }
+  if (!lastL) return null;
+  const targetT = lastL.t - days * 86400;
   let best = null, bestDiff = Infinity;
-  for (let i = history.length - 2; i >= 0; i--) {
-    if (history[i].l == null) continue;
-    const diff = Math.abs(history[i].t - targetT);
-    if (diff < bestDiff) { bestDiff = diff; best = history[i]; }
-    if (history[i].t < targetT - days * 1.6 * 86400) break;
+  for (let i = history.length - 1; i >= 0; i--) {
+    const p = history[i];
+    if (p.l == null || p.t >= lastL.t) continue;
+    const diff = Math.abs(p.t - targetT);
+    if (diff < bestDiff) { bestDiff = diff; best = p; }
+    if (p.t < targetT - days * 1.6 * 86400) break;
   }
-  if (!best) return null;
-  return last.l - best.l;
-}
-
-function sparkSVG(history, color, key) {
-  const pts = history.slice(-60);
-  if (pts.length < 2) return `<div class="wait" style="padding:10px">Belum cukup titik untuk grafik.</div>`;
-  const vals = pts.map((p) => p[key]).filter((x) => x != null);
-  if (vals.length < 2) return `<div class="wait" style="padding:10px">Belum cukup titik untuk grafik.</div>`;
-  const min = Math.min(...vals), max = Math.max(...vals);
-  const W = 400, H = 64, pad = 3;
-  const xs = [], ys = [];
-  pts.forEach((p, i) => {
-    if (p[key] == null) return;
-    xs.push(pad + (i / (pts.length - 1)) * (W - 2 * pad));
-    ys.push(H - pad - ((p[key] - min) / Math.max(1, max - min)) * (H - 2 * pad));
-  });
-  const line = xs.map((x, i) => `${i ? "L" : "M"}${x.toFixed(1)},${ys[i].toFixed(1)}`).join(" ");
-  const area = line + ` L${xs[xs.length - 1].toFixed(1)},${H} L${xs[0].toFixed(1)},${H} Z`;
-  const gid = "g" + Math.random().toString(36).slice(2, 8);
-  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="${color}" stop-opacity=".35"/><stop offset="1" stop-color="${color}" stop-opacity="0"/>
-    </linearGradient></defs>
-    <path d="${area}" fill="url(#${gid})"/>
-    <path d="${line}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
-  </svg>`;
+  if (!best || bestDiff > days * 1.6 * 86400) return null;
+  return lastL.l - best.l;
 }
 
 /* milestone util — ambil N target berikutnya */
@@ -442,8 +418,6 @@ function renderChannel() {
   }
   const h = ch.history, last = h[h.length - 1];
   const d1 = deltaDays(h, 1), d7 = deltaDays(h, 7);
-  const nextSub = nextMilestones(last.s || 0, SUB_MS, 1)[0];
-  const rate7 = d7 ? d7.rate : 0;
   const rateS7 = d7 && d7.deltaS != null ? d7.deltaS / 7 : 0;
   sec.innerHTML = `
     <div class="chcard clickable" id="chcard" style="--artist-color:${art.color}" tabindex="0" role="button" aria-label="Lihat detail channel ${esc(art.name)}" title="Klik untuk melihat detail channel">
@@ -472,10 +446,6 @@ function renderChannel() {
           <div class="v">${fmtExact(last.c)}</div>
           <div class="d">di channel YouTube</div>
         </div>
-      </div>
-      <div class="sparkwrap">
-        <div class="k">Pertumbuhan subscriber ${nextSub ? `· menuju ${fmtCompact(nextSub)} ${etaText(nextSub, last.s || 0, rateS7 || rate7)}` : ""}</div>
-        ${sparkSVG(h.map((p) => ({ t: p.t, v: p.s })), art.color, "v")}
       </div>
       <div class="chhint"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>Klik kartu ini untuk detail lengkap channel — grafik sejak channel dibuat</div>
     </div>`;
@@ -517,6 +487,12 @@ function videoList() {
   return list;
 }
 function lastV(v) { return v.history && v.history.length ? v.history[v.history.length - 1].v : 0; }
+/* titik likes terbaru yang benar-benar terukur (likes mulai direkam belakangan) */
+function lastLikePoint(h) {
+  if (!h || !h.length) return null;
+  for (let i = h.length - 1; i >= 0; i--) if (h[i].l != null) return h[i];
+  return null;
+}
 
 function renderVideos() {
   const art = artistOf(state.artist);
@@ -540,6 +516,7 @@ function renderVideos() {
   }
   grid.innerHTML = list.map((v) => {
     const last = v.history && v.history.length ? v.history[v.history.length - 1] : { v: 0, l: null };
+    const lpt = lastLikePoint(v.history);
     const d7 = deltaDays(v.history, 7);
     return `
     <article class="vcard" data-id="${v.id}" style="--artist-color:${art.color}" tabindex="0" role="button" aria-label="${esc(v.title)}">
@@ -552,7 +529,7 @@ function renderVideos() {
         <div class="vmeta">
           <div class="vviews">
             <div class="n">${fmtCompact(last.v)}</div>
-            <div class="l">views${last.l != null ? " · " + fmtCompact(last.l) + " likes" : ""}</div>
+            <div class="l">views${lpt ? " · " + fmtCompact(lpt.l) + " likes" : ""}</div>
           </div>
           <div class="vright">
             <div class="g ${d7 && d7.delta >= 0 ? "up" : ""}">${d7 ? fmtDelta(d7.delta) : "–"}</div>
@@ -587,11 +564,12 @@ function openDetail(vid) {
   const allAge = h.length > 1 ? Math.max(1, (h[h.length - 1].t - h[0].t) / 86400) : 0;
   const rateAll = allAge ? (last.v - h[0].v) / allAge : 0;
   const rate = (d7 && d7.rate) || (d30 && d30.rate) || rateAll;
-  const per1000 = last.v ? (last.l / last.v) * 1000 : null;
   const age = ageDays(v.published);
   const msList = nextMilestones(last.v || 0, VIEW_MS, 4);
   const srcBase = (location.pathname.replace(/\/[^\/]*$/, "/"));
   const est = recentEst(h, 7);
+  const lpt = lastLikePoint(h);
+  const per1000 = lpt && lpt.v ? (lpt.l / lpt.v) * 1000 : null;
   const realPts = h.filter((p) => p.e !== 1);
   const watched = realPts.length > 1 ? Math.round((realPts[realPts.length - 1].t - realPts[0].t) / 86400) : (realPts.length === 1 ? 0 : null);
 
@@ -618,8 +596,8 @@ function openDetail(vid) {
         <div class="d">${d1 ? `<span class="up">${fmtDelta(d1.delta)}</span> kemarin${recentEst(h, 1) ? " (est.)" : ""}` : "menunggu data berikutnya"}</div></div>
       <div class="stat"><div class="k">Rata-rata / hari</div><div class="v">${d7 ? fmtCompact(Math.round(d7.rate)) : "–"}</div>
         <div class="d">${d7 ? `7 hari terakhir${est ? " (est.)" : ""}` : "–"}</div></div>
-      <div class="stat"><div class="k">Likes</div><div class="v">${last.l != null ? fmtCompact(last.l) : "–"}</div>
-        <div class="d">${last.l != null ? (deltaLikes(h, 1) ? `<span class="up">${fmtDelta(deltaLikes(h, 1))}</span> kemarin` : "sesuai YouTube") : "menunggu pengukuran"}</div></div>
+      <div class="stat"><div class="k">Likes</div><div class="v">${lpt ? fmtCompact(lpt.l) : "–"}</div>
+        <div class="d">${lpt ? (deltaLikes(h, 2) ? `<span class="up">${fmtDelta(deltaLikes(h, 2))}</span> 2 hari terakhir` : "sesuai YouTube") : "menunggu pengukuran"}</div></div>
       <div class="stat"><div class="k">Likes / 1.000 views</div><div class="v">${per1000 ? per1000.toLocaleString("id-ID", { maximumFractionDigits: 1 }) : "–"}</div>
         <div class="d">rasio interaksi</div></div>
     </div>
@@ -999,7 +977,8 @@ function renderTopline() {
   const el = $("#toplineText");
   const n = watchedIds().size;
   if (state.meta && state.meta.last_updated) {
-    el.innerHTML = `Terakhir diperbarui <b>${fmtTs(state.meta.last_updated)}</b> · ${n} video dipantau · data direkam 2× sehari oleh GitHub Actions`;
+    const mode = state.meta.mode === "api" ? "YouTube API" : state.meta.mode === "scrape" ? "mode scraping (tanpa API key)" : "data awal";
+    el.innerHTML = `Terakhir diperbarui <b>${fmtTs(state.meta.last_updated)}</b> · ${n} video dipantau · ${mode} · data direkam 2× sehari oleh GitHub Actions`;
   } else {
     el.textContent = "Data belum tersedia — jalankan sekali workflow “Kumpulkan data YouTube” di tab Actions.";
   }

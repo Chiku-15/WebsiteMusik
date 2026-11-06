@@ -9,7 +9,7 @@ Statistik YouTube dua artis — **BABYMONSTER** dan **TREASURE** — direkam oto
 - **Dua artis** dalam satu situs (tab BABYMONSTER / TREASURE) — mudah ditambah artis lain
 - **Kartu channel bisa diklik** → modal detail channel: subscriber, total ditonton, jumlah video, rata-rata sub/hari
 - **Grafik pertumbuhan channel SEJAK CHANNEL DIBUAT** (BM 28 Des 2022, TREASURE 8 Feb 2019) — interaktif: hover tooltip, tombol rentang (60 hari / 1 tahun / sejak dibuat), zoom scroll & geser (tarik), metrik subscriber/total views
-- **48 video terpantau**: MV resmi + Dance Practice penuh saja (tanpa focus cut, solo practice, performance video, versi JP/RAW, dll.)
+- **65 video terpantau**: MV resmi + Dance Practice penuh + **Dance Performance Video** lagu sendiri (tanpa focus cut, solo practice, cover, stage practice, live/concert, versi JP/RAW, dll.)
 - **Grafik per video SEJAK TANGGAL RILIS ASLI**: views kumulatif + views ditambahkan per hari (60 hari / 1 tahun / sejak rilis)
 - **Likes ditampilkan** sesuai YouTube (dari API; muncul begitu pengukuran pertama berhasil)
 - **Pembeda data nyata vs estimasi**: garis putus-putus/batang transparan = estimasi, titik solid = pengukuran nyata
@@ -85,11 +85,11 @@ Edit `config.json`:
 }
 ```
 
-- `category` pilihan: `mv`, `dance_practice`
+- `category` pilihan: `mv`, `dance_practice`, `dance_performance`
 - `published` (opsional): tanggal rilis `YYYY-MM-DD` — dipakai untuk estimasi awal, dikoreksi otomatis oleh API
 - `channel_id` ada di URL channel YouTube (bagian setelah `/channel/`)
-- Video **MV/dance practice baru** yang diunggah ke channel sudah otomatis terdeteksi; menambah lewat `config.json` hanya perlu kalau ingin memantau video lama/khusus.
-- Konten non-MV (teaser, performance video, focus cut, versi JP/RAW, dll.) otomatis diabaikan oleh deteksi rilis baru — sesuai keinginan pemantauan yang hanya MV + dance practice penuh.
+- Video **MV / dance practice / dance performance baru** yang diunggah ke channel sudah otomatis terdeteksi; menambah lewat `config.json` hanya perlu kalau ingin memantau video lama/khusus.
+- Yang otomatis diabaikan: teaser, focus cut, solo dance practice/performance, cover lagu orang lain, stage practice, live/concert performance, performance film/eksklusif, versi JP/RAW, behind, dll. **"DANCE PERFORMANCE VIDEO" untuk lagu sendiri tetap dipantau** (kategori `dance_performance`).
 
 ## Mengganti jadwal
 
@@ -104,7 +104,7 @@ Edit `.github/workflows/collect.yml` bagian `cron` (zona UTC):
 2. Jalankan sekali *Actions → Kumpulkan data YouTube → Run workflow*.
 3. Selesai — grafik langsung penuh sejak tanggal rilis; angka presisi dari API menimpa estimasi mulai putaran pertama.
 
-> Kalau kamu hanya mengganti `collect.js`/`config.json`/`index.html` dan membiarkan `data/` lama: tidak apa-apa. `collect.js` versi ini melakukan **migrasi otomatis** (schema v2) — titik data lama yang tidak valid dibuang, hanya titik terukur 21 hari terakhir yang dipertahankan, lalu estimasi dibangun ulang dari tanggal rilis yang benar. Video yang tidak lagi dipantau otomatis hilang dari grafik.
+> Kalau kamu hanya mengganti `collect.js`/`config.json`/`index.html` dan membiarkan `data/` lama: tidak apa-apa. `collect.js` versi ini melakukan **migrasi otomatis** (schema v3) — titik estimasi lama dibangun ulang dengan model terbaru, titik data lama yang tidak valid dibuang, hanya titik terukur yang rapat/21 hari terakhir yang dipertahankan, lalu estimasi dibangun ulang dari tanggal rilis yang benar. Video yang tidak lagi dipantau otomatis hilang dari grafik.
 
 ## Tanggal rilis & tanggal channel dibuat
 
@@ -130,7 +130,7 @@ Setiap kali Actions merekam angka baru, estimasi pada hari itu **ditimpa data ny
 
 **Grafik sekarang langsung penuh.** Sejak versi ini riwayat diisi dari tanggal rilis (video) dan tanggal channel dibuat (channel) memakai estimasi (lihat "Tentang data historis"). Tanda **(est.)** pada kartu/tooltip berarti angka itu masih berbasis estimasi.
 
-**Kenapa likes kadang masih "–"?** YouTube menyembunyikan jumlah like dari halaman tanpa login untuk sebagian tipe pengambilan data. Likes tampil otomatis begitu `collect.js` berhasil mengambilnya — paling cepat lewat YouTube Data API (secret `YT_API_KEY`), di mana `statistics.likeCount` selalu tersedia untuk video yang menampilkan like publik.
+**Kenapa likes kadang masih "–"?** Likes diambil dari `statistics.likeCount` (YouTube Data API — secret `YT_API_KEY`) atau dari endpoint publik YouTube saat mode scraping. Likes tampil otomatis pada putaran pertama setelah versi ini dipasang — kartu, modal, dan rasio likes/1.000 views langsung terisi untuk BM maupun TREASURE.
 
 **Angka di awal sedikit meleset (subscriber dibulatkan, tanggal rilis perkiraan)?** Titik data awal berasal dari cuplikan halaman publik YouTube yang dibulatkan (mis. "425 jt views"). Begitu workflow dijalankan dengan API key, semua angka dan tanggal rilis diperbarui ke nilai persis dari YouTube Data API dan seluruh kurva menyesuaikan otomatis.
 
