@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pemantau YouTube — BABYMONSTER × TREASURE</title>
-<meta name="description" content="Statistik YouTube BABYMONSTER & TREASURE: views, likes, subscriber, pertumbuhan harian, milestone & prediksi. Data direkam otomatis oleh GitHub Actions.">
+<title>K-POP PULSE — Statistik YouTube Artis K-pop</title>
+<meta name="description" content="Pantau views, likes, subscriber, grafik pertumbuhan harian & prediksi milestone artis K-pop favoritmu. Data direkam otomatis 2x sehari oleh GitHub Actions.">
 <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%23ff4d6d"/><path d="M26 20l18 12-18 12z" fill="white"/></svg>'>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -187,6 +187,61 @@
   table.ms tr:last-child td{border-bottom:none}
   table.ms td.num{text-align:right;font-variant-numeric:tabular-nums}
   .wait{color:var(--muted);font-size:13px;background:var(--bg2);border:1px dashed var(--border);border-radius:12px;padding:18px;text-align:center}
+  /* ---------- legenda data nyata vs estimasi ---------- */
+  .legend{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin:0 2px 10px;color:var(--muted);font-size:11.5px;font-weight:700}
+  .legend .sw{display:inline-block;width:14px;height:9px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  /* ---------- landing (halaman pembuka) ---------- */
+  body.landing-open{overflow:hidden}
+  #landing{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;
+    background:#07090f;color:#eef1f8;overflow:hidden;padding:20px;
+    transition:opacity .45s ease;}
+  #landing.out{opacity:0;pointer-events:none}
+  .l-blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;animation:lblob 16s ease-in-out infinite alternate}
+  .l-blob.b1{width:540px;height:540px;background:#ff4d6d;top:-160px;left:-140px}
+  .l-blob.b2{width:480px;height:480px;background:#6a78ff;bottom:-140px;right:-110px;animation-delay:-6s}
+  .l-blob.b3{width:380px;height:380px;background:#8b5cf6;top:42%;left:56%;animation-delay:-11s}
+  @keyframes lblob{from{transform:translate(0,0) scale(1)}to{transform:translate(46px,30px) scale(1.14)}}
+  .l-inner{position:relative;max-width:660px;width:100%;padding:46px 34px 36px;text-align:center;
+    background:rgba(10,13,20,.55);border:1px solid rgba(255,255,255,.09);border-radius:26px;
+    backdrop-filter:blur(18px);box-shadow:0 30px 80px rgba(0,0,0,.5)}
+  .l-inner>*{animation:lris .7s ease both}
+  .l-inner>*:nth-child(2){animation-delay:.08s}.l-inner>*:nth-child(3){animation-delay:.16s}
+  .l-inner>*:nth-child(4){animation-delay:.24s}.l-inner>*:nth-child(5){animation-delay:.32s}
+  .l-inner>*:nth-child(6){animation-delay:.40s}.l-inner>*:nth-child(7){animation-delay:.48s}
+  @keyframes lris{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+  .l-badge{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:2.6px;color:#c9d1e2;
+    border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:7px 16px;background:rgba(255,255,255,.05)}
+  .l-title{font-size:clamp(44px,9vw,74px);font-weight:800;letter-spacing:1.5px;margin:18px 0 0;line-height:1.05}
+  .l-title span{background:linear-gradient(92deg,#ff4d6d 10%,#a06bff 55%,#6a78ff 95%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .l-eq{display:flex;gap:5px;align-items:flex-end;justify-content:center;height:26px;margin-top:16px}
+  .l-eq i{width:5px;border-radius:3px;background:linear-gradient(180deg,#ff4d6d,#6a78ff);
+    transform-origin:bottom;animation:leq 1.05s ease-in-out infinite alternate}
+  .l-eq i:nth-child(1){height:12px;animation-delay:0s}.l-eq i:nth-child(2){height:22px;animation-delay:.12s}
+  .l-eq i:nth-child(3){height:9px;animation-delay:.24s}.l-eq i:nth-child(4){height:26px;animation-delay:.06s}
+  .l-eq i:nth-child(5){height:14px;animation-delay:.3s}.l-eq i:nth-child(6){height:20px;animation-delay:.18s}
+  .l-eq i:nth-child(7){height:10px;animation-delay:.42s}
+  @keyframes leq{from{transform:scaleY(.25)}to{transform:scaleY(1)}}
+  .l-tag{color:#b6bfd2;font-size:14.5px;line-height:1.7;margin:18px auto 0;max-width:540px}
+  .l-feats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:26px 0 4px;text-align:left}
+  .l-feat{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:14px;padding:14px 15px}
+  .l-feat svg{width:20px;height:20px;fill:#ff7a92}
+  .l-feat:nth-child(2) svg{fill:#a48cff}.l-feat:nth-child(3) svg{fill:#7fa2ff}
+  .l-feat b{display:block;font-size:13px;margin:9px 0 4px}
+  .l-feat span{color:#9aa3b8;font-size:11.5px;line-height:1.55}
+  .l-cta{margin-top:22px;border:none;cursor:pointer;font:800 15px var(--font);color:#fff;
+    background:linear-gradient(135deg,#ff4d6d,#6a78ff);padding:15px 38px;border-radius:999px;
+    display:inline-flex;align-items:center;gap:10px;box-shadow:0 14px 38px rgba(255,77,109,.35);transition:.2s}
+  .l-cta:hover{transform:translateY(-2px);filter:brightness(1.07)}
+  .l-cta svg{width:17px;height:17px;fill:#fff}
+  .l-foot{color:#6d7688;font-size:11.5px;margin:18px 0 0}
+  @media (max-width:640px){
+    .l-feats{grid-template-columns:1fr}
+    .l-inner{padding:36px 22px 30px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .l-blob,.l-eq i,.l-inner>*{animation:none}
+  }
   @media (max-width:640px){
     .chstats{grid-template-columns:1fr 1fr}
     .dthumb{width:100%}
@@ -195,6 +250,35 @@
 </style>
 </head>
 <body>
+
+<div id="landing" role="dialog" aria-label="Halaman pembuka">
+  <div class="l-blob b1"></div><div class="l-blob b2"></div><div class="l-blob b3"></div>
+  <div class="l-inner">
+    <span class="l-badge">SITUS STATISTIK ARTIS K-POP</span>
+    <h1 class="l-title">K-POP <span>PULSE</span></h1>
+    <div class="l-eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <p class="l-tag">Pantau views, likes, subscriber &amp; pertumbuhan video artis K-pop favoritmu — lengkap dengan grafik harian dan prediksi milestone. Data dicatat otomatis dua kali sehari, langsung dari YouTube.</p>
+    <div class="l-feats">
+      <div class="l-feat">
+        <svg viewBox="0 0 24 24"><path d="M3.5 18.5 9 13l3.5 3.5L20 9l1.4 1.4-8.9 8.9L9 15.8l-4.1 4.1z"/><path d="M16 9h5v5h-2v-3h-3z"/></svg>
+        <b>Grafik pertumbuhan</b>
+        <span>Views harian &amp; kumulatif sejak video dirilis, dengan penanda jelas mana data nyata dan mana estimasi.</span>
+      </div>
+      <div class="l-feat">
+        <svg viewBox="0 0 24 24"><path d="M17 4V2h-2v2h-6V2H7v2H3v6c0 2.2 1.8 4 4 4h.5A5.5 5.5 0 0 0 11 16.9V19H8v2h8v-2h-3v-2.1a5.5 5.5 0 0 0 3.5-2.9H17c2.2 0 4-1.8 4-4V4h-4zM5 10V6h2v6c-1.1 0-2-.9-2-2zm14 0c0 1.1-.9 2-2 2V6h2v4z"/></svg>
+        <b>Milestone &amp; prediksi</b>
+        <span>Kira-kira kapan artismu menyentuh 100 jt, 500 jt, atau 1 mlr views — dihitung dari tren terbaru.</span>
+      </div>
+      <div class="l-feat">
+        <svg viewBox="0 0 24 24"><path d="M11 21h-1l1-7H7.5c-.6 0-.6-.3-.6-.6 0-.2.1-.3.1-.4L13 3h1l-1 7h3.5c.5 0 .7.3.5.7L11 21z"/></svg>
+        <b>Update otomatis 2×/hari</b>
+        <span>Rekaman rutin oleh GitHub Actions tanpa perlu membuka YouTube — grafik makin lengkap setiap hari.</span>
+      </div>
+    </div>
+    <button class="l-cta" id="enterBtn">Masuk Sekarang<svg viewBox="0 0 24 24"><path d="M8.6 5.4 10.2 4l7.8 8-7.8 8-1.6-1.4L14.8 12z"/></svg></button>
+    <p class="l-foot">Data publik dari YouTube · Gratis tanpa iklan · Dibuat untuk penggemar K-pop</p>
+  </div>
+</div>
 
 <header>
   <div class="hwrap">
@@ -498,7 +582,10 @@ function renderVideos() {
   const art = artistOf(state.artist);
   const chips = $("#catChips");
   const counts = {};
-  for (const [id, v] of Object.entries(state.videos || {})) if (v.channel === state.artist) counts[v.category] = (counts[v.category] || 0) + 1;
+  const watched = watchedIds();
+  for (const [id, v] of Object.entries(state.videos || {})) {
+    if (v.channel === state.artist && watched.has(id)) counts[v.category] = (counts[v.category] || 0) + 1;
+  }
   const cats = [["all", "Semua"], ...Object.entries(state.config.categories)];
   chips.innerHTML = cats.map(([k, label]) => {
     const n = k === "all" ? Object.values(counts).reduce((a, b) => a + b, 0) : counts[k] || 0;
@@ -604,6 +691,7 @@ function openDetail(vid) {
 
     <div class="sect">
       <h3>Views ditambahkan per hari</h3>
+      <div class="legend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span><span><i class="sw" style="background:${art.color}55"></i>Estimasi</span></div>
       <div class="rangewrap" id="dailyRange">
         <button class="rangebtn ${state.dailyRange === "60" ? "active" : ""}" data-r="60">60 hari</button>
         <button class="rangebtn ${state.dailyRange === "365" ? "active" : ""}" data-r="365">1 tahun</button>
@@ -614,8 +702,9 @@ function openDetail(vid) {
 
     <div class="sect">
       <h3>Total views (sejak rilis)</h3>
+      <div class="legend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span><span><i class="sw" style="background:${art.color}55"></i>Estimasi</span></div>
       <div class="chartbox"><canvas id="chartCum"></canvas></div>
-      <p class="note">Batang transparan dan garis putus-putus = <b>estimasi</b> — dihitung dari tanggal rilis + views terkini (sebagian dari arsip Wayback Machine bila tersedia). Titik/batang solid = pengukuran nyata yang terus menimpa estimasi setiap putaran GitHub Actions.</p>
+      <p class="note">Batang/garis transparan &amp; putus-putus = <b>estimasi</b> — dibangun otomatis dari tanggal rilis + views terkini (sebagian berbekal arsip Wayback Machine). Batang/garis solid = <b>pengukuran nyata</b> yang diambil langsung dari YouTube tiap putaran GitHub Actions (2× sehari) dan menimpa estimasi. YouTube tidak menyediakan riwayat harian untuk publik (hanya pemilik channel bisa melihatnya di YouTube Studio), jadi masa sebelum pemantauan dimulai memang berupa estimasi — makin lama situs berjalan, makin panjang data nyatanya.${realPts.length ? `<br>Data nyata video ini mulai terekam: <b>${fmtTs(realPts[0].t)}</b>${watched != null ? ` — sejauh itu sudah ${NF.format(watched)} hari terpantau` : ""}.` : ""}</p>
     </div>
 
     <div class="sect">
@@ -871,6 +960,7 @@ function openChannel(artId) {
       <button class="rangebtn ${state.chanRange === "all" ? "active" : ""}" data-r="all">Sejak channel dibuat</button>
       ${hasZoom ? `<button class="zoomreset" id="chanZoomReset" title="Kembalikan zoom">Reset zoom</button>` : ""}
     </div>
+    <div class="legend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span><span><i class="sw" style="background:${art.color}55"></i>Estimasi</span></div>
     <div class="chartbox" style="margin-bottom:12px"><canvas id="chanLine"></canvas></div>
     <div class="chartbox"><canvas id="chanBar"></canvas></div>
     <p class="note">Garis/batang transparan dan putus-putus = <b>estimasi</b> — dibangun dari tanggal channel dibuat + angka terkini (model pertumbuhan; BM 28 Des 2022, TREASURE 8 Feb 2019). Titik/batang solid = pengukuran nyata yang menimpa estimasi setiap putaran GitHub Actions.${hasZoom ? " Scroll di atas grafik = zoom, tarik = geser." : ""}</p>
@@ -964,6 +1054,41 @@ $("#themeBtn").addEventListener("click", () => {
   }
 });
 
+/* ===================== landing (halaman pembuka) ===================== */
+let landing = document.getElementById("landing");
+const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function applySiteTitle() {
+  const t = state.config ? state.config.site : { title: "K-POP PULSE", subtitle: "Statistik YouTube Artis K-pop" };
+  $("#siteTitle").childNodes[0].textContent = t.title + " ";
+  $("#siteSubtitle").textContent = t.subtitle;
+  document.title = `${t.title} — ${t.subtitle}`;
+}
+
+function hideLanding(instant) {
+  if (!landing || landing.dataset.gone) return;
+  landing.dataset.gone = "1";
+  document.body.classList.remove("landing-open");
+  if (instant || prefersReduced) {
+    landing.remove();
+  } else {
+    landing.classList.add("out");
+    setTimeout(() => landing.remove(), 500);
+  }
+  landing = null;
+  applySiteTitle();
+}
+
+// deep-link (#v= / #c=) langsung masuk tanpa landing
+if (landing && /^#(v|c)=/.test(location.hash)) { landing.remove(); landing = null; }
+if (landing) document.body.classList.add("landing-open");
+
+const enterBtn = document.getElementById("enterBtn");
+if (enterBtn) enterBtn.addEventListener("click", () => hideLanding(false));
+document.addEventListener("keydown", (e) => {
+  if (landing && (e.key === "Enter" || e.key === "Escape")) hideLanding(false);
+});
+
 /* ===================== init ===================== */
 function renderAll() {
   renderTabs();
@@ -1007,10 +1132,8 @@ function renderTopline() {
     return;
   }
 
-  // judul situs dari config
-  $("#siteTitle").childNodes[0].textContent = state.config.site.title + " ";
-  $("#siteSubtitle").textContent = state.config.site.subtitle;
-  document.title = `${state.config.site.title} — ${state.config.site.subtitle}`;
+  // judul situs dari config (saat landing masih tampil, judul tab tetap generik)
+  if (!landing) applySiteTitle();
   if (state.config.site.repo_url) $("#repoLink").href = state.config.site.repo_url;
 
   if (!state.artist || !artistOf(state.artist)) state.artist = state.config.artists[0].id;

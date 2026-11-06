@@ -1,22 +1,23 @@
-# Pemantau YouTube (versi GitHub) — BABYMONSTER × TREASURE
+# K-POP PULSE (versi GitHub) — Statistik YouTube Artis K-pop
 
-Statistik YouTube dua artis — **BABYMONSTER** dan **TREASURE** — direkam otomatis **2× sehari** oleh GitHub Actions, lalu ditampilkan sebagai situs grafik ala bm-tracker: jumlah views, likes, subscriber, pertumbuhan harian, sampai perkiraan tanggal tembus milestone.
+Situs statistik YouTube untuk artis K-pop — saat ini berisi **BABYMONSTER** dan **TREASURE** — direkam otomatis **2× sehari** oleh GitHub Actions, lalu ditampilkan sebagai situs grafik: jumlah views, likes, subscriber, pertumbuhan harian, sampai perkiraan tanggal tembus milestone. Dibuka pertama kali, pengunjung disambut **halaman pembuka (landing page)** bergaya situs K-pop generik sebelum masuk ke pemantau.
 
 **Tidak perlu server, tidak perlu VPS.** Semuanya berjalan gratis di GitHub: Actions merekam data, Pages menayangkannya.
 
 ## Fitur
 
+- **Halaman pembuka (landing) generik** bertema K-pop — tidak menampilkan artis mana pun sebelum tombol "Masuk Sekarang" ditekan
 - **Dua artis** dalam satu situs (tab BABYMONSTER / TREASURE) — mudah ditambah artis lain
 - **Kartu channel bisa diklik** → modal detail channel: subscriber, total ditonton, jumlah video, rata-rata sub/hari
 - **Grafik pertumbuhan channel SEJAK CHANNEL DIBUAT** (BM 28 Des 2022, TREASURE 8 Feb 2019) — interaktif: hover tooltip, tombol rentang (60 hari / 1 tahun / sejak dibuat), zoom scroll & geser (tarik), metrik subscriber/total views
-- **65 video terpantau**: MV resmi + Dance Practice penuh + **Dance Performance Video** lagu sendiri (tanpa focus cut, solo practice, cover, stage practice, live/concert, versi JP/RAW, dll.)
+- **82 video terpantau**: MV resmi + Dance Practice penuh + **video performa lagu sendiri** (Dance Performance / Performance Video / Exclusive & Special Performance Video) — tanpa video solo member, focus cut, cover lagu orang lain, stage practice, live/concert, versi JP/RAW, highlight, teaser, behind, dll.
 - **Grafik per video SEJAK TANGGAL RILIS ASLI**: views kumulatif + views ditambahkan per hari (60 hari / 1 tahun / sejak rilis)
 - **Likes ditampilkan** sesuai YouTube (dari API; muncul begitu pengukuran pertama berhasil)
-- **Pembeda data nyata vs estimasi**: garis putus-putus/batang transparan = estimasi, titik solid = pengukuran nyata
+- **Pembeda data nyata vs estimasi**: legenda + garis putus-putus/batang transparan = estimasi, titik solid = pengukuran nyata, plus catatan penjelas
 - **Milestone & prediksi**: perkiraan tanggal tembus 500 jt, 1 M dsb. (berdasarkan rata-rata 7 hari)
 - **Mode gelap/terang** dengan tombol toggle
 - Seluruh antarmuka berbahasa Indonesia
-- **Deteksi rilis baru otomatis**: MV/dance practice baru yang diunggah ke channel langsung masuk daftar; konten non-MV otomatis diabaikan
+- **Deteksi rilis baru otomatis**: MV/dance practice/performance video baru yang diunggah ke channel langsung masuk daftar; video solo member & konten non-performa otomatis diabaikan
 
 ## Cara kerja singkat
 
@@ -88,8 +89,9 @@ Edit `config.json`:
 - `category` pilihan: `mv`, `dance_practice`, `dance_performance`
 - `published` (opsional): tanggal rilis `YYYY-MM-DD` — dipakai untuk estimasi awal, dikoreksi otomatis oleh API
 - `channel_id` ada di URL channel YouTube (bagian setelah `/channel/`)
-- Video **MV / dance practice / dance performance baru** yang diunggah ke channel sudah otomatis terdeteksi; menambah lewat `config.json` hanya perlu kalau ingin memantau video lama/khusus.
-- Yang otomatis diabaikan: teaser, focus cut, solo dance practice/performance, cover lagu orang lain, stage practice, live/concert performance, performance film/eksklusif, versi JP/RAW, behind, dll. **"DANCE PERFORMANCE VIDEO" untuk lagu sendiri tetap dipantau** (kategori `dance_performance`).
+- Video **MV / dance practice / performance video baru** yang diunggah ke channel sudah otomatis terdeteksi; menambah lewat `config.json` hanya perlu kalau ingin memantau video lama/khusus.
+- Yang otomatis diabaikan: teaser, highlight, focus cut, **video solo member** (mis. judul "... of TREASURE", solo dance practice/performance), cover lagu orang lain, stage practice, live/concert performance, versi JP/RAW, behind/making, clip promosi, dsb.
+- Yang **dipantau** (kategori `dance_performance`): *Dance Performance Video*, *Performance Video*, *Exclusive Performance Video*, dan *Special Performance Video* untuk lagu grup sendiri.
 
 ## Mengganti jadwal
 
@@ -132,7 +134,7 @@ Setiap kali Actions merekam angka baru, estimasi pada hari itu **ditimpa data ny
 
 **Kenapa likes kadang masih "–"?** Likes diambil dari `statistics.likeCount` (YouTube Data API — secret `YT_API_KEY`) atau dari endpoint publik YouTube saat mode scraping. Likes tampil otomatis pada putaran pertama setelah versi ini dipasang — kartu, modal, dan rasio likes/1.000 views langsung terisi untuk BM maupun TREASURE.
 
-**Angka di awal sedikit meleset (subscriber dibulatkan, tanggal rilis perkiraan)?** Titik data awal berasal dari cuplikan halaman publik YouTube yang dibulatkan (mis. "425 jt views"). Begitu workflow dijalankan dengan API key, semua angka dan tanggal rilis diperbarui ke nilai persis dari YouTube Data API dan seluruh kurva menyesuaikan otomatis.
+**Kenapa ada angka estimasi? Bisa lihat yang real?** YouTube **tidak menyediakan** riwayat views harian untuk publik (hanya pemilik channel bisa melihatnya di YouTube Studio), jadi rincian per-hari masa lalu memang diestimasi — ditandai batang transparan/garis putus-putus + legenda "Estimasi". Yang **selalu nyata**: total views, likes, subscriber saat ini, dan semua titik solid (pengukuran langsung dari YouTube API 2× sehari sejak situs berjalan). Makin lama situs dipasang, makin panjang bagian nyatanya.
 
 ---
 Dibuat dengan GitHub Actions + GitHub Pages

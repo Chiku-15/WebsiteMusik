@@ -1,8 +1,8 @@
 {
   "site": {
-    "title": "Pemantau YouTube",
-    "subtitle": "BABYMONSTER × TREASURE",
-    "description": "Statistik YouTube otomatis (views, likes, subscriber) yang direkam 2x sehari oleh GitHub Actions.",
+    "title": "K-POP PULSE",
+    "subtitle": "Statistik YouTube Artis K-pop",
+    "description": "Pantau views, likes, subscriber, grafik pertumbuhan harian & prediksi milestone artis K-pop favoritmu. Data direkam otomatis 2x sehari oleh GitHub Actions.",
     "timezone": "Asia/Jakarta"
   },
   "schema_note": "published = tanggal rilis UTC; dikoreksi otomatis dari YouTube API pada setiap putaran collect.js.",
@@ -22,17 +22,10 @@
       "exclude_ids": [
         "46GMs-4TayE",
         "8Gn8EksHj_8",
-        "B1gDCOTpDzA",
         "Cof2_dZwxY8",
         "FinTVHCeYBo",
-        "Gz_yRl6703c",
-        "IApenpQjcuI",
-        "LYbHsAsj6i8",
-        "M8r3x4Re8-I",
-        "MN2RlOy8y8k",
         "QqvZAUEOrAQ",
         "R5KZon9z5_c",
-        "SsuCimm5BIU",
         "UJW5gsnkq7M",
         "V1t84JWsdtk",
         "YzBNFKaAv3M",
@@ -40,16 +33,10 @@
         "bYS1zIC3gDE",
         "buxrq6ZLpr4",
         "cVUZy1MhGDw",
-        "cxhqqpVk65Q",
-        "frV8cZ_yA_4",
         "gaDP9GDHeVw",
-        "kOanBE5Wg24",
         "kmwrN2HDgJs",
-        "o9V8HrgJgIg",
         "pvpRC17TbnM",
-        "sdCLxCkXM1M",
-        "wqSHogLRtJI",
-        "yAXnEHFKKaY"
+        "sdCLxCkXM1M"
       ],
       "videos": [
         {
@@ -189,6 +176,84 @@
           "category": "dance_performance",
           "published": "2025-07-09",
           "featured": false
+        },
+        {
+          "id": "kOanBE5Wg24",
+          "category": "dance_performance",
+          "published": "2024-04-24",
+          "featured": false
+        },
+        {
+          "id": "M8r3x4Re8-I",
+          "category": "dance_performance",
+          "published": "2024-06-04",
+          "featured": false
+        },
+        {
+          "id": "cxhqqpVk65Q",
+          "category": "dance_performance",
+          "published": "2024-11-05",
+          "featured": false
+        },
+        {
+          "id": "frV8cZ_yA_4",
+          "category": "dance_performance",
+          "published": "2024-11-02",
+          "featured": false
+        },
+        {
+          "id": "B1gDCOTpDzA",
+          "category": "dance_performance",
+          "published": "2024-11-05",
+          "featured": false
+        },
+        {
+          "id": "IApenpQjcuI",
+          "category": "dance_performance",
+          "published": "2024-11-04",
+          "featured": false
+        },
+        {
+          "id": "MN2RlOy8y8k",
+          "category": "dance_performance",
+          "published": "2025-10-14",
+          "featured": false
+        },
+        {
+          "id": "Gz_yRl6703c",
+          "category": "dance_performance",
+          "published": "2025-10-23",
+          "featured": false
+        },
+        {
+          "id": "o9V8HrgJgIg",
+          "category": "dance_performance",
+          "published": "2025-10-17",
+          "featured": false
+        },
+        {
+          "id": "yAXnEHFKKaY",
+          "category": "dance_performance",
+          "published": "2025-12-06",
+          "featured": false
+        },
+        {
+          "id": "wqSHogLRtJI",
+          "category": "dance_performance",
+          "published": "2026-05-11",
+          "featured": false
+        },
+        {
+          "id": "SsuCimm5BIU",
+          "category": "dance_performance",
+          "published": "2026-07-02",
+          "featured": false
+        },
+        {
+          "id": "LYbHsAsj6i8",
+          "category": "dance_performance",
+          "published": "2026-08-08",
+          "featured": false
         }
       ]
     },
@@ -201,10 +266,9 @@
       "created": "2019-02-08",
       "exclude_ids": [
         "3E7rLh2Jd6Q",
-        "4bBczzrciP0",
-        "EKHd0OgwabY",
         "GtCvi67kQ9Y",
         "J_1zJ4ka37A",
+        "k-U9YOXG4Qg",
         "MEA62eluCuI",
         "M_J8awMzJ7Y",
         "OsdZxD3TCSs",
@@ -212,10 +276,8 @@
         "VOapML6KyWE",
         "Vke_Vl4DNfo",
         "fLifNUFAYOg",
-        "g2i5hKKMaS0",
         "hhV1QDQoXCM",
         "iDcDsVHYuxg",
-        "nDhIZIGz0xo",
         "oLstWoMF4Pc",
         "rP8fq4x2tEo",
         "u01r0O5WsEo",
@@ -232,12 +294,6 @@
           "category": "mv",
           "published": "2020-08-07",
           "featured": true
-        },
-        {
-          "id": "k-U9YOXG4Qg",
-          "category": "mv",
-          "published": "2020-06-05",
-          "featured": false
         },
         {
           "id": "_hFarg-Obuc",
@@ -477,6 +533,30 @@
           "id": "WL5PnZkZ7oM",
           "category": "dance_performance",
           "published": "2026-06-08",
+          "featured": false
+        },
+        {
+          "id": "EKHd0OgwabY",
+          "category": "dance_performance",
+          "published": "2020-09-04",
+          "featured": false
+        },
+        {
+          "id": "g2i5hKKMaS0",
+          "category": "dance_performance",
+          "published": "2020-11-09",
+          "featured": false
+        },
+        {
+          "id": "4bBczzrciP0",
+          "category": "dance_performance",
+          "published": "2022-03-25",
+          "featured": false
+        },
+        {
+          "id": "nDhIZIGz0xo",
+          "category": "dance_performance",
+          "published": "2022-10-30",
           "featured": false
         }
       ]

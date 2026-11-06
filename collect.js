@@ -220,11 +220,19 @@ function buildEstimatedSeries(publishedISO, currentV, measuredT, opts = {}) {
   for (let d = 0; d < D; d++) w[d] = Math.max(1e-9, w[d] * (1 + jitter(seed, d)));
   let total = 0;
   for (let d = 0; d < D; d++) total += w[d];
+  // hari berjalan (parsial) ikut dinormalisasi supaya jangkar tepat di waktu pengukuran:
+  // cum(akhir kemarin) < currentV, dan titik jangkar (e:1) di-push di t=measuredT.
+  // Tanpa ini, delta "kemarin" pada video yang baru dipantau selalu 0.
+  const fracDay = Math.min(1, Math.max(0.05, (measuredT - (t0 + D * 86400)) / 86400));
+  const wTail = w.slice(Math.max(0, D - 7)).reduce((a, b) => a + b, 0) / Math.max(1, Math.min(7, D));
+  const totalAll = total + wTail * fracDay;
   // views kumulatif per hari, lalu emisi per bucket kalender (delta bulan/minggu akurat)
   const cumDays = new Array(D);
   let run = 0;
-  for (let d = 0; d < D; d++) { run += w[d]; cumDays[d] = Math.round((currentV * run) / total); }
+  for (let d = 0; d < D; d++) { run += w[d]; cumDays[d] = Math.round((currentV * run) / totalAll); }
   emitCalendarBuckets(t0, D, (i) => cumDays[i], out, 1);
+  // jangkar estimasi tepat di waktu pengukuran (ditimpa titik nyata di hari yang sama saat merge)
+  out.push({ t: measuredT, v: currentV, l: null, e: 1 });
   // titik nol tepat sebelum hari rilis: supaya delta bucket pertama (bulan/hari rilis)
   // muncul sebagai batang di grafik "views ditambahkan", bukan hilang begitu saja
   out.unshift({ t: t0 - 1, v: 0, l: null, e: 1 });
@@ -539,13 +547,14 @@ function isoDurationToSeconds(iso) {
 // ---------- klasifikasi judul ----------
 /* Konten non-MV / non-dance TIDAK dipantau (permintaan pengguna): focus cut, solo
  * practice/performance, cover lagu orang lain, stage practice, live/concert performance,
- * performance video/film/eksklusif/spesial, versi JP/anime/RAW, remix, behind, dsb.
- * "DANCE PERFORMANCE VIDEO" lagu sendiri kini DIPANTAU (kategori dance_performance). */
+ * versi JP/anime/RAW, highlight/teaser/behind/making, clip promosi, dsb.
+ * DIPANTAU: M/V, DANCE PERFORMANCE VIDEO, PERFORMANCE VIDEO, EXCLUSIVE/SPECIAL
+ * PERFORMANCE VIDEO (lagu sendiri, bukan solo) — kategori dance_performance. */
 const RE_EXCLUDE =
-  /focus\s*cut|solo\s*dance|solo\s*performance|solo\s*ver\.?|choreography|dance\s*cover|stage\s*practice|stage\s*cam|fancam|live\s*performance|(?<!dance\s)performance\s*video|performance\s*film|special\s*performance|exclusive\s*performance|japanese\s*ver\.?|-?jp\s*ver\.?|japan\s*ver\.?|raw\s*version|raw\s*ver\.?|anime|concert|making|behind|teaser|trailer|visual\s*film|jacket|mashup|reaction|highlight|reply\b|countdown|spoiler|preview\b|episode\b|commentary|shorts\b|out now|watch now|remix|part\s*switch|eye\s*contact|drake|a\$ap|lil pump|timtim|jenny from the block|回应|リリース/i;
+  /focus\s*cut|solo\s*dance|solo\s*performance|solo\s*ver\.?|choreography|dance\s*cover|stage\s*practice|stage\s*cam|fancam|live\s*performance|performance\s*film|japanese\s*ver\.?|-?jp\s*ver\.?|japan\s*ver\.?|\bjapan\b|raw\s*version|raw\s*ver\.?|anime|concert|making|behind|teaser|trailer|visual\s*film|jacket|mashup|reaction|highlight|reply\b|countdown|spoiler|preview\b|episode\b|commentary|shorts\b|out now|watch now|part\s*switch|eye\s*contact|drake|a\$ap|lil pump|timtim|jenny from the block|vocal\s*clip|close[-\s]?up|d[-\s]?day\b|hits\s*\d+|teumecam|\bof\s+treasure\b|응원법|비하인드|매거진|촬영|포커스|回应|リリース/i;
 const RE_MV = /\bm\s*\/\s*v\b/i;
 const RE_PRACTICE = /dance\s*practice|practice\s*video/i;
-const RE_DANCE_PERF = /dance\s*performance/i;
+const RE_DANCE_PERF = /dance\s*performance|performance\s*video/i;
 
 function classifyTitle(title) {
   if (!title || RE_EXCLUDE.test(title)) return null;
