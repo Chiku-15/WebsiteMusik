@@ -288,13 +288,24 @@ function buildChannelSeries(createdISO, measuredT, metrics, opts = {}) {
 /*
  * thinSeries — pangkas titik lama (bukan 100 hari terakhir) agar total <= cap.
  * Grafik bulanan tetap akurat; detail harian tetap utk 100 hari terakhir.
+ * Titik penutup bulan TIDAK pernah dipangkas (dulu video tua kehilangan titik akhir
+ * bulan -> batang beberapa bulan hilang / delta bulan melompat).
  */
+function monthKeyOf(t) {
+  const x = new Date((t + 7 * 3600) * 1000); // zona WIB
+  return x.getUTCFullYear() * 12 + x.getUTCMonth();
+}
 function thinSeries(pts, cap = EST_CAP, keepRecent = EST_KEEP_DAILY) {
   if (pts.length <= cap) return pts;
   const head = pts.slice(0, pts.length - keepRecent);
   const tail = pts.slice(pts.length - keepRecent);
   const step = Math.max(1, Math.ceil(head.length / Math.max(1, cap - keepRecent)));
-  return head.filter((_, i) => i % step === 0).concat(tail);
+  const out = head.filter((p, i) => {
+    if (i % step === 0) return true;
+    const nx = head[i + 1] || tail[0]; // titik terakhir head dibandingkan dgn awal tail
+    return nx && monthKeyOf(nx.t) !== monthKeyOf(p.t); // penutup bulan selalu disimpan
+  });
+  return out.concat(tail);
 }
 
 /*
@@ -314,9 +325,16 @@ function rebuildVideoEstimates(rec, id) {
   const last = reals[reals.length - 1];
   if (!(last.v > 0)) return;
   let est;
-  if (reals.length >= 3) {
-    // laju harian terukur tepat setelah jangkar pertama -> sambungan estimasi mulus
-    const g = rateBetween(reals[0], reals[1]) || undefined;
+  if (reals.length >= 2) {
+    // Jangkar >= 2 (milestone resmi / arsip Wayback / pengukuran lama + titik terbaru):
+    // segmen rilis->jangkar pertama mengikuti model, sisanya diinterpolasi PCHIP antar
+    // jangkar — TIDAK ada celah kosong lagi. Celah kosong dulu bikin grafik bulanan salah:
+    // seluruh delta antar jangkar dijatuhkan ke bulan titik terakhir (batang NOVEMBER
+    // raksasa) dan bulan-bulan di antaranya kosong (kasus 'IF I' cuma 2 batang).
+    // laju harian dipakai sbg bentuk sambung hanya bila jangkar pertama berdekatan;
+    // kalau jaraknya jauh, rata-rata antar jangkar menyesatkan -> biarkan model pilih sendiri
+    const gGap = reals[1] && reals[1].t - reals[0].t <= 60 * 86400 ? rateBetween(reals[0], reals[1]) : null;
+    const g = gGap || undefined;
     const anchors = reals.slice(0, -1).map((p) => ({ t: p.t, v: p.v, w: p.w }));
     est = thinSeries(buildAnchoredSeries(rec.published, anchors, last.v, last.t, { g, seed: id }));
   } else {
@@ -842,23 +860,30 @@ async function scrapeChannel(handle) {
 }
 
 async function scrapePlaylistPage(plId, continuation, clientVersion) {
-  let html;
+  let text;
   if (!continuation) {
-    html = await fetchText(`https://www.youtube.com/playlist?list=${plId}&hl=en&gl=US`);
+    text = await fetchText(`https://www.youtube.com/playlist?list=${plId}&hl=en&gl=US`);
   } else {
     const body = {
       context: { client: { clientName: "WEB", clientVersion: clientVersion || "2.20260101.00.00", hl: "en", gl: "US" } },
       continuation,
     };
-    html = await fetchText("https://www.youtube.com/youtubei/v1/browse?prettyPrint=false", {
+    text = await fetchText("https://www.youtube.com/youtubei/v1/browse?prettyPrint=false", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
   }
-  const data = extractYtInitialData(html);
+  /* Respons continuation adalah JSON murni — bukan halaman HTML. Dulu selalu diurai
+   * sbg ytInitialData sehingga halaman 2+ kosong (temuan audit kelengkapan MV). */
+  const trimmed = String(text).replace(/^\uFEFF/, "").trimStart();
+  let data = null;
+  if (trimmed.startsWith("{")) {
+    try { data = JSON.parse(trimmed); } catch { data = null; }
+  }
+  if (!data) data = extractYtInitialData(text);
   if (!data) return { items: [], tokens: [], clientVersion };
-  const cv = /"clientVersion":"([\d.]+)"/.exec(html);
+  const cv = /"clientVersion":"([\d.]+)"/.exec(text) || /"clientVersion":"([\d.]+)"/.exec(trimmed);
   const rends = [];
   collectRenderers(data, rends);
   const tokens = [];
