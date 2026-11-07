@@ -1,0 +1,46 @@
+{
+ "babymonster": {
+  "id": "babymonster",
+  "name": "BABYMONSTER",
+  "spotifyId": "1SIocsqdEefUTE6XKGUiVS",
+  "color": "#ff4d6d",
+  "image": "https://image-cdn-ak.spotifycdn.com/image/ab676161000051747eed59dfba0a93af631a6654",
+  "monthlyListeners": 8070662,
+  "mlDelta": -12701,
+  "followers": null,
+  "totalStreams": 2566592807,
+  "dailyStreams": 3187115,
+  "trackCount": 43,
+  "history": [
+   {
+    "t": 1794026902,
+    "total": 2566592807,
+    "daily": 3187115,
+    "ml": 8070662
+   }
+  ],
+  "openUrl": "https://open.spotify.com/artist/1SIocsqdEefUTE6XKGUiVS"
+ },
+ "treasure": {
+  "id": "treasure",
+  "name": "TREASURE",
+  "spotifyId": "3KonOYiLsU53m4yT7gNotP",
+  "color": "#38bdf8",
+  "image": "https://image-cdn-ak.spotifycdn.com/image/ab67616100005174946efd7262fe76ff1f08e776",
+  "monthlyListeners": null,
+  "mlDelta": null,
+  "followers": null,
+  "totalStreams": 1725526487,
+  "dailyStreams": 493940,
+  "trackCount": 158,
+  "history": [
+   {
+    "t": 1794026909,
+    "total": 1725526487,
+    "daily": 493940,
+    "ml": null
+   }
+  ],
+  "openUrl": "https://open.spotify.com/artist/3KonOYiLsU53m4yT7gNotP"
+ }
+}

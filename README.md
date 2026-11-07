@@ -1,6 +1,6 @@
-# K-POP PULSE (versi GitHub) — Statistik YouTube Artis K-pop
+# K-POP PULSE (versi GitHub) — Statistik YouTube & Spotify Artis K-pop
 
-Situs statistik YouTube untuk artis K-pop — saat ini berisi **BABYMONSTER** dan **TREASURE** — direkam otomatis **2× sehari** oleh GitHub Actions, lalu ditampilkan sebagai situs grafik: jumlah views, likes, subscriber, pertumbuhan harian, sampai perkiraan tanggal tembus milestone. Dibuka pertama kali, pengunjung disambut **halaman pembuka (landing page)** bergaya situs K-pop generik, lalu masuk ke **Beranda** berisi papan peringkat lagu paling banyak ditonton, video yang sedang tren, rilisan terbaru, dan ringkasan channel — sebelum menjelajah halaman tiap artis.
+Situs statistik **YouTube + Spotify** untuk artis K-pop — saat ini berisi **BABYMONSTER** dan **TREASURE** — direkam otomatis **2× sehari** oleh GitHub Actions, lalu ditampilkan sebagai situs grafik: jumlah views, likes, subscriber, stream Spotify, pertumbuhan harian, sampai perkiraan tanggal tembus milestone. Ada **dua tombol platform di header — YouTube dan Spotify** — cukup tekan untuk berganti (model seperti bm-tracker.com). Dibuka pertama kali, pengunjung disambut **halaman pembuka (landing page)** bergaya situs K-pop generik, lalu masuk ke **Beranda** berisi papan peringkat lagu paling banyak ditonton/di-stream, video/lagu yang sedang naik, rilisan terbaru, dan ringkasan channel — sebelum menjelajah halaman tiap artis.
 
 **Tidak perlu server, tidak perlu VPS.** Semuanya berjalan gratis di GitHub: Actions merekam data, Pages menayangkannya.
 
@@ -29,29 +29,44 @@ Situs statistik YouTube untuk artis K-pop — saat ini berisi **BABYMONSTER** da
 - Seluruh antarmuka berbahasa Indonesia
 - **Deteksi rilis baru otomatis**: MV/dance practice/performance video baru yang diunggah ke channel langsung masuk daftar; video solo member & konten non-performa otomatis diabaikan
 
+### Bagian Spotify (tombol “Spotify” di header)
+
+- **Toggle YouTube ⇄ Spotify** di header lengkap dengan hitungan item yang dipantau — model seperti bm-tracker (YouTube (81) | Spotify (167)); pilihan artis & tema ikut terbawa saat berganti
+- **Beranda Spotify**: total stream gabungan, stream 24 jam, papan peringkat **lagu paling banyak di-stream** (semua versi digabung: remix/ver. JP dihitung satu entri, versi live dipisah tanda Live), berita **milestone** (tercapai 30 hari terakhir + target terdekat beserta perkiraan tanggalnya), **pertumbuhan harian tertinggi**, dan kartu artis
+- **Halaman artis Spotify**: total stream, stream/hari, **pendengar per bulan** + delta mingguan, followers (opsional), daftar **album/EP/singel lengkap dengan tipe (Single/EP/Album/Live), tanggal rilis, total stream & delta harian** — klik album untuk membuka daftar lagu dengan bar progres menuju milestone berikutnya, plus **kotak pencarian lagu**
+- **Modal lagu Spotify**: total stream (gabungan semua versi/ID), delta 24 jam, rata-rata 7 hari, grafik kumulatif sejak rilis (terukur vs estimasi), chip milestone tercapai, tabel prediksi milestone berikutnya
+- **Sumber data Spotify tanpa API key**: angka stream harian dari **Spotify Charts (via kworb.net)**, metadata album/track & tanggal rilis dari halaman **embed resmi Spotify** (di-cache). Pendengar per bulan dari daftar global kworb (artis yang masuk daftar). *Opsional*: isi Secret `SPOTIFY_CLIENT_ID` + `SPOTIFY_CLIENT_SECRET` (Spotify Web API) untuk ikut merekam **followers**
+
 ## Cara kerja singkat
 
 ```
 GitHub Actions (07:00 & 19:00 WIB)
-  │ node collect.js → YouTube Data API v3 (pakai Secret YT_API_KEY)
+  │ node collect.js        → YouTube Data API v3 (Secret YT_API_KEY)
+  │ node collect_spotify.js → Spotify Charts via kworb.net + embed Spotify (tanpa API key;
+  │                           opsional Spotify Web API utk followers)
   ▼
-data/*.json (riwayat angka, di-commit oleh github-actions[bot])
+data/*.json + data/spotify-*.json (riwayat angka, di-commit oleh github-actions[bot])
   ▼
-GitHub Pages menayangkan index.html yang membaca data/*.json
+GitHub Pages menayangkan index.html — tombol YouTube/Spotify di header berganti tampilan
 ```
 
 ## Struktur file
 
 | File | Fungsi |
 | --- | --- |
-| `index.html` | Situs (satu file, tanpa build) |
-| `config.json` | Daftar artis, channel, dan video yang dipantau |
-| `collect.js` | Skrip pengambil data (Node.js, tanpa dependensi) |
-| `data/videos.json` | Riwayat views & likes per video (harian sejak rilis) |
+| `index.html` | Situs (satu file, tanpa build) — YouTube & Spotify |
+| `config.json` | Daftar artis, channel, video YouTube, dan album Spotify yang dipantau |
+| `collect.js` | Skrip pengambil data YouTube (Node.js, tanpa dependensi) |
+| `collect_spotify.js` | Skrip pengambil data Spotify (kworb + embed; tanpa dependensi) |
+| `data/videos.json` | Riwayat views & likes per video YouTube (harian sejak rilis) |
 | `data/channels.json` | Riwayat subscriber & total views per channel |
+| `data/spotify-tracks.json` | Riwayat stream per lagu Spotify (semua versi digabung) |
+| `data/spotify-albums.json` | Metadata album/EP/singel + daftar lagunya |
+| `data/spotify-artists.json` | Total stream harian, pendengar/bln, followers, riwayat artis |
+| `data/spotify-meta.json` | Info pembaruan terakhir bagian Spotify |
 | `data/backfill/` | Penanda video yang sudah dibackfill dari arsip |
-| `data/meta.json` | Info pembaruan terakhir |
-| `.github/workflows/collect.yml` | Jadwal pengambilan data (2× sehari) |
+| `data/meta.json` | Info pembaruan terakhir bagian YouTube |
+| `.github/workflows/collect.yml` | Jadwal pengambilan data (2× sehari, YouTube + Spotify dalam satu run) |
 
 ## Cara pasang di GitHub (dari nol)
 
@@ -62,12 +77,13 @@ GitHub Pages menayangkan index.html yang membaca data/*.json
 3. **Simpan API key** sebagai Secret:
  - Buka *Settings → Secrets and variables → Actions → New repository secret*
  - Name: `YT_API_KEY` — Secret: isi API key-mu → *Add secret*
+ - (Opsional, hanya untuk followers Spotify) tambah `SPOTIFY_CLIENT_ID` & `SPOTIFY_CLIENT_SECRET` dari [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard) — tanpa ini bagian Spotify tetap jalan penuh, hanya kartu Followers yang kosong.
 4. **Aktifkan GitHub Pages**:
  - *Settings → Pages → Build and deployment → Source: **Deploy from a branch***
  - Branch: `main`, folder: `/(root)` → *Save*
 5. **Jalankan data pertama**:
- - Buka tab *Actions → Kumpulkan data YouTube → Run workflow → Run workflow*
- - Tunggu ±1 menit sampai selesai; file di `data/` akan terisi.
+ - Buka tab *Actions → Kumpulkan data (YouTube + Spotify) → Run workflow → Run workflow*
+ - Tunggu ±2–5 menit sampai selesai; file di `data/` akan terisi (termasuk `data/spotify-*.json`).
 6. **Buka situsnya**: `https://USERNAME.github.io/pemantau-youtube/`
 7. Selesai! Data berikutnya otomatis terekam **setiap hari pukul 07:00 & 19:00 WIB**.
 
@@ -112,9 +128,9 @@ Edit `.github/workflows/collect.yml` bagian `cron` (zona UTC):
 
 ## Memperbarui repo yang sudah terpasang (versi lama → versi ini)
 
-1. Unduh ZIP terbaru, lalu **ganti semua file** di repo (termasuk seluruh isi `data/`). Cara termudah: hapus file lama di repo, unggah semua file baru.
-2. Jalankan sekali *Actions → Kumpulkan data YouTube → Run workflow*.
-3. Selesai — grafik langsung penuh sejak tanggal rilis; angka presisi dari API menimpa estimasi mulai putaran pertama.
+1. Unduh ZIP terbaru, lalu **ganti semua file** di repo (termasuk seluruh isi `data/`). Cara termudah: hapus file lama di repo, unggah semua file baru. File baru di versi ini: `collect_spotify.js`, `data/spotify-*.json`, dan `config.json` yang menambah field Spotify per artis.
+2. Jalankan sekali *Actions → Kumpulkan data (YouTube + Spotify) → Run workflow*.
+3. Selesai — tombol **Spotify** di header langsung berisi data (167 lagu, 23 album BM & TREASURE per 7 Nov 2026), grafik YouTube pun langsung penuh sejak tanggal rilis.
 
 > Kalau kamu hanya mengganti `collect.js`/`config.json`/`index.html` dan membiarkan `data/` lama: tidak apa-apa. `collect.js` versi ini melakukan **migrasi otomatis** (schema v3) — titik estimasi lama dibangun ulang dengan model terbaru, titik data lama yang tidak valid dibuang, hanya titik terukur yang rapat/21 hari terakhir yang dipertahankan, lalu estimasi dibangun ulang dari tanggal rilis yang benar. Video yang tidak lagi dipantau otomatis hilang dari grafik.
 
@@ -140,11 +156,15 @@ Setiap kali Actions merekam angka baru, estimasi pada hari itu **ditimpa data ny
 
 **Apakah API key saya aman?** Ya — key disimpan sebagai *repository secret*, tidak ikut ter-commit, dan hanya dipakai di Actions. Situs publik tidak pernah menyentuh key karena data sudah dikumpulkan ke `data/*.json`.
 
+**Dari mana angka Spotify berasal? Apa akurat?** Angka stream per lagu diproses dari **data harian publik Spotify Charts** (via kworb.net — situs rujukan para pelacak streaming), metadata album/track & tanggal rilis dari **halaman embed resmi Spotify**. Total stream gabungan di situs ini sama persis dengan angka yang terlihat di aplikasi Spotify (contoh: SUGAR HONEY ICE TEA 49.025.510 per 7 Nov 2026). Pendengar per bulan hanya tampil saat artis masuk daftar global kworb. Riwayat sebelum situs berjalan diisi estimasi model (ditandai), sama seperti sisi YouTube.
+
 **Grafik sekarang langsung penuh.** Sejak versi ini riwayat diisi dari tanggal rilis (video) dan tanggal channel dibuat (channel) memakai estimasi (lihat "Tentang data historis"). Tanda **(est.)** pada kartu/tooltip berarti angka itu masih berbasis estimasi.
 
 **Kenapa likes kadang masih "–"?** Likes diambil dari `statistics.likeCount` (YouTube Data API — secret `YT_API_KEY`) atau dari endpoint publik YouTube saat mode scraping. Likes tampil otomatis pada putaran pertama setelah versi ini dipasang — kartu, modal, dan rasio likes/1.000 views langsung terisi untuk BM maupun TREASURE.
 
 **Kenapa ada angka estimasi? Bisa lihat yang real?** YouTube **tidak menyediakan** riwayat views harian untuk publik (hanya pemilik channel bisa melihatnya di YouTube Studio), jadi rincian per-hari masa lalu memang diestimasi — ditandai batang transparan/garis putus-putus + legenda "Estimasi". Yang **selalu nyata**: total views, likes, subscriber saat ini, dan semua titik solid (pengukuran langsung dari YouTube API 2× sehari sejak situs berjalan). Makin lama situs dipasang, makin panjang bagian nyatanya.
+
+**Run Actions gagal `! [rejected] main -> main (fetch first)`?** Itu terjadi kalau repo berubah saat run masih berjalan (mis. kamu mengunggah file situs bersamaan dengan run). Versi workflow ini sudah mengatasinya sendiri: sebelum push, bot menarik commit terbaru (`git pull --rebase`) lalu mendorong, dengan 3× percobaan ulang. Tidak ada data yang hilang — cukup jalankan ulang workflow.
 
 ---
 Dibuat dengan GitHub Actions + GitHub Pages
