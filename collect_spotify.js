@@ -123,7 +123,9 @@ function albumTypeOf(note) {
 /** kworb: halaman lagu per artis → {id:{title,total,daily}} */
 function parseKworbSongs(html) {
   const out = {};
-  const re = /<td class="text"><div><a href="https:\/\/open\.spotify\.com\/track\/([A-Za-z0-9]{22})"[^>]*>([\s\S]*?)<\/a><\/div><\/td><td>([\d,]+)<\/td><td>([\d,]+)<\/td>/g;
+  // sel "daily" boleh KOSONG (lagu baru/tidak masuk chart harian terakhir),
+  // contoh: <td>313,696</td><td></td> — karena itu pakai [\d,]* bukan [\d,]+.
+  const re = /<td class="text"><div><a href="https:\/\/open\.spotify\.com\/track\/([A-Za-z0-9]{22})"[^>]*>([\s\S]*?)<\/a><\/div><\/td><td>([\d,]*)<\/td><td>([\d,]*)<\/td>/g;
   let m;
   while ((m = re.exec(html))) {
     out[m[1]] = {
@@ -169,6 +171,41 @@ function coverOf(entity) {
     if (imgs && imgs.length) return imgs[0].url;
   } catch {}
   return null;
+}
+
+/**
+ * fallback monthly listeners dari halaman artis Spotify (HTML SEO untuk bot
+ * pencari: "Listen to TREASURE on Spotify. Artist · 1.8M monthly listeners.").
+ * Dipakai untuk artis yang TIDAK masuk daftar 2.500 besar global kworb.
+ */
+async function fetchMonthlyListenersFallback(spotifyId) {
+  const re = /([0-9][0-9.,]*)\s*([KMB])?\s+monthly listeners/i;
+  const parse = (txt) => {
+    const m = String(txt || "").match(re);
+    if (!m) return null;
+    const n = parseFloat(m[1].replace(/,/g, ""));
+    if (!isFinite(n)) return null;
+    const mul = m[2] === "B" ? 1e9 : m[2] === "M" ? 1e6 : m[2] === "K" ? 1e3 : 1;
+    return Math.round(n * mul);
+  };
+  try {
+    const res = await fetch(`https://open.spotify.com/artist/${spotifyId}`, {
+      headers: {
+        "User-Agent": "Googlebot/2.1 (+http://www.google.com/bot.html)",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+      signal: AbortSignal.timeout ? AbortSignal.timeout(20000) : undefined,
+    });
+    if (!res.ok) return null;
+    const html = await res.text();
+    const md = (html.match(/<meta name="description" content="([^"]*)"/) || [])[1];
+    const v = parse(md) || parse((html.match(/"description":"([^"]*)"/) || [])[1]);
+    if (v) log(`  ↳ monthly listeners dari halaman Spotify: ${v.toLocaleString("en-US")}`);
+    return v;
+  } catch (e) {
+    log("  ! fallback monthly listeners gagal:", String(e).slice(0, 100));
+    return null;
+  }
 }
 
 /* ---------------- riwayat ---------------- */
@@ -238,38 +275,75 @@ async function main() {
   const oldTracksRaw = loadJson("spotify-tracks-raw.json", {});
   const oldArtists = loadJson("spotify-artists.json", {});
 
-  /* --- 0. (opsional) followers via Spotify Web API resmi --- */
+  /* --- 0. followers via Spotify Web API --- */
+  /* Urutan: 1) secret SPOTIFY_CLIENT_ID & SPOTIFY_CLIENT_SECRET (paling andal),
+     2) token anonim pemutar embed Spotify (tanpa key, bisa berubah kapan saja). */
   let followersMap = {};
+  let anonToken = null;
   const cid = process.env.SPOTIFY_CLIENT_ID;
   const csec = process.env.SPOTIFY_CLIENT_SECRET;
-  if (cid && csec) {
+  const artistIds = CONFIG.artists.map((a) => a.spotify_id).filter(Boolean);
+  async function getAnonToken() {
+    if (anonToken) return anonToken;
     try {
-      log("↳ mode: Spotify Web API (followers)");
-      const res = await fetch("https://accounts.spotify.com/api/token", {
-        method: "POST",
-        headers: {
-          Authorization: "Basic " + Buffer.from(cid + ":" + csec).toString("base64"),
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: "grant_type=client_credentials",
+      const res = await fetch("https://open.spotify.com/get_access_token?reason=transport&productType=embed", {
+        headers: { "User-Agent": UA },
+        signal: AbortSignal.timeout ? AbortSignal.timeout(15000) : undefined,
       });
       if (res.ok) {
-        const { access_token } = await res.json();
-        for (const a of CONFIG.artists) {
-          if (!a.spotify_id) continue;
-          const r = await fetch(`https://api.spotify.com/v1/artists/${a.spotify_id}`, {
-            headers: { Authorization: "Bearer " + access_token },
-          });
-          if (r.ok) {
-            const j = await r.json();
-            followersMap[a.id] = (j.followers && j.followers.total) || null;
-          }
-          await sleep(200);
-        }
+        const j = await res.json();
+        if (j && j.accessToken) { anonToken = j.accessToken; return anonToken; }
       }
     } catch (e) {
-      log("  ! followers gagal:", String(e).slice(0, 120));
+      log("  ! token anonim gagal:", String(e).slice(0, 100));
     }
+    return null;
+  }
+  async function fetchFollowers(token) {
+    const r = await fetch(`https://api.spotify.com/v1/artists?ids=${artistIds.join(",")}`, {
+      headers: { Authorization: "Bearer " + token },
+    });
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    const list = (await r.json()).artists || [];
+    for (const j of list) {
+      const a = CONFIG.artists.find((x) => x.spotify_id === j.id);
+      if (a && j.followers && j.followers.total) followersMap[a.id] = j.followers.total;
+    }
+  }
+  if (artistIds.length) {
+    if (cid && csec) {
+      try {
+        log("↳ mode: Spotify Web API (followers) — via secret");
+        const res = await fetch("https://accounts.spotify.com/api/token", {
+          method: "POST",
+          headers: {
+            Authorization: "Basic " + Buffer.from(cid + ":" + csec).toString("base64"),
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: "grant_type=client_credentials",
+        });
+        if (res.ok) {
+          const { access_token } = await res.json();
+          await fetchFollowers(access_token);
+        } else {
+          log("  ! token secret gagal: HTTP " + res.status);
+        }
+      } catch (e) {
+        log("  ! followers gagal:", String(e).slice(0, 120));
+      }
+    } else {
+      log("↳ secret SPOTIFY_CLIENT_ID/SECRET belum diisi → coba token anonim Spotify");
+      try {
+        const tok = await getAnonToken();
+        if (tok) await fetchFollowers(tok);
+      } catch (e) {
+        log("  ! followers (anonim) gagal:", String(e).slice(0, 120));
+      }
+      if (!Object.keys(followersMap).length) {
+        log("  ! followers kosong — isi secret SPOTIFY_CLIENT_ID & SPOTIFY_CLIENT_SECRET di repo untuk mengaktifkannya (lihat README).");
+      }
+    }
+    log(`↳ followers: ${Object.keys(followersMap).length}/${artistIds.length} artis`);
   }
 
   /* --- 1. kworb listeners (monthly listeners) --- */
@@ -574,7 +648,14 @@ async function main() {
     }
 
     /* --- 12. artis --- */
-    const ml = listenersMap[artist.name] || null;
+    let ml = listenersMap[artist.name] || null;
+    let mlApprox = false;
+    if (!ml) {
+      // artis di luar 2.500 besar global kworb → ambil dari halaman Spotify
+      const v = await fetchMonthlyListenersFallback(artist.spotify_id);
+      if (v) { ml = { listeners: v, delta: null }; mlApprox = true; }
+      await sleep(300);
+    }
     const oldArt = oldArtists[artist.id] || {};
     const artHist = (oldArt.history || []).filter((p) => p && p.t && p.total != null);
     artHist.push({ t: tn, total: kworbTotal, daily: kworbDaily, ml: ml ? ml.listeners : null });
@@ -592,6 +673,7 @@ async function main() {
       image: artistImg || oldArt.image || null,
       monthlyListeners: ml ? ml.listeners : null,
       mlDelta: ml ? ml.delta : null,
+      mlApprox: mlApprox || undefined,
       followers: followersMap[artist.id] || oldArt.followers || null,
       totalStreams: kworbTotal,
       dailyStreams: kworbDaily,

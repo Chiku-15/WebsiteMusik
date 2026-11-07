@@ -378,6 +378,34 @@
   .spitem .ic.next{background:color-mix(in srgb,#ffb02e 16%,transparent);color:#ffb02e}
   .spitem .tx{font-size:12.5px;line-height:1.5}
   .spitem .tx b{font-size:13px}
+  /* ---------- bagian milestone penuh (di bawah grid) ---------- */
+  .mscols{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px 22px;align-items:start}
+  .mcolhead{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:800;color:var(--muted);margin:0 2px 10px;text-transform:uppercase;letter-spacing:.6px}
+  .mcolhead .dot{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;font-size:13px;flex:none}
+  .mcolhead .dot.ok{background:color-mix(in srgb,#2fd57b 16%,transparent);color:#2fd57b}
+  .mcolhead .dot.next{background:color-mix(in srgb,#ffb02e 16%,transparent);color:#ffb02e}
+  .mcolhead .cnt{background:var(--chip);border-radius:999px;padding:2px 9px;font-size:11px}
+  .mscards{display:flex;flex-direction:column;gap:8px}
+  .mscard{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:13px;padding:9px 12px;cursor:pointer;transition:.15s;min-width:0}
+  .mscard:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:color-mix(in srgb,#1ed760 40%,var(--border))}
+  .mscover{width:44px;height:44px;border-radius:9px;object-fit:cover;flex:none;border:1px solid var(--border);background:var(--chip)}
+  .mscover.ph{display:grid;place-items:center;color:var(--muted);font-size:16px}
+  .msmain{flex:1;min-width:0}
+  .msname{font-weight:700;font-size:13.5px;display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden}
+  .mssub{font-size:11.5px;color:var(--muted);margin-top:4px;line-height:1.45}
+  .mssub b{color:var(--text)}
+  .msbar{height:5px;border-radius:3px;background:var(--chip);overflow:hidden;margin:7px 0 6px;max-width:300px}
+  .msbar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#1db954,#1ed760)}
+  .msbadge{flex:none;font-size:11px;font-weight:800;padding:5px 11px;border-radius:999px;text-align:center}
+  .msbadge.ok{background:color-mix(in srgb,#2fd57b 14%,transparent);border:1px solid color-mix(in srgb,#2fd57b 38%,transparent);color:#2fd57b}
+  .msbadge.next{background:color-mix(in srgb,#ffb02e 14%,transparent);border:1px solid color-mix(in srgb,#ffb02e 38%,transparent);color:#ffb02e}
+  /* ---------- judul section + kotak total stream ---------- */
+  .secthead{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .secthead h3{margin:4px 0 10px}
+  .charttotal{text-align:right;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:7px 14px 8px;margin:0 0 10px}
+  .charttotal .ctl{font-size:9.5px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:var(--muted)}
+  .charttotal .ctv{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.3}
+  .charttotal .ctd{font-size:11px;color:var(--muted);font-weight:600;margin-top:1px}
   @media (max-width:640px){
     .sprow{grid-template-columns:22px minmax(0,1fr) auto}
     .splbthumb{width:44px}
@@ -1943,7 +1971,7 @@ function renderSpHome(sec) {
   const dl = arts.reduce((s, a) => s + (a.dailyStreams || 0), 0);
   const nAlb = Object.keys(state.sp.albums).length;
   const top = [...withData].sort((a, b) => b.kworb.total - a.kworb.total).slice(0, 10);
-  const naik = [...withData].filter((t) => t.kworb.daily > 0).sort((a, b) => b.kworb.daily - a.kworb.daily).slice(0, 8);
+  const naik = [...withData].filter((t) => t.kworb.daily > 0).sort((a, b) => b.kworb.daily - a.kworb.daily).slice(0, 10);
   const news = spNews();
 
   const lbRow = (t, i) => {
@@ -1976,20 +2004,34 @@ function renderSpHome(sec) {
       <div class="chstats">
         <div class="stat"><div class="k">Total stream</div><div class="v">${fmtCompact(a.totalStreams)}</div><div class="d">&nbsp;</div></div>
         <div class="stat"><div class="k">Per hari</div><div class="v up">+${fmtCompact(a.dailyStreams)}</div><div class="d">&nbsp;</div></div>
-        <div class="stat"><div class="k">Pendengar/bln</div><div class="v">${a.monthlyListeners ? fmtCompact(a.monthlyListeners) : "–"}</div><div class="d">${a.followers ? fmtCompact(a.followers) + " followers" : "&nbsp;"}</div></div>
+        <div class="stat"><div class="k">Pendengar/bln</div><div class="v">${a.monthlyListeners ? fmtCompact(a.monthlyListeners) + (a.mlApprox ? ' <span class="cellno">±</span>' : "") : "–"}</div><div class="d">${a.followers ? fmtCompact(a.followers) + " followers" : "&nbsp;"}</div></div>
       </div>
       <div class="chhint"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>Lihat album &amp; lagu ${esc(a.name)} di Spotify</div>
     </div>`).join("");
 
-  const newsHTML = news.length ? news.map((n) => `
-    <div class="spitem" data-spk="${esc(n.key)}" tabindex="0" role="button">
-      <div class="ic ${n.kind === "next" ? "next" : ""}">${n.kind === "ok" ? "✓" : "◎"}</div>
-      <div class="tx">${n.kind === "ok"
-        ? `<b>${esc(n.name)}</b> menembus <b>${fmtCompact(n.m)}</b> stream ${n.real ? "" : "<span class='cellno'>(±)</span>"} — ${fmtDate(isoDate(n.at))} <span class="cellno">· ${esc(n.ar.name)}</span>`
-        : `<b>${esc(n.name)}</b> menuju <b>${fmtCompact(n.m)}</b> — ±${Math.ceil(n.days)} hari lagi (${fmtDate(isoDate(n.t))}) <span class="cellno">· ${esc(n.ar.name)}</span>`}
+  const msOKCard = (n) => `
+    <div class="mscard" data-spk="${esc(n.key)}" tabindex="0" role="button" aria-label="${esc(n.name)} menembus ${fmtCompact(n.m)}">
+      ${n.cover ? `<img class="mscover" src="${esc(n.cover)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : `<div class="mscover ph">♪</div>`}
+      <div class="msmain">
+        <div class="msname">${esc(n.name)}<span class="apill" style="background:${n.ar.color || SP_GREEN}">${esc(n.ar.name || "")}</span></div>
+        <div class="mssub">menembus <b>${fmtCompact(n.m)}</b> stream · ${fmtDate(isoDate(n.at))}${n.real ? "" : " <span class='cellno'>(±)</span>"}</div>
       </div>
-    </div>`).join("")
-    : `<div class="spitem" style="cursor:default"><div class="tx note">Belum ada milestone baru — rekap milestone &amp; prediksi terbentuk otomatis setiap hari dari data terbaru.</div></div>`;
+      <div class="msbadge ok">✓</div>
+    </div>`;
+  const msNextCard = (n) => {
+    const pct = n.m ? Math.min(100, Math.max(3, (n.tot / n.m) * 100)) : 100;
+    return `
+    <div class="mscard" data-spk="${esc(n.key)}" tabindex="0" role="button" aria-label="${esc(n.name)} menuju ${fmtCompact(n.m)}">
+      ${n.cover ? `<img class="mscover" src="${esc(n.cover)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : `<div class="mscover ph">♪</div>`}
+      <div class="msmain">
+        <div class="msname">${esc(n.name)}<span class="apill" style="background:${n.ar.color || SP_GREEN}">${esc(n.ar.name || "")}</span></div>
+        <div class="msbar"><i style="width:${pct}%"></i></div>
+        <div class="mssub">menuju <b>${fmtCompact(n.m)}</b> · ±${Math.ceil(n.days)} hari lagi (${fmtDate(isoDate(n.t))})</div>
+      </div>
+      <div class="msbadge next">${fmtCompact(n.m)}</div>
+    </div>`;
+  };
+  const msEmpty = (txt) => `<div class="spitem" style="cursor:default"><div class="tx note">${txt}</div></div>`;
 
   sec.innerHTML = `
     <section class="hero sp">
@@ -2012,11 +2054,8 @@ function renderSpHome(sec) {
         <div class="chgrid">${cards}</div>
       </div>
       <div>
-        ${spSectHead("#ffb02e", "M9 18.7 13.2 10l4.2 8.7M12 3 3 21h3l1.7-3.6h8.6L18 21h3L12 3z", "Milestone &amp; sedang naik", "tercapai 30 hari terakhir + target terdekat")}
-        <div class="spnews">${newsHTML}</div>
-        <div style="margin-top:14px">
-          ${spSectHead("#ff4d6d", ICO_SP_FIRE, "Pertumbuhan harian tertinggi", "stream 24 jam terakhir")}
-          <div class="lb">${naik.map((t, i) => {
+        ${spSectHead("#ff4d6d", ICO_SP_FIRE, "Pertumbuhan harian tertinggi", "10 lagu · stream 24 jam terakhir")}
+        <div class="lb">${naik.map((t, i) => {
             const ar = spArtistOf(t.artistId) || {};
             return `
             <article class="lbrow" data-spk="${esc(t.key)}" style="--ac:${ar.color || SP_GREEN}" tabindex="0" role="button" aria-label="${esc(t.name)}">
@@ -2029,9 +2068,21 @@ function renderSpHome(sec) {
               <div class="lbstats"><div class="g up">+${fmtCompact(t.kworb.daily)}</div><div class="l">per hari</div></div>
             </article>`;
           }).join("")}</div>
+      </div>
+    </div>
+    <section style="margin-top:26px">
+      ${spSectHead("#ffb02e", "M9 18.7 13.2 10l4.2 8.7M12 3 3 21h3l1.7-3.6h8.6L18 21h3L12 3z", "Milestone &amp; sedang naik", "tercapai 30 hari terakhir + target terdekat")}
+      <div class="mscols">
+        <div>
+          <div class="mcolhead"><span class="dot ok">✓</span>Baru menembus milestone <span class="cnt">${news.ok.length} lagu</span></div>
+          <div class="mscards">${news.ok.length ? news.ok.map(msOKCard).join("") : msEmpty("Belum ada milestone baru dalam 30 hari terakhir — rekap terbentuk otomatis setiap hari dari data terbaru.")}</div>
+        </div>
+        <div>
+          <div class="mcolhead"><span class="dot next">◎</span>Sedang menuju milestone <span class="cnt">${news.next.length} lagu</span></div>
+          <div class="mscards">${news.next.length ? news.next.map(msNextCard).join("") : msEmpty("Belum ada prediksi terdekat — butuh riwayat beberapa hari agar ritme 7 hari bisa dihitung.")}</div>
         </div>
       </div>
-    </div>`;
+    </section>`;
 
   sec.querySelectorAll("[data-spk]").forEach((el) => {
     const go = () => openSpTrack(el.dataset.spk);
@@ -2046,26 +2097,31 @@ function renderSpHome(sec) {
 }
 
 function spNews() {
-  const out = [];
+  const ok = [], next = [];
   const nowS = Date.now() / 1000;
   for (const tr of Object.values(state.sp.tracks || {})) {
     if (!tr.kworb || !tr.kworb.total) continue;
     const ar = spArtistOf(tr.artistId) || { name: "" };
     const ms = spMilestones(tr);
+    const tot = spTrackTotal(tr);
     for (const d of ms.done) {
-      if (d.at && nowS - d.at <= 30 * 86400) out.push({ kind: "ok", key: tr.key, name: tr.name, ar, m: d.m, at: d.at, real: d.real });
+      if (d.at && nowS - d.at <= 30 * 86400) ok.push({ key: tr.key, name: tr.name, ar, m: d.m, at: d.at, real: d.real, cover: tr.cover });
     }
     const n0 = ms.next[0];
     if (n0) {
       const rate = spAvg7(tr);
       if (rate > 0) {
-        const days = (n0 - spTrackTotal(tr)) / rate;
-        if (days > 0 && days <= 45) out.push({ kind: "next", key: tr.key, name: tr.name, ar, m: n0, days, t: nowS + days * 86400 });
+        const days = (n0 - tot) / rate;
+        if (days > 0 && days <= 45) {
+          const idx = SP_MS.indexOf(n0);
+          next.push({ key: tr.key, name: tr.name, ar, m: n0, days, t: nowS + days * 86400, tot, prev: idx > 0 ? SP_MS[idx - 1] : 0, rate, cover: tr.cover });
+        }
       }
     }
   }
-  out.sort((a, b) => (a.kind === b.kind ? (a.kind === "ok" ? b.at - a.at : a.days - b.days) : a.kind === "ok" ? -1 : 1));
-  return out.slice(0, 7);
+  ok.sort((a, b) => b.at - a.at);
+  next.sort((a, b) => a.days - b.days);
+  return { ok: ok.slice(0, 6), next: next.slice(0, 6) };
 }
 
 function spTrackRowHTML(tr, i) {
@@ -2144,15 +2200,22 @@ function renderSpArtist(sec) {
       <div class="chstats">
         <div class="stat"><div class="k">Total stream</div><div class="v">${fmtCompact(a.totalStreams)}</div><div class="d">semua lagu terdaftar</div></div>
         <div class="stat"><div class="k">Per hari</div><div class="v up">+${fmtCompact(a.dailyStreams)}</div><div class="d">stream 24 jam</div></div>
-        <div class="stat"><div class="k">Pendengar/bln</div><div class="v">${a.monthlyListeners ? fmtCompact(a.monthlyListeners) : "–"}</div><div class="d">${a.mlDelta != null ? `<span class="${a.mlDelta >= 0 ? "up" : "down"}">${fmtDelta(a.mlDelta)}</span> vs minggu lalu` : "bila masuk daftar global"}</div></div>
-        <div class="stat"><div class="k">Followers</div><div class="v">${a.followers ? fmtCompact(a.followers) : "–"}</div><div class="d">${a.followers ? "profil Spotify" : "opsional (Web API)"}</div></div>
+        <div class="stat"><div class="k">Pendengar/bln</div><div class="v">${a.monthlyListeners ? fmtCompact(a.monthlyListeners) + (a.mlApprox ? ' <span class="cellno">±</span>' : "") : "–"}</div><div class="d">${a.mlDelta != null ? `<span class="${a.mlDelta >= 0 ? "up" : "down"}">${fmtDelta(a.mlDelta)}</span> vs kemarin` : a.monthlyListeners ? (a.mlApprox ? "perkiraan dari halaman Spotify" : "—") : "di luar 2.500 besar global"}</div></div>
+        <div class="stat"><div class="k">Followers</div><div class="v">${a.followers ? fmtCompact(a.followers) : "–"}</div><div class="d">${a.followers ? "profil Spotify" : "isi secret SPOTIFY_CLIENT_ID &amp; SECRET → aktif"}</div></div>
         <div class="stat"><div class="k">Lagu dipantau</div><div class="v">${nSongs}</div><div class="d">termasuk semua versi</div></div>
         <div class="stat"><div class="k">Album dipantau</div><div class="v">${albums.length}</div><div class="d">album, EP &amp; singel</div></div>
       </div>
     </div>
     ${a.history && a.history.length >= 2 ? `
     <div class="sect">
-      <h3>Total stream ${esc(a.name)} — rekaman situs ini</h3>
+      <div class="secthead">
+        <h3>Total stream ${esc(a.name)} — rekaman situs ini</h3>
+        <div class="charttotal">
+          <div class="ctl">Total stream</div>
+          <div class="ctv">${fmtExact(a.totalStreams)}</div>
+          <div class="ctd">${d1 != null ? `<span class="up">+${fmtCompact(Math.max(0, d1))}</span> · hari terakhir` : "penjumlahan semua lagu"}</div>
+        </div>
+      </div>
       <div class="chartbox"><canvas id="spArtChart"></canvas></div>
       <p class="note">Kurva terbentuk dari pengukuran rutin 2× sehari; makin lama situs berjalan, makin panjang riwayatnya.${d1 != null ? ` Delta hari terakhir: <span class="up">+${fmtCompact(Math.max(0, d1))}</span>.` : ""}</p>
     </div>` : ""}
@@ -2230,7 +2293,14 @@ function openSpTrack(key) {
     </div>
 
     <div class="sect">
-      <h3>Total stream (sejak rilis)</h3>
+      <div class="secthead">
+        <h3>Total stream (sejak rilis)</h3>
+        <div class="charttotal">
+          <div class="ctl">Total stream</div>
+          <div class="ctv">${fmtExact(tot)}</div>
+          <div class="ctd">${spTrackDaily(tr) ? `<span class="up">+${fmtCompact(spTrackDaily(tr))}</span> · 24 jam terakhir` : `penjumlahan ${tr.trackIds.length} versi`}</div>
+        </div>
+      </div>
       <div class="legend"><span><i class="sw" style="background:${ar.color}"></i>Data terukur</span><span><i class="sw" style="background:${ar.color}55"></i>Estimasi</span></div>
       <div class="rangewrap" id="spRange">
         <button class="rangebtn ${state.spRange === 30 ? "active" : ""}" data-r="30">30 hari</button>

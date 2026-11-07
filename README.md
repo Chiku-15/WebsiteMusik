@@ -77,7 +77,7 @@ GitHub Pages menayangkan index.html — tombol YouTube/Spotify di header bergant
 3. **Simpan API key** sebagai Secret:
  - Buka *Settings → Secrets and variables → Actions → New repository secret*
  - Name: `YT_API_KEY` — Secret: isi API key-mu → *Add secret*
- - (Opsional, hanya untuk followers Spotify) tambah `SPOTIFY_CLIENT_ID` & `SPOTIFY_CLIENT_SECRET` dari [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard) — tanpa ini bagian Spotify tetap jalan penuh, hanya kartu Followers yang kosong.
+ - (Direkomendasikan untuk **followers Spotify**) tambah `SPOTIFY_CLIENT_ID` & `SPOTIFY_CLIENT_SECRET` dari [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard) (buat app apa pun, dapatkan *Client ID* & *Client secret*). Tanpa ini collector mencoba token anonim Spotify; kalau itu pun gagal, kartu Followers tampil "–" — semua fitur lain tetap jalan penuh.
 4. **Aktifkan GitHub Pages**:
  - *Settings → Pages → Build and deployment → Source: **Deploy from a branch***
  - Branch: `main`, folder: `/(root)` → *Save*
@@ -156,13 +156,15 @@ Setiap kali Actions merekam angka baru, estimasi pada hari itu **ditimpa data ny
 
 **Apakah API key saya aman?** Ya — key disimpan sebagai *repository secret*, tidak ikut ter-commit, dan hanya dipakai di Actions. Situs publik tidak pernah menyentuh key karena data sudah dikumpulkan ke `data/*.json`.
 
-**Dari mana angka Spotify berasal? Apa akurat?** Angka stream per lagu diproses dari **data harian publik Spotify Charts** (via kworb.net — situs rujukan para pelacak streaming), metadata album/track & tanggal rilis dari **halaman embed resmi Spotify**. Total stream gabungan di situs ini sama persis dengan angka yang terlihat di aplikasi Spotify (contoh: SUGAR HONEY ICE TEA 49.025.510 per 7 Nov 2026). Pendengar per bulan hanya tampil saat artis masuk daftar global kworb. Riwayat sebelum situs berjalan diisi estimasi model (ditandai), sama seperti sisi YouTube.
+**Dari mana angka Spotify berasal? Apa akurat?** Angka stream per lagu diproses dari **data harian publik Spotify Charts** (via kworb.net — situs rujukan para pelacak streaming), metadata album/track & tanggal rilis dari **halaman embed resmi Spotify**. Total stream gabungan di situs ini sama persis dengan angka yang terlihat di aplikasi Spotify (contoh: SUGAR HONEY ICE TEA 49.025.510 per 7 Nov 2026). Pendengar per bulan: dari daftar global kworb (lengkap + delta harian) — kalau artis di luar 2.500 besar global (contoh: TREASURE), angka diambil dari halaman resmi artis Spotify (ditandai "±", dibulatkan). Riwayat sebelum situs berjalan diisi estimasi model (ditandai), sama seperti sisi YouTube.
 
 **Grafik sekarang langsung penuh.** Sejak versi ini riwayat diisi dari tanggal rilis (video) dan tanggal channel dibuat (channel) memakai estimasi (lihat "Tentang data historis"). Tanda **(est.)** pada kartu/tooltip berarti angka itu masih berbasis estimasi.
 
 **Kenapa likes kadang masih "–"?** Likes diambil dari `statistics.likeCount` (YouTube Data API — secret `YT_API_KEY`) atau dari endpoint publik YouTube saat mode scraping. Likes tampil otomatis pada putaran pertama setelah versi ini dipasang — kartu, modal, dan rasio likes/1.000 views langsung terisi untuk BM maupun TREASURE.
 
 **Kenapa ada angka estimasi? Bisa lihat yang real?** YouTube **tidak menyediakan** riwayat views harian untuk publik (hanya pemilik channel bisa melihatnya di YouTube Studio), jadi rincian per-hari masa lalu memang diestimasi — ditandai batang transparan/garis putus-putus + legenda "Estimasi". Yang **selalu nyata**: total views, likes, subscriber saat ini, dan semua titik solid (pengukuran langsung dari YouTube API 2× sehari sejak situs berjalan). Makin lama situs dipasang, makin panjang bagian nyatanya.
+
+**Kenapa ada lagu yang tadinya 0 stream (contoh: SHOCK)?** Parser tabel kworb dulu gagal membaca baris yang sel *stream harian*-nya kosong (biasa terjadi pada lagu baru yang belum masuk chart harian 200 besar) — lagunya dianggap tidak ada sehingga tampil 0. Sudah diperbaiki: sel kosong sekarang sah (daily = 0) dan total stream tetap terbaca. Setelah di-deploy, jalankan sekali workflow *Kumpulkan data* dan angka SHOCK (dan semua lagu berstatus sama) langsung terisi.
 
 **Run Actions gagal `! [rejected] main -> main (fetch first)`?** Itu terjadi kalau repo berubah saat run masih berjalan (mis. kamu mengunggah file situs bersamaan dengan run). Versi workflow ini sudah mengatasinya sendiri: sebelum push, bot menarik commit terbaru (`git pull --rebase`) lalu mendorong, dengan 3× percobaan ulang. Tidak ada data yang hilang — cukup jalankan ulang workflow.
 
