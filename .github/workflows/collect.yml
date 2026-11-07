@@ -1,4 +1,4 @@
-name: Kumpulkan data YouTube
+name: Kumpulkan data (YouTube + Spotify)
 
 on:
   schedule:
@@ -27,10 +27,19 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Kumpulkan data (YouTube API)
+      - name: Kumpulkan data YouTube
         env:
-          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          YT_API_KEY: ${{ secrets.YT_API_KEY }}
         run: node collect.js
+
+      - name: Kumpulkan data Spotify (kworb + embed)
+        env:
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+        run: node collect_spotify.js
+        # kworb/embed adalah sumber pihak ketiga — kalau sesekali gagal,
+        # update data YouTube tetap jalan (data Spotify menunggu putaran berikutnya).
+        continue-on-error: true
 
       - name: Simpan data ke repo
         run: |
@@ -42,12 +51,16 @@ jobs:
           else
             git commit -m "data: update $(TZ=Asia/Jakarta date +'%d %b %Y %H:%M WIB')"
           fi
+          # Repo bisa saja berubah saat run berjalan (mis. file situs diunggah bersamaan).
+          # Tarik + rebase dulu supaya push tidak ditolak "(fetch first)", lalu dorong.
+          # -X theirs = kalau ada konflik, data hasil run ini (lebih baru) yang menang.
           ok=""
           for i in 1 2 3; do
             if git pull --rebase -X theirs origin main && git push; then
-              ok=1; break
+              ok=1
+              break
             fi
-            echo "Push gagal (percobaan $i/3), coba lagi..."
+            echo "Push gagal (percobaan $i/3), mencoba lagi dalam 5 detik..."
             git rebase --abort 2>/dev/null || true
             sleep 5
           done
