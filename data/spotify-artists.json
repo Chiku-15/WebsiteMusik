@@ -4,7 +4,7 @@
   "name": "BABYMONSTER",
   "spotifyId": "1SIocsqdEefUTE6XKGUiVS",
   "color": "#ff4d6d",
-  "image": "https://image-cdn-ak.spotifycdn.com/image/ab676161000051747eed59dfba0a93af631a6654",
+  "image": "https://image-cdn-fa.spotifycdn.com/image/ab676161000051747eed59dfba0a93af631a6654",
   "monthlyListeners": 8070662,
   "mlDelta": -12701,
   "followers": null,
@@ -13,7 +13,7 @@
   "trackCount": 43,
   "history": [
    {
-    "t": 1794026902,
+    "t": 1794029935,
     "total": 2566592807,
     "daily": 3187115,
     "ml": 8070662
@@ -26,7 +26,7 @@
   "name": "TREASURE",
   "spotifyId": "3KonOYiLsU53m4yT7gNotP",
   "color": "#38bdf8",
-  "image": "https://image-cdn-ak.spotifycdn.com/image/ab67616100005174946efd7262fe76ff1f08e776",
+  "image": "https://image-cdn-fa.spotifycdn.com/image/ab67616100005174946efd7262fe76ff1f08e776",
   "monthlyListeners": null,
   "mlDelta": null,
   "followers": null,
@@ -35,7 +35,7 @@
   "trackCount": 158,
   "history": [
    {
-    "t": 1794026909,
+    "t": 1794029943,
     "total": 1725526487,
     "daily": 493940,
     "ml": null
