@@ -285,17 +285,25 @@ async function main() {
   const artistIds = CONFIG.artists.map((a) => a.spotify_id).filter(Boolean);
   async function getAnonToken() {
     if (anonToken) return anonToken;
-    try {
-      const res = await fetch("https://open.spotify.com/get_access_token?reason=transport&productType=embed", {
-        headers: { "User-Agent": UA },
-        signal: AbortSignal.timeout ? AbortSignal.timeout(15000) : undefined,
-      });
-      if (res.ok) {
+    /* beberapa endpoint token publik — dicakup satu per satu karena ketersediaannya
+     * berubah-ubah (IP runner GitHub Actions kadang diblokir Cloudflare) */
+    const tries = [
+      "https://open.spotify.com/get_access_token?reason=transport&productType=embed",
+      "https://open.spotify.com/get_access_token?reason=init&productType=web-player",
+      "https://open.spotify.com/api/token?reason=init&productType=web-player",
+    ];
+    for (const u of tries) {
+      try {
+        const res = await fetch(u, {
+          headers: { "User-Agent": UA, "Accept": "application/json", "Referer": "https://open.spotify.com/" },
+          signal: AbortSignal.timeout ? AbortSignal.timeout(15000) : undefined,
+        });
+        if (!res.ok) { log("  ! token anonim (" + u.split("?")[0].split("/").pop() + "): HTTP " + res.status); continue; }
         const j = await res.json();
         if (j && j.accessToken) { anonToken = j.accessToken; return anonToken; }
+      } catch (e) {
+        log("  ! token anonim gagal:", String(e).slice(0, 100));
       }
-    } catch (e) {
-      log("  ! token anonim gagal:", String(e).slice(0, 100));
     }
     return null;
   }
@@ -372,8 +380,8 @@ async function main() {
     const songsHtml = await fetchText(artist.kworb_songs_url);
     const kworb = parseKworbSongs(songsHtml);
     const kworbIds = Object.keys(kworb);
-    const kworbTotal = kworbIds.reduce((s, id) => s + kworb[id].total, 0);
-    const kworbDaily = kworbIds.reduce((s, id) => s + kworb[id].daily, 0);
+    let kworbTotal = kworbIds.reduce((s, id) => s + kworb[id].total, 0);
+    let kworbDaily = kworbIds.reduce((s, id) => s + kworb[id].daily, 0);
     log(`↳ kworb: ${kworbIds.length} lagu | total ${kworbTotal.toLocaleString("en-US")} | harian +${kworbDaily.toLocaleString("en-US")}`);
 
     /* --- 3. embed artis (avatar) --- */
@@ -466,6 +474,15 @@ async function main() {
       keptReal.sort((a, b) => a.t - b.t);
       let maxV = 0;
       for (const p of keptReal) { if (p.v < maxV) p.v = maxV; maxV = p.v; }
+      const keptHist = retainReal(keptReal);
+      /* kworb kadang tidak mengisi kolom harian (lagu baru / di luar chart
+       * harian — contohnya SHOCK). Kalau kosong, turunkan stream harian dari
+       * dua titik terukur terakhir supaya "+ per hari" tidak tampil 0. */
+      if (!s.daily && keptHist.length >= 2) {
+        const p2 = keptHist[keptHist.length - 2], p1 = keptHist[keptHist.length - 1];
+        const dd = p1.v - p2.v;
+        if (dd > 0) s.daily = Math.max(1, Math.round(dd / Math.max(1, (p1.t - p2.t) / DAY)));
+      }
       newTracksRaw[artist.id][tid] = {
         name: s.title,
         releaseDate: releaseDates[tid] || oldRaw.releaseDate || null,
@@ -473,7 +490,7 @@ async function main() {
         duration: s.duration || oldRaw.duration || null,
         total: s.total,
         daily: s.daily,
-        history: retainReal(keptReal),
+        history: keptHist,
       };
     }
 
@@ -648,6 +665,10 @@ async function main() {
     }
 
     /* --- 12. artis --- */
+    /* hitung ulang total & harian kworb — angka harian turunan (lagu yang kolom
+     * hariannya kosong di kworb) ikut masuk jumlah artis */
+    kworbTotal = kworbIds.reduce((s, id) => s + kworb[id].total, 0);
+    kworbDaily = kworbIds.reduce((s, id) => s + kworb[id].daily, 0);
     let ml = listenersMap[artist.name] || null;
     let mlApprox = false;
     if (!ml) {
