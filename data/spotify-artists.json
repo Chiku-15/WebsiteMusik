@@ -17,6 +17,12 @@
     "total": 2566592807,
     "daily": 3187115,
     "ml": 8070662
+   },
+   {
+    "t": 1794098463,
+    "total": 2566592807,
+    "daily": 3187115,
+    "ml": 8070662
    }
   ],
   "openUrl": "https://open.spotify.com/artist/1SIocsqdEefUTE6XKGUiVS"
@@ -27,7 +33,7 @@
   "spotifyId": "3KonOYiLsU53m4yT7gNotP",
   "color": "#38bdf8",
   "image": "https://image-cdn-fa.spotifycdn.com/image/ab67616100005174946efd7262fe76ff1f08e776",
-  "monthlyListeners": 1800000,
+  "monthlyListeners": 1900000,
   "mlDelta": null,
   "mlApprox": true,
   "followers": null,
@@ -40,6 +46,12 @@
     "total": 1725941747,
     "daily": 493940,
     "ml": 1800000
+   },
+   {
+    "t": 1794098473,
+    "total": 1725941747,
+    "daily": 493940,
+    "ml": 1900000
    }
   ],
   "openUrl": "https://open.spotify.com/artist/3KonOYiLsU53m4yT7gNotP"
