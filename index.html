@@ -398,6 +398,13 @@
   .spitem .tx b{font-size:13px}
   /* ---------- bagian milestone penuh (di bawah grid) ---------- */
   .mscols{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:16px 22px;align-items:start}
+  /* milestone & sedang naik SEJAJAR: pasangan kartu kiri-kanan dalam satu grid,
+   * tinggi kartu dalam satu baris otomatis sama (baris ke-i kiri = baris ke-i kanan) */
+  .msgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;align-items:stretch}
+  .msgrid>.mcolhead{margin:14px 2px 2px}
+  .msgrid>.mcolhead:nth-child(-n+2){margin-top:2px}
+  .msgrid .mscard{height:100%}
+  @media (max-width:760px){.msgrid{grid-template-columns:1fr}}
   .mcolhead{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:800;color:var(--muted);margin:0 2px 10px;text-transform:uppercase;letter-spacing:.6px}
   .mcolhead .dot{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;font-size:13px;flex:none}
   .mcolhead .dot.ok{background:color-mix(in srgb,#2fd57b 16%,transparent);color:#2fd57b}
@@ -492,6 +499,8 @@
   <section id="homeSection" style="display:none"></section>
 
   <section class="chgrid" id="channelSection"></section>
+
+  <section id="artistHl" style="display:none"></section>
 
   <div class="stabs" id="viewTabs" style="display:none"></div>
 
@@ -1107,6 +1116,62 @@ function renderChannel() {
   }
 }
 
+/* ===================== render: sorotan halaman artis (gaya beranda, tersusun atas-bawah) =====================
+ * Tiga section seperti beranda — Paling banyak ditonton / Tren minggu ini / Rilisan terbaru —
+ * tapi hanya berisi video milik artis ini, diletakkan DI ATAS tab Video & Milestone. */
+function renderArtistHighlights() {
+  const el = $("#artistHl");
+  const art = artistOf(state.artist);
+  if (!el || !art) return;
+  el.style.setProperty("--artist-color", art.color);
+  const mine = allVideosFlat().filter((v) => v.channel === state.artist);
+  if (!mine.length) { el.innerHTML = ""; el.style.display = "none"; return; }
+  el.style.display = "";
+
+  /* paling banyak ditonton: peringkat lagu (gabungan semua versi) milik artis ini */
+  const top = songGroups().filter((g) => g.channel === state.artist && g.total > 0)
+    .sort((a, b) => b.total - a.total).slice(0, 10);
+  const rows = top.map((g, i) => {
+    const mv = g.mv;
+    const d7sum = g.vids.reduce((s, x) => { const d = deltaDays(x.history, 7); return s + (d ? d.delta : 0); }, 0);
+    const estFlag = g.vids.some((x) => recentEst(x.history, 7));
+    return `
+    <article class="lbrow ${i < 3 ? "top3" : ""}" data-id="${mv.id}" data-combined="1" style="--ac:${mv.art.color}" tabindex="0" role="button" aria-label="Peringkat ${i + 1}: ${esc(g.song)}">
+      <div class="lbrank">${i + 1}</div>
+      <img class="lbthumb" src="https://i.ytimg.com/vi/${mv.id}/hqdefault.jpg" alt="" loading="lazy">
+      <div class="lbmain">
+        <div class="lbtitle">${esc(g.song)}</div>
+        <div class="lbmeta">
+          <span class="apill" style="background:${mv.art.color}">${esc(mv.art.name)}</span>
+          <span class="lbnum">${fmtCompact(g.total)} views</span>
+          ${g.vids.length > 1 ? `<span class="lbnum">· ${g.vids.length} versi</span>` : ""}
+        </div>
+      </div>
+      <div class="lbstats">
+        <div class="g ${d7sum >= 0 ? "up" : ""}">${fmtDelta(d7sum)}</div>
+        <div class="l">7 hari${estFlag ? " (est.)" : ""}</div>
+      </div>
+    </article>`;
+  }).join("");
+
+  /* tren minggu ini + rilisan terbaru: hanya video milik artis ini */
+  const rate7 = (v) => { const d = deltaDays(v.history, 7); return d ? d.rate : 0; };
+  const trend = mine.map((v) => ({ v, r: rate7(v) })).sort((a, b) => b.r - a.r || lastV(b.v) - lastV(a.v)).slice(0, 8).map((x) => x.v);
+  const newest = [...mine].sort((a, b) => (b.published || "").localeCompare(a.published || "")).slice(0, 6);
+
+  el.innerHTML = `
+    ${homeSectHead("#ffb02e", ICO_TROPHY, "Paling banyak ditonton", `gabungan semua versi lagu ${esc(art.name)}`)}
+    ${rows
+      ? `<div class="lb">${rows}</div><p class="note">Peringkat = total views gabungan semua versi lagu milik ${esc(art.name)} · diperbarui otomatis 2× sehari. Klik = buka mode gabungan.</p>`
+      : `<div class="banner">Belum ada data views untuk lagu ${esc(art.name)}.</div>`}
+    ${homeSectHead("#ff4d6d", ICO_FIRE, "Tren minggu ini", "pertumbuhan views 7 hari tertinggi")}
+    <div class="vgrid">${trend.map((v) => vcardHTML(v, v.art.color)).join("")}</div>
+    ${homeSectHead("#8b5cf6", ICO_NEW, "Rilisan terbaru", `video terbaru ${esc(art.name)}`)}
+    <div class="vgrid six">${newest.map((v) => vcardHTML(v, v.art.color)).join("")}</div>
+  `;
+  bindCards(el);
+}
+
 /* ===================== render: BERANDA ===================== */
 function allVideosFlat() {
   const watched = watchedIds();
@@ -1153,6 +1218,16 @@ function bindCards(root) {
   });
 }
 
+/* ikon + judul section gaya beranda — dipakai beranda & sorotan halaman artis */
+const sicIco = (c, p) => `<span class="sic" style="--c:${c}"><svg viewBox="0 0 24 24"><path d="${p}"/></svg></span>`;
+const ICO_TROPHY = "M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z";
+const ICO_FIRE = "M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z";
+const ICO_NEW = "M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z";
+const ICO_PEOPLE = "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z";
+function homeSectHead(c, ico, title, sub) {
+  return `<div class="hsect"><h2>${sicIco(c, ico)}${title}</h2>${sub ? `<span class="sub">${sub}</span>` : ""}</div>`;
+}
+
 function renderHome() {
   const sec = $("#homeSection");
   const vids = allVideosFlat();
@@ -1173,14 +1248,6 @@ function renderHome() {
   const rate7 = (v) => { const d = deltaDays(v.history, 7); return d ? d.rate : 0; };
   const trend = vids.map((v) => ({ v, r: rate7(v) })).sort((a, b) => b.r - a.r || lastV(b.v) - lastV(a.v)).slice(0, 8).map((x) => x.v);
   const newest = [...vids].sort((a, b) => (b.published || "").localeCompare(a.published || "")).slice(0, 6);
-
-  const sic = (c, p) => `<span class="sic" style="--c:${c}"><svg viewBox="0 0 24 24"><path d="${p}"/></svg></span>`;
-  const ICO_TROPHY = "M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z";
-  const ICO_FIRE = "M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z";
-  const ICO_NEW = "M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z";
-  const ICO_PEOPLE = "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z";
-  const sectHead = (c, ico, title, sub) => `
-    <div class="hsect"><h2>${sic(c, ico)}${title}</h2>${sub ? `<span class="sub">${sub}</span>` : ""}</div>`;
 
   const hero = `
     <section class="hero">
@@ -1244,21 +1311,15 @@ function renderHome() {
 
   sec.innerHTML = `
     ${hero}
-    <div class="hgrid">
-      <div>
-        ${sectHead("#ffb02e", ICO_TROPHY, "Lagu paling banyak ditonton", "gabungan semua versi")}
-        <div class="lb">${rows}</div>
-        <p class="note">Peringkat = total views gabungan semua versi lagu (MV, dance performance, practice, remix) di semua artis yang dipantau · diperbarui otomatis 2× sehari. Klik = buka mode gabungan.</p>
-        ${sectHead("#38bdf8", ICO_PEOPLE, "Jelajahi artis", "halaman lengkap per artis")}
-        <div class="chgrid two">${explore}</div>
-      </div>
-      <div>
-        ${sectHead("#ff4d6d", ICO_FIRE, "Sedang tren minggu ini", "pertumbuhan views 7 hari tertinggi")}
-        <div class="vgrid mini">${trend.map((v) => vcardHTML(v, v.art.color)).join("")}</div>
-      </div>
-    </div>
-    ${sectHead("#8b5cf6", ICO_NEW, "Rilisan terbaru", "video terbaru semua artis")}
+    ${homeSectHead("#ffb02e", ICO_TROPHY, "Lagu paling banyak ditonton", "gabungan semua versi")}
+    <div class="lb">${rows}</div>
+    <p class="note">Peringkat = total views gabungan semua versi lagu (MV, dance performance, practice, remix) di semua artis yang dipantau · diperbarui otomatis 2× sehari. Klik = buka mode gabungan.</p>
+    ${homeSectHead("#ff4d6d", ICO_FIRE, "Sedang tren minggu ini", "pertumbuhan views 7 hari tertinggi")}
+    <div class="vgrid">${trend.map((v) => vcardHTML(v, v.art.color)).join("")}</div>
+    ${homeSectHead("#8b5cf6", ICO_NEW, "Rilisan terbaru", "video terbaru semua artis")}
     <div class="vgrid six">${newest.map((v) => vcardHTML(v, v.art.color)).join("")}</div>
+    ${homeSectHead("#38bdf8", ICO_PEOPLE, "Jelajahi artis", "halaman lengkap per artis")}
+    <div class="chgrid two">${explore}</div>
   `;
   bindCards(sec);
   sec.querySelectorAll("[data-art]").forEach((c) => {
@@ -2045,6 +2106,7 @@ const ICO_SP_PEOPLE = "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 
 function renderSpAll() {
   $("#homeSection").style.display = "none";
   $("#channelSection").style.display = "none";
+  $("#artistHl").style.display = "none";
   $("#viewTabs").style.display = "none";
   $("#msSection").style.display = "none";
   $("#toolbar").style.display = "none";
@@ -2133,6 +2195,14 @@ function renderSpHome(sec) {
   };
   const msEmpty = (txt) => `<div class="spitem" style="cursor:default"><div class="tx note">${txt}</div></div>`;
 
+  /* pasangan kartu kiri-kanan (kiri = tercapai, kanan = menuju) — baris ke-i selalu sejajar */
+  const okCards = news.ok.length ? news.ok.map(msOKCard) : [msEmpty("Belum ada milestone yang tercatat — rekap terbentuk otomatis setiap hari dari data terbaru.")];
+  const nextCards = news.next.length ? news.next.map(msNextCard) : [msEmpty("Belum ada prediksi terdekat — butuh riwayat beberapa hari agar ritme 7 hari bisa dihitung.")];
+  let msPairs = "";
+  for (let i = 0; i < Math.max(okCards.length, nextCards.length); i++) {
+    msPairs += (okCards[i] || "<div></div>") + (nextCards[i] || "<div></div>");
+  }
+
   sec.innerHTML = `
     <section class="hero sp">
       <span class="hbadge">SPOTIFY · PEMANTAUAN OTOMATIS 2× SEHARI</span>
@@ -2150,8 +2220,6 @@ function renderSpHome(sec) {
         ${spSectHead("#1ed760", ICO_SP_TROPHY, "Lagu paling banyak di-stream", "gabungan semua versi")}
         <div class="lb">${top.map(lbRow).join("")}</div>
         <p class="note">Peringkat = total stream gabungan semua versi lagu (remix, ver. JP, versi live dihitung terpisah) di semua artis yang dipantau · sumber angka: Spotify Charts (via kworb.net) · diperbarui otomatis 2× sehari. Klik = grafik &amp; milestone.</p>
-        ${spSectHead("#38bdf8", ICO_SP_PEOPLE, "Jelajahi artis", "halaman lengkap per artis")}
-        <div class="chgrid two">${cards}</div>
       </div>
       <div>
         ${spSectHead("#ff4d6d", ICO_SP_FIRE, "Pertumbuhan harian tertinggi", "10 lagu · stream 24 jam terakhir")}
@@ -2170,17 +2238,14 @@ function renderSpHome(sec) {
           }).join("")}</div>
       </div>
     </div>
+    ${spSectHead("#38bdf8", ICO_SP_PEOPLE, "Jelajahi artis", "halaman lengkap per artis")}
+    <div class="chgrid two">${cards}</div>
     <section style="margin-top:26px">
       ${spSectHead("#ffb02e", "M9 18.7 13.2 10l4.2 8.7M12 3 3 21h3l1.7-3.6h8.6L18 21h3L12 3z", "Milestone &amp; sedang naik", "10 milestone terakhir + target terdekat")}
-      <div class="mscols">
-        <div>
-          <div class="mcolhead"><span class="dot ok">✓</span>Baru menembus milestone <span class="cnt">${news.ok.length} lagu</span></div>
-          <div class="mscards">${news.ok.length ? news.ok.map(msOKCard).join("") : msEmpty("Belum ada milestone yang tercatat — rekap terbentuk otomatis setiap hari dari data terbaru.")}</div>
-        </div>
-        <div>
-          <div class="mcolhead"><span class="dot next">◎</span>Sedang menuju milestone <span class="cnt">${news.next.length} lagu</span></div>
-          <div class="mscards">${news.next.length ? news.next.map(msNextCard).join("") : msEmpty("Belum ada prediksi terdekat — butuh riwayat beberapa hari agar ritme 7 hari bisa dihitung.")}</div>
-        </div>
+      <div class="msgrid">
+        <div class="mcolhead"><span class="dot ok">✓</span>Baru menembus milestone <span class="cnt">${news.ok.length} lagu</span></div>
+        <div class="mcolhead"><span class="dot next">◎</span>Sedang menuju milestone <span class="cnt">${news.next.length} lagu</span></div>
+        ${msPairs}
       </div>
     </section>`;
 
@@ -2662,6 +2727,7 @@ function renderAll() {
   const ms = !home && state.artistTab === "milestones";
   $("#homeSection").style.display = home ? "" : "none";
   $("#channelSection").style.display = home ? "none" : "";
+  $("#artistHl").style.display = home ? "none" : "";
   $("#viewTabs").style.display = home ? "none" : "";
   $("#msSection").style.display = ms ? "" : "none";
   $("#toolbar").style.display = home || ms ? "none" : "";
@@ -2670,6 +2736,7 @@ function renderAll() {
   else {
     renderViewTabs();
     renderChannel();
+    renderArtistHighlights();
     if (ms) renderMilestones();
     else renderVideos();
   }
