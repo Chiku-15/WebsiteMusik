@@ -28,11 +28,16 @@ jobs:
           node-version: "20"
 
       - name: Kumpulkan data YouTube
+        id: yt
         env:
           YT_API_KEY: ${{ secrets.YT_API_KEY }}
         run: node collect.js
+        # Kalau YouTube gagal (API key hilang / jaringan), Spotify tetap jalan dan
+        # data apa pun yang berhasil dikumpulkan tetap disimpan — situs tidak macet.
+        continue-on-error: true
 
       - name: Kumpulkan data Spotify (kworb + embed)
+        id: sp
         env:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
@@ -42,7 +47,15 @@ jobs:
         continue-on-error: true
 
       - name: Simpan data ke repo
+        if: always()
         run: |
+          echo "Hasil putaran ini: YouTube=${{ steps.yt.outcome }} Spotify=${{ steps.sp.outcome }}"
+          if [ "${{ steps.yt.outcome }}" = "failure" ] && [ "${{ steps.sp.outcome }}" = "failure" ]; then
+            echo "::error::Kedua kolektor gagal — tidak ada data baru untuk disimpan."
+          fi
+          if [ "${{ steps.yt.outcome }}" = "failure" ]; then
+            echo "::warning::Langkah YouTube gagal. Penyebab paling sering: secret YT_API_KEY kosong/hilang (cek Settings → Secrets and variables → Actions) atau YouTube menolak permintaan."
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/ config.json
