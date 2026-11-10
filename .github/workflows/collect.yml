@@ -2,9 +2,9 @@ name: Kumpulkan data (YouTube + Spotify)
 
 on:
   schedule:
-    # 00:00 UTC = 07:00 WIB  |  12:00 UTC = 19:00 WIB
-    - cron: "0 0 * * *"
-    - cron: "0 12 * * *"
+    # Setiap jam (WIB = UTC+7) — supaya grafik "1 hari" di situs bisa menampilkan
+    # batang per jam (~24 batang). Kwantitas API YouTube tetap aman: ± 5 unit/run.
+    - cron: "0 * * * *"
   workflow_dispatch: # tombol jalankan manual di tab Actions
 
 permissions:
