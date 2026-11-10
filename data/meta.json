@@ -1,8 +1,8 @@
 {
- "last_updated": 1794328250,
+ "last_updated": 1794328787,
  "schema": 3,
  "mode": "api",
- "duration_sec": 4,
+ "duration_sec": 3,
  "quota_note": "pakai YouTube Data API v3",
  "note": "Grafik menyertakan estimasi harian sejak tanggal rilis video / tanggal channel dibuat (ditandai est.). Titik terukur menimpanya."
 }
