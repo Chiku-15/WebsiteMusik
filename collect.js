@@ -94,15 +94,14 @@ function appendHistory(history, point) {
   const last = history[history.length - 1];
   if (last) {
     if (last.e !== 1 && point.e === 1) return false; // estimasi tidak pernah menimpa data terukur
-    if (sameWIBDay(last.t, point.t)) {
-      // granularitas harian: simpan satu titik terbaru per hari (timpa estimasi dgn data nyata)
-      if (point.t > last.t || (last.e === 1 && point.e !== 1)) {
-        history[history.length - 1] = point;
-        return true;
-      }
-      return false;
+    if (sameWIBDay(last.t, point.t) && last.e === 1 && point.e !== 1) {
+      // titik terukur selalu menggantikan estimasi di hari yang sama
+      history[history.length - 1] = point;
+      return true;
     }
-    if (point.t - last.t < 30 * 60) return false; // dedupe < 30 menit
+    // granularitas per jam: simpan titik baru bila jaraknya ≥ 45 menit
+    // (toleransi jadwal cron per jam yang kadang bergeser beberapa menit)
+    if (point.t - last.t < 45 * 60) return false;
   }
   history.push(point);
   if (history.length > HISTORY_CAP) history.splice(0, history.length - HISTORY_CAP);

@@ -4,13 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>K-POP PULSE — Statistik YouTube &amp; Spotify Artis K-pop</title>
-<meta name="description" content="Pantau views, likes, subscriber YouTube &amp; streaming Spotify artis K-pop favoritmu — grafik pertumbuhan harian &amp; prediksi milestone. Data direkam otomatis 2x sehari oleh GitHub Actions.">
+<meta name="description" content="Pantau views, likes, subscriber YouTube &amp; streaming Spotify artis K-pop favoritmu — grafik pertumbuhan harian &amp; prediksi milestone. Data direkam otomatis tiap jam oleh GitHub Actions.">
 <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%23ff4d6d"/><path d="M26 20l18 12-18 12z" fill="white"/></svg>'>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.2.0/dist/chartjs-plugin-zoom.min.js"></script>
+<!-- plugin zoom Chart.js sengaja tidak dimuat: scroll halaman harus selalu jalan di atas grafik -->
 <style>
   :root{
     --radius:16px;
@@ -151,12 +151,13 @@
   /* ---------- detail overlay ---------- */
   .overlay{
     position:fixed;inset:0;background:var(--overlay);z-index:100;display:none;
-    align-items:flex-start;justify-content:center;overflow-y:auto;padding:4vh 16px 6vh;
+    align-items:flex-start;justify-content:center;overflow-y:auto;padding:0;
   }
   .overlay.open{display:flex}
+  /* detail full layar — tidak ada ruang kosong kiri-kanan */
   .sheet{
-    width:100%;max-width:920px;background:var(--bg2);border:1px solid var(--border);
-    border-radius:20px;box-shadow:var(--shadow);padding:22px;position:relative;
+    width:100%;max-width:none;background:var(--bg2);border:none;
+    border-radius:0;min-height:100dvh;box-shadow:none;padding:22px;position:relative;
     animation:pop .22s ease;
   }
   @keyframes pop{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
@@ -313,6 +314,14 @@
   .lbstats{text-align:right;flex:none}
   .lbstats .g{font-size:13px;font-weight:800}
   .lbstats .l{font-size:10.5px;color:var(--muted);font-weight:600;margin-top:2px}
+  /* halaman artis: samakan tinggi baris 3 kolom sorotan supaya barisannya sejajar rapi */
+  .hgrid3 .lbrow{height:86px;padding-top:0;padding-bottom:0}
+  .hgrid3 .lbmeta{flex-wrap:nowrap;overflow:hidden;white-space:nowrap}
+  .hgrid3 .lbmeta .apill{flex:none}
+  .hgrid3 .lbmeta .lbnum{overflow:hidden;text-overflow:ellipsis}
+  .hgrid3 .lbstats .g,.hgrid3 .lbstats .l{white-space:nowrap}
+  .hgrid3 .hsect .sub{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+  .hgrid3 .note{min-height:38px}
   @media (max-width:640px){
     .hstats{grid-template-columns:repeat(2,1fr)}
     .lbthumb{width:76px}
@@ -637,6 +646,14 @@ function lastDayDelta(history, key) {
   if (days.length < 2) return null;
   const a = days[days.length - 1], b = days[days.length - 2];
   return { key: a.key, t: a.t, delta: Math.max(0, a.v - b.v), est: !!a.e || !!b.e };
+}
+/* label relatif utk hari kalender WIB: hari ini / kemarin / tanggal lengkap */
+function relDay(key) {
+  if (!key) return "–";
+  const nowMs = Date.now();
+  if (key === dayKeyOf(nowMs / 1000)) return "hari ini";
+  if (key === dayKeyOf(nowMs / 1000 - 86400)) return "kemarin";
+  return fmtDate(key);
 }
 /* berapa jam yang lalu data terakhir direkam (dari meta.json) */
 function hoursSinceUpdate() {
@@ -1145,7 +1162,6 @@ function renderArtistHighlights() {
       <div class="lbmain">
         <div class="lbtitle">${esc(g.song)}</div>
         <div class="lbmeta">
-          <span class="apill" style="background:${mv.art.color}">${esc(mv.art.name)}</span>
           <span class="lbnum">${fmtCompact(g.total)} views</span>
           ${g.vids.length > 1 ? `<span class="lbnum">· ${g.vids.length} versi</span>` : ""}
         </div>
@@ -1172,7 +1188,6 @@ function renderArtistHighlights() {
       <div class="lbmain">
         <div class="lbtitle">${esc(v.title)}</div>
         <div class="lbmeta">
-          <span class="apill" style="background:${v.art.color}">${catLabel(v)}</span>
           <span class="lbnum">${fmtCompact(lastV(v))} views</span>
         </div>
       </div>
@@ -1192,7 +1207,6 @@ function renderArtistHighlights() {
       <div class="lbmain">
         <div class="lbtitle">${esc(v.title)}</div>
         <div class="lbmeta">
-          <span class="apill" style="background:${v.art.color}">${catLabel(v)}</span>
           <span class="lbnum">${v.published ? fmtDate(v.published) : "–"}</span>
         </div>
       </div>
@@ -1208,19 +1222,19 @@ function renderArtistHighlights() {
       <div>
         ${homeSectHead("#ffb02e", ICO_TROPHY, "Paling banyak ditonton", `gabungan semua versi lagu ${esc(art.name)}`)}
         ${rows
-          ? `<div class="lb">${rows}</div><p class="note">Peringkat = total views gabungan semua versi lagu milik ${esc(art.name)} · diperbarui otomatis 2× sehari. Klik = buka mode gabungan.</p>`
+          ? `<div class="lb">${rows}</div><p class="note">Peringkat = total views gabungan semua versi lagu milik ${esc(art.name)} · klik = buka mode gabungan.</p>`
           : `<div class="banner">Belum ada data views untuk lagu ${esc(art.name)}.</div>`}
       </div>
       <div>
         ${homeSectHead("#ff4d6d", ICO_FIRE, "Tren minggu ini", `${trend.length} video · pertumbuhan 7 hari tertinggi`)}
         ${trendRows
-          ? `<div class="lb">${trendRows}</div><p class="note">Diurutkan dari pertumbuhan views 7 hari tertinggi milik ${esc(art.name)} · diperbarui otomatis 2× sehari. Klik = grafik harian.</p>`
+          ? `<div class="lb">${trendRows}</div><p class="note">Diurutkan dari pertumbuhan views 7 hari tertinggi milik ${esc(art.name)} · klik = grafik harian.</p>`
           : `<div class="banner">Belum ada data pertumbuhan untuk ${esc(art.name)}.</div>`}
       </div>
       <div>
         ${homeSectHead("#8b5cf6", ICO_NEW, "Rilisan terbaru", `${newest.length} video terbaru ${esc(art.name)}`)}
         ${newRows
-          ? `<div class="lb">${newRows}</div><p class="note">Video terbaru dari channel ${esc(art.name)}, paling baru di atas · diperbarui otomatis 2× sehari. Klik = detail video.</p>`
+          ? `<div class="lb">${newRows}</div><p class="note">Video terbaru dari channel ${esc(art.name)}, paling baru di atas · klik = detail video.</p>`
           : `<div class="banner">Belum ada rilisan terbaru dari ${esc(art.name)}.</div>`}
       </div>
     </div>
@@ -1307,7 +1321,7 @@ function renderHome() {
 
   const hero = `
     <section class="hero">
-      <span class="hbadge">PEMANTAUAN OTOMATIS 2× SEHARI</span>
+      <span class="hbadge">PEMANTAUAN OTOMATIS TIAP JAM</span>
       <h1>Lagu K-pop <span class="grad">paling banyak ditonton</span> hari ini</h1>
       <p>Papan peringkat gabungan semua versi lagu dari artis yang dipantau — klik lagu/video mana pun untuk grafik harian &amp; prediksi milestone.</p>
       <div class="hstats">
@@ -1371,7 +1385,7 @@ function renderHome() {
       <div>
         ${homeSectHead("#ffb02e", ICO_TROPHY, "Lagu paling banyak ditonton", "gabungan semua versi")}
         <div class="lb">${rows}</div>
-        <p class="note">Peringkat = total views gabungan semua versi lagu (MV, dance performance, practice, remix) di semua artis yang dipantau · diperbarui otomatis 2× sehari. Klik = buka mode gabungan.</p>
+        <p class="note">Peringkat = total views gabungan semua versi lagu (MV, dance performance, practice, remix) di semua artis yang dipantau · diperbarui otomatis tiap jam. Klik = buka mode gabungan.</p>
         ${homeSectHead("#38bdf8", ICO_PEOPLE, "Jelajahi artis", "halaman lengkap per artis")}
         <div class="chgrid">${explore}</div>
       </div>
@@ -1550,23 +1564,15 @@ function openDetail(vid, combined) {
     </div>
 
     ${isStale ? `
-    <div class="stalewarn"><span class="ico">⏸</span><div><b>Pembaruan data tertahan.</b> Pengukuran terakhir terekam <b>${fmtTs(state.meta.last_updated)}</b> (${freshnessText(state.meta.last_updated)}) — angka di bawah adalah pengukuran terakhir yang tersimpan, bukan angka real-time. Buka repo → tab <b>Actions → “Kumpulkan data (YouTube + Spotify)” → Run workflow</b> untuk memaksa pembaruan, atau tunggu jadwal otomatis berikutnya (07.00 &amp; 19.00 WIB).</div></div>` : ""}
+    <div class="stalewarn"><span class="ico">⏸</span><div><b>Pembaruan data tertahan.</b> Pengukuran terakhir terekam <b>${fmtTs(state.meta.last_updated)}</b> (${freshnessText(state.meta.last_updated)}) — angka di bawah adalah pengukuran terakhir yang tersimpan, bukan angka real-time. Buka repo → tab <b>Actions → “Kumpulkan data (YouTube + Spotify)” → Run workflow</b> untuk memaksa pembaruan, atau tunggu jadwal otomatis berikutnya (tiap jam).</div></div>` : ""}
 
     <div class="dhero" style="--artist-color:${art.color}">
       <div class="dstat hero"><div class="k">Views${state.detailCombined ? " · semua versi" : ""}</div>
         <div class="v">${fmtExact(last.v)}</div>
-        <div class="d">${dV ? `( ${DFS.format(new Date(dV.t * 1000))}: <span class="up">+${fmtGrow(dV.delta)}</span>${dV.est ? " · est." : ""} )` : "menunggu data berikutnya"}</div></div>
+        <div class="d">${dV ? `<span class="up">+${fmtGrow(dV.delta)}</span>&nbsp;· ${relDay(dV.key)}${dV.est ? " · est." : ""}` : "menunggu data berikutnya"}</div></div>
       <div class="dstat hero"><div class="k">Likes</div>
         <div class="v">${lpt ? fmtExact(lpt.l) : "–"}</div>
-        <div class="d">${lpt ? (dLday ? `( <span class="up">+${fmtGrow(dLday.delta)}</span>${dLday.est ? " · est." : ""} )` : "sesuai YouTube") : "menunggu pengukuran"}</div></div>
-    </div>
-    <div class="dbadges">
-      <span class="dbadge"><b>#${NF.format(rankViews)}</b>&nbsp;dari ${NF.format(nTracked)} video dipantau</span>
-      <span class="dbadge ${rankFast === 1 ? "hot" : ""}"><b>#${NF.format(rankFast)}</b>&nbsp;tercepat 7 hari</span>
-      ${d7w && d7w.delta > 0 ? `<span class="dbadge hot"><b>+${fmtGrow(d7w.delta)}</b>&nbsp;views 7 hari terakhir${recentEst(h, 7) ? " (est.)" : ""}</span>` : ""}
-      ${d7 ? `<span class="dbadge"><b>${fmtCompact(Math.round(d7.rate))}</b>&nbsp;rata-rata views/hari</span>` : ""}
-      ${watched != null ? `<span class="dbadge">${watched >= 1 ? `dipantau <b>${NF.format(watched)}</b>&nbsp;hari` : "baru mulai dipantau"}${firstRealT ? ` · sejak ${fmtDate(isoDate(firstRealT))}` : ""}</span>` : ""}
-      ${per1000 ? `<span class="dbadge"><b>${per1000.toLocaleString("id-ID", { maximumFractionDigits: 1 })}</b>&nbsp;likes / 1.000 views</span>` : ""}
+        <div class="d">${lpt && dLday ? `<span class="up">+${fmtGrow(dLday.delta)}</span>&nbsp;· ${relDay(dLday.key)}${dLday.est ? " · est." : ""}` : (lpt ? "sesuai YouTube" : "menunggu pengukuran")}</div></div>
     </div>
 
     ${versions.length ? `
@@ -1600,7 +1606,7 @@ function openDetail(vid, combined) {
       <div class="legend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span><span><i class="sw" style="background:${art.color}55"></i>Estimasi</span></div>
       <div class="chartbox"><canvas id="chartCum"></canvas></div>
       <p class="note" id="likeHint" style="margin-top:6px"></p>
-      <p class="note">Batang/garis transparan &amp; putus-putus = <b>estimasi</b> — dibangun otomatis dari tanggal rilis + views terkini (sebagian berbekal arsip Wayback Machine). Batang/garis solid = <b>pengukuran nyata</b> yang diambil langsung dari YouTube tiap putaran GitHub Actions (2× sehari) dan menimpa estimasi. YouTube tidak menyediakan riwayat harian untuk publik (hanya pemilik channel bisa melihatnya di YouTube Studio), jadi masa sebelum pemantauan dimulai memang berupa estimasi — makin lama situs berjalan, makin panjang data nyatanya.${state.detailCombined
+      <p class="note">Batang/garis transparan &amp; putus-putus = <b>estimasi</b> — dibangun otomatis dari tanggal rilis + views terkini (sebagian berbekal arsip Wayback Machine). Batang/garis solid = <b>pengukuran nyata</b> yang diambil langsung dari YouTube tiap putaran GitHub Actions (tiap jam) dan menimpa estimasi. YouTube tidak menyediakan riwayat harian untuk publik (hanya pemilik channel bisa melihatnya di YouTube Studio), jadi masa sebelum pemantauan dimulai memang berupa estimasi — makin lama situs berjalan, makin panjang data nyatanya.${state.detailCombined
         ? `<br><b>Mode gabungan:</b> angka = penjumlahan seluruh ${versions.length + 1} versi lagu ini, dijumlahkan per hari kalender.`
         : realPts.length ? `<br>Data nyata video ini mulai terekam: <b>${fmtTs(realPts[0].t)}</b>${watched != null ? ` — sejauh itu sudah ${NF.format(watched)} hari terpantau` : ""}.` : ""}</p>
     </div>
@@ -1720,6 +1726,7 @@ function bucketize(days, gran) {
 function granFor(days) { return days.length < 90 ? "day" : days.length < 420 ? "week" : "month"; }
 function bucketLabel(key, gran) {
   if (gran === "month") return MF.format(new Date(key + "-01T00:00:00"));
+  if (gran === "hour") return key.slice(8, 10) + "/" + key.slice(5, 7) + " " + key.slice(11, 13) + ":00";
   return key.slice(8, 10) + "/" + key.slice(5, 7);
 }
 
@@ -1795,11 +1802,7 @@ function makeDualLineChart(canvas, cum, likeMap, color, cid, gran) {
       },
     });
   }
-  const zoomCfg = hasZoom ? {
-    pan: { enabled: !isCoarse, mode: "x", threshold: 8 },
-    zoom: { wheel: { enabled: !isCoarse }, pinch: { enabled: isCoarse }, mode: "x", panOnDrag: false },
-    limits: { x: { minRange: 3 * 86400 * 1000 } },
-  } : undefined;
+  /* zoom/pan dinonaktifkan — scroll halaman harus selalu jalan di atas grafik */
   return newChart(canvas, {
     type: "line",
     data: {
@@ -1825,7 +1828,6 @@ function makeDualLineChart(canvas, cum, likeMap, color, cid, gran) {
               : fmtExact(c.parsed.y) + " likes" + (likeEstFlags[c.dataIndex] ? " (estimasi)" : ""),
           },
         },
-        ...(zoomCfg ? { zoom: zoomCfg } : {}),
       },
       scales: {
         x: { grid: { color: cssVar("--chart-grid") }, ticks: { color: cssVar("--chart-text"), maxTicksLimit: 8, font: { size: 10.5 } } },
@@ -1845,14 +1847,7 @@ function makeDualLineChart(canvas, cum, likeMap, color, cid, gran) {
 }
 
 function chartOpts(tooltipLabel, extra = {}) {
-  const zoomCfg = hasZoom ? {
-    pan: { enabled: !isCoarse, mode: "x", threshold: 8 },
-    zoom: {
-      wheel: { enabled: !isCoarse }, pinch: { enabled: isCoarse },
-      mode: "x", panOnDrag: false,
-    },
-    limits: { x: { minRange: 3 * 86400 * 1000 } },
-  } : undefined;
+  /* zoom/pan dinonaktifkan — scroll halaman harus selalu jalan di atas grafik */
   return {
     responsive: true,
     maintainAspectRatio: false,
@@ -1866,7 +1861,6 @@ function chartOpts(tooltipLabel, extra = {}) {
         borderColor: cssVar("--border"), borderWidth: 1, padding: 10, displayColors: false,
         ...(tooltipLabel ? { callbacks: { label: tooltipLabel } } : {}),
       },
-      ...(zoomCfg ? { zoom: zoomCfg } : {}),
     },
     scales: {
       x: { grid: { color: cssVar("--chart-grid") }, ticks: { color: cssVar("--chart-text"), maxTicksLimit: 8, font: { size: 10.5 } } },
@@ -1884,6 +1878,37 @@ function weekKeyOf(key) {
   return d.toISOString().slice(0, 10);
 }
 
+/* delta views PER JAM utk 24 jam terakhir (tombol “1 hari”) — sekitar 24 batang.
+ * Nilai tiap jam = interpolasi linier antara dua titik pengukuran yang mengapitnya.
+ * Kalau jarak kedua pengukuran > 3 jam (perekaman masih jarang), batang ditandai estimasi;
+ * begitu perekaman per jam berjalan, semua batang otomatis jadi data nyata. */
+function hourlyDeltas(h, hours = 24) {
+  if (!h || h.length < 2) return [];
+  const endH = Math.floor(h[h.length - 1].t / 3600);
+  const startH = endH - hours + 1;
+  const valAt = (T) => {
+    if (T <= h[0].t) return { v: h[0].v, e: true };
+    const lastP = h[h.length - 1];
+    if (T >= lastP.t) return { v: lastP.v, e: lastP.e === 1 };
+    let i = 0;
+    while (i < h.length - 2 && h[i + 1].t <= T) i++;
+    const a = h[i], b = h[i + 1];
+    if (b.t <= a.t) return { v: b.v, e: b.e === 1 };
+    const f = (T - a.t) / (b.t - a.t);
+    return { v: a.v + (b.v - a.v) * f, e: a.e === 1 || b.e === 1 || (b.t - a.t) > 3 * 3600 };
+  };
+  const hhFmt = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Jakarta", hour: "2-digit", hourCycle: "h23", hour12: false });
+  const out = [];
+  let prev = valAt(startH * 3600 - 1);
+  for (let H = startH; H <= endH; H++) {
+    const cur = valAt(H * 3600 + 3599);
+    const hh = hhFmt.format(new Date(H * 3600 * 1000));
+    out.push({ key: dayKeyOf(H * 3600) + "T" + hh, v: Math.max(0, Math.round(cur.v - prev.v)), est: !!cur.e || !!prev.e });
+    prev = cur;
+  }
+  return out;
+}
+
 function buildDailyChart(h, color) {
   const box = $("#chartDaily") ? $("#chartDaily").closest(".chartbox") : null;
   const days = daysFromHistory(h, "v");
@@ -1891,11 +1916,21 @@ function buildDailyChart(h, color) {
     if (box) box.innerHTML = `<div class="wait">Belum cukup data untuk grafik harian.</div>`;
     return;
   }
-  const gran = state.dailyRange === "365" ? "week" : state.dailyRange === "all" ? "month" : "day";
-  const sliced = state.dailyRange === "1" ? days.slice(-2) : state.dailyRange === "7" ? days.slice(-8) : state.dailyRange === "30" ? days.slice(-31) : days;
-  const series = bucketize(sliced, gran);
+  const gran = state.dailyRange === "365" ? "week" : state.dailyRange === "all" ? "month" : state.dailyRange === "1" ? "hour" : "day";
+  let series;
+  if (gran === "hour") {
+    const hb = hourlyDeltas(h, 24);
+    if (hb.length < 2) {
+      if (box) box.innerHTML = `<div class="wait">Belum cukup data untuk grafik per jam.</div>`;
+      return;
+    }
+    series = { deltas: hb };
+  } else {
+    const sliced = state.dailyRange === "7" ? days.slice(-8) : state.dailyRange === "30" ? days.slice(-31) : days;
+    series = bucketize(sliced, gran);
+  }
   const t = $("#dailyTitle");
-  if (t) t.textContent = gran === "month" ? "Views ditambahkan per bulan" : gran === "week" ? "Views ditambahkan per pekan" : "Views ditambahkan per hari";
+  if (t) t.textContent = gran === "month" ? "Views ditambahkan per bulan" : gran === "week" ? "Views ditambahkan per pekan" : gran === "hour" ? "Views ditambahkan per jam · 24 jam terakhir" : "Views ditambahkan per hari";
   makeBarChart($("#chartDaily"), series.deltas, color, "daily", "views", gran);
 }
 
@@ -2011,7 +2046,7 @@ function openChannel(artId) {
     <div class="legend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span><span><i class="sw" style="background:${art.color}55"></i>Estimasi</span></div>
     <div class="chartbox" style="margin-bottom:12px"><canvas id="chanLine"></canvas></div>
     <div class="chartbox"><canvas id="chanBar"></canvas></div>
-    <p class="note">Garis/batang transparan dan putus-putus = <b>estimasi</b> — dibangun dari tanggal channel dibuat + angka terkini (model pertumbuhan; BM 28 Des 2022, TREASURE 8 Feb 2019). Titik/batang solid = pengukuran nyata yang menimpa estimasi setiap putaran GitHub Actions.${hasZoom ? " Scroll di atas grafik = zoom, tarik = geser." : ""}</p>
+    <p class="note">Garis/batang transparan dan putus-putus = <b>estimasi</b> — dibangun dari tanggal channel dibuat + angka terkini (model pertumbuhan; BM 28 Des 2022, TREASURE 8 Feb 2019). Titik/batang solid = pengukuran nyata yang menimpa estimasi setiap putaran GitHub Actions.</p>
 
     <div class="sect">
       <h3>Milestone total views</h3>
@@ -2267,7 +2302,7 @@ function renderSpHome(sec) {
 
   sec.innerHTML = `
     <section class="hero sp">
-      <span class="hbadge">SPOTIFY · PEMANTAUAN OTOMATIS 2× SEHARI</span>
+      <span class="hbadge">SPOTIFY · PEMANTAUAN OTOMATIS TIAP JAM</span>
       <h1>Lagu K-pop <span class="grad">paling banyak di-stream</span> hari ini</h1>
       <p>Papan peringkat gabungan semua versi lagu di Spotify — klik lagu mana pun untuk grafik stream harian &amp; prediksi milestone.</p>
       <div class="hstats">
@@ -2281,7 +2316,7 @@ function renderSpHome(sec) {
       <div>
         ${spSectHead("#1ed760", ICO_SP_TROPHY, "Lagu paling banyak di-stream", "gabungan semua versi")}
         <div class="lb">${top.map(lbRow).join("")}</div>
-        <p class="note">Peringkat = total stream gabungan semua versi lagu (remix, ver. JP, versi live dihitung terpisah) di semua artis yang dipantau · sumber angka: Spotify Charts (via kworb.net) · diperbarui otomatis 2× sehari. Klik = grafik &amp; milestone.</p>
+        <p class="note">Peringkat = total stream gabungan semua versi lagu (remix, ver. JP, versi live dihitung terpisah) di semua artis yang dipantau · sumber angka: Spotify Charts (via kworb.net) · diperbarui otomatis tiap jam. Klik = grafik &amp; milestone.</p>
         ${spSectHead("#38bdf8", ICO_SP_PEOPLE, "Jelajahi artis", "halaman lengkap per artis")}
         <div class="chgrid two">${cards}</div>
       </div>
@@ -2564,7 +2599,7 @@ function renderSpArtist(sec) {
         </div>
         <canvas id="spArtChart"></canvas>
       </div>
-      <p class="note">Kurva terbentuk dari pengukuran rutin 2× sehari; makin lama situs berjalan, makin panjang riwayatnya.${d1 > 0 ? ` Delta 24 jam terakhir: <span class="up">+${fmtCompact(d1)}</span>.` : ""}</p>
+      <p class="note">Kurva terbentuk dari pengukuran rutin tiap jam; makin lama situs berjalan, makin panjang riwayatnya.${d1 > 0 ? ` Delta 24 jam terakhir: <span class="up">+${fmtCompact(d1)}</span>.` : ""}</p>
     </div>` : ""}
     <div class="stabs" style="margin:24px 2px 14px">
       <button class="stab ${state.spArtistTab !== "ms" ? "active" : ""}" data-sptab="albums">Album &amp; lagu (${nSongs})</button>
@@ -2675,7 +2710,7 @@ function openSpTrack(key) {
         </div>
         <canvas id="spTrackChart"></canvas>
       </div>
-      <p class="note">Angka = penjumlahan seluruh ${tr.trackIds.length} versi/ID Spotify dengan judul yang sama, direkam dari data publik Spotify Charts (via kworb.net) setiap putaran GitHub Actions (2× sehari). Kurva putus-putus sebelum rekaman pertama = estimasi model pertumbuhan — makin lama situs berjalan, makin panjang data nyatanya. <a href="${esc(tr.openUrl)}" target="_blank" rel="noopener">Buka di Spotify ↗</a></p>
+      <p class="note">Angka = penjumlahan seluruh ${tr.trackIds.length} versi/ID Spotify dengan judul yang sama, direkam dari data publik Spotify Charts (via kworb.net) setiap putaran GitHub Actions (tiap jam). Kurva putus-putus sebelum rekaman pertama = estimasi model pertumbuhan — makin lama situs berjalan, makin panjang data nyatanya. <a href="${esc(tr.openUrl)}" target="_blank" rel="noopener">Buka di Spotify ↗</a></p>
     </div>
 
     <div class="sect">
@@ -2720,7 +2755,7 @@ function drawSpTrackChart(tr, color) {
     .filter((p) => state.spRange === "all" || p.t >= last - state.spRange * 86400)
     .map((p) => ({ key: isoDate(p.t), t: p.t, v: p.v, est: p.e === 1 }));
   if (pts.length < 2) {
-    if (box) box.innerHTML = `<div class="wait">Belum cukup data untuk grafik — cek lagi setelah pengukuran berikutnya (2× sehari).</div>`;
+    if (box) box.innerHTML = `<div class="wait">Belum cukup data untuk grafik — cek lagi setelah pengukuran berikutnya (tiap jam).</div>`;
     return;
   }
   makeLineChart($("#spTrackChart"), pts, color, "spTrack", "stream", "day", { layout: { padding: { top: 64 } } });
@@ -2817,7 +2852,7 @@ function renderTopline() {
   if (state.platform === "spotify") {
     if (state.sp.meta && state.sp.meta.last_updated) {
       const n = state.sp.tracks ? Object.keys(state.sp.tracks).length : 0;
-      el.innerHTML = `Terakhir diperbarui <b>${fmtTs(state.sp.meta.last_updated)}</b>${freshTail(state.sp.meta.last_updated)} · ${n} lagu dipantau · Spotify Charts (via kworb.net) · data direkam 2× sehari oleh GitHub Actions`;
+      el.innerHTML = `Terakhir diperbarui <b>${fmtTs(state.sp.meta.last_updated)}</b>${freshTail(state.sp.meta.last_updated)} · ${n} lagu dipantau · Spotify Charts (via kworb.net) · data direkam tiap jam oleh GitHub Actions`;
     } else if (state.sp.error) {
       el.textContent = "Data Spotify belum tersedia — jalankan workflow “Kumpulkan data” di tab Actions sekali, lalu muat ulang halaman.";
     } else {
@@ -2828,7 +2863,7 @@ function renderTopline() {
   const n = watchedIds().size;
   if (state.meta && state.meta.last_updated) {
     const mode = state.meta.mode === "api" ? "YouTube API" : state.meta.mode === "scrape" ? "mode scraping (tanpa API key)" : "data awal";
-    el.innerHTML = `Terakhir diperbarui <b>${fmtTs(state.meta.last_updated)}</b>${freshTail(state.meta.last_updated)} · ${n} video dipantau · ${mode} · data direkam 2× sehari oleh GitHub Actions`;
+    el.innerHTML = `Terakhir diperbarui <b>${fmtTs(state.meta.last_updated)}</b>${freshTail(state.meta.last_updated)} · ${n} video dipantau · ${mode} · data direkam tiap jam oleh GitHub Actions`;
   } else {
     el.textContent = "Data belum tersedia — jalankan sekali workflow “Kumpulkan data YouTube” di tab Actions.";
   }
