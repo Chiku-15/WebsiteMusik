@@ -4,7 +4,7 @@
  * Mengumpulkan statistik channel & video lalu menyimpannya ke data/.
  *
  * Mode:
- *  1) API (disarankan)  : set GitHub Secret YT_API_KEY → pakai YouTube Data API v3 (hemat kuota).
+ *  1) API (disarankan)  : set GitHub Secret YOUTUBE_API_KEY → pakai YouTube Data API v3 (hemat kuota).
  *  2) Scraping (cadangan): tanpa API key → baca halaman publik YouTube.
  *
  * Jalankan: node collect.js
@@ -17,7 +17,7 @@ const path = require("path");
 const ROOT = __dirname;
 const DATA_DIR = path.join(ROOT, "data");
 const CONFIG = JSON.parse(fs.readFileSync(path.join(ROOT, "config.json"), "utf-8"));
-const API_KEY = process.env.YT_API_KEY || "";
+const API_KEY = process.env.YOUTUBE_API_KEY || process.env.YT_API_KEY || ""; // nama baru + fallback nama lama
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 
