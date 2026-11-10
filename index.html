@@ -773,6 +773,28 @@ function displaySongOf(title) {
   if (m) return m[1].trim();
   return (title || "").replace(/\s*M\s*\/\s*V\s*$/i, "").trim();
 }
+/* judul pendek utk baris peringkat: buang nama artis di depan + kutip nama lagu.
+ * "BABYMONSTER - 'SHEESH' M/V" → "SHEESH M/V". Di halaman artis nama artis dibuang
+ * karena halamannya memang milik artis itu; di beranda nama artis tetap tampil sbg pill. */
+function rowTitleOf(v, art) {
+  const raw = (v && v.title) || "";
+  let s = raw;
+  const n = art && art.name ? String(art.name).trim() : "";
+  if (n) {
+    const e = n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    s = s.replace(new RegExp("^" + e + "\\s*[-–—:|]\\s*", "i"), "");
+    s = s.replace(new RegExp("^" + e + "\\s+", "i"), "");
+  }
+  s = s
+    .replace(/\u2018([^\u2018\u2019]+)\u2019/g, "$1")
+    .replace(/\u201C([^\u201C\u201D]+)\u201D/g, "$1")
+    .replace(/'([^']*)'/g, "$1")
+    .replace(/"([^"]*)"/g, "$1")
+    /* pasangan kutip campur (buka ' + tutup ’, atau sebaliknya) */
+    .replace(/'([^'\u2018\u2019\u201C\u201D]+)[\u2019\u201D]/g, "$1")
+    .replace(/[\u2018\u201C]([^\u2018\u2019\u201C\u201D]+)'/g, "$1");
+  return s.trim() || raw;
+}
 /* semua versi lain dari lagu yang sama (artis sama, kunci lagu sama) — MV di depan */
 function versionsOf(vid) {
   const v = state.videos[vid];
@@ -1148,27 +1170,25 @@ function renderArtistHighlights() {
   if (!mine.length) { el.innerHTML = ""; el.style.display = "none"; return; }
   el.style.display = "";
 
-  /* paling banyak ditonton: peringkat lagu (gabungan semua versi) milik artis ini */
-  const top = songGroups().filter((g) => g.channel === state.artist && g.total > 0)
-    .sort((a, b) => b.total - a.total).slice(0, 10);
-  const rows = top.map((g, i) => {
-    const mv = g.mv;
-    const d7sum = g.vids.reduce((s, x) => { const d = deltaDays(x.history, 7); return s + (d ? d.delta : 0); }, 0);
-    const estFlag = g.vids.some((x) => recentEst(x.history, 7));
+  /* paling banyak ditonton: peringkat VIDEO milik artis ini — tiap versi (MV, performance,
+   * dance practice) dihitung terpisah, tidak digabung jadi satu per lagu */
+  const top = [...mine].filter((v) => lastV(v) > 0).sort((a, b) => lastV(b) - lastV(a)).slice(0, 10);
+  const rows = top.map((v, i) => {
+    const d7 = deltaDays(v.history, 7);
+    const t = rowTitleOf(v, art);
     return `
-    <article class="lbrow ${i < 3 ? "top3" : ""}" data-id="${mv.id}" data-combined="1" style="--ac:${mv.art.color}" tabindex="0" role="button" aria-label="Peringkat ${i + 1}: ${esc(g.song)}">
+    <article class="lbrow ${i < 3 ? "top3" : ""}" data-id="${v.id}" style="--ac:${v.art.color}" tabindex="0" role="button" aria-label="Peringkat ${i + 1}: ${esc(t)}">
       <div class="lbrank">${i + 1}</div>
-      <img class="lbthumb" src="https://i.ytimg.com/vi/${mv.id}/hqdefault.jpg" alt="" loading="lazy">
+      <img class="lbthumb" src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy">
       <div class="lbmain">
-        <div class="lbtitle">${esc(g.song)}</div>
+        <div class="lbtitle">${esc(t)}</div>
         <div class="lbmeta">
-          <span class="lbnum">${fmtCompact(g.total)} views</span>
-          ${g.vids.length > 1 ? `<span class="lbnum">· ${g.vids.length} versi</span>` : ""}
+          <span class="lbnum">${fmtCompact(lastV(v))} views</span>
         </div>
       </div>
       <div class="lbstats">
-        <div class="g ${d7sum >= 0 ? "up" : ""}">${fmtDelta(d7sum)}</div>
-        <div class="l">7 hari${estFlag ? " (est.)" : ""}</div>
+        <div class="g ${d7 && d7.delta >= 0 ? "up" : ""}">${d7 ? fmtDelta(d7.delta) : "–"}</div>
+        <div class="l">7 hari${recentEst(v.history, 7) ? " (est.)" : ""}</div>
       </div>
     </article>`;
   }).join("");
@@ -1182,11 +1202,11 @@ function renderArtistHighlights() {
   const trendRows = trend.map((v, i) => {
     const d7 = deltaDays(v.history, 7);
     return `
-    <article class="lbrow ${i < 3 ? "top3" : ""}" data-id="${v.id}" style="--ac:${v.art.color}" tabindex="0" role="button" aria-label="Tren ${i + 1}: ${esc(v.title)}">
+    <article class="lbrow ${i < 3 ? "top3" : ""}" data-id="${v.id}" style="--ac:${v.art.color}" tabindex="0" role="button" aria-label="Tren ${i + 1}: ${esc(rowTitleOf(v, art))}">
       <div class="lbrank">${i + 1}</div>
       <img class="lbthumb" src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy">
       <div class="lbmain">
-        <div class="lbtitle">${esc(v.title)}</div>
+        <div class="lbtitle">${esc(rowTitleOf(v, art))}</div>
         <div class="lbmeta">
           <span class="lbnum">${fmtCompact(lastV(v))} views</span>
         </div>
@@ -1201,11 +1221,11 @@ function renderArtistHighlights() {
   const newRows = newest.map((v, i) => {
     const d7 = deltaDays(v.history, 7);
     return `
-    <article class="lbrow ${i < 3 ? "top3" : ""}" data-id="${v.id}" style="--ac:${v.art.color}" tabindex="0" role="button" aria-label="Terbaru ${i + 1}: ${esc(v.title)}">
+    <article class="lbrow ${i < 3 ? "top3" : ""}" data-id="${v.id}" style="--ac:${v.art.color}" tabindex="0" role="button" aria-label="Terbaru ${i + 1}: ${esc(rowTitleOf(v, art))}">
       <div class="lbrank">${i + 1}</div>
       <img class="lbthumb" src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy">
       <div class="lbmain">
-        <div class="lbtitle">${esc(v.title)}</div>
+        <div class="lbtitle">${esc(rowTitleOf(v, art))}</div>
         <div class="lbmeta">
           <span class="lbnum">${v.published ? fmtDate(v.published) : "–"}</span>
         </div>
@@ -1220,10 +1240,10 @@ function renderArtistHighlights() {
   el.innerHTML = `
     <div class="hgrid3">
       <div>
-        ${homeSectHead("#ffb02e", ICO_TROPHY, "Paling banyak ditonton", `gabungan semua versi lagu ${esc(art.name)}`)}
+        ${homeSectHead("#ffb02e", ICO_TROPHY, "Paling banyak ditonton", `views terbanyak per video ${esc(art.name)}`)}
         ${rows
-          ? `<div class="lb">${rows}</div><p class="note">Peringkat = total views gabungan semua versi lagu milik ${esc(art.name)} · klik = buka mode gabungan.</p>`
-          : `<div class="banner">Belum ada data views untuk lagu ${esc(art.name)}.</div>`}
+          ? `<div class="lb">${rows}</div><p class="note">Peringkat = views tiap video — setiap versi (MV, performance, dance practice) dihitung terpisah · klik = detail video.</p>`
+          : `<div class="banner">Belum ada data views untuk video ${esc(art.name)}.</div>`}
       </div>
       <div>
         ${homeSectHead("#ff4d6d", ICO_FIRE, "Tren minggu ini", `${trend.length} video · pertumbuhan 7 hari tertinggi`)}
@@ -1313,8 +1333,8 @@ function renderHome() {
     if (h && h.length) { hasCh = true; totV += h[h.length - 1].v || 0; totS += h[h.length - 1].s || 0; }
   }
 
-  /* peringkat LAGU (gabungan semua versi: MV + dance performance + practice + remix) */
-  const top = songGroups().filter((g) => g.total > 0).sort((a, b) => b.total - a.total).slice(0, 10);
+  /* peringkat VIDEO (tiap versi dihitung terpisah — MV, dance performance, practice tidak digabung) */
+  const top = vids.filter((v) => lastV(v) > 0).sort((a, b) => lastV(b) - lastV(a)).slice(0, 10);
   const rate7 = (v) => { const d = deltaDays(v.history, 7); return d ? d.rate : 0; };
   const trend = vids.map((v) => ({ v, r: rate7(v) })).sort((a, b) => b.r - a.r || lastV(b.v) - lastV(a.v)).slice(0, 8).map((x) => x.v);
   const newest = [...vids].sort((a, b) => (b.published || "").localeCompare(a.published || "")).slice(0, 6);
@@ -1322,8 +1342,8 @@ function renderHome() {
   const hero = `
     <section class="hero">
       <span class="hbadge">PEMANTAUAN OTOMATIS TIAP JAM</span>
-      <h1>Lagu K-pop <span class="grad">paling banyak ditonton</span> hari ini</h1>
-      <p>Papan peringkat gabungan semua versi lagu dari artis yang dipantau — klik lagu/video mana pun untuk grafik harian &amp; prediksi milestone.</p>
+      <h1>Video K-pop <span class="grad">paling banyak ditonton</span> hari ini</h1>
+      <p>Papan peringkat video dari artis yang dipantau — setiap versi (MV, dance performance, practice) dihitung terpisah — klik video mana pun untuk grafik harian &amp; prediksi milestone.</p>
       <div class="hstats">
         <div class="stat"><div class="k">Artis dipantau</div><div class="v">${state.config.artists.length}</div><div class="d">channel YouTube resmi</div></div>
         <div class="stat"><div class="k">Video dipantau</div><div class="v">${watchedIds().size}</div><div class="d">MV, dance practice &amp; performance</div></div>
@@ -1332,25 +1352,23 @@ function renderHome() {
       </div>
     </section>`;
 
-  const rows = top.map((g, i) => {
-    const mv = g.mv;
-    const d7sum = g.vids.reduce((s, x) => { const d = deltaDays(x.history, 7); return s + (d ? d.delta : 0); }, 0);
-    const estFlag = g.vids.some((x) => recentEst(x.history, 7));
+  const rows = top.map((v, i) => {
+    const d7 = deltaDays(v.history, 7);
+    const t = rowTitleOf(v, v.art);
     return `
-    <article class="lbrow ${i < 3 ? "top3" : ""}" data-id="${mv.id}" data-combined="1" style="--ac:${mv.art.color}" tabindex="0" role="button" aria-label="Peringkat ${i + 1}: ${esc(g.song)}">
+    <article class="lbrow ${i < 3 ? "top3" : ""}" data-id="${v.id}" style="--ac:${v.art.color}" tabindex="0" role="button" aria-label="Peringkat ${i + 1}: ${esc(t)}">
       <div class="lbrank">${i + 1}</div>
-      <img class="lbthumb" src="https://i.ytimg.com/vi/${mv.id}/hqdefault.jpg" alt="" loading="lazy">
+      <img class="lbthumb" src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy">
       <div class="lbmain">
-        <div class="lbtitle">${esc(g.song)}</div>
+        <div class="lbtitle">${esc(t)}</div>
         <div class="lbmeta">
-          <span class="apill" style="background:${mv.art.color}">${esc(mv.art.name)}</span>
-          <span class="lbnum">${fmtCompact(g.total)} views</span>
-          ${g.vids.length > 1 ? `<span class="lbnum">· ${g.vids.length} versi</span>` : ""}
+          <span class="apill" style="background:${v.art.color}">${esc(v.art.name)}</span>
+          <span class="lbnum">${fmtCompact(lastV(v))} views</span>
         </div>
       </div>
       <div class="lbstats">
-        <div class="g ${d7sum >= 0 ? "up" : ""}">${fmtDelta(d7sum)}</div>
-        <div class="l">7 hari${estFlag ? " (est.)" : ""}</div>
+        <div class="g ${d7 && d7.delta >= 0 ? "up" : ""}">${d7 ? fmtDelta(d7.delta) : "–"}</div>
+        <div class="l">7 hari${recentEst(v.history, 7) ? " (est.)" : ""}</div>
       </div>
     </article>`;
   }).join("");
@@ -1383,9 +1401,9 @@ function renderHome() {
     ${hero}
     <div class="hgrid">
       <div>
-        ${homeSectHead("#ffb02e", ICO_TROPHY, "Lagu paling banyak ditonton", "gabungan semua versi")}
+        ${homeSectHead("#ffb02e", ICO_TROPHY, "Video paling banyak ditonton", "tiap versi dihitung terpisah")}
         <div class="lb">${rows}</div>
-        <p class="note">Peringkat = total views gabungan semua versi lagu (MV, dance performance, practice, remix) di semua artis yang dipantau · diperbarui otomatis tiap jam. Klik = buka mode gabungan.</p>
+        <p class="note">Peringkat = views tiap video — setiap versi (MV, dance performance, practice) dihitung terpisah, tidak digabung per lagu · diperbarui otomatis tiap jam. Klik = grafik &amp; detail video.</p>
         ${homeSectHead("#38bdf8", ICO_PEOPLE, "Jelajahi artis", "halaman lengkap per artis")}
         <div class="chgrid">${explore}</div>
       </div>
