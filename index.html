@@ -173,6 +173,20 @@
   .pill{background:var(--chip);border-radius:999px;padding:3px 10px;font-size:11.5px}
   .dbig{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:18px 0}
   .dbig .stat .v{font-size:24px}
+  /* ---------- kartu angka besar gaya bm-tracker (views + likes) ---------- */
+  .dhero{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:18px 0 10px}
+  .dstat{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px 16px 12px;text-align:center}
+  .dstat .k{color:var(--muted);font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:1.1px}
+  .dstat .v{font-size:clamp(21px,4.6vw,28px);font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:.3px;margin-top:4px;line-height:1.25}
+  .dstat .d{font-size:12px;color:var(--muted);font-weight:700;margin-top:3px}
+  .dstat.hero{border-color:color-mix(in srgb,var(--artist-color,#6a78ff) 42%,var(--border));box-shadow:0 0 0 1px color-mix(in srgb,var(--artist-color,#6a78ff) 14%,transparent) inset}
+  .dbadges{display:flex;flex-wrap:wrap;gap:7px;margin:2px 0 4px}
+  .dbadge{display:inline-flex;align-items:center;gap:5px;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:5px 12px;font-size:11.5px;font-weight:700;color:var(--muted)}
+  .dbadge b{color:var(--text);font-weight:800}
+  .dbadge.hot{border-color:color-mix(in srgb,#2fd57b 42%,var(--border));color:#2fd57b}
+  .stalewarn{display:flex;gap:10px;align-items:flex-start;background:color-mix(in srgb,#ffb02e 12%,transparent);border:1px solid color-mix(in srgb,#ffb02e 40%,transparent);border-radius:12px;padding:10px 14px;margin:14px 0 2px;font-size:12.5px;line-height:1.55;color:var(--text)}
+  .stalewarn .ico{font-size:16px;line-height:1.4}
+  .stalewarn b{font-weight:800}
   .sect{margin-top:8px}
   .sect h3{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:16px 2px 10px}
   .chartbox{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;position:relative}
@@ -332,6 +346,17 @@
   .msdone{background:color-mix(in srgb,#2fd57b 14%,transparent);border:1px solid color-mix(in srgb,#2fd57b 38%,transparent);color:#2fd57b;border-radius:999px;padding:4px 12px;font-size:11.5px;font-weight:800}
   .msversion{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
   .verslink{font:inherit;color:var(--text)}
+  /* ---------- tabel delta harian (riwayat kenaikan per hari, gaya bm-tracker) ---------- */
+  .dtab td.num{padding:8px 9px}
+  .dtab .pos{color:#2fd57b;font-weight:800}
+  .dtab td.est .pos,.dtab td.tot.est .pos{color:color-mix(in srgb,#2fd57b 52%,var(--muted))}
+  .dtab td.zero .pos{color:var(--muted);font-weight:600}
+  .dtab td.best{background:color-mix(in srgb,#2fd57b 9%,transparent)}
+  .dtab td.tot{border-left:1px solid var(--border);font-size:13px}
+  .dtab .rk{color:var(--muted);font-weight:800;text-align:right;width:36px;font-size:12px}
+  .dtab tr.toprow .rk{color:#ffd257}
+  .dtab th.rk{text-align:right;width:36px}
+  .drangebar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:14px 2px 10px}
   @media (max-width:640px){
     .l-feats{grid-template-columns:1fr}
     .l-inner{padding:36px 22px 30px}
@@ -520,6 +545,7 @@
 const $ = (s) => document.querySelector(s);
 const NF = new Intl.NumberFormat("id-ID");
 const DF = new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric" });
+const DFS = new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short" }); // "6 Nov" — label delta harian
 const DFW = new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Jakarta" });
 const TF = new Intl.DateTimeFormat("id-ID", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" });
 const MF = new Intl.DateTimeFormat("id-ID", { month: "short", year: "numeric" });
@@ -600,6 +626,28 @@ function deltaLikes(history, days) {
   }
   if (!best || bestDiff > days * 1.6 * 86400) return null;
   return lastL.l - best.l;
+}
+
+/* delta hari kalender (WIB) TERUKUR TERAKHIR untuk metrik "v" | "l" | "s" — gaya bm-tracker:
+ * "(9 Nov: +472.277)" = nilai akhir hari terakhir dikurangi nilai akhir hari sebelumnya.
+ * Mengembalikan { key "YYYY-MM-DD", t, delta, est } atau null bila kurang dari 2 hari data. */
+function lastDayDelta(history, key) {
+  const days = daysFromHistory(history, key);
+  if (days.length < 2) return null;
+  const a = days[days.length - 1], b = days[days.length - 2];
+  return { key: a.key, t: a.t, delta: Math.max(0, a.v - b.v), est: !!a.e || !!b.e };
+}
+/* berapa jam yang lalu data terakhir direkam (dari meta.json) */
+function hoursSinceUpdate() {
+  return state.meta && state.meta.last_updated ? (Date.now() / 1000 - state.meta.last_updated) / 3600 : null;
+}
+/* label kesegaran data: "3 jam lalu" / "2 hari lalu" */
+function freshnessText(tSec) {
+  if (!tSec) return "";
+  const h = (Date.now() / 1000 - tSec) / 3600;
+  if (h < 1) return "baru saja";
+  if (h < 36) return Math.round(h) + " jam lalu";
+  return Math.round(h / 24) + " hari lalu";
 }
 
 /* milestone util — ambil N target berikutnya */
@@ -906,7 +954,8 @@ function renderViewTabs() {
   const n = allVideosFlat().filter((x) => x.channel === state.artist).length;
   el.innerHTML = `
     <button class="stab ${state.artistTab === "videos" ? "active" : ""}" data-t="videos">Video (${n})</button>
-    <button class="stab ${state.artistTab === "milestones" ? "active" : ""}" data-t="milestones">Milestone</button>`;
+    <button class="stab ${state.artistTab === "milestones" ? "active" : ""}" data-t="milestones">Milestone</button>
+    <button class="stab ${state.artistTab === "delta" ? "active" : ""}" data-t="delta">Delta harian</button>`;
   el.querySelectorAll(".stab").forEach((b) =>
     b.addEventListener("click", () => { state.artistTab = b.dataset.t; renderAll(); })
   );
@@ -1014,6 +1063,110 @@ function renderMilestones() {
     b.addEventListener("click", () => { state.msTab = b.dataset.k; renderMilestones(); })
   );
   sec.querySelectorAll("tr[data-id]").forEach((tr) =>
+    tr.addEventListener("click", () => openDetail(tr.dataset.id))
+  );
+}
+
+/* ===================== RIWAYAT DELTA HARIAN (gaya tabel peringkat mingguan bm-tracker) =====================
+ * Satu baris = satu video/lagu, satu kolom = satu hari kalender WIB, isi sel = views/stream yang
+ * ditambahkan pada hari itu. Diurutkan berdasarkan total periode — dipakai YouTube & Spotify. */
+function deltaTableHTML(items, opts) {
+  /* items: [{ id, title, sub, tie, days }] — days = hasil daysFromHistory (nilai akhir per hari WIB)
+   * opts : { unit, N, colName, emptyMsg } — id baris diletakkan di atribut data-id utk klik */
+  const N = opts.N;
+  let endKey = "0";
+  for (const it of items) { const d = it.days; if (d.length && d[d.length - 1].key > endKey) endKey = d[d.length - 1].key; }
+  if (endKey === "0") return `<div class="banner">${esc(opts.emptyMsg || "Belum ada data yang terekam.")}</div>`;
+  const endT = Date.parse(endKey + "T00:00:00+07:00") / 1000;
+  const colKeys = [];
+  for (let i = N - 1; i >= 0; i--) colKeys.push(dayKeyOf(endT - i * 86400)); // kunci hari kalender WIB
+  const colHead = colKeys.map((k) =>
+    `<th class="num" title="${fmtDate(k)} (WIB)">${k.slice(8, 10)}/${k.slice(5, 7)}</th>`).join("");
+
+  const rows = items.map((it) => {
+    const d = it.days, m = new Map();
+    if (d.length && d[0].v > 0) m.set(d[0].key, { delta: d[0].v, est: !!d[0].e }); // pemantauan mulai saat video sudah punya views
+    for (let i = 1; i < d.length; i++)
+      m.set(d[i].key, { delta: Math.max(0, d[i].v - d[i - 1].v), est: !!(d[i].e || d[i - 1].e) });
+    const cells = []; let tot = 0, any = false, anyEst = false, best = 0, bestIdx = -1;
+    colKeys.forEach((k, ci) => {
+      const c = m.get(k);
+      if (!c) { cells.push(null); return; }
+      any = true; if (c.est) anyEst = true;
+      tot += c.delta;
+      if (c.delta > best) { best = c.delta; bestIdx = ci; }
+      cells.push(c);
+    });
+    return { it, cells, tot, any, anyEst, bestIdx };
+  }).filter((r) => r.any).sort((a, b) => b.tot - a.tot || (b.it.tie || 0) - (a.it.tie || 0));
+
+  if (!rows.length)
+    return `<div class="banner">Tidak ada kenaikan ${esc(opts.unit)} pada ${N} hari terakhir untuk video/lagu artis ini.</div>`;
+
+  const body = rows.map((r, i) => `
+    <tr data-id="${esc(r.it.id)}" ${i < 3 ? 'class="toprow"' : ""}>
+      <td class="rk">${i + 1}</td>
+      <td class="sticky1"><div class="st1t"><b>${esc(r.it.title)}</b></div><div class="st1m">${r.it.sub}</div></td>
+      ${r.cells.map((c, ci) => {
+        if (!c) return `<td class="num"><span class="cellno">–</span></td>`;
+        const cls = `num${c.delta <= 0 ? " zero" : ""}${c.est ? " est" : ""}${ci === r.bestIdx && c.delta > 0 ? " best" : ""}`;
+        const tip = `+${NF.format(c.delta)} ${esc(opts.unit)} pada ${fmtDate(colKeys[ci])} (WIB)${c.est ? " · estimasi" : ""}${ci === r.bestIdx && c.delta > 0 ? " · hari terbaik" : ""}`;
+        return `<td class="${cls}" title="${tip}"><span class="pos">+${fmtCompact(c.delta)}</span></td>`;
+      }).join("")}
+      <td class="num tot${r.anyEst ? " est" : ""}" title="total ${esc(opts.unit)} dalam ${N} hari terakhir${r.anyEst ? " (sebagian estimasi)" : ""}"><span class="pos">+${fmtCompact(r.tot)}</span></td>
+    </tr>`).join("");
+
+  return `
+    <div class="tscroll"><table class="ms dtab">
+      <thead><tr><th class="rk">#</th><th class="sticky1">${esc(opts.colName || "Video")}</th>${colHead}<th class="num">Total ${N} hari</th></tr></thead>
+      <tbody>${body}</tbody>
+    </table></div>
+    <p class="note">Angka hijau = <b>views/${esc(opts.unit)} ditambahkan pada hari itu</b> (zona WIB) · <b>Total</b> = penjumlahan ${N} hari terakhir, tabel diurutkan dari total terbesar · <b>–</b> = belum rilis / tidak ada pengukuran · sel redup = <b>estimasi</b> (sebelum pemantauan dimulai) · latar hijau lembut = hari terbaik pada baris tersebut · <b>klik baris</b> untuk membuka detail lengkap. Rentang berakhir di ${fmtDate(endKey)} WIB — pengukuran terakhir yang tersimpan.</p>`;
+}
+
+function deltaRangePick(current, keyLS, onChange) {
+  const wrap = document.createElement("div");
+  wrap.className = "drangebar";
+  wrap.innerHTML = [7, 14, 30].map((n) =>
+    `<button class="rangebtn ${current === n ? "active" : ""}" data-n="${n}">${n} hari</button>`).join("") +
+    `<span class="lbnum" style="margin-left:4px">zona WIB</span>`;
+  wrap.querySelectorAll(".rangebtn").forEach((b) =>
+    b.addEventListener("click", () => {
+      const n = parseInt(b.dataset.n, 10);
+      localStorage.setItem(keyLS, String(n));
+      onChange(n);
+    })
+  );
+  return wrap;
+}
+
+function renderDelta() {
+  const art = artistOf(state.artist);
+  const sec = $("#msSection");
+  sec.style.setProperty("--artist-color", art.color);
+  const N = parseInt(localStorage.getItem("py.deltaRange") || "7", 10) || 7;
+  const vids = allVideosFlat().filter((x) => x.channel === state.artist && (x.history || []).length);
+  const items = vids.map((v) => ({
+    id: v.id,
+    title: v.title,
+    sub: `${fmtCompact(lastV(v))} views · rilis ${fmtDate(v.published)}`,
+    tie: lastV(v),
+    days: daysFromHistory(v.history || [], "v"),
+  }));
+  sec.innerHTML = `
+    <div class="sect" style="margin-top:18px" id="deltaWrap">
+      <h3>Riwayat delta harian — ${esc(art.name)}</h3>
+      <div class="legend"><span><i class="sw" style="background:${art.color}"></i>Kenaikan per hari</span><span><i class="sw" style="background:#2fd57b"></i>Positif</span></div>
+    </div>`;
+  const wrap = $("#deltaWrap");
+  const body = document.createElement("div");
+  body.innerHTML = deltaTableHTML(items, {
+    unit: "views", N, colName: "Video",
+    emptyMsg: `Belum ada data untuk ${art.name} — jalankan sekali workflow “Kumpulkan data” di tab Actions.`,
+  });
+  wrap.appendChild(deltaRangePick(N, "py.deltaRange", (n) => renderDelta()));
+  wrap.appendChild(body);
+  body.querySelectorAll("tr[data-id]").forEach((tr) =>
     tr.addEventListener("click", () => openDetail(tr.dataset.id))
   );
 }
@@ -1342,6 +1495,35 @@ function openDetail(vid, combined) {
   const songName = displaySongOf(v.title);
   const catOf = (x) => esc(state.config.categories[x.category] || x.category);
 
+  /* ---- gaya bm-tracker: delta hari terukur terakhir + peringkat di antara video dipantau ---- */
+  const dV = lastDayDelta(h, "v");
+  const dLday = lastDayDelta(h, "l");
+  const d7w = deltaDays(h, 7);
+  const fmtGrow = (n) => (n != null && n < 1e6 ? NF.format(n) : fmtCompact(n));
+  const flatVids = allVideosFlat();
+  const nTracked = flatVids.length;
+  const curTotal = last.v || 0;
+  const rate7of = (x) => { const d = deltaDays(x.history, 7); return d ? d.rate : 0; };
+  let rankViews = 1, rankFast = 1;
+  if (state.detailCombined) {
+    const groups = songGroups().sort((a, b) => b.total - a.total);
+    const gi = groups.findIndex((g) => g.channel === v.channel && g.vids.some((x) => x.id === vid));
+    if (gi >= 0) {
+      rankViews = gi + 1;
+      const gr = groups[gi].vids.reduce((s, x) => s + rate7of(x), 0);
+      rankFast = 1 + groups.filter((g, i) => i !== gi && g.vids.reduce((s, x) => s + rate7of(x), 0) > gr).length;
+    }
+  } else {
+    for (const x of flatVids) {
+      if (x.id === vid) continue;
+      if (lastV(x) > curTotal) rankViews++;
+      if (rate7of(x) > (d7 ? d7.rate : 0)) rankFast++;
+    }
+  }
+  /* pembaruan data tertahan? (pengukuran terakhir > 40 jam lalu) */
+  const staleH = hoursSinceUpdate();
+  const isStale = staleH != null && staleH > 40;
+
   $("#sheet").innerHTML = `
     <button class="close" id="closeBtn" aria-label="Tutup">✕</button>
     <div class="dhead">
@@ -1360,15 +1542,24 @@ function openDetail(vid, combined) {
       </div>
     </div>
 
-    <div class="dbig">
-      <div class="stat"><div class="k">Views${state.detailCombined ? " · semua versi" : ""}</div><div class="v">${fmtExact(last.v)}</div>
-        <div class="d">${d1 ? `<span class="up">${fmtDelta(d1.delta)}</span> kemarin${recentEst(h, 1) ? " (est.)" : ""}` : "menunggu data berikutnya"}</div></div>
-      <div class="stat"><div class="k">Rata-rata / hari</div><div class="v">${d7 ? fmtCompact(Math.round(d7.rate)) : "–"}</div>
-        <div class="d">${d7 ? `7 hari terakhir${est ? " (est.)" : ""}` : "–"}</div></div>
-      <div class="stat"><div class="k">Likes</div><div class="v">${lpt ? fmtCompact(lpt.l) : "–"}</div>
-        <div class="d">${lpt ? (deltaLikes(h, 2) ? `<span class="up">${fmtDelta(deltaLikes(h, 2))}</span> 2 hari terakhir` : "sesuai YouTube") : "menunggu pengukuran"}</div></div>
-      <div class="stat"><div class="k">Likes / 1.000 views</div><div class="v">${per1000 ? per1000.toLocaleString("id-ID", { maximumFractionDigits: 1 }) : "–"}</div>
-        <div class="d">rasio interaksi</div></div>
+    ${isStale ? `
+    <div class="stalewarn"><span class="ico">⏸</span><div><b>Pembaruan data tertahan.</b> Pengukuran terakhir terekam <b>${fmtTs(state.meta.last_updated)}</b> (${freshnessText(state.meta.last_updated)}) — angka di bawah adalah pengukuran terakhir yang tersimpan, bukan angka real-time. Buka repo → tab <b>Actions → “Kumpulkan data (YouTube + Spotify)” → Run workflow</b> untuk memaksa pembaruan, atau tunggu jadwal otomatis berikutnya (07.00 &amp; 19.00 WIB).</div></div>` : ""}
+
+    <div class="dhero" style="--artist-color:${art.color}">
+      <div class="dstat hero"><div class="k">Views${state.detailCombined ? " · semua versi" : ""}</div>
+        <div class="v">${fmtExact(last.v)}</div>
+        <div class="d">${dV ? `( ${DFS.format(new Date(dV.t * 1000))}: <span class="up">+${fmtGrow(dV.delta)}</span>${dV.est ? " · est." : ""} )` : "menunggu data berikutnya"}</div></div>
+      <div class="dstat hero"><div class="k">Likes</div>
+        <div class="v">${lpt ? fmtExact(lpt.l) : "–"}</div>
+        <div class="d">${lpt ? (dLday ? `( <span class="up">+${fmtGrow(dLday.delta)}</span>${dLday.est ? " · est." : ""} )` : "sesuai YouTube") : "menunggu pengukuran"}</div></div>
+    </div>
+    <div class="dbadges">
+      <span class="dbadge"><b>#${NF.format(rankViews)}</b>&nbsp;dari ${NF.format(nTracked)} video dipantau</span>
+      <span class="dbadge ${rankFast === 1 ? "hot" : ""}"><b>#${NF.format(rankFast)}</b>&nbsp;tercepat 7 hari</span>
+      ${d7w && d7w.delta > 0 ? `<span class="dbadge hot"><b>+${fmtGrow(d7w.delta)}</b>&nbsp;views 7 hari terakhir${recentEst(h, 7) ? " (est.)" : ""}</span>` : ""}
+      ${d7 ? `<span class="dbadge"><b>${fmtCompact(Math.round(d7.rate))}</b>&nbsp;rata-rata views/hari</span>` : ""}
+      ${watched != null ? `<span class="dbadge">${watched >= 1 ? `dipantau <b>${NF.format(watched)}</b>&nbsp;hari` : "baru mulai dipantau"}${firstRealT ? ` · sejak ${fmtDate(isoDate(firstRealT))}` : ""}</span>` : ""}
+      ${per1000 ? `<span class="dbadge"><b>${per1000.toLocaleString("id-ID", { maximumFractionDigits: 1 })}</b>&nbsp;likes / 1.000 views</span>` : ""}
     </div>
 
     ${versions.length ? `
@@ -2278,6 +2469,41 @@ function renderSpArtist(sec) {
   const a = spArtistOf(state.view);
   if (!a) { sec.innerHTML = `<div class="banner">Artis Spotify tidak ditemukan.</div>`; return; }
   sec.style.setProperty("--artist-color", a.color || SP_GREEN);
+
+  /* ---------- tab DELTA HARIAN Spotify (tabel peringkat harian, padanan YouTube) ---------- */
+  if (state.spArtistTab === "delta") {
+    const N = parseInt(localStorage.getItem("py.spDeltaRange") || "7", 10) || 7;
+    const tracks = Object.values(state.sp.tracks).filter((t) => t.artistId === a.id && (t.history || []).length);
+    const items = tracks.map((tr) => ({
+      id: tr.key,
+      title: tr.name + (tr.live ? " · Live" : ""),
+      sub: `${fmtCompact(spTrackTotal(tr))} stream · rilis ${tr.releaseDate ? fmtDate(tr.releaseDate) : "–"}`,
+      tie: spTrackTotal(tr),
+      days: daysFromHistory(tr.history || [], "v"),
+    }));
+    sec.innerHTML = `
+      <div class="sect" style="margin-top:18px" id="spDeltaWrap">
+        <h3>Riwayat delta harian — ${esc(a.name)} (Spotify)</h3>
+        <div class="legend"><span><i class="sw" style="background:${a.color || SP_GREEN}"></i>Kenaikan stream per hari</span></div>
+      </div>`;
+    const wrap = $("#spDeltaWrap");
+    const body = document.createElement("div");
+    body.innerHTML = deltaTableHTML(items, {
+      unit: "stream", N, colName: "Lagu",
+      emptyMsg: `Belum ada data stream untuk ${a.name} — jalankan sekali workflow “Kumpulkan data” di tab Actions.`,
+    });
+    wrap.appendChild(deltaRangePick(N, "py.spDeltaRange", () => renderSpArtist(sec)));
+    wrap.appendChild(body);
+    body.querySelectorAll("tr[data-id]").forEach((tr) => {
+      const go = () => openSpTrack(tr.dataset.id);
+      tr.addEventListener("click", go);
+      tr.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+      tr.setAttribute("tabindex", "0");
+      tr.setAttribute("role", "button");
+    });
+    return;
+  }
+
   const albums = Object.values(state.sp.albums).filter((x) => x.artistId === a.id)
     .sort((x, y) => (y.releaseDate || "").localeCompare(x.releaseDate || ""));
   const orphans = Object.values(state.sp.tracks).filter((t) => t.artistId === a.id && !t.albumIds.length)
@@ -2350,8 +2576,9 @@ function renderSpArtist(sec) {
       <p class="note">Kurva terbentuk dari pengukuran rutin 2× sehari; makin lama situs berjalan, makin panjang riwayatnya.${d1 > 0 ? ` Delta 24 jam terakhir: <span class="up">+${fmtCompact(d1)}</span>.` : ""}</p>
     </div>` : ""}
     <div class="stabs" style="margin:24px 2px 14px">
-      <button class="stab ${state.spArtistTab !== "ms" ? "active" : ""}" data-sptab="albums">Album &amp; lagu (${nSongs})</button>
+      <button class="stab ${state.spArtistTab !== "ms" && state.spArtistTab !== "delta" ? "active" : ""}" data-sptab="albums">Album &amp; lagu (${nSongs})</button>
       <button class="stab ${state.spArtistTab === "ms" ? "active" : ""}" data-sptab="ms">Milestone</button>
+      <button class="stab ${state.spArtistTab === "delta" ? "active" : ""}" data-sptab="delta">Delta harian</button>
     </div>
     ${state.spArtistTab === "ms" ? spMsHTML(a) : `
     <div class="toolbar" style="margin-top:2px">
@@ -2570,17 +2797,19 @@ function renderAll() {
   $("#spSection").style.display = "none";
   const home = state.view === "home";
   const ms = !home && state.artistTab === "milestones";
+  const dl = !home && state.artistTab === "delta";
   $("#homeSection").style.display = home ? "" : "none";
   $("#channelSection").style.display = home ? "none" : "";
   $("#viewTabs").style.display = home ? "none" : "";
-  $("#msSection").style.display = ms ? "" : "none";
-  $("#toolbar").style.display = home || ms ? "none" : "";
-  $("#videoGrid").style.display = home || ms ? "none" : "";
+  $("#msSection").style.display = ms || dl ? "" : "none";
+  $("#toolbar").style.display = home || ms || dl ? "none" : "";
+  $("#videoGrid").style.display = home || ms || dl ? "none" : "";
   if (home) renderHome();
   else {
     renderViewTabs();
     renderChannel();
     if (ms) renderMilestones();
+    else if (dl) renderDelta();
     else renderVideos();
   }
   renderTopline();
@@ -2588,10 +2817,17 @@ function renderAll() {
 
 function renderTopline() {
   const el = $("#toplineText");
+  const freshTail = (t) => {
+    const f = freshnessText(t);
+    const stale = t && (Date.now() / 1000 - t) / 3600 > 40;
+    return stale
+      ? ` <span style="color:#ffb02e">⚠ ${f} — pembaruan tertahan, jalankan workflow di tab Actions</span>`
+      : ` (${f})`;
+  };
   if (state.platform === "spotify") {
     if (state.sp.meta && state.sp.meta.last_updated) {
       const n = state.sp.tracks ? Object.keys(state.sp.tracks).length : 0;
-      el.innerHTML = `Terakhir diperbarui <b>${fmtTs(state.sp.meta.last_updated)}</b> · ${n} lagu dipantau · Spotify Charts (via kworb.net) · data direkam 2× sehari oleh GitHub Actions`;
+      el.innerHTML = `Terakhir diperbarui <b>${fmtTs(state.sp.meta.last_updated)}</b>${freshTail(state.sp.meta.last_updated)} · ${n} lagu dipantau · Spotify Charts (via kworb.net) · data direkam 2× sehari oleh GitHub Actions`;
     } else if (state.sp.error) {
       el.textContent = "Data Spotify belum tersedia — jalankan workflow “Kumpulkan data” di tab Actions sekali, lalu muat ulang halaman.";
     } else {
@@ -2602,7 +2838,7 @@ function renderTopline() {
   const n = watchedIds().size;
   if (state.meta && state.meta.last_updated) {
     const mode = state.meta.mode === "api" ? "YouTube API" : state.meta.mode === "scrape" ? "mode scraping (tanpa API key)" : "data awal";
-    el.innerHTML = `Terakhir diperbarui <b>${fmtTs(state.meta.last_updated)}</b> · ${n} video dipantau · ${mode} · data direkam 2× sehari oleh GitHub Actions`;
+    el.innerHTML = `Terakhir diperbarui <b>${fmtTs(state.meta.last_updated)}</b>${freshTail(state.meta.last_updated)} · ${n} video dipantau · ${mode} · data direkam 2× sehari oleh GitHub Actions`;
   } else {
     el.textContent = "Data belum tersedia — jalankan sekali workflow “Kumpulkan data YouTube” di tab Actions.";
   }
