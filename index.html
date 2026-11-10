@@ -1157,10 +1157,51 @@ function renderArtistHighlights() {
     </article>`;
   }).join("");
 
-  /* tren minggu ini + rilisan terbaru: hanya video milik artis ini */
+  /* tren minggu ini + rilisan terbaru: baris papan peringkat seperti "paling banyak" — 10 video per bagian (total 30) */
   const rate7 = (v) => { const d = deltaDays(v.history, 7); return d ? d.rate : 0; };
-  const trend = mine.map((v) => ({ v, r: rate7(v) })).sort((a, b) => b.r - a.r || lastV(b.v) - lastV(a.v)).slice(0, 8).map((x) => x.v);
-  const newest = [...mine].sort((a, b) => (b.published || "").localeCompare(a.published || "")).slice(0, 6);
+  const catLabel = (v) => esc(state.config.categories[v.category] || v.category || "");
+  const trend = mine.map((v) => ({ v, r: rate7(v) })).sort((a, b) => b.r - a.r || lastV(b.v) - lastV(a.v)).slice(0, 10).map((x) => x.v);
+  const newest = [...mine].sort((a, b) => (b.published || "").localeCompare(a.published || "")).slice(0, 10);
+
+  const trendRows = trend.map((v, i) => {
+    const d7 = deltaDays(v.history, 7);
+    return `
+    <article class="lbrow ${i < 3 ? "top3" : ""}" data-id="${v.id}" style="--ac:${v.art.color}" tabindex="0" role="button" aria-label="Tren ${i + 1}: ${esc(v.title)}">
+      <div class="lbrank">${i + 1}</div>
+      <img class="lbthumb" src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy">
+      <div class="lbmain">
+        <div class="lbtitle">${esc(v.title)}</div>
+        <div class="lbmeta">
+          <span class="apill" style="background:${v.art.color}">${catLabel(v)}</span>
+          <span class="lbnum">${fmtCompact(lastV(v))} views</span>
+        </div>
+      </div>
+      <div class="lbstats">
+        <div class="g ${d7 && d7.delta >= 0 ? "up" : ""}">${d7 ? fmtDelta(d7.delta) : "–"}</div>
+        <div class="l">7 hari${recentEst(v.history, 7) ? " (est.)" : ""}</div>
+      </div>
+    </article>`;
+  }).join("");
+
+  const newRows = newest.map((v, i) => {
+    const d7 = deltaDays(v.history, 7);
+    return `
+    <article class="lbrow ${i < 3 ? "top3" : ""}" data-id="${v.id}" style="--ac:${v.art.color}" tabindex="0" role="button" aria-label="Terbaru ${i + 1}: ${esc(v.title)}">
+      <div class="lbrank">${i + 1}</div>
+      <img class="lbthumb" src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy">
+      <div class="lbmain">
+        <div class="lbtitle">${esc(v.title)}</div>
+        <div class="lbmeta">
+          <span class="apill" style="background:${v.art.color}">${catLabel(v)}</span>
+          <span class="lbnum">${v.published ? fmtDate(v.published) : "–"}</span>
+        </div>
+      </div>
+      <div class="lbstats">
+        <div class="g">${fmtCompact(lastV(v))}</div>
+        <div class="l">views</div>
+      </div>
+    </article>`;
+  }).join("");
 
   el.innerHTML = `
     <div class="hgrid3">
@@ -1171,12 +1212,16 @@ function renderArtistHighlights() {
           : `<div class="banner">Belum ada data views untuk lagu ${esc(art.name)}.</div>`}
       </div>
       <div>
-        ${homeSectHead("#ff4d6d", ICO_FIRE, "Tren minggu ini", "pertumbuhan views 7 hari tertinggi")}
-        <div class="vgrid mini">${trend.map((v) => vcardHTML(v, v.art.color)).join("")}</div>
+        ${homeSectHead("#ff4d6d", ICO_FIRE, "Tren minggu ini", `${trend.length} video · pertumbuhan 7 hari tertinggi`)}
+        ${trendRows
+          ? `<div class="lb">${trendRows}</div><p class="note">Diurutkan dari pertumbuhan views 7 hari tertinggi milik ${esc(art.name)} · diperbarui otomatis 2× sehari. Klik = grafik harian.</p>`
+          : `<div class="banner">Belum ada data pertumbuhan untuk ${esc(art.name)}.</div>`}
       </div>
       <div>
-        ${homeSectHead("#8b5cf6", ICO_NEW, "Rilisan terbaru", `video terbaru ${esc(art.name)}`)}
-        <div class="vgrid mini">${newest.map((v) => vcardHTML(v, v.art.color)).join("")}</div>
+        ${homeSectHead("#8b5cf6", ICO_NEW, "Rilisan terbaru", `${newest.length} video terbaru ${esc(art.name)}`)}
+        ${newRows
+          ? `<div class="lb">${newRows}</div><p class="note">Video terbaru dari channel ${esc(art.name)}, paling baru di atas · diperbarui otomatis 2× sehari. Klik = detail video.</p>`
+          : `<div class="banner">Belum ada rilisan terbaru dari ${esc(art.name)}.</div>`}
       </div>
     </div>
   `;
