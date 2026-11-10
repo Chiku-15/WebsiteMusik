@@ -1121,7 +1121,7 @@ function deltaTableHTML(items, opts) {
       <thead><tr><th class="rk">#</th><th class="sticky1">${esc(opts.colName || "Video")}</th>${colHead}<th class="num">Total ${N} hari</th></tr></thead>
       <tbody>${body}</tbody>
     </table></div>
-    <p class="note">Angka hijau = <b>views/${esc(opts.unit)} ditambahkan pada hari itu</b> (zona WIB) · <b>Total</b> = penjumlahan ${N} hari terakhir, tabel diurutkan dari total terbesar · <b>–</b> = belum rilis / tidak ada pengukuran · sel redup = <b>estimasi</b> (sebelum pemantauan dimulai) · latar hijau lembut = hari terbaik pada baris tersebut · <b>klik baris</b> untuk membuka detail lengkap. Rentang berakhir di ${fmtDate(endKey)} WIB — pengukuran terakhir yang tersimpan.</p>`;
+    <p class="note">Angka hijau = <b>${esc(opts.unit)} ditambahkan pada hari itu</b> (zona WIB) · <b>Total</b> = penjumlahan ${N} hari terakhir, tabel diurutkan dari total terbesar · <b>–</b> = belum rilis / tidak ada pengukuran · sel redup = <b>estimasi</b> (sebelum pemantauan dimulai) · latar hijau lembut = hari terbaik pada baris tersebut · <b>klik baris</b> untuk membuka detail lengkap. Rentang berakhir di ${fmtDate(endKey)} WIB — pengukuran terakhir yang tersimpan.</p>`;
 }
 
 function deltaRangePick(current, keyLS, onChange) {
