@@ -1311,15 +1311,21 @@ function renderHome() {
 
   sec.innerHTML = `
     ${hero}
-    ${homeSectHead("#ffb02e", ICO_TROPHY, "Lagu paling banyak ditonton", "gabungan semua versi")}
-    <div class="lb">${rows}</div>
-    <p class="note">Peringkat = total views gabungan semua versi lagu (MV, dance performance, practice, remix) di semua artis yang dipantau · diperbarui otomatis 2× sehari. Klik = buka mode gabungan.</p>
-    ${homeSectHead("#ff4d6d", ICO_FIRE, "Sedang tren minggu ini", "pertumbuhan views 7 hari tertinggi")}
-    <div class="vgrid">${trend.map((v) => vcardHTML(v, v.art.color)).join("")}</div>
+    <div class="hgrid">
+      <div>
+        ${homeSectHead("#ffb02e", ICO_TROPHY, "Lagu paling banyak ditonton", "gabungan semua versi")}
+        <div class="lb">${rows}</div>
+        <p class="note">Peringkat = total views gabungan semua versi lagu (MV, dance performance, practice, remix) di semua artis yang dipantau · diperbarui otomatis 2× sehari. Klik = buka mode gabungan.</p>
+        ${homeSectHead("#38bdf8", ICO_PEOPLE, "Jelajahi artis", "halaman lengkap per artis")}
+        <div class="chgrid two">${explore}</div>
+      </div>
+      <div>
+        ${homeSectHead("#ff4d6d", ICO_FIRE, "Sedang tren minggu ini", "pertumbuhan views 7 hari tertinggi")}
+        <div class="vgrid mini">${trend.map((v) => vcardHTML(v, v.art.color)).join("")}</div>
+      </div>
+    </div>
     ${homeSectHead("#8b5cf6", ICO_NEW, "Rilisan terbaru", "video terbaru semua artis")}
     <div class="vgrid six">${newest.map((v) => vcardHTML(v, v.art.color)).join("")}</div>
-    ${homeSectHead("#38bdf8", ICO_PEOPLE, "Jelajahi artis", "halaman lengkap per artis")}
-    <div class="chgrid two">${explore}</div>
   `;
   bindCards(sec);
   sec.querySelectorAll("[data-art]").forEach((c) => {
@@ -2220,6 +2226,8 @@ function renderSpHome(sec) {
         ${spSectHead("#1ed760", ICO_SP_TROPHY, "Lagu paling banyak di-stream", "gabungan semua versi")}
         <div class="lb">${top.map(lbRow).join("")}</div>
         <p class="note">Peringkat = total stream gabungan semua versi lagu (remix, ver. JP, versi live dihitung terpisah) di semua artis yang dipantau · sumber angka: Spotify Charts (via kworb.net) · diperbarui otomatis 2× sehari. Klik = grafik &amp; milestone.</p>
+        ${spSectHead("#38bdf8", ICO_SP_PEOPLE, "Jelajahi artis", "halaman lengkap per artis")}
+        <div class="chgrid two">${cards}</div>
       </div>
       <div>
         ${spSectHead("#ff4d6d", ICO_SP_FIRE, "Pertumbuhan harian tertinggi", "10 lagu · stream 24 jam terakhir")}
@@ -2238,8 +2246,6 @@ function renderSpHome(sec) {
           }).join("")}</div>
       </div>
     </div>
-    ${spSectHead("#38bdf8", ICO_SP_PEOPLE, "Jelajahi artis", "halaman lengkap per artis")}
-    <div class="chgrid two">${cards}</div>
     <section style="margin-top:26px">
       ${spSectHead("#ffb02e", "M9 18.7 13.2 10l4.2 8.7M12 3 3 21h3l1.7-3.6h8.6L18 21h3L12 3z", "Milestone &amp; sedang naik", "10 milestone terakhir + target terdekat")}
       <div class="msgrid">
