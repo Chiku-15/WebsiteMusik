@@ -292,6 +292,9 @@
   .vgrid.mini .vbody{padding:11px 12px 12px;gap:7px}
   @media (max-width:920px){.hgrid{grid-template-columns:1fr}}
   @media (max-width:560px){.vgrid.mini{grid-template-columns:1fr}}
+  /* halaman artis: tiga kolom sekaligus (kiri = paling banyak ditonton, tengah = tren minggu ini, kanan = rilisan terbaru) */
+  .hgrid3{display:grid;grid-template-columns:minmax(0,10fr) minmax(0,9fr) minmax(0,9fr);gap:4px 26px;align-items:start}
+  @media (max-width:1100px){.hgrid3{grid-template-columns:1fr}}
   /* papan peringkat */
   .lb{display:flex;flex-direction:column;gap:8px}
   .lbrow{
@@ -1160,14 +1163,22 @@ function renderArtistHighlights() {
   const newest = [...mine].sort((a, b) => (b.published || "").localeCompare(a.published || "")).slice(0, 6);
 
   el.innerHTML = `
-    ${homeSectHead("#ffb02e", ICO_TROPHY, "Paling banyak ditonton", `gabungan semua versi lagu ${esc(art.name)}`)}
-    ${rows
-      ? `<div class="lb">${rows}</div><p class="note">Peringkat = total views gabungan semua versi lagu milik ${esc(art.name)} · diperbarui otomatis 2× sehari. Klik = buka mode gabungan.</p>`
-      : `<div class="banner">Belum ada data views untuk lagu ${esc(art.name)}.</div>`}
-    ${homeSectHead("#ff4d6d", ICO_FIRE, "Tren minggu ini", "pertumbuhan views 7 hari tertinggi")}
-    <div class="vgrid">${trend.map((v) => vcardHTML(v, v.art.color)).join("")}</div>
-    ${homeSectHead("#8b5cf6", ICO_NEW, "Rilisan terbaru", `video terbaru ${esc(art.name)}`)}
-    <div class="vgrid six">${newest.map((v) => vcardHTML(v, v.art.color)).join("")}</div>
+    <div class="hgrid3">
+      <div>
+        ${homeSectHead("#ffb02e", ICO_TROPHY, "Paling banyak ditonton", `gabungan semua versi lagu ${esc(art.name)}`)}
+        ${rows
+          ? `<div class="lb">${rows}</div><p class="note">Peringkat = total views gabungan semua versi lagu milik ${esc(art.name)} · diperbarui otomatis 2× sehari. Klik = buka mode gabungan.</p>`
+          : `<div class="banner">Belum ada data views untuk lagu ${esc(art.name)}.</div>`}
+      </div>
+      <div>
+        ${homeSectHead("#ff4d6d", ICO_FIRE, "Tren minggu ini", "pertumbuhan views 7 hari tertinggi")}
+        <div class="vgrid mini">${trend.map((v) => vcardHTML(v, v.art.color)).join("")}</div>
+      </div>
+      <div>
+        ${homeSectHead("#8b5cf6", ICO_NEW, "Rilisan terbaru", `video terbaru ${esc(art.name)}`)}
+        <div class="vgrid mini">${newest.map((v) => vcardHTML(v, v.art.color)).join("")}</div>
+      </div>
+    </div>
   `;
   bindCards(el);
 }
@@ -1317,7 +1328,7 @@ function renderHome() {
         <div class="lb">${rows}</div>
         <p class="note">Peringkat = total views gabungan semua versi lagu (MV, dance performance, practice, remix) di semua artis yang dipantau · diperbarui otomatis 2× sehari. Klik = buka mode gabungan.</p>
         ${homeSectHead("#38bdf8", ICO_PEOPLE, "Jelajahi artis", "halaman lengkap per artis")}
-        <div class="chgrid two">${explore}</div>
+        <div class="chgrid">${explore}</div>
       </div>
       <div>
         ${homeSectHead("#ff4d6d", ICO_FIRE, "Sedang tren minggu ini", "pertumbuhan views 7 hari tertinggi")}
