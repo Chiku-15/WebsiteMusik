@@ -727,9 +727,9 @@ function crossPoint(history, milestone) {
   if (!prev) return null;
   if (prev.v >= milestone) {
     // jangkar pertama sudah melewati milestone: hanya dianggap nyata bila nilainya PERSIS
-    // milestone; selain itu tanggal sebelum data pertama = perkiraan
+    // milestone; selain itu tanggal sebelum data pertama = batas atas (ditandai pre: true)
     const exact = prev.v === milestone;
-    return { t: prev.t, est: prev.e === 1, src: exact ? prev.src || null : null, interp: !exact };
+    return { t: prev.t, est: prev.e === 1, src: exact ? prev.src || null : null, interp: !exact, pre: !exact };
   }
   for (let i = history.indexOf(prev) + 1; i < history.length; i++) {
     const p = history[i];
@@ -960,7 +960,8 @@ function artistOf(id) { return state.config.artists.find((a) => a.id === id); }
 function renderTabs() {
   const nav = $("#artistTabs");
   const btn = (id, label) => `<button class="tab ${state.view === id ? "active" : ""}" data-id="${id}">${esc(label)}</button>`;
-  nav.innerHTML = btn("home", "Beranda") + state.config.artists.map((a) => btn(a.id, a.name)).join("");
+  /* hanya Beranda — pindah halaman artis lewat kartu channel di beranda */
+  nav.innerHTML = btn("home", "Beranda");
   nav.querySelectorAll(".tab").forEach((b) =>
     b.addEventListener("click", () => setView(b.dataset.id))
   );
@@ -1048,7 +1049,7 @@ function msTableHTML(vids) {
       const off = officialOf(v.id, m);
       if (off) return `<td class="num msoff${f ? " fastest" : ""}" title="${esc(officialTip(off, m))}">${NF.format(d)} <span class="offck">✓</span>${f ? " ★" : ""}</td>`;
       const c = crossPoint(v.history, m);
-      return `<td class="num ${f ? "fastest" : ""}" title="${fmtCompact(m)} tercapai ${fmtDate(isoDate(c.t))}${c.est ? " (estimasi)" : ""}">${NF.format(d)}${f ? " ★" : ""}</td>`;
+      return `<td class="num ${f ? "fastest" : ""}" title="${fmtCompact(m)} tercapai ${c.pre ? "paling lambat " : ""}${fmtDate(isoDate(c.t))}${c.pre ? " (sebelum titik data pertama — tanggal tepat tidak dicatat)" : c.est ? " (estimasi)" : ""}">${NF.format(d)}${c.pre ? ' <span class="cellno">≤</span>' : ""}${f ? " ★" : ""}</td>`;
     }).join("");
     return `<tr data-id="${v.id}"><td class="sticky1"><div class="st1t"><b>${esc(v.title)}</b></div><div class="st1m">${fmtCompact(lastV(v))} views · rilis ${fmtDate(v.published)}</div></td>${cells}</tr>`;
   }).join("");
@@ -1093,7 +1094,7 @@ function msReachedHTML(vids) {
       if (isFinite(t)) { list.push({ v, m, t, est: false, off, days: officialDays(v, m) }); continue; }
     }
     const c = crossPoint(v.history, m);
-    if (c) list.push({ v, m, t: c.t, est: c.est, days: daysToReach(v, v.history, m) });
+    if (c) list.push({ v, m, t: c.t, est: c.est, pre: !!c.pre, days: daysToReach(v, v.history, m) });
   }
   list.sort((a, b) => b.t - a.t);
   if (!list.length) return `<div class="banner">Belum ada milestone yang tercapai.</div>`;
@@ -1103,7 +1104,7 @@ function msReachedHTML(vids) {
       <thead><tr><th>Tanggal dicapai</th><th class="sticky1">Video</th><th class="num">Milestone</th><th class="num">Hari ke-</th></tr></thead>
       <tbody>
         ${shown.map((x) => `
-        <tr data-id="${x.v.id}"><td${x.off ? ` title="${esc(officialTip(x.off, x.m))}"` : ""}>${fmtDate(isoDate(x.t))}${x.off ? ' <span class="offck">✓</span>' : x.est ? ' <span class="cellno">(est.)</span>' : ""}</td><td class="sticky1"><div class="st1t">${esc(x.v.title)}</div></td><td class="num">${fmtCompact(x.m)}</td><td class="num">${x.days != null ? NF.format(x.days) : "–"}</td></tr>`).join("")}
+        <tr data-id="${x.v.id}"><td${x.off ? ` title="${esc(officialTip(x.off, x.m))}"` : x.pre ? ' title="tercapai paling lambat pada tanggal ini (sebelum titik data pertama)"' : ""}>${x.pre ? "≤ " : ""}${fmtDate(isoDate(x.t))}${x.off ? ' <span class="offck">✓</span>' : x.est ? ' <span class="cellno">(est.)</span>' : ""}</td><td class="sticky1"><div class="st1t">${esc(x.v.title)}</div></td><td class="num">${fmtCompact(x.m)}</td><td class="num">${x.days != null ? (x.pre ? "≤" : "") + NF.format(x.days) : "–"}</td></tr>`).join("")}
       </tbody>
     </table></div>
     <p class="note">Diurutkan dari yang terbaru (maks. 120 terakhir). <b>✓</b> = data resmi YG/media. ${MS_NOTE}</p>`;
@@ -1680,7 +1681,7 @@ function openDetail(vid, combined) {
 
     <div class="sect">
       <h3 id="dailyTitle">Views ditambahkan per hari</h3>
-      <div class="legend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span><span><i class="sw" style="background:${art.color}55"></i>Estimasi</span></div>
+      <div class="legend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span>${h.some((p) => p.e === 1) ? `<span><i class="sw" style="background:${art.color}55"></i>Estimasi</span>` : ""}</div>
       <div class="rangewrap" id="dailyRange">
         <button class="rangebtn ${state.dailyRange === "1" ? "active" : ""}" data-r="1">1 hari</button>
         <button class="rangebtn ${state.dailyRange === "7" ? "active" : ""}" data-r="7">7 hari</button>
@@ -1693,10 +1694,10 @@ function openDetail(vid, combined) {
 
     <div class="sect">
       <h3>Total views &amp; likes (sejak rilis)</h3>
-      <div class="legend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span><span><i class="sw" style="background:${art.color}55"></i>Estimasi</span></div>
+      <div class="legend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span>${h.some((p) => p.e === 1) ? `<span><i class="sw" style="background:${art.color}55"></i>Estimasi</span>` : ""}</div>
       <div class="chartbox"><canvas id="chartCum"></canvas></div>
       <p class="note" id="likeHint" style="margin-top:6px"></p>
-      <p class="note">Batang/garis transparan &amp; putus-putus = <b>estimasi</b> — dibangun otomatis dari tanggal rilis + views terkini (sebagian berbekal arsip Wayback Machine). Batang/garis solid = <b>pengukuran nyata</b> yang diambil langsung dari YouTube tiap putaran GitHub Actions (tiap jam) dan menimpa estimasi. YouTube tidak menyediakan riwayat harian untuk publik (hanya pemilik channel bisa melihatnya di YouTube Studio), jadi masa sebelum pemantauan dimulai memang berupa estimasi — makin lama situs berjalan, makin panjang data nyatanya.${state.detailCombined
+      <p class="note">Semua titik di grafik ini adalah <b>data nyata</b> yang dikumpulkan dari berbagai sumber: <b>YouTube Data API</b> (direkam GitHub Actions tiap jam), <b>arsip Wayback Machine</b> (snapshot halaman video dari berbagai tanggal sejak rilis), dan <b>pengumuman resmi YG Entertainment/media</b> (tanggal milestone views). YouTube tidak menyediakan riwayat harian untuk publik (hanya pemilik channel bisa melihatnya di YouTube Studio), jadi antar titik sumber dihubungkan garis lurus — tanpa model estimasi. Untuk menambah kepadatan titik arsip, jalankan workflow <b>“Kumpulkan data (YouTube + Spotify)”</b> di tab Actions dengan mode <b>“wayback-mass”</b>.${state.detailCombined
         ? `<br><b>Mode gabungan:</b> angka = penjumlahan seluruh ${versions.length + 1} versi lagu ini, dijumlahkan per hari kalender.`
         : realPts.length ? `<br>Data nyata video ini mulai terekam: <b>${fmtTs(realPts[0].t)}</b>${watched != null ? ` — sejauh itu sudah ${NF.format(watched)} hari terpantau` : ""}.` : ""}</p>
     </div>
@@ -1710,7 +1711,7 @@ function openDetail(vid, combined) {
           return `<span class="msdone" title="${esc(officialTip(off, m))}">${fmtCompact(m)} ✓ ${fmtDate(off.d)} · hari ke-${od != null ? NF.format(od) : "–"}</span>`;
         }
         const c = crossPoint(h, m);
-        return `<span class="msdone" title="${c && c.est ? "perkiraan (estimasi)" : "pengukuran nyata"}">${fmtCompact(m)} ✓ ${c ? fmtDate(isoDate(c.t)) : ""}</span>`;
+        return `<span class="msdone" title="${c && c.pre ? "tercapai paling lambat pada tanggal ini (sebelum titik data pertama — tanggal tepatnya tidak dicatat)" : c && c.est ? "perkiraan (estimasi)" : "pengukuran nyata"}">${fmtCompact(m)} ✓ ${c ? (c.pre ? "≤ " : "") + fmtDate(isoDate(c.t)) : ""}</span>`;
       }).join("")}</div>` : ""}
       <div class="chartbox" style="padding:6px 10px">
         ${h.length < 2 ? `<div class="wait">Prediksi tersedia setelah data pertama terekam.</div>` : `
@@ -1813,7 +1814,12 @@ function bucketize(days, gran) {
   }
   return { cum: [...cumMap.values()], deltas: [...dMap.values()], gran };
 }
-function granFor(days) { return days.length < 90 ? "day" : days.length < 420 ? "week" : "month"; }
+/* granularitas berdasar RENTANG WAKTU (bukan jumlah titik) — riwayat nyata yang berjarak
+ * renggang (arsip/milestone) tetap di-bucket pekanan/bulanan agar garisnya terbaca */
+function granFor(days) {
+  const span = days.length ? days[days.length - 1].t - days[0].t : 0;
+  return span < 90 * 86400 ? "day" : span < 420 * 86400 ? "week" : "month";
+}
 function bucketLabel(key, gran) {
   if (gran === "month") return MF.format(new Date(key + "-01T00:00:00"));
   if (gran === "hour") return key.slice(8, 10) + "/" + key.slice(5, 7) + " " + key.slice(11, 13) + ":00";
@@ -2042,22 +2048,11 @@ function buildCumChart(h, color) {
     return;
   }
   let gran = granFor(days);
-  const likeDaysRaw = daysFromHistory(h, "l");
-  /* Backfill likes: YouTube tidak menyimpan riwayat likes publik, jadi masa sebelum
-   * perekaman likes diestimasi = views hari itu × rasio likes/views pada pengukuran
-   * likes pertama. Kurva likes jadi tampil sejak rilis (ditandai est./putus-putus). */
-  let likeDays = likeDaysRaw, backfilled = false, firstLikeKey = null;
-  if (likeDaysRaw.length >= 1) {
-    const first = likeDaysRaw[0];
-    const vAtFirst = days.find((d) => d.key === first.key);
-    if (vAtFirst && vAtFirst.v > 0 && first.v >= 0) {
-      const ratio = first.v / vAtFirst.v;
-      const back = days.filter((d) => d.key < first.key)
-        .map((d) => ({ key: d.key, t: d.t, v: Math.round(d.v * ratio), e: true }));
-      if (back.length) { likeDays = back.concat(likeDaysRaw); backfilled = true; firstLikeKey = first.key; }
-    }
-  }
-  /* kalau titik likes masih sedikit & habis tergerus bucket besar, perhalus granularitas supaya kurva likes tetap terlihat */
+  /* likes: hanya titik NYATA (pengukuran YouTube / arsip halaman) — tanpa backfill rasio,
+   * sesuai prinsip situs: tidak ada titik estimasi di grafik.
+   * Kalau titik likes masih sedikit & habis tergerus bucket besar, perhalus granularitas
+   * supaya kurva likes tetap terlihat. */
+  const likeDays = daysFromHistory(h, "l");
   if (likeDays.length >= 2) {
     if (bucketize(likeDays, gran).cum.length < 2) {
       gran = "week";
@@ -2068,10 +2063,8 @@ function buildCumChart(h, color) {
   const likeMap = likeDays.length >= 2 ? new Map(bucketize(likeDays, gran).cum.map((p) => [p.key, p])) : null;
   const hint = $("#likeHint");
   if (hint) hint.innerHTML = !likeMap
-    ? "Kurva likes tampil otomatis setelah pengukuran likes pertama terekam (perekaman likes baru berjalan — cek lagi besok)."
-    : backfilled
-      ? `Garis likes sebelum <b>${fmtDate(firstLikeKey)}</b> = <b>estimasi</b> — views hari itu dikalikan rasio likes/views dari pengukuran terkini, karena YouTube tidak menyediakan riwayat likes untuk publik.`
-      : "";
+    ? "Kurva likes tampil setelah titik likes nyata pertama terekam — dari pengukuran YouTube (GitHub Actions) atau arsip halaman video."
+    : "";
   makeDualLineChart($("#chartCum"), series.cum, likeMap, color, "cum", gran);
 }
 
@@ -2097,7 +2090,7 @@ function openChannel(artId) {
     for (const m of CHAN_MS) {
       const c = crossPoint(h, m);
       if (!c) break;
-      chRows.push({ m, t: c.t, est: c.est, interp: !!c.interp, src: c.src || null, gap: prevT != null ? Math.max(1, Math.round((c.t - prevT) / 86400)) : null });
+      chRows.push({ m, t: c.t, est: c.est, interp: !!c.interp, pre: !!c.pre, src: c.src || null, gap: prevT != null ? Math.max(1, Math.round((c.t - prevT) / 86400)) : null });
       prevT = c.t;
     }
   }
@@ -2159,7 +2152,7 @@ function openChannel(artId) {
           <thead><tr><th>Milestone</th><th class="num">Tanggal dicapai</th><th class="num">Jarak dari sebelumnya</th></tr></thead>
           <tbody>
             ${chShown.map((r) => `
-              <tr${r.interp ? ' class="dimrow"' : ""}><td>${fmtExact(r.m)} views</td><td class="num" title="${r.est ? "Segmen estimasi lama" : r.interp ? "Perkiraan garis lurus di antara dua titik data nyata — bukan tanggal resmi" : r.src ? "Sumber: " + esc(r.src) : "Titik data nyata"}">${fmtDate(isoDate(r.t))}${r.est ? ' <span class="cellno">(est.)</span>' : r.interp ? ' <span class="cellno" title="Perkiraan di antara dua titik data nyata">(±)</span>' : ""}${r.src && !r.interp && !r.est ? ` <span class="cellno">· ${esc(r.src)}</span>` : ""}</td><td class="num">${r.gap != null ? NF.format(r.gap) + " hari" : "–"}</td></tr>`).join("")}
+              <tr${r.interp ? ' class="dimrow"' : ""}><td>${fmtExact(r.m)} views</td><td class="num" title="${r.est ? "Segmen estimasi lama" : r.pre ? "Paling lambat tanggal ini (sebelum titik data pertama — tanggal tepat tidak dicatat)" : r.interp ? "Perkiraan garis lurus di antara dua titik data nyata — bukan tanggal resmi" : r.src ? "Sumber: " + esc(r.src) : "Titik data nyata"}">${r.pre ? "≤ " : ""}${fmtDate(isoDate(r.t))}${r.est ? ' <span class="cellno">(est.)</span>' : r.pre ? ' <span class="cellno" title="Sebelum titik data pertama">(≤)</span>' : r.interp ? ' <span class="cellno" title="Perkiraan di antara dua titik data nyata">(±)</span>' : ""}${r.src && !r.interp && !r.est ? ` <span class="cellno">· ${esc(r.src)}</span>` : ""}</td><td class="num">${r.gap != null ? NF.format(r.gap) + " hari" : "–"}</td></tr>`).join("")}
             ${chNext ? `
               <tr class="msnext"><td>${fmtExact(chNext)} views</td><td class="num">${etaText(chNext, last.v || 0, rateV7)}</td><td class="num">sisa ${fmtCompact(chNext - (last.v || 0))}</td></tr>` : ""}
           </tbody>

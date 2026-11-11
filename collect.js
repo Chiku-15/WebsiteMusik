@@ -24,7 +24,8 @@ const UA =
 const HISTORY_CAP = 4000; // maksimum titik data per video/channel
 const DISCOVERY_PAGES = 4; // halaman playlist uploads yang discan utk video baru (50/hal)
 const WAYBACK_MAX_VIDEOS = parseInt(process.env.WAYBACK_MAX || "25", 10) || 25; // budget backfill Wayback per putaran
-const WAYBACK_PER_VIDEO = 6; // maksimum snapshot arsip yang diambil per video
+const WAYBACK_PER_VIDEO = 6; // maksimum snapshot arsip yang diambil per video (mode normal)
+const WAYBACK_MASS_PER_VIDEO = parseInt(process.env.WAYBACK_MASS_PER || "40", 10) || 40; // mode massal: snapshot per video
 const WAYBACK_SLEEP_MS = 1100; // jeda sopan antar permintaan ke web.archive.org
 const SCHEMA_VERSION = 3; // penanda format data; beda versi -> migrasi otomatis
 const EST_CAP = 380; // batas titik estimasi per video (hemat ukuran file)
@@ -318,30 +319,13 @@ function rateBetween(a, b) {
   return (b.v - a.v) / Math.max(1, (b.t - a.t) / 86400);
 }
 
+/* riwayat video: TANPA estimasi model — hanya titik data nyata dari berbagai sumber
+ * (YouTube API tiap jam, arsip Wayback Machine, pengumuman resmi YG/media).
+ * Sama seperti riwayat channel: titik estimasi lama (e:1, kurva model) dibuang setiap
+ * putaran supaya tidak pernah tampil lagi di grafik; antar titik sumber situs menyambung
+ * garis lurus. Urutan dijaga kronologis. */
 function rebuildVideoEstimates(rec, id) {
-  const reals = (rec.history || []).filter((p) => p.e !== 1).sort((a, b) => a.t - b.t);
-  if (!reals.length || !rec.published) return;
-  const last = reals[reals.length - 1];
-  if (!(last.v > 0)) return;
-  let est;
-  if (reals.length >= 2) {
-    // Jangkar >= 2 (milestone resmi / arsip Wayback / pengukuran lama + titik terbaru):
-    // segmen rilis->jangkar pertama mengikuti model, sisanya diinterpolasi PCHIP antar
-    // jangkar — TIDAK ada celah kosong lagi. Celah kosong dulu bikin grafik bulanan salah:
-    // seluruh delta antar jangkar dijatuhkan ke bulan titik terakhir (batang NOVEMBER
-    // raksasa) dan bulan-bulan di antaranya kosong (kasus 'IF I' cuma 2 batang).
-    // laju harian dipakai sbg bentuk sambung hanya bila jangkar pertama berdekatan;
-    // kalau jaraknya jauh, rata-rata antar jangkar menyesatkan -> biarkan model pilih sendiri
-    const gGap = reals[1] && reals[1].t - reals[0].t <= 60 * 86400 ? rateBetween(reals[0], reals[1]) : null;
-    const g = gGap || undefined;
-    const anchors = reals.slice(0, -1).map((p) => ({ t: p.t, v: p.v, w: p.w }));
-    est = thinSeries(buildAnchoredSeries(rec.published, anchors, last.v, last.t, { g, seed: id }));
-  } else {
-    const anchor = reals.find((p) => p.v > 0) || last;
-    const g = rateBetween(anchor, reals[reals.indexOf(anchor) + 1]) || undefined;
-    est = thinSeries(buildEstimatedSeries(rec.published, anchor.v, anchor.t, { g, seed: id }));
-  }
-  rec.history = mergeHistory(est, reals);
+  rec.history = (rec.history || []).filter((p) => p.e !== 1).sort((a, b) => a.t - b.t);
 }
 
 /*
@@ -472,6 +456,19 @@ function parseViewCountFromPage(html) {
   return null;
 }
 
+/* likes dari halaman arsip — pola terstruktur yg sama seperti scrapeVideo */
+function parseLikeCountFromPage(html) {
+  let m = /"likeCount":"(\d+)"/.exec(html);
+  if (m) return parseInt(m[1], 10);
+  m = /"accessibilityText":"([\d,.]+\s*[KMB]?)\s*(?:likes|suka)"/i.exec(html);
+  if (m) return parseShortCount(m[1]);
+  m = /"expandedText":"([\d,.]+\s*[KMB]?)\s*(?:likes|suka)"/i.exec(html);
+  if (m) return parseShortCount(m[1]);
+  m = /"defaultText":\{"accessibility":\{"accessibilityData":\{"label":"([\d,.]+\s*[KMB]?)\s*(?:likes|suka)"/i.exec(html);
+  if (m) return parseShortCount(m[1]);
+  return null;
+}
+
 /*
  * Migrasi otomatis: jika schema lama, buang titik estimasi lama (dibangun ulang dgn model
  * baru), buang video yang tak lagi dipantau, dan bersihkan titik terukur lama yang
@@ -517,9 +514,10 @@ function cdxTsToEpoch(ts) {
 
 async function waybackAnchors(vid, publishedISO) {
   const from = (publishedISO || "").replace(/-/g, "");
+  const mass = !!process.env.WAYBACK_MASS;
   const cdx =
     `https://web.archive.org/cdx/search/cdx?url=youtube.com%2Fwatch%3Fv%3D${vid}` +
-    `&output=json&fl=timestamp,statuscode&filter=statuscode:200&collapse=timestamp:6&limit=-40` +
+    `&output=json&fl=timestamp,statuscode&filter=statuscode:200&collapse=timestamp:6&limit=-${mass ? 80 : 40}` +
     (from ? `&from=${from}` : "");
   let rows;
   try {
@@ -531,8 +529,9 @@ async function waybackAnchors(vid, publishedISO) {
   if (!Array.isArray(rows) || rows.length < 2) return [];
   const list = rows.slice(1).filter((r) => r[1] === "200").map((r) => r[0]);
   if (!list.length) return [];
+  const per = mass ? WAYBACK_MASS_PER_VIDEO : WAYBACK_PER_VIDEO;
   const picked = new Set();
-  const n = Math.min(WAYBACK_PER_VIDEO, list.length);
+  const n = Math.min(per, list.length);
   for (let i = 0; i < n; i++) {
     const idx = Math.round((i * (list.length - 1)) / Math.max(1, n - 1));
     picked.add(list[idx]);
@@ -542,7 +541,7 @@ async function waybackAnchors(vid, publishedISO) {
     try {
       const html = await fetchText(`https://web.archive.org/web/${ts}id_/https://www.youtube.com/watch?v=${vid}`);
       const v = parseViewCountFromPage(html);
-      if (v && v > 0) anchors.push({ t: cdxTsToEpoch(ts), v });
+      if (v && v > 0) anchors.push({ t: cdxTsToEpoch(ts), v, l: parseLikeCountFromPage(html) });
     } catch (e) {
       log(`  snapshot ${ts} gagal: ${String(e).slice(0, 70)}`);
     }
@@ -552,38 +551,47 @@ async function waybackAnchors(vid, publishedISO) {
 }
 
 async function backfillFromWayback(videos, now) {
-  let budget = WAYBACK_MAX_VIDEOS;
+  const mass = !!process.env.WAYBACK_MASS;
+  let budget = mass ? 999999 : WAYBACK_MAX_VIDEOS;
   let archiveAlive = true;
-  let done = 0;
+  let done = 0, totalAnchors = 0;
   for (const [id, rec] of Object.entries(videos)) {
     if (budget <= 0 || !archiveAlive) break;
     if (!rec.published || !rec.history || !rec.history.length) continue;
-    if (rec.history.filter((p) => p.e !== 1).length >= 3) continue; // sudah cukup data nyata
-    const marker = `backfill/${id}.json`;
+    if (!mass && rec.history.filter((p) => p.e !== 1).length >= 3) continue; // sudah cukup data nyata
+    const marker = `backfill/${mass ? "mass-" : ""}${id}.json`;
     if (readJSON(marker, null)) continue; // sudah pernah dicoba
     budget--;
     try {
-      const last = rec.history[rec.history.length - 1];
       const anchors = await waybackAnchors(id, rec.published);
       if (anchors === null) { archiveAlive = false; break; }
       if (anchors.length) {
-        const series = buildAnchoredSeries(rec.published, anchors, last.v, last.t, { seed: id });
-        if (series.length > 3) {
-          const keptReal = rec.history.filter((p) => p.e !== 1);
-          rec.history = mergeHistory(series, keptReal);
-          // tandai titik jangkar arsip (w:1) agar bisa dibedakan dari titik API harian
-          const tsSet = new Set(anchors.map((a) => a.t));
-          rec.history = rec.history.map((p) => (p.e !== 1 && tsSet.has(p.t) ? { ...p, w: 1 } : p));
-          done++;
-          log(`backfill ${id}: ${anchors.length} jangkar arsip → ${rec.history.length} titik`);
+        /* sisipkan jangkar arsip sbg titik NYATA (e:0) — tanpa model estimasi.
+         * Jaga kemonotonan di kedua sisi supaya salah-baca arsip tidak merusak kurva. */
+        const reals = rec.history.filter((p) => p.e !== 1).sort((a, b) => a.t - b.t);
+        let added = 0;
+        for (const a of anchors) {
+          const prev = reals.filter((p) => p.t <= a.t).pop();
+          const next = reals.find((p) => p.t > a.t);
+          if (prev && prev.v >= a.v) continue;
+          if (next && next.v < a.v) continue;
+          if (reals.some((p) => Math.abs(p.t - a.t) < 20 * 3600)) continue; // sudah ada titik dekat
+          rec.history.push({ t: a.t, v: a.v, l: a.l != null ? a.l : null, e: 0, w: 1 });
+          reals.push({ t: a.t, v: a.v, e: 0 });
+          reals.sort((x, y) => x.t - y.t);
+          added++;
         }
+        rec.history.sort((a, b) => a.t - b.t);
+        done++;
+        totalAnchors += added;
+        log(`backfill ${id}: ${added}/${anchors.length} jangkar arsip masuk`);
       }
       writeJSON(marker, { done: true, at: now, anchors: anchors.length });
     } catch (e) {
       log(`! backfill ${id} gagal: ${String(e).slice(0, 90)}`);
     }
   }
-  if (done) log(`backfill Wayback selesai: ${done} video (budget ${WAYBACK_MAX_VIDEOS}/putaran)`);
+  if (done) log(`backfill Wayback selesai: ${done} video, ${totalAnchors} jangkar (mode ${mass ? "MASSAL" : "normal"})`);
 }
 
 function isoDurationToSeconds(iso) {
@@ -1069,7 +1077,7 @@ async function main() {
       mode: result.mode,
       duration_sec: Math.round((Date.now() - started) / 1000),
       quota_note: API_KEY ? "pakai YouTube Data API v3" : "scraping publik",
-      note: "Grafik menyertakan estimasi harian sejak tanggal rilis video / tanggal channel dibuat (ditandai est.). Titik terukur menimpanya.",
+      note: "Riwayat TANPA estimasi — semua titik adalah data nyata dari berbagai sumber: YouTube API (tiap jam), arsip Wayback Machine, dan pengumuman resmi YG/media.",
     });
     log(`selesai dalam ${Math.round((Date.now() - started) / 1000)}s — videos=${result.videos} channels=${result.channels}`);
   }
