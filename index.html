@@ -201,6 +201,10 @@
   .sect h3{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:16px 2px 10px}
   .chartbox{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;position:relative}
   .chartbox canvas{width:100%!important;height:260px!important}
+  /* grafik mini di dalam kartu channel Spotify (lebih pendek dari grafik penuh) */
+  .chartbox.mini{margin-top:14px;padding:12px 14px 10px;cursor:pointer}
+  .chartbox.mini canvas{height:150px!important}
+  @media (max-width:640px){.chartbox.mini canvas{height:118px!important}}
   .rangewrap{display:flex;gap:6px;margin:10px 2px 12px;flex-wrap:wrap}
   .rangebtn{border:1px solid var(--border);background:var(--chip);color:var(--muted);font:600 11.5px var(--font);padding:5px 12px;border-radius:999px;cursor:pointer}
   .rangebtn.active{background:var(--text);color:var(--bg);border-color:var(--text)}
@@ -915,6 +919,9 @@ const state = {
   spRange: "all",
   spArtistTab: "albums",  // "albums" | "ms" — sub-tab di halaman artis Spotify
   spMsTab: "table",       // "table" | "upcoming" | "reached"
+  spSort: "stream",       // kategori daftar Album & lagu: "stream" | "daily" | "newest"
+  spChanMetric: "total",  // metrik modal artis Spotify: "total" | "ml"
+  spChanRange: ["1", "7", "30", "365", "all"].includes(localStorage.getItem("py.spchanrange")) ? localStorage.getItem("py.spchanrange") : "all",
 };
 
 /* deteksi plugin zoom (opsional; kalau CDN gagal, semua tetap jalan) */
@@ -1012,6 +1019,7 @@ function loadSpData() {
     state.sp.tracks = trks || {};
     state.sp.raw = rawr || {};
     state.sp.vers = spVersAll();
+    state.sp.serCache = {};   // kurva level artis dihitung ulang dari data baru
   })().catch((e) => {
     state.sp.error = (e && e.message) || String(e);
   });
@@ -1560,8 +1568,13 @@ function renderVideos() {
 
 /* ===================== detail overlay ===================== */
 function destroyCharts() {
-  for (const c of state.chartRegistry) { try { c.destroy(); } catch {} }
-  state.chartRegistry = [];
+  /* grafik mini kartu artis Spotify TIDAK ikut dihapus — dia menempel di halaman
+   * di balik modal, jadi harus tetap hidup setelah modal ditutup */
+  for (const c of state.chartRegistry) {
+    if (c.__cid === "spCard") continue;
+    try { c.destroy(); } catch {}
+  }
+  state.chartRegistry = state.chartRegistry.filter((c) => c.__cid === "spCard");
 }
 
 function openDetail(vid, combined) {
@@ -2080,7 +2093,9 @@ function makeDualLineChart(canvas, vpts, lpts, color, cid, anchorT) {
 }
 
 /* garis kumulatif SATU metrik pada poros waktu linier (modal channel) */
-function makeTimeLineChart(canvas, pts, color, cid, unit) {
+function makeTimeLineChart(canvas, pts, color, cid, unit, opts) {
+  const o = opts || {};
+  const dim = (i) => !!o.dimEst && pts[i] != null && !!pts[i].e;
   const tA = pts[0].t, tZ = pts[pts.length - 1].t;
   return newChart(canvas, {
     type: "line",
@@ -2089,6 +2104,10 @@ function makeTimeLineChart(canvas, pts, color, cid, unit) {
         data: pts.map((p) => ({ x: p.t * 1000, y: p.v })),
         borderColor: color, borderWidth: 2.4,
         pointRadius: pts.length <= 14 ? 2.2 : 0, pointHitRadius: 14, tension: 0,
+        segment: o.dimEst ? {
+          borderColor: (c) => (dim(c.p0DataIndex) || dim(c.p1DataIndex)) ? color + "55" : color,
+          borderDash: (c) => (dim(c.p0DataIndex) || dim(c.p1DataIndex)) ? [5, 4] : undefined,
+        } : undefined,
         fill: true,
         backgroundColor: (ctx2) => {
           const g = ctx2.chart.ctx.createLinearGradient(0, 0, 0, ctx2.chart.height || 260);
@@ -2109,7 +2128,7 @@ function makeTimeLineChart(canvas, pts, color, cid, unit) {
           borderColor: cssVar("--border"), borderWidth: 1, padding: 10, displayColors: false,
           callbacks: {
             title: (items) => items.length ? DAY_FULL.format(new Date(items[0].parsed.x)) : "",
-            label: (c) => fmtExact(c.parsed.y) + " " + unit,
+            label: (c) => fmtExact(c.parsed.y) + " " + unit + (pts[c.dataIndex] && pts[c.dataIndex].e ? " (estimasi)" : ""),
           },
         },
       },
@@ -2437,21 +2456,24 @@ function closeDetail() {
   $("#overlay").classList.remove("open");
   document.body.style.overflow = "";
   state.detailMode = null;
-  if (/^#(v|c|s)=/.test(location.hash)) history.replaceState(null, "", location.pathname + location.search);
+  if (/^#(v|c|s|sc)=/.test(location.hash)) history.replaceState(null, "", location.pathname + location.search);
 }
 $("#overlay").addEventListener("click", (e) => { if (e.target === $("#overlay")) closeDetail(); });
 document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeDetail(); });
 window.addEventListener("hashchange", () => {
   const mv = /^#v=([\w-]+)$/.exec(location.hash);
   const mc = /^#c=([\w-]+)$/.exec(location.hash);
+  const msc = /^#sc=([\w-]+)$/.exec(location.hash);
   const msp = /^#s=(.+)$/.exec(location.hash);
   /* jangan buka ulang detail yang SEDANG terbuka — dulu klik baris gabungan di beranda
    * selalu ditimpa ulang jadi "versi ini saja" oleh event hashchange buatan sendiri */
   const openVideo = state.detailMode && state.detailMode.type === "video" ? state.detailMode.id : null;
   const openChan = state.detailMode && state.detailMode.type === "channel" ? state.detailMode.id : null;
   const openSp = state.detailMode && state.detailMode.type === "sptrack" ? state.detailMode.id : null;
+  const openSpCh = state.detailMode && state.detailMode.type === "spchannel" ? state.detailMode.id : null;
   if (mv && state.videos && state.videos[mv[1]]) { if (mv[1] !== openVideo) openDetail(mv[1]); }
   else if (mc && artistOf(mc[1])) { if (mc[1] !== openChan) openChannel(mc[1]); }
+  else if (msc && state.sp.artists && spArtistOf(msc[1])) { if (msc[1] !== openSpCh) openSpChannel(msc[1]); }
   else if (msp && state.sp.tracks) {
     const key = decodeURIComponent(msp[1]);
     if (state.sp.tracks[key] && key !== openSp) openSpTrack(key);
@@ -2558,6 +2580,74 @@ function spSectHead(color, ico, title, sub) {
 const ICO_SP_TROPHY = "M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z";
 const ICO_SP_FIRE = "M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z";
 const ICO_SP_PEOPLE = "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z";
+
+/* ---------- seri riwayat LEVEL ARTIS Spotify ----------
+ * Riwayat artis (a.history) baru direkam belakangan, sementara riwayat tiap lagu panjang
+ * (backfill estimasi sejak rilis). Kurva artis = penjumlahan riwayat seluruh lagu per hari
+ * kalender WIB (nilai tiap lagu diangkut maju di antara titik rekam) — titik terakhirnya
+ * persis total stream artis, jadi konsisten dengan angka di kartu. */
+function spArtistDaily(artId) {
+  state.sp.serCache = state.sp.serCache || {};
+  if (state.sp.serCache[artId]) return state.sp.serCache[artId];
+  const tracks = Object.values(state.sp.tracks || {}).filter((t) => t.artistId === artId);
+  const daySet = new Set();
+  for (const tr of tracks) for (const p of (tr.history || [])) daySet.add(dayKeyOf(p.t));
+  const days = [...daySet].sort();
+  const startOf = new Map(days.map((d) => [d, wibDayStartIso(d) || 0]));
+  const per = [];
+  for (const tr of tracks) {
+    const h = (tr.history || []).slice().sort((x, y) => x.t - y.t);
+    if (!h.length) continue;
+    const m = new Map();
+    let i = 0, cur = null, est = false;
+    for (const d of days) {
+      const end = (startOf.get(d) || 0) + 86400;
+      while (i < h.length && h[i].t < end) { cur = h[i].v; est = h[i].e === 1; i++; }
+      if (cur != null) m.set(d, { v: cur, e: est });
+    }
+    per.push(m);
+  }
+  const out = [];
+  for (const d of days) {
+    let v = 0, e = false, has = false;
+    for (const m of per) { const x = m.get(d); if (x) { v += x.v; e = e || x.e; has = true; } }
+    if (has) out.push({ key: d, t: (startOf.get(d) || 0) + 86399, v, e });
+  }
+  state.sp.serCache[artId] = out;
+  return out;
+}
+/* deret per JAM 24 jam terakhir untuk tombol “1 hari” — nilai tiap lagu diinterpolasi linier
+ * di antara dua titik pengukuran yang mengapit jam itu, lalu dijumlahkan antar lagu */
+function spArtistHourly(artId, hours) {
+  const hs = [];
+  let tZ = 0;
+  for (const tr of Object.values(state.sp.tracks || {})) {
+    if (tr.artistId !== artId) continue;
+    const h = (tr.history || []).slice().sort((x, y) => x.t - y.t);
+    if (h.length >= 2) { hs.push(h); if (h[h.length - 1].t > tZ) tZ = h[h.length - 1].t; }
+  }
+  if (!hs.length || !tZ) return [];
+  const endH = Math.floor(tZ / 3600), startH = endH - (hours || 24) + 1;
+  const valAt = (h, T) => {
+    if (T <= h[0].t) return h[0].v;
+    const lp = h[h.length - 1];
+    if (T >= lp.t) return lp.v;
+    let i = 0;
+    while (i < h.length - 2 && h[i + 1].t <= T) i++;
+    const x = h[i], y = h[i + 1];
+    if (y.t <= x.t) return y.v;
+    return x.v + (y.v - x.v) * ((T - x.t) / (y.t - x.t));
+  };
+  const hhFmt = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Jakarta", hour: "2-digit", hourCycle: "h23", hour12: false });
+  const out = [];
+  for (let H = startH; H <= endH; H++) {
+    const T = H * 3600 + 3599;
+    let v = 0;
+    for (const h of hs) v += valAt(h, T);
+    out.push({ key: dayKeyOf(H * 3600) + "T" + hhFmt.format(new Date(H * 3600 * 1000)), t: H * 3600 + 3599, v: Math.round(v), e: false });
+  }
+  return out;
+}
 
 function renderSpAll() {
   $("#homeSection").style.display = "none";
@@ -2880,18 +2970,35 @@ function renderSpArtist(sec) {
   if (!a) { sec.innerHTML = `<div class="banner">Artis Spotify tidak ditemukan.</div>`; return; }
   sec.style.setProperty("--artist-color", a.color || SP_GREEN);
 
-  const albums = Object.values(state.sp.albums).filter((x) => x.artistId === a.id)
-    .sort((x, y) => (y.releaseDate || "").localeCompare(x.releaseDate || ""));
-  const orphans = Object.values(state.sp.tracks).filter((t) => t.artistId === a.id && !t.albumIds.length)
-    .sort((x, y) => spTrackTotal(y) - spTrackTotal(x));
+  const albums = Object.values(state.sp.albums).filter((x) => x.artistId === a.id);
+  /* kategori daftar seperti YouTube: Stream terbanyak / Harian tertinggi / Rilisan terbaru */
+  const albSum = (al) => al.tracks.reduce((s, r) => { const tr = state.sp.tracks[r.key]; return s + (tr ? spTrackTotal(tr) : 0); }, 0);
+  const albDay = (al) => al.tracks.reduce((s, r) => { const tr = state.sp.tracks[r.key]; return s + (tr ? spTrackDaily(tr) : 0); }, 0);
+  const albList = albums.slice();
+  if (state.spSort === "stream") albList.sort((x, y) => albSum(y) - albSum(x));
+  else if (state.spSort === "daily") albList.sort((x, y) => albDay(y) - albDay(x));
+  else albList.sort((x, y) => (y.releaseDate || "").localeCompare(x.releaseDate || ""));
+  const orphans = Object.values(state.sp.tracks).filter((t) => t.artistId === a.id && !t.albumIds.length);
+  if (state.spSort === "stream") orphans.sort((x, y) => spTrackTotal(y) - spTrackTotal(x));
+  else if (state.spSort === "daily") orphans.sort((x, y) => spTrackDaily(y) - spTrackDaily(x));
+  else orphans.sort((x, y) => (y.releaseDate || "").localeCompare(x.releaseDate || ""));
   const q = (state.spQuery || "").toLowerCase();
   const matchT = (tr) => !q || (tr.name || "").toLowerCase().includes(q);
   const matchName = (s) => !q || String(s || "").toLowerCase().includes(q);
   const nSongs = Object.values(state.sp.tracks).filter((t) => t.artistId === a.id).length;
-  const d1 = a.history && a.history.length >= 2 ? a.history[a.history.length - 1].total - a.history[a.history.length - 2].total : null;
+  /* kurva level artis: penjumlahan riwayat seluruh lagu — titik terakhirnya = total artis */
+  const ser = spArtistDaily(a.id);
+  const serLast = ser.length ? ser[ser.length - 1].v : (a.totalStreams || 0);
+  const serPrev = ser.length >= 2 ? ser[ser.length - 2].v : null;
+  const serD1 = a.dailyStreams || (serPrev != null ? Math.max(0, serLast - serPrev) : 0);
 
-  const albHTML = albums.map((al, ai) => {
-    const rows = al.tracks.map((r) => state.sp.tracks[r.key]).filter(Boolean);
+  const sortTracks = (arr) => {
+    if (state.spSort === "stream") return arr.slice().sort((x, y) => spTrackTotal(y) - spTrackTotal(x));
+    if (state.spSort === "daily") return arr.slice().sort((x, y) => spTrackDaily(y) - spTrackDaily(x));
+    return arr; // rilisan terbaru: urutan asli tracklist album
+  };
+  const albHTML = albList.map((al, ai) => {
+    const rows = sortTracks(al.tracks.map((r) => state.sp.tracks[r.key]).filter(Boolean));
     const visRows = matchName(al.name) ? rows : rows.filter(matchT);
     if (q && !visRows.length && !matchName(al.name)) return "";
     const totAl = rows.reduce((s, tr) => s + spTrackTotal(tr), 0);
@@ -2949,7 +3056,7 @@ function renderSpArtist(sec) {
     </article>`;
 
   sec.innerHTML = `
-    <div class="chcard" style="--artist-color:${a.color || SP_GREEN};margin-top:6px">
+    <div class="chcard clickable" id="spChCard" style="--artist-color:${a.color || SP_GREEN};margin-top:6px" tabindex="0" role="button" aria-label="Lihat detail lengkap Spotify ${esc(a.name)}" title="Klik untuk melihat detail lengkap">
       <div class="chtop">
         ${a.image ? `<img class="chava" style="width:74px;height:74px;border-radius:16px" src="${esc(a.image)}" alt="Foto ${esc(a.name)}" loading="lazy" onerror="this.style.visibility='hidden'">` : ""}
         <div>
@@ -2958,27 +3065,24 @@ function renderSpArtist(sec) {
         </div>
       </div>
       <div class="chstats">
-        <div class="stat"><div class="k">Total stream</div><div class="v">${fmtCompact(a.totalStreams)}</div><div class="d">semua lagu terdaftar</div></div>
+        <div class="stat"><div class="k">Total stream</div><div class="v">${fmtCompact(serLast)}</div><div class="d">semua lagu terdaftar</div></div>
         <div class="stat"><div class="k">Per hari</div><div class="v up">+${fmtCompact(a.dailyStreams)}</div><div class="d">stream 24 jam</div></div>
         <div class="stat"><div class="k">Pendengar/bln</div><div class="v">${a.monthlyListeners ? fmtCompact(a.monthlyListeners) + (a.mlApprox ? ' <span class="cellno">±</span>' : "") : (a.followers ? "–" : "")}</div><div class="d">${a.mlDelta != null ? `<span class="${a.mlDelta >= 0 ? "up" : "down"}">${fmtDelta(a.mlDelta)}</span> vs kemarin` : a.monthlyListeners ? (a.mlApprox ? "perkiraan dari halaman Spotify" : "—") : a.followers ? "di luar 2.500 besar global" : "menunggu data"}</div></div>
         ${a.followers ? `<div class="stat"><div class="k">Followers</div><div class="v">${fmtCompact(a.followers)}</div><div class="d">profil Spotify</div></div>` : ""}
         <div class="stat"><div class="k">Lagu dipantau</div><div class="v">${nSongs}</div><div class="d">termasuk semua versi</div></div>
         <div class="stat"><div class="k">Album dipantau</div><div class="v">${albums.length}</div><div class="d">album, EP &amp; singel</div></div>
       </div>
-    </div>
-    ${a.history && a.history.length >= 2 ? `
-    <div class="sect">
-      <div class="secthead"><h3>Total stream ${esc(a.name)} — rekaman situs ini</h3></div>
-      <div class="chartbox">
+      ${ser.length >= 2 ? `
+      <div class="chartbox mini">
         <div class="charttotal ov">
           <div class="ctl">Total stream</div>
-          <div class="ctv">${fmtExact(a.totalStreams)}</div>
-          <div class="ctd">${d1 > 0 ? `<span class="up">+${fmtCompact(d1)}</span> /24 jam` : "penjumlahan semua lagu"}</div>
+          <div class="ctv">${fmtExact(serLast)}</div>
+          <div class="ctd">${serD1 > 0 ? `<span class="up">+${fmtCompact(serD1)}</span> /24 jam` : "penjumlahan semua lagu"}</div>
         </div>
-        <canvas id="spArtChart"></canvas>
-      </div>
-      <p class="note">Kurva terbentuk dari pengukuran rutin tiap jam; makin lama situs berjalan, makin panjang riwayatnya.${d1 > 0 ? ` Delta 24 jam terakhir: <span class="up">+${fmtCompact(d1)}</span>.` : ""}</p>
-    </div>` : ""}
+        <canvas id="spCardChart"></canvas>
+      </div>` : ""}
+      <div class="chhint"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>Klik kartu ini untuk grafik lengkap + pilihan rentang waktu &amp; milestone — seperti kartu channel YouTube</div>
+    </div>
     <div class="hgrid3">
       <div>
         ${spSectHead("#1ed760", ICO_SP_TROPHY, "Stream terbanyak", `stream terbanyak per versi ${esc(a.name)}`)}
@@ -3004,6 +3108,11 @@ function renderSpArtist(sec) {
       <button class="stab ${state.spArtistTab === "ms" ? "active" : ""}" data-sptab="ms">Milestone</button>
     </div>
     ${state.spArtistTab === "ms" ? spMsHTML(a) : `
+    <div class="stabs" style="margin:0 2px 10px">
+      <button class="stab ${state.spSort === "stream" ? "active" : ""}" data-spsort="stream">Stream terbanyak</button>
+      <button class="stab ${state.spSort === "daily" ? "active" : ""}" data-spsort="daily">Harian tertinggi</button>
+      <button class="stab ${state.spSort === "newest" ? "active" : ""}" data-spsort="newest">Rilisan terbaru</button>
+    </div>
     <div class="toolbar" style="margin-top:2px">
       <div class="search">
         <svg viewBox="0 0 24 24"><path d="M10 2a8 8 0 1 0 4.9 14.3l5 5a1 1 0 0 0 1.4-1.4l-5-5A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12z"/></svg>
@@ -3015,10 +3124,19 @@ function renderSpArtist(sec) {
     <div style="display:flex;flex-direction:column;gap:9px">${albHTML}${orphHTML}</div>
     ${q && !albHTML && !orphHTML ? `<div class="banner">Tidak ada lagu yang cocok dengan “${esc(state.spQuery)}”.</div>` : ""}`}`;
 
-  const cv = $("#spArtChart");
-  if (cv) {
-    const pts = a.history.map((p) => ({ key: isoDate(p.t), t: p.t, v: p.total, est: false }));
-    if (pts.length >= 2) makeLineChart(cv, pts, a.color || SP_GREEN, "spArt", "stream", "day", { layout: { padding: { top: 64 } } });
+  destroyChartById("spCard");
+  const cardCv = $("#spCardChart");
+  if (cardCv && ser.length >= 2) makeTimeLineChart(cardCv, ser, a.color || SP_GREEN, "spCard", "stream", { dimEst: true });
+  sec.querySelectorAll("[data-spsort]").forEach((b) => {
+    b.addEventListener("click", () => { state.spSort = b.dataset.spsort; renderSpArtist(sec); });
+  });
+  const spCard = $("#spChCard");
+  if (spCard) {
+    const openCh = () => openSpChannel(a.id);
+    spCard.addEventListener("click", openCh);
+    spCard.addEventListener("keydown", (e) => { if (e.key === "Enter") openCh(); });
+    const lnk = spCard.querySelector(".chhandle a");
+    if (lnk) lnk.addEventListener("click", (e) => e.stopPropagation());
   }
   sec.querySelectorAll("[data-sptab]").forEach((b) => {
     b.addEventListener("click", () => { state.spArtistTab = b.dataset.sptab; renderSpArtist(sec); });
@@ -3048,6 +3166,152 @@ function renderSpArtist(sec) {
     const s2 = $("#spSearch");
     if (s2) { s2.focus(); s2.setSelectionRange(s2.value.length, s2.value.length); }
   });
+}
+
+/* ===================== modal detail ARTIS SPOTIFY (padanan modal channel YouTube) ===================== */
+function openSpChannel(artId) {
+  const a = spArtistOf(artId);
+  if (!a) return;
+  state.detailMode = { type: "spchannel", id: artId };
+  destroyCharts();
+  const color = a.color || SP_GREEN;
+  const ser = spArtistDaily(artId);
+  const last = ser.length ? ser[ser.length - 1].v : (a.totalStreams || 0);
+  const prev = ser.length >= 2 ? ser[ser.length - 2].v : null;
+  const d1 = a.dailyStreams || (prev != null ? Math.max(0, last - prev) : 0);
+  let i7 = null;
+  if (ser.length) {
+    const cut = ser[ser.length - 1].t - 7 * 86400;
+    for (const p of ser) if (p.t >= cut) { i7 = p; break; }
+  }
+  const rate7 = i7 ? Math.max(0, (last - i7.v) / Math.max(1, (ser[ser.length - 1].t - i7.t) / 86400)) : (a.dailyStreams || 0);
+  const nSongs = Object.values(state.sp.tracks || {}).filter((t) => t.artistId === artId).length;
+  const nAlb = Object.values(state.sp.albums || {}).filter((x) => x.artistId === artId).length;
+  const mlPts = (a.history || []).filter((p) => p.ml != null);
+  const hasML = mlPts.length >= 2;
+  if (!hasML) state.spChanMetric = "total";
+
+  $("#sheet").innerHTML = `
+    <button class="close" id="closeBtn" aria-label="Tutup">✕</button>
+    <div class="dhead">
+      ${a.image ? `<img class="chava" style="width:84px;height:84px;border-radius:18px" src="${esc(a.image)}" alt="" onerror="this.style.visibility='hidden'">` : ""}
+      <div>
+        <h2 class="dtitle">${esc(a.name)}</h2>
+        <div class="dsub">
+          <span class="pill" style="background:${color};color:#fff;border-radius:999px">Spotify · artis</span>
+          ${state.sp.meta && state.sp.meta.last_updated ? `<span>diperbarui ${fmtTs(state.sp.meta.last_updated)}</span>` : ""}
+        </div>
+        <div class="dsub" style="margin-top:6px">
+          <a class="pill" href="${esc(a.openUrl)}" target="_blank" rel="noopener">Buka di Spotify ↗</a>
+          <span class="pill">Detail artis</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dbig">
+      <div class="stat"><div class="k">Total stream</div><div class="v">${fmtExact(last)}</div>
+        <div class="d">${d1 > 0 ? `<span class="up">+${fmtCompact(d1)}</span> /24 jam` : "penjumlahan lagu dipantau"}</div></div>
+      <div class="stat"><div class="k">Rata-rata / hari</div><div class="v">${rate7 ? fmtCompact(Math.round(rate7)) : "–"}</div><div class="d">7 hari terakhir</div></div>
+      <div class="stat"><div class="k">Pendengar/bln</div><div class="v">${a.monthlyListeners ? fmtCompact(a.monthlyListeners) + (a.mlApprox ? ' <span class="cellno">±</span>' : "") : "–"}</div>
+        <div class="d">${a.mlDelta != null ? `<span class="${a.mlDelta >= 0 ? "up" : "down"}">${fmtDelta(a.mlDelta)}</span> vs kemarin` : "profil Spotify"}</div></div>
+      ${a.followers ? `<div class="stat"><div class="k">Followers</div><div class="v">${fmtCompact(a.followers)}</div><div class="d">profil Spotify</div></div>` : ""}
+      <div class="stat"><div class="k">Lagu dipantau</div><div class="v">${nSongs}</div><div class="d">termasuk semua versi</div></div>
+      <div class="stat"><div class="k">Album dipantau</div><div class="v">${nAlb}</div><div class="d">album, EP &amp; singel</div></div>
+    </div>
+
+    ${hasML ? `
+    <div class="mtabs" id="spChanMetricTabs">
+      <button class="mtab ${state.spChanMetric !== "ml" ? "active" : ""}" data-m="total">Total stream</button>
+      <button class="mtab ${state.spChanMetric === "ml" ? "active" : ""}" data-m="ml">Pendengar bulanan</button>
+    </div>` : ""}
+    <div class="rangewrap" id="spChanRange">
+      <button class="rangebtn ${state.spChanRange === "1" ? "active" : ""}" data-r="1">1 hari</button>
+      <button class="rangebtn ${state.spChanRange === "7" ? "active" : ""}" data-r="7">7 hari</button>
+      <button class="rangebtn ${state.spChanRange === "30" ? "active" : ""}" data-r="30">30 hari</button>
+      <button class="rangebtn ${state.spChanRange === "365" ? "active" : ""}" data-r="365">1 tahun</button>
+      <button class="rangebtn ${state.spChanRange === "all" ? "active" : ""}" data-r="all">Sejak rekaman awal</button>
+    </div>
+    <div class="legend" id="spChanLegend"><span><i class="sw" style="background:${color}"></i>Data nyata</span></div>
+    <div class="chartbox" style="margin-bottom:12px"><canvas id="spChanLine"></canvas></div>
+    <div class="chartbox"><canvas id="spChanArea"></canvas></div>
+    <p class="note">Kurva = <b>penjumlahan riwayat seluruh ${nSongs} lagu ${esc(a.name)} yang dipantau</b> (tiap versi/ID Spotify dihitung terpisah lalu dijumlahkan per hari kalender WIB) — titik terakhirnya persis total stream artis. Perekaman berjalan otomatis <b>tiap jam</b> dari Spotify Charts (via kworb.net) oleh GitHub Actions. Segmen putus-putus/transparan = bagian yang diisi kurva estimasi (sebelum titik rekaman nyata pertama tiap lagu) supaya kurva tetap terbaca sejak rilis. <a href="${esc(a.openUrl)}" target="_blank" rel="noopener">Buka di Spotify ↗</a></p>
+
+    <div class="sect">
+      <h3>Milestone lagu ${esc(a.name)} — target terdekat</h3>
+      ${spMsUpcomingHTML(a)}
+    </div>`;
+  $("#overlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+  $("#closeBtn").addEventListener("click", closeDetail);
+  location.hash = "#sc=" + artId;
+  const mt = $("#spChanMetricTabs");
+  if (mt) mt.querySelectorAll(".mtab").forEach((b) =>
+    b.addEventListener("click", () => {
+      state.spChanMetric = b.dataset.m;
+      mt.querySelectorAll(".mtab").forEach((x) => x.classList.toggle("active", x === b));
+      buildSpChanCharts(a);
+    })
+  );
+  $("#spChanRange").querySelectorAll(".rangebtn").forEach((b) =>
+    b.addEventListener("click", () => {
+      state.spChanRange = b.dataset.r;
+      localStorage.setItem("py.spchanrange", state.spChanRange);
+      $("#spChanRange").querySelectorAll(".rangebtn").forEach((x) => x.classList.toggle("active", x === b));
+      buildSpChanCharts(a);
+    })
+  );
+  $("#sheet").querySelectorAll("tr[data-spkms]").forEach((tr) => {
+    const go = () => openSpTrack(tr.dataset.spkms);
+    tr.addEventListener("click", go);
+    tr.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+    tr.setAttribute("tabindex", "0");
+    tr.setAttribute("role", "button");
+  });
+  buildSpChanCharts(a);
+}
+
+function buildSpChanCharts(a) {
+  destroyChartById("spChanLine");
+  destroyChartById("spChanArea");
+  const color = a.color || SP_GREEN;
+  const isML = state.spChanMetric === "ml";
+  const unit = isML ? "pendengar" : "stream";
+  const pts = isML
+    ? (a.history || []).filter((p) => p.ml != null).map((p) => ({ t: p.t, v: p.ml, e: false }))
+    : spArtistDaily(a.id);
+  const elL = $("#spChanLine"), elA = $("#spChanArea");
+  if (pts.length < 2) {
+    if (elL && elL.closest(".chartbox")) elL.closest(".chartbox").innerHTML = `<div class="wait">Belum cukup data — grafik muncul setelah beberapa putaran perekaman berjalan.</div>`;
+    if (elA && elA.closest(".chartbox")) elA.closest(".chartbox").innerHTML = `<div class="wait">Grafik per periode muncul bersamaan dengan kurva di atas.</div>`;
+    return;
+  }
+  /* garis kumulatif: poros waktu LINIAR — jarak antar titik proporsional tanggal */
+  let linePts = pts;
+  if (state.spChanRange === "1") linePts = isML ? sliceWindow(pts, 2) : spArtistHourly(a.id, 24);
+  else if (state.spChanRange === "7") linePts = sliceWindow(pts, 7);
+  else if (state.spChanRange === "30") linePts = sliceWindow(pts, 30);
+  else if (state.spChanRange === "365") linePts = sliceWindow(pts, 365);
+  if (elL && linePts.length >= 2) makeTimeLineChart(elL, linePts, color, "spChanLine", unit, { dimEst: true });
+  /* area delta: bucket kontinu + interpolasi (hari/pekan/bulan tanpa data tetap terisi) */
+  let gran, series;
+  if (state.spChanRange === "1") {
+    gran = "hour";
+    series = hourlyDeltas(linePts, 24);
+  } else if (state.spChanRange === "7" || state.spChanRange === "30") {
+    const nd = state.spChanRange === "7" ? 7 : 30;
+    gran = "day";
+    series = interpolatedBuckets(sliceWindow(pts, nd), gran, null, dayIndexOf(pts[pts.length - 1].t - nd * 86400));
+  } else if (state.spChanRange === "365") {
+    gran = "week";
+    const di = dayIndexOf(pts[pts.length - 1].t - 365 * 86400);
+    series = interpolatedBuckets(sliceWindow(pts, 365), gran, null, di - ((di + 3) % 7));
+  } else {
+    gran = granForSpan(pts, null);
+    series = interpolatedBuckets(pts, gran, null, null);
+  }
+  const anyIp = series.some((b) => b.ip), anyEst = series.some((b) => b.est);
+  updateLegendIp("spChanLegend", anyEst, anyIp, color);
+  if (elA && series.length >= 2) makeAreaChart(elA, series, color, "spChanArea", unit + "/hari", gran);
 }
 
 function openSpTrack(key) {
@@ -3174,6 +3438,7 @@ $("#themeBtn").addEventListener("click", () => {
     if (state.detailMode.type === "video" && state.videos[state.detailMode.id]) openDetail(state.detailMode.id, state.detailCombined);
     else if (state.detailMode.type === "channel") openChannel(state.detailMode.id);
     else if (state.detailMode.type === "sptrack") openSpTrack(state.detailMode.id);
+    else if (state.detailMode.type === "spchannel") openSpChannel(state.detailMode.id);
   }
 });
 
@@ -3310,6 +3575,10 @@ function renderTopline() {
       const key = decodeURIComponent(msp0[1]);
       if (state.sp.tracks && state.sp.tracks[key]) openSpTrack(key);
     }).catch(() => {});
+  }
+  const msc0 = /^#sc=([\w-]+)$/.exec(location.hash);
+  if (msc0) {
+    loadSpData().then(() => { if (spArtistOf(msc0[1])) openSpChannel(msc0[1]); }).catch(() => {});
   }
 
   $("#searchBox").addEventListener("input", (e) => { state.query = e.target.value.trim(); renderVideos(); });
