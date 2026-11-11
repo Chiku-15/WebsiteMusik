@@ -3,8 +3,8 @@
   "channel_id": "UCqwUnggBBct-AY2lAdI88jQ",
   "name": "BABYMONSTER",
   "handle": "@BABYMONSTER",
-  "avatar": "https://yt3.googleusercontent.com/guzIoEyd9IyKWaD7Jfnlp1rD7k9SiEOV7go0ItyJ3O9V-j8ez6Jvs4Yj3LfrCu3Z7rFcdIqYLTI=s900-c-k-c0x00ffffff-no-rj",
-  "created": "2022-12-27",
+  "avatar": "https://yt3.ggpht.com/guzIoEyd9IyKWaD7Jfnlp1rD7k9SiEOV7go0ItyJ3O9V-j8ez6Jvs4Yj3LfrCu3Z7rFcdIqYLTI=s800-c-k-c0x00ffffff-no-rj",
+  "created": "2022-12-28",
   "history": [
    {
     "t": 1672203600,
@@ -191,6 +191,12 @@
     "src": "Social Blade",
     "s": 13600000,
     "v": 10728092272
+   },
+   {
+    "t": 1794400131,
+    "s": 13600000,
+    "v": 10728092272,
+    "c": 1093
    }
   ]
  },
@@ -198,8 +204,8 @@
   "channel_id": "UCx9hXYOCvUYwrprEqe4ZQHA",
   "name": "TREASURE",
   "handle": "@TREASURE",
-  "avatar": "https://yt3.googleusercontent.com/aUvewrJGTcI4ANkUkWnnwkDr0esbtIrWntgvCb1GWGnRAEKHePNCirzbC2YdoIdKSA0_c63XBQ=s900-c-k-c0x00ffffff-no-rj",
-  "created": "2019-02-07",
+  "avatar": "https://yt3.ggpht.com/aUvewrJGTcI4ANkUkWnnwkDr0esbtIrWntgvCb1GWGnRAEKHePNCirzbC2YdoIdKSA0_c63XBQ=s800-c-k-c0x00ffffff-no-rj",
+  "created": "2019-02-08",
   "history": [
    {
     "t": 1549515600,
@@ -358,6 +364,12 @@
     "s": 8080000,
     "v": 4286900863,
     "c": 1970
+   },
+   {
+    "t": 1794400131,
+    "s": 8080000,
+    "v": 4286900863,
+    "c": 1972
    }
   ]
  }

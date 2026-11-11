@@ -5,7 +5,7 @@
   "category": "mv",
   "featured": true,
   "published": "2023-11-26",
-  "duration": null,
+  "duration": 199,
   "history": [
    {
     "t": 1701363600,
@@ -29,10 +29,29 @@
     "o": 1
    },
    {
+    "t": 1771057497,
+    "v": 335875293,
+    "l": 3022448,
+    "e": 0,
+    "w": 1
+   },
+   {
+    "t": 1791333369,
+    "v": 352083350,
+    "l": null,
+    "e": 0,
+    "w": 1
+   },
+   {
     "t": 1793939870,
     "v": 353774467,
     "l": 3123338,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 354028635,
+    "l": 3124513
    }
   ]
  },
@@ -42,7 +61,7 @@
   "category": "mv",
   "featured": true,
   "published": "2024-01-31",
-  "duration": null,
+  "duration": 258,
   "history": [
    {
     "t": 1710003600,
@@ -52,20 +71,88 @@
     "o": 1
    },
    {
+    "t": 1713023200,
+    "v": 111960219,
+    "l": null,
+    "e": 0,
+    "w": 1
+   },
+   {
+    "t": 1722013497,
+    "v": 120130259,
+    "l": null,
+    "e": 0,
+    "w": 1
+   },
+   {
+    "t": 1724317635,
+    "v": 121445171,
+    "l": null,
+    "e": 0,
+    "w": 1
+   },
+   {
+    "t": 1732585791,
+    "v": 125383883,
+    "l": null,
+    "e": 0,
+    "w": 1
+   },
+   {
+    "t": 1769975763,
+    "v": 137003304,
+    "l": 1420021,
+    "e": 0,
+    "w": 1
+   },
+   {
+    "t": 1778446633,
+    "v": 138846813,
+    "l": 1437224,
+    "e": 0,
+    "w": 1
+   },
+   {
+    "t": 1781739453,
+    "v": 139581934,
+    "l": null,
+    "e": 0,
+    "w": 1
+   },
+   {
+    "t": 1781882038,
+    "v": 139654739,
+    "l": 1445930,
+    "e": 0,
+    "w": 1
+   },
+   {
+    "t": 1791855561,
+    "v": 141650111,
+    "l": null,
+    "e": 0,
+    "w": 1
+   },
+   {
     "t": 1793939870,
     "v": 142126198,
     "l": 1466238,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 142213003,
+    "l": 1466783
    }
   ]
  },
  "2wA_b6YHjqQ": {
-  "title": "BABYMONSTER - \u2018SHEESH\u2019 M/V",
+  "title": "BABYMONSTER - ‘SHEESH’ M/V",
   "channel": "babymonster",
   "category": "mv",
   "featured": true,
   "published": "2024-03-31",
-  "duration": null,
+  "duration": 186,
   "history": [
    {
     "t": 1712768400,
@@ -100,16 +187,21 @@
     "v": 425247150,
     "l": 4593065,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 425722337,
+    "l": 4595236
    }
   ]
  },
  "eJCHKjt0MPw": {
-  "title": "BABYMONSTER - \u2018FOREVER\u2019 M/V",
+  "title": "BABYMONSTER - ‘FOREVER’ M/V",
   "channel": "babymonster",
   "category": "mv",
   "featured": true,
   "published": "2024-06-30",
-  "duration": null,
+  "duration": 234,
   "history": [
    {
     "t": 1722099600,
@@ -123,6 +215,11 @@
     "v": 271126916,
     "l": 3005189,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 271684151,
+    "l": 3007232
    }
   ]
  },
@@ -131,8 +228,8 @@
   "channel": "babymonster",
   "category": "mv",
   "featured": true,
-  "published": "2024-10-29",
-  "duration": null,
+  "published": "2024-10-30",
+  "duration": 175,
   "history": [
    {
     "t": 1733677200,
@@ -146,6 +243,11 @@
     "v": 138164006,
     "l": 1579590,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 138293891,
+    "l": 1580573
    }
   ]
  },
@@ -154,8 +256,8 @@
   "channel": "babymonster",
   "category": "mv",
   "featured": true,
-  "published": "2024-10-31",
-  "duration": null,
+  "published": "2024-11-01",
+  "duration": 187,
   "history": [
    {
     "t": 1732208400,
@@ -176,6 +278,11 @@
     "v": 419450681,
     "l": 3384670,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 420763282,
+    "l": 3389545
    }
   ]
  },
@@ -185,23 +292,28 @@
   "category": "mv",
   "featured": false,
   "published": "2024-12-15",
-  "duration": null,
+  "duration": 232,
   "history": [
    {
     "t": 1793939870,
     "v": 89825107,
     "l": 1214157,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 90016390,
+    "l": 1215335
    }
   ]
  },
  "XShaIZs7J7M": {
-  "title": "BABYMONSTER - \u2018Really Like You\u2019 M/V",
+  "title": "BABYMONSTER - ‘Really Like You’ M/V",
   "channel": "babymonster",
   "category": "mv",
   "featured": false,
   "published": "2025-01-16",
-  "duration": null,
+  "duration": 226,
   "history": [
    {
     "t": 1763312400,
@@ -215,16 +327,21 @@
     "v": 134611173,
     "l": 1863399,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 134968318,
+    "l": 1864820
    }
   ]
  },
  "xn8mQqz2xmM": {
-  "title": "BABYMONSTER - \u2018HOT SAUCE\u2019 M/V",
+  "title": "BABYMONSTER - ‘HOT SAUCE’ M/V",
   "channel": "babymonster",
   "category": "mv",
   "featured": true,
   "published": "2025-07-01",
-  "duration": null,
+  "duration": 155,
   "history": [
    {
     "t": 1753290000,
@@ -238,16 +355,21 @@
     "v": 179853102,
     "l": 1261652,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 180204913,
+    "l": 1263311
    }
   ]
  },
  "wlHwjkYpSr0": {
-  "title": "BABYMONSTER - \u2018WE GO UP\u2019 M/V",
+  "title": "BABYMONSTER - ‘WE GO UP’ M/V",
   "channel": "babymonster",
   "category": "mv",
   "featured": true,
-  "published": "2025-10-09",
-  "duration": null,
+  "published": "2025-10-10",
+  "duration": 203,
   "history": [
    {
     "t": 1761152400,
@@ -261,16 +383,21 @@
     "v": 228940636,
     "l": 1471693,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 229367965,
+    "l": 1473933
    }
   ]
  },
  "yd_uG3TtREs": {
-  "title": "BABYMONSTER - \u2018PSYCHO\u2019 M/V",
+  "title": "BABYMONSTER - ‘PSYCHO’ M/V",
   "channel": "babymonster",
   "category": "mv",
   "featured": true,
   "published": "2025-11-18",
-  "duration": null,
+  "duration": 204,
   "history": [
    {
     "t": 1764694800,
@@ -291,32 +418,42 @@
     "v": 232594374,
     "l": 1652091,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 233790958,
+    "l": 1657143
    }
   ]
  },
  "SbdOIdg2McI": {
-  "title": "BABYMONSTER - \u2018SUPA DUPA LUV\u2019 M/V",
+  "title": "BABYMONSTER - ‘SUPA DUPA LUV’ M/V",
   "channel": "babymonster",
   "category": "mv",
   "featured": true,
   "published": "2025-12-18",
-  "duration": null,
+  "duration": 182,
   "history": [
    {
     "t": 1793939870,
     "v": 85519435,
     "l": 740232,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 85720369,
+    "l": 741243
    }
   ]
  },
  "x3eqqoZPV_E": {
-  "title": "BABYMONSTER - '\ucda4 (CHOOM)' M/V",
+  "title": "BABYMONSTER - '춤 (CHOOM)' M/V",
   "channel": "babymonster",
   "category": "mv",
   "featured": true,
   "published": "2026-05-04",
-  "duration": null,
+  "duration": 205,
   "history": [
    {
     "t": 1779037200,
@@ -330,6 +467,11 @@
     "v": 208068816,
     "l": 1657698,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 209575788,
+    "l": 1663596
    }
   ]
  },
@@ -339,7 +481,7 @@
   "category": "mv",
   "featured": false,
   "published": "2026-06-07",
-  "duration": null,
+  "duration": 187,
   "history": [
    {
     "t": 1782234000,
@@ -353,6 +495,11 @@
     "v": 149952688,
     "l": 1239520,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 151068868,
+    "l": 1243418
    }
   ]
  },
@@ -362,7 +509,7 @@
   "category": "mv",
   "featured": true,
   "published": "2026-07-05",
-  "duration": null,
+  "duration": 219,
   "history": [
    {
     "t": 1791824400,
@@ -376,6 +523,11 @@
     "v": 103843408,
     "l": 932448,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 104607191,
+    "l": 935100
    }
   ]
  },
@@ -385,13 +537,18 @@
   "category": "mv",
   "featured": true,
   "published": "2026-08-02",
-  "duration": null,
+  "duration": 175,
   "history": [
    {
     "t": 1793939870,
     "v": 91162595,
     "l": 860448,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 91871251,
+    "l": 863345
    }
   ]
  },
@@ -400,8 +557,8 @@
   "channel": "babymonster",
   "category": "mv",
   "featured": true,
-  "published": "2026-10-22",
-  "duration": null,
+  "published": "2026-10-23",
+  "duration": 215,
   "history": [
    {
     "t": 1793725200,
@@ -415,6 +572,11 @@
     "v": 115004016,
     "l": 870155,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 118012482,
+    "l": 895527
    }
   ]
  },
@@ -424,29 +586,39 @@
   "category": "dance_practice",
   "featured": false,
   "published": "2023-12-12",
-  "duration": null,
+  "duration": 197,
   "history": [
    {
     "t": 1793939870,
     "v": 40297959,
     "l": 680824,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 40371327,
+    "l": 681345
    }
   ]
  },
  "8W5TWR74Mms": {
-  "title": "BABYMONSTER - \u2018HOT SAUCE\u2019 DANCE PRACTICE VIDEO",
+  "title": "BABYMONSTER - ‘HOT SAUCE’ DANCE PRACTICE VIDEO",
   "channel": "babymonster",
   "category": "dance_practice",
   "featured": false,
   "published": "2025-07-03",
-  "duration": null,
+  "duration": 154,
   "history": [
    {
     "t": 1793939870,
     "v": 67246838,
     "l": 311157,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 67318046,
+    "l": 311565
    }
   ]
  },
@@ -456,7 +628,7 @@
   "category": "mv",
   "featured": true,
   "published": "2020-08-07",
-  "duration": null,
+  "duration": 197,
   "history": [
    {
     "t": 1596819600,
@@ -484,16 +656,21 @@
     "v": 129928757,
     "l": 2953648,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 129960476,
+    "l": 2953598
    }
   ]
  },
  "_hFarg-Obuc": {
-  "title": "TREASURE - \u2018\uc0ac\ub791\ud574 (I LOVE YOU)\u2019 M/V",
+  "title": "TREASURE - ‘사랑해 (I LOVE YOU)’ M/V",
   "channel": "treasure",
   "category": "mv",
   "featured": true,
   "published": "2020-09-18",
-  "duration": null,
+  "duration": 190,
   "history": [
    {
     "t": 1661792400,
@@ -507,38 +684,53 @@
     "v": 122252520,
     "l": 2860369,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 122292086,
+    "l": 2860470
    }
   ]
  },
  "RjbNMogQw8s": {
-  "title": "TREASURE - \u2018\uc74c (MMM)\u2019 M/V",
+  "title": "TREASURE - ‘음 (MMM)’ M/V",
   "channel": "treasure",
   "category": "mv",
   "featured": true,
   "published": "2020-11-06",
-  "duration": null,
+  "duration": 216,
   "history": [
    {
     "t": 1793939870,
     "v": 72757021,
     "l": 2110524,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 72787240,
+    "l": 2110615
    }
   ]
  },
  "p9LLoijPQfg": {
-  "title": "TREASURE - \u2018MY TREASURE\u2019 M/V",
+  "title": "TREASURE - ‘MY TREASURE’ M/V",
   "channel": "treasure",
   "category": "mv",
   "featured": true,
   "published": "2021-01-11",
-  "duration": null,
+  "duration": 201,
   "history": [
    {
     "t": 1793939870,
     "v": 54947672,
     "l": 1640560,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 54965717,
+    "l": 1640518
    }
   ]
  },
@@ -548,23 +740,28 @@
   "category": "mv",
   "featured": false,
   "published": "2021-03-31",
-  "duration": null,
+  "duration": 231,
   "history": [
    {
     "t": 1793939870,
     "v": 32403420,
     "l": 1128288,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 32423712,
+    "l": 1128384
    }
   ]
  },
  "ZJaKdBBzUYk": {
-  "title": "TREASURE - '\uc9c1\uc9c4 (JIKJIN)' M/V",
+  "title": "TREASURE - '직진 (JIKJIN)' M/V",
   "channel": "treasure",
   "category": "mv",
   "featured": true,
   "published": "2022-02-15",
-  "duration": null,
+  "duration": 190,
   "history": [
    {
     "t": 1661878800,
@@ -578,38 +775,53 @@
     "v": 155563086,
     "l": 2911976,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 155638185,
+    "l": 2912266
    }
   ]
  },
  "aPd9exmH17o": {
-  "title": "TREASURE - \u2018HELLO\u2019 M/V",
+  "title": "TREASURE - ‘HELLO’ M/V",
   "channel": "treasure",
   "category": "mv",
   "featured": true,
   "published": "2022-10-04",
-  "duration": null,
+  "duration": 186,
   "history": [
    {
     "t": 1793939870,
     "v": 97104739,
     "l": 1449045,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 97169140,
+    "l": 1449285
    }
   ]
  },
  "Dbs3l_ZJR6o": {
-  "title": "TREASURE - \u2018VolKno\u2019 M/V",
+  "title": "TREASURE - ‘VolKno’ M/V",
   "channel": "treasure",
   "category": "mv",
   "featured": false,
   "published": "2022-11-09",
-  "duration": null,
+  "duration": 199,
   "history": [
    {
     "t": 1793939870,
     "v": 26579837,
     "l": 620243,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 26589133,
+    "l": 620319
    }
   ]
  },
@@ -619,13 +831,18 @@
   "category": "mv",
   "featured": false,
   "published": "2023-06-28",
-  "duration": null,
+  "duration": 222,
   "history": [
    {
     "t": 1793939870,
     "v": 71030741,
     "l": 876384,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 71068310,
+    "l": 876616
    }
   ]
  },
@@ -635,13 +852,18 @@
   "category": "mv",
   "featured": true,
   "published": "2023-07-28",
-  "duration": null,
+  "duration": 225,
   "history": [
    {
     "t": 1793939870,
     "v": 75882302,
     "l": 889461,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 75914266,
+    "l": 889675
    }
   ]
  },
@@ -651,13 +873,18 @@
   "category": "mv",
   "featured": true,
   "published": "2024-05-28",
-  "duration": null,
+  "duration": 208,
   "history": [
    {
     "t": 1793939870,
     "v": 68400387,
     "l": 1164215,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 68438490,
+    "l": 1164415
    }
   ]
  },
@@ -667,71 +894,91 @@
   "category": "mv",
   "featured": true,
   "published": "2024-12-05",
-  "duration": null,
+  "duration": 185,
   "history": [
    {
     "t": 1793939870,
     "v": 63720666,
     "l": 538258,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 63765885,
+    "l": 538584
    }
   ]
  },
  "R55VGD7aYUI": {
-  "title": "TREASURE - \u2018YELLOW\u2019 M/V",
+  "title": "TREASURE - ‘YELLOW’ M/V",
   "channel": "treasure",
   "category": "mv",
   "featured": true,
   "published": "2025-03-07",
-  "duration": null,
+  "duration": 228,
   "history": [
    {
     "t": 1793939870,
     "v": 82546327,
     "l": 810470,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 82671578,
+    "l": 811092
    }
   ]
  },
  "gZNQs3jA7aE": {
-  "title": "TREASURE - \u2018PARADISE\u2019 M/V",
+  "title": "TREASURE - ‘PARADISE’ M/V",
   "channel": "treasure",
   "category": "mv",
   "featured": false,
   "published": "2025-09-01",
-  "duration": null,
+  "duration": 184,
   "history": [
    {
     "t": 1793939870,
     "v": 78116082,
     "l": 373110,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 78168683,
+    "l": 373467
    }
   ]
  },
  "KcW1_wI6rsc": {
-  "title": "TREASURE - \u2018EVERYTHING\u2019 M/V",
+  "title": "TREASURE - ‘EVERYTHING’ M/V",
   "channel": "treasure",
   "category": "mv",
   "featured": false,
   "published": "2025-09-18",
-  "duration": null,
+  "duration": 232,
   "history": [
    {
     "t": 1793939870,
     "v": 33281022,
     "l": 197999,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 33310613,
+    "l": 198354
    }
   ]
  },
  "QERKD90hG98": {
-  "title": "TREASURE - \u2018IF I\u2019 M/V",
+  "title": "TREASURE - ‘IF I’ M/V",
   "channel": "treasure",
   "category": "mv",
   "featured": true,
   "published": "2026-06-01",
-  "duration": null,
+  "duration": 188,
   "history": [
    {
     "t": 1780851600,
@@ -752,118 +999,158 @@
     "v": 126205047,
     "l": 528269,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 126463169,
+    "l": 530272
    }
   ]
  },
  "GCedXwbwMfQ": {
-  "title": "TREASURE - '\ub09c\ub9ac\ub098 (NALLY-NA) (HYUNHAYO)\u2019 M/V",
+  "title": "TREASURE - '난리나 (NALLY-NA) (HYUNHAYO)’ M/V",
   "channel": "treasure",
   "category": "mv",
   "featured": false,
   "published": "2026-06-22",
-  "duration": null,
+  "duration": 184,
   "history": [
    {
     "t": 1793939870,
     "v": 57906058,
     "l": 187807,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 57958937,
+    "l": 188367
    }
   ]
  },
  "u_hpZueWI9g": {
-  "title": "TREASURE - \u2018SHOCK\u2019 M/V",
+  "title": "TREASURE - ‘SHOCK’ M/V",
   "channel": "treasure",
   "category": "mv",
   "featured": true,
   "published": "2026-11-02",
-  "duration": null,
+  "duration": 173,
   "history": [
    {
     "t": 1793939870,
     "v": 39890517,
     "l": 212208,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 85714994,
+    "l": 239305
    }
   ]
  },
  "jMuos6u0cFg": {
-  "title": "TREASURE - \u2018BOY\u2019 DANCE PRACTICE VIDEO",
+  "title": "TREASURE - ‘BOY’ DANCE PRACTICE VIDEO",
   "channel": "treasure",
   "category": "dance_practice",
   "featured": false,
-  "published": "2020-08-09",
-  "duration": null,
+  "published": "2020-08-10",
+  "duration": 202,
   "history": [
    {
     "t": 1793939870,
     "v": 16766651,
     "l": 746124,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 16772273,
+    "l": 746103
    }
   ]
  },
  "5-UzO747ruM": {
-  "title": "TREASURE - \u2018\uc0ac\ub791\ud574 (I LOVE YOU)\u2019 DANCE PRACTICE VIDEO",
+  "title": "TREASURE - ‘사랑해 (I LOVE YOU)’ DANCE PRACTICE VIDEO",
   "channel": "treasure",
   "category": "dance_practice",
   "featured": false,
   "published": "2020-09-28",
-  "duration": null,
+  "duration": 187,
   "history": [
    {
     "t": 1793939870,
     "v": 14092622,
     "l": 579646,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 14097717,
+    "l": 579624
    }
   ]
  },
  "x0tW4mqmLyU": {
-  "title": "TREASURE - \u2018MY TREASURE\u2019 DANCE PRACTICE VIDEO",
+  "title": "TREASURE - ‘MY TREASURE’ DANCE PRACTICE VIDEO",
   "channel": "treasure",
   "category": "dance_practice",
   "featured": false,
   "published": "2021-01-18",
-  "duration": null,
+  "duration": 205,
   "history": [
    {
     "t": 1793939870,
     "v": 6818922,
     "l": 359253,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 6820990,
+    "l": 359248
    }
   ]
  },
  "2bCdVnoztc8": {
-  "title": "TREASURE - \u2018\ub2e4\ub77c\ub9ac (DARARI)\u2019 DANCE PRACTICE VIDEO",
+  "title": "TREASURE - ‘다라리 (DARARI)’ DANCE PRACTICE VIDEO",
   "channel": "treasure",
   "category": "dance_practice",
   "featured": false,
   "published": "2022-04-15",
-  "duration": null,
+  "duration": 223,
   "history": [
    {
     "t": 1793939870,
     "v": 90816763,
     "l": 1489319,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 90966062,
+    "l": 1490032
    }
   ]
  },
  "kDkdtNoW9Rw": {
-  "title": "TREASURE - \u2018HELLO\u2019 DANCE PRACTICE VIDEO",
+  "title": "TREASURE - ‘HELLO’ DANCE PRACTICE VIDEO",
   "channel": "treasure",
   "category": "dance_practice",
   "featured": false,
   "published": "2022-10-08",
-  "duration": null,
+  "duration": 191,
   "history": [
    {
     "t": 1793939870,
     "v": 12598121,
     "l": 359513,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 12609033,
+    "l": 359548
    }
   ]
  },
@@ -873,77 +1160,102 @@
   "category": "dance_practice",
   "featured": false,
   "published": "2023-06-20",
-  "duration": null,
+  "duration": 221,
   "history": [
    {
     "t": 1793939870,
     "v": 40231058,
     "l": 590107,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 40235877,
+    "l": 590138
    }
   ]
  },
  "SkyQR3Tdl_E": {
-  "title": "TREASURE - \u2018BONA BONA\u2019 DANCE PRACTICE VIDEO",
+  "title": "TREASURE - ‘BONA BONA’ DANCE PRACTICE VIDEO",
   "channel": "treasure",
   "category": "dance_practice",
   "featured": false,
   "published": "2023-08-01",
-  "duration": null,
+  "duration": 223,
   "history": [
    {
     "t": 1793939870,
     "v": 26713797,
     "l": 235941,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 26724894,
+    "l": 235982
    }
   ]
  },
  "NkO_8gCLMZ0": {
-  "title": "TREASURE - \u2018\uc0ac\ub974\ub974 (SARURU)\u2019 DANCE PRACTICE VIDEO",
+  "title": "TREASURE - ‘사르르 (SARURU)’ DANCE PRACTICE VIDEO",
   "channel": "treasure",
   "category": "dance_practice",
   "featured": false,
   "published": "2025-03-12",
-  "duration": null,
+  "duration": 191,
   "history": [
    {
     "t": 1793939870,
     "v": 22578687,
     "l": 274791,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 22610882,
+    "l": 274933
    }
   ]
  },
  "zjJs3I4hsCg": {
-  "title": "TREASURE - \u2018EVERYTHING\u2019 DANCE PRACTICE VIDEO",
+  "title": "TREASURE - ‘EVERYTHING’ DANCE PRACTICE VIDEO",
   "channel": "treasure",
   "category": "dance_practice",
   "featured": false,
   "published": "2025-08-18",
-  "duration": null,
+  "duration": 173,
   "history": [
    {
     "t": 1793939870,
     "v": 17358281,
     "l": 140265,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 17379228,
+    "l": 140374
    }
   ]
  },
  "nSKPJ2UmnqU": {
-  "title": "TREASURE - \u2018ZOOM ZOOM\u2019 DANCE PRACTICE VIDEO",
+  "title": "TREASURE - ‘ZOOM ZOOM’ DANCE PRACTICE VIDEO",
   "channel": "treasure",
   "category": "dance_practice",
   "featured": false,
   "published": "2026-06-16",
-  "duration": null,
+  "duration": 195,
   "history": [
    {
     "t": 1793939870,
     "v": 31329470,
     "l": 157783,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 31412346,
+    "l": 158227
    }
   ]
  },
@@ -953,269 +1265,354 @@
   "category": "dance_performance",
   "featured": false,
   "published": "2023-12-03",
-  "duration": null,
+  "duration": 196,
   "history": [
    {
     "t": 1793939870,
     "v": 83905951,
     "l": 912804,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 83993098,
+    "l": 913183
    }
   ]
  },
  "tDt7X6coxvs": {
-  "title": "BABYMONSTER - \u2018FOREVER\u2019 DANCE PERFORMANCE VIDEO",
+  "title": "BABYMONSTER - ‘FOREVER’ DANCE PERFORMANCE VIDEO",
   "channel": "babymonster",
   "category": "dance_performance",
   "featured": false,
   "published": "2024-07-04",
-  "duration": null,
+  "duration": 220,
   "history": [
    {
     "t": 1793939870,
     "v": 77273462,
     "l": 963569,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 77387382,
+    "l": 964050
    }
   ]
  },
  "gnJOBNz1q0A": {
-  "title": "BABYMONSTER - \u2018LIKE THAT\u2019 DANCE PERFORMANCE VIDEO",
+  "title": "BABYMONSTER - ‘LIKE THAT’ DANCE PERFORMANCE VIDEO",
   "channel": "babymonster",
   "category": "dance_performance",
   "featured": false,
   "published": "2024-06-08",
-  "duration": null,
+  "duration": 180,
   "history": [
    {
     "t": 1793939870,
     "v": 53062295,
     "l": 793002,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 53114490,
+    "l": 793255
    }
   ]
  },
  "4iw45qO3OsE": {
-  "title": "BABYMONSTER - \u2018HOT SAUCE\u2019 DANCE PERFORMANCE VIDEO (M/V White Horizon Ver.)",
+  "title": "BABYMONSTER - ‘HOT SAUCE’ DANCE PERFORMANCE VIDEO (M/V White Horizon Ver.)",
   "channel": "babymonster",
   "category": "dance_performance",
   "featured": false,
   "published": "2025-07-15",
-  "duration": null,
+  "duration": 158,
   "history": [
    {
     "t": 1793939870,
     "v": 27145792,
     "l": 148092,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 27162881,
+    "l": 148185
    }
   ]
  },
  "Q5SIYzCRRv4": {
-  "title": "TREASURE - '\uc9c1\uc9c4 (JIKJIN)' DANCE PERFORMANCE VIDEO",
+  "title": "TREASURE - '직진 (JIKJIN)' DANCE PERFORMANCE VIDEO",
   "channel": "treasure",
   "category": "dance_performance",
   "featured": false,
   "published": "2022-02-23",
-  "duration": null,
+  "duration": 193,
   "history": [
    {
     "t": 1793939870,
     "v": 18653780,
     "l": 590573,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 18663276,
+    "l": 590599
    }
   ]
  },
  "9v32bIz4WGs": {
-  "title": "TREASURE - \u2018PARADISE\u2019 DANCE PERFORMANCE VIDEO",
+  "title": "TREASURE - ‘PARADISE’ DANCE PERFORMANCE VIDEO",
   "channel": "treasure",
   "category": "dance_performance",
   "featured": false,
   "published": "2025-09-03",
-  "duration": null,
+  "duration": 182,
   "history": [
    {
     "t": 1793939870,
     "v": 29344197,
     "l": 116181,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 29373348,
+    "l": 116335
    }
   ]
  },
  "GCPK6u39ZK0": {
-  "title": "TREASURE - \u2018\uc74c (MMM)\u2019 DANCE PERFORMANCE VIDEO (SPACE SET ver.)",
+  "title": "TREASURE - ‘음 (MMM)’ DANCE PERFORMANCE VIDEO (SPACE SET ver.)",
   "channel": "treasure",
   "category": "dance_performance",
   "featured": false,
-  "published": "2020-11-11",
-  "duration": null,
+  "published": "2020-11-12",
+  "duration": 212,
   "history": [
    {
     "t": 1793939870,
     "v": 9053565,
     "l": 402145,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 9055722,
+    "l": 402128
    }
   ]
  },
  "HBzzYDSDI-U": {
-  "title": "TREASURE - \u2018\uc74c (MMM)\u2019 DANCE PERFORMANCE VIDEO (HALLOWEEN ver.)",
+  "title": "TREASURE - ‘음 (MMM)’ DANCE PERFORMANCE VIDEO (HALLOWEEN ver.)",
   "channel": "treasure",
   "category": "dance_performance",
   "featured": false,
   "published": "2020-11-13",
-  "duration": null,
+  "duration": 216,
   "history": [
    {
     "t": 1793939870,
     "v": 8841188,
     "l": 570170,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 8844410,
+    "l": 570177
    }
   ]
  },
  "ehOVBOAtxU4": {
-  "title": "TREASURE - \u2018B.O.M.B (kaboom ver.)\u2019 WHITE DANCE PERFORMANCE VIDEO",
+  "title": "TREASURE - ‘B.O.M.B (kaboom ver.)’ WHITE DANCE PERFORMANCE VIDEO",
   "channel": "treasure",
   "category": "dance_performance",
   "featured": false,
   "published": "2023-10-20",
-  "duration": null,
+  "duration": 237,
   "history": [
    {
     "t": 1793939870,
     "v": 35792225,
     "l": 221788,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 35810260,
+    "l": 221882
    }
   ]
  },
  "uxmzwbGpH30": {
-  "title": "TREASURE - \u2018B.O.M.B (kaboom ver.)\u2019 DANCE PERFORMANCE VIDEO",
+  "title": "TREASURE - ‘B.O.M.B (kaboom ver.)’ DANCE PERFORMANCE VIDEO",
   "channel": "treasure",
   "category": "dance_performance",
   "featured": false,
   "published": "2023-10-20",
-  "duration": null,
+  "duration": 252,
   "history": [
    {
     "t": 1793939870,
     "v": 48768703,
     "l": 450779,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 48800122,
+    "l": 450927
    }
   ]
  },
  "bQN4aoknQg4": {
-  "title": "TREASURE - \u2018YELLOW\u2019 DANCE PERFORMANCE VIDEO",
+  "title": "TREASURE - ‘YELLOW’ DANCE PERFORMANCE VIDEO",
   "channel": "treasure",
   "category": "dance_performance",
   "featured": false,
   "published": "2025-03-09",
-  "duration": null,
+  "duration": 203,
   "history": [
    {
     "t": 1793939870,
     "v": 26595618,
     "l": 184981,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 26630851,
+    "l": 185229
    }
   ]
  },
  "GC0FRaUlsNQ": {
-  "title": "TREASURE - \u2018KING KONG' DANCE PERFORMANCE VIDEO",
+  "title": "TREASURE - ‘KING KONG' DANCE PERFORMANCE VIDEO",
   "channel": "treasure",
   "category": "dance_performance",
   "featured": false,
   "published": "2024-06-06",
-  "duration": null,
+  "duration": 206,
   "history": [
    {
     "t": 1793939870,
     "v": 10040682,
     "l": 215757,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 10047420,
+    "l": 215802
    }
   ]
  },
  "DIxRlfHq9Fo": {
-  "title": "TREASURE \u2013 \u2018DANGER\u2019 DANCE PERFORMANCE VIDEO",
+  "title": "TREASURE – ‘DANGER’ DANCE PERFORMANCE VIDEO",
   "channel": "treasure",
   "category": "dance_performance",
   "featured": false,
   "published": "2026-08-23",
-  "duration": null,
+  "duration": 169,
   "history": [
    {
     "t": 1793939870,
     "v": 30644360,
     "l": 111682,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 30714952,
+    "l": 112323
    }
   ]
  },
  "1662wSi7nes": {
-  "title": "TREASURE - \u2018LAST NIGHT' DANCE PERFORMANCE VIDEO",
+  "title": "TREASURE - ‘LAST NIGHT' DANCE PERFORMANCE VIDEO",
   "channel": "treasure",
   "category": "dance_performance",
   "featured": false,
   "published": "2024-12-12",
-  "duration": null,
+  "duration": 192,
   "history": [
    {
     "t": 1793939870,
     "v": 18969386,
     "l": 138300,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 18990230,
+    "l": 138433
    }
   ]
  },
  "-3NRu9GB8zs": {
-  "title": "TREASURE - \u2018NOW FOREVER\u2019 DANCE PERFORMANCE VIDEO",
+  "title": "TREASURE - ‘NOW FOREVER’ DANCE PERFORMANCE VIDEO",
   "channel": "treasure",
   "category": "dance_performance",
   "featured": false,
   "published": "2025-09-25",
-  "duration": null,
+  "duration": 197,
   "history": [
    {
     "t": 1793939870,
     "v": 32272166,
     "l": 123996,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 32316299,
+    "l": 124239
    }
   ]
  },
  "vW-FVdrv_8Q": {
-  "title": "TREASURE \u2013 \u2018\ub09c\ub9ac\ub098 (NALLY-NA) (HYUNHAYO)\u2019 DANCE PERFORMANCE VIDEO",
+  "title": "TREASURE – ‘난리나 (NALLY-NA) (HYUNHAYO)’ DANCE PERFORMANCE VIDEO",
   "channel": "treasure",
   "category": "dance_performance",
   "featured": false,
   "published": "2026-06-24",
-  "duration": null,
+  "duration": 176,
   "history": [
    {
     "t": 1793939870,
     "v": 29015874,
     "l": 63119,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 29040704,
+    "l": 63389
    }
   ]
  },
  "WL5PnZkZ7oM": {
-  "title": "TREASURE - \u2018IF I\u2019 DANCE PERFORMANCE VIDEO",
+  "title": "TREASURE - ‘IF I’ DANCE PERFORMANCE VIDEO",
   "channel": "treasure",
   "category": "dance_performance",
   "featured": false,
   "published": "2026-06-02",
-  "duration": null,
+  "duration": 195,
   "history": [
    {
     "t": 1793939870,
     "v": 42496397,
     "l": 150294,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 42535361,
+    "l": 150597
    }
   ]
  },
@@ -1224,14 +1621,19 @@
   "channel": "babymonster",
   "category": "dance_performance",
   "featured": false,
-  "published": "2025-10-17",
-  "duration": null,
+  "published": "2025-10-13",
+  "duration": 206,
   "history": [
    {
     "t": 1793961429,
     "v": 201000000,
     "l": null,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 202088676,
+    "l": 820088
    }
   ]
  },
@@ -1240,8 +1642,8 @@
   "channel": "babymonster",
   "category": "dance_performance",
   "featured": false,
-  "published": "2024-06-04",
-  "duration": null,
+  "published": "2024-05-30",
+  "duration": 178,
   "history": [
    {
     "t": 1720198800,
@@ -1262,6 +1664,11 @@
     "v": 256000000,
     "l": null,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 256998844,
+    "l": 2706382
    }
   ]
  },
@@ -1270,14 +1677,19 @@
   "channel": "babymonster",
   "category": "dance_performance",
   "featured": false,
-  "published": "2025-10-23",
-  "duration": null,
+  "published": "2025-02-06",
+  "duration": 164,
   "history": [
    {
     "t": 1793961429,
     "v": 163000000,
     "l": null,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 164270338,
+    "l": 1299455
    }
   ]
  },
@@ -1286,24 +1698,29 @@
   "channel": "babymonster",
   "category": "dance_performance",
   "featured": false,
-  "published": "2025-10-14",
-  "duration": null,
+  "published": "2025-02-13",
+  "duration": 166,
   "history": [
    {
     "t": 1793961429,
     "v": 73000000,
     "l": null,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 73837527,
+    "l": 675557
    }
   ]
  },
  "kOanBE5Wg24": {
-  "title": "BABYMONSTER - \u2018SHEESH\u2019 PERFORMANCE VIDEO",
+  "title": "BABYMONSTER - ‘SHEESH’ PERFORMANCE VIDEO",
   "channel": "babymonster",
   "category": "dance_performance",
   "featured": false,
-  "published": "2024-04-24",
-  "duration": null,
+  "published": "2024-04-04",
+  "duration": 183,
   "history": [
    {
     "t": 1715965200,
@@ -1317,16 +1734,21 @@
     "v": 239000000,
     "l": null,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 240227393,
+    "l": 1780917
    }
   ]
  },
  "cxhqqpVk65Q": {
-  "title": "BABYMONSTER - \u2018DRIP\u2019 PERFORMANCE VIDEO",
+  "title": "BABYMONSTER - ‘DRIP’ PERFORMANCE VIDEO",
   "channel": "babymonster",
   "category": "dance_performance",
   "featured": false,
   "published": "2024-11-05",
-  "duration": null,
+  "duration": 190,
   "history": [
    {
     "t": 1743526800,
@@ -1340,54 +1762,74 @@
     "v": 212000000,
     "l": null,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 213162939,
+    "l": 1455522
    }
   ]
  },
  "frV8cZ_yA_4": {
-  "title": "BABYMONSTER - \u2018CLIK CLAK\u2019 PERFORMANCE VIDEO",
+  "title": "BABYMONSTER - ‘CLIK CLAK’ PERFORMANCE VIDEO",
   "channel": "babymonster",
   "category": "dance_performance",
   "featured": false,
-  "published": "2024-11-02",
-  "duration": null,
+  "published": "2024-11-03",
+  "duration": 179,
   "history": [
    {
     "t": 1793961429,
     "v": 84000000,
     "l": null,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 84986595,
+    "l": 906154
    }
   ]
  },
  "B1gDCOTpDzA": {
-  "title": "BABYMONSTER - \u2018CLIK CLAK\u2019 SPECIAL PERFORMANCE VIDEO",
+  "title": "BABYMONSTER - ‘CLIK CLAK’ SPECIAL PERFORMANCE VIDEO",
   "channel": "babymonster",
   "category": "dance_performance",
   "featured": false,
-  "published": "2024-11-05",
-  "duration": null,
+  "published": "2024-11-08",
+  "duration": 179,
   "history": [
    {
     "t": 1793961429,
     "v": 30000000,
     "l": null,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 31027272,
+    "l": 537422
    }
   ]
  },
  "IApenpQjcuI": {
-  "title": "BABYMONSTER - \u2018DRIP' SPECIAL PERFORMANCE VIDEO",
+  "title": "BABYMONSTER - ‘DRIP' SPECIAL PERFORMANCE VIDEO",
   "channel": "babymonster",
   "category": "dance_performance",
   "featured": false,
-  "published": "2024-11-04",
-  "duration": null,
+  "published": "2024-11-08",
+  "duration": 190,
   "history": [
    {
     "t": 1793961429,
     "v": 27000000,
     "l": null,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 27119112,
+    "l": 525510
    }
   ]
  },
@@ -1396,14 +1838,19 @@
   "channel": "babymonster",
   "category": "dance_performance",
   "featured": false,
-  "published": "2025-12-06",
-  "duration": null,
+  "published": "2025-12-05",
+  "duration": 206,
   "history": [
    {
     "t": 1793961429,
     "v": 95000000,
     "l": null,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 96025495,
+    "l": 501215
    }
   ]
  },
@@ -1412,30 +1859,40 @@
   "channel": "babymonster",
   "category": "dance_performance",
   "featured": false,
-  "published": "2026-08-08",
-  "duration": null,
+  "published": "2026-08-04",
+  "duration": 177,
   "history": [
    {
     "t": 1793961429,
     "v": 40000000,
     "l": null,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 40478616,
+    "l": 317571
    }
   ]
  },
  "wqSHogLRtJI": {
-  "title": "BABYMONSTER - '\ucda4 (CHOOM)' PERFORMANCE VIDEO",
+  "title": "BABYMONSTER - '춤 (CHOOM)' PERFORMANCE VIDEO",
   "channel": "babymonster",
   "category": "dance_performance",
   "featured": false,
-  "published": "2026-05-11",
-  "duration": null,
+  "published": "2026-05-05",
+  "duration": 194,
   "history": [
    {
     "t": 1793961429,
     "v": 99000000,
     "l": null,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 99502846,
+    "l": 547614
    }
   ]
  },
@@ -1444,30 +1901,40 @@
   "channel": "babymonster",
   "category": "dance_performance",
   "featured": false,
-  "published": "2026-07-02",
-  "duration": null,
+  "published": "2026-06-10",
+  "duration": 191,
   "history": [
    {
     "t": 1793961429,
     "v": 72000000,
     "l": null,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 72512111,
+    "l": 370642
    }
   ]
  },
  "nDhIZIGz0xo": {
-  "title": "TREASURE - \u2018HELLO\u2019 SPECIAL PERFORMANCE VIDEO",
+  "title": "TREASURE - ‘HELLO’ SPECIAL PERFORMANCE VIDEO",
   "channel": "treasure",
   "category": "dance_performance",
   "featured": false,
-  "published": "2022-10-30",
-  "duration": null,
+  "published": "2022-10-20",
+  "duration": 211,
   "history": [
    {
     "t": 1793961429,
     "v": 5800000,
     "l": null,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 5900334,
+    "l": 301775
    }
   ]
  },
@@ -1476,46 +1943,61 @@
   "channel": "treasure",
   "category": "dance_performance",
   "featured": false,
-  "published": "2022-03-25",
-  "duration": null,
+  "published": "2022-05-12",
+  "duration": 228,
   "history": [
    {
     "t": 1793961429,
     "v": 65000000,
     "l": null,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 65351574,
+    "l": 1620269
    }
   ]
  },
  "g2i5hKKMaS0": {
-  "title": "TREASURE - \u2018\uc0ac\ub791\ud574 (I LOVE YOU)\u2019 SPECIAL PERFORMANCE VIDEO",
+  "title": "TREASURE - ‘사랑해 (I LOVE YOU)’ SPECIAL PERFORMANCE VIDEO",
   "channel": "treasure",
   "category": "dance_performance",
   "featured": false,
-  "published": "2020-11-09",
-  "duration": null,
+  "published": "2020-10-02",
+  "duration": 191,
   "history": [
    {
     "t": 1793961429,
     "v": 8500000,
     "l": null,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 8583562,
+    "l": 507823
    }
   ]
  },
  "EKHd0OgwabY": {
-  "title": "TREASURE - \u2018BOY\u2019 SPECIAL PERFORMANCE VIDEO",
+  "title": "TREASURE - ‘BOY’ SPECIAL PERFORMANCE VIDEO",
   "channel": "treasure",
   "category": "dance_performance",
   "featured": false,
-  "published": "2020-09-04",
-  "duration": null,
+  "published": "2020-08-20",
+  "duration": 204,
   "history": [
    {
     "t": 1793961429,
     "v": 5400000,
     "l": null,
     "e": 0
+   },
+   {
+    "t": 1794400131,
+    "v": 5493213,
+    "l": 417218
    }
   ]
  }
