@@ -27,6 +27,10 @@ const WAYBACK_MAX_VIDEOS = parseInt(process.env.WAYBACK_MAX || "25", 10) || 25; 
 const WAYBACK_PER_VIDEO = 6; // maksimum snapshot arsip yang diambil per video (mode normal)
 const WAYBACK_MASS_PER_VIDEO = parseInt(process.env.WAYBACK_MASS_PER || "40", 10) || 40; // mode massal: snapshot per video
 const WAYBACK_SLEEP_MS = 1100; // jeda sopan antar permintaan ke web.archive.org
+/* versi logika backfill — dinaikkan saat kriteria/parser berubah supaya video yang dulu
+ * dicoba (marker lama) diulang dgn kriteria baru TANPA perlu bump schema (migrasi schema
+ * menurunkan riwayat milestone lama channel, jadi tidak dipakai utk ini). */
+const BACKFILL_VER = 2;
 const SCHEMA_VERSION = 3; // penanda format data; beda versi -> migrasi otomatis
 const EST_CAP = 380; // batas titik estimasi per video (hemat ukuran file)
 const EST_KEEP_DAILY = 100; // estimasi 100 hari terakhir selalu harian
@@ -456,10 +460,16 @@ function parseViewCountFromPage(html) {
   return null;
 }
 
-/* likes dari halaman arsip — pola terstruktur yg sama seperti scrapeVideo */
+/* likes dari halaman arsip — pola terstruktur yg sama seperti scrapeVideo.
+ * Pola "along with" penting: halaman YouTube modern menaruh jumlah like di label
+ * "like this video along with 1,234,567 other people" (bukan di awal label). */
 function parseLikeCountFromPage(html) {
   let m = /"likeCount":"(\d+)"/.exec(html);
   if (m) return parseInt(m[1], 10);
+  m = /like this video along with ([\d,.]+) other people/i.exec(html);
+  if (m) return parseShortCount(m[1]);
+  m = /"accessibilityText":"[^"]{0,100}?(?:bersama|along with)\s+([\d.,]+)\s*(?:orang lain|other people)/i.exec(html);
+  if (m) return parseShortCount(m[1]);
   m = /"accessibilityText":"([\d,.]+\s*[KMB]?)\s*(?:likes|suka)"/i.exec(html);
   if (m) return parseShortCount(m[1]);
   m = /"expandedText":"([\d,.]+\s*[KMB]?)\s*(?:likes|suka)"/i.exec(html);
@@ -558,9 +568,24 @@ async function backfillFromWayback(videos, now) {
   for (const [id, rec] of Object.entries(videos)) {
     if (budget <= 0 || !archiveAlive) break;
     if (!rec.published || !rec.history || !rec.history.length) continue;
-    if (!mass && rec.history.filter((p) => p.e !== 1).length >= 3) continue; // sudah cukup data nyata
-    const marker = `backfill/${mass ? "mass-" : ""}${id}.json`;
-    if (readJSON(marker, null)) continue; // sudah pernah dicoba
+    /* kriteria perlu-backfill (mode normal): data nyata masih gersang, likes belum
+     * terpantau sejak dekat rilis, atau ada celah panjang antar titik.
+     * Dulu cukup >= 3 titik utk dilewati — akibatnya video dgn 2 milestone + 1 titik API
+     * (mis. DRIP: celah 21 bulan, likes kosong bertahun-tahun) tidak pernah di-backfill. */
+    if (!mass) {
+      const reals = rec.history.filter((p) => p.e !== 1).sort((a, b) => a.t - b.t);
+      const likePts = rec.history.filter((p) => p.l != null && p.l > 0).sort((a, b) => a.t - b.t);
+      const pubT = Date.parse((rec.published || "") + "T00:00:00Z") / 1000;
+      let need = reals.length < 3;
+      if (!need) for (let i = 1; i < reals.length; i++) {
+        if (reals[i].t - reals[i - 1].t > 30 * 86400) { need = true; break; }
+      }
+      if (!need && isFinite(pubT) && reals.length && reals[0].t - pubT > 30 * 86400) need = true;
+      if (!need && (!likePts.length || (isFinite(pubT) && likePts[0].t - pubT > 7 * 86400))) need = true;
+      if (!need) continue; // sudah rapat + likes terpantau sejak awal
+    }
+    const marker = `backfill/v${BACKFILL_VER}-${mass ? "mass-" : ""}${id}.json`;
+    if (readJSON(marker, null)) continue; // sudah pernah dicoba dgn logika versi ini
     budget--;
     try {
       const anchors = await waybackAnchors(id, rec.published);
@@ -1090,5 +1115,6 @@ module.exports = {
   main, appendHistory, mergeHistory, buildEstimatedSeries, buildChannelSeries, buildAnchoredSeries,
   rebuildVideoEstimates, rebuildChannelEstimates, thinSeries, migrateIfNeeded, applyOfficialMilestones,
   backfillFromWayback, waybackAnchors, classifyTitle, parseShortCount, scrapePlaylistPage,
+  parseLikeCountFromPage, parseViewCountFromPage,
   CONFIG, API_KEY, DATA_DIR, SCHEMA_VERSION,
 };

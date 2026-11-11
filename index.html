@@ -1606,6 +1606,14 @@ function openDetail(vid, combined) {
   const reached = reachedMilestones(last.v || 0, MS_COLS);
   const songName = displaySongOf(v.title);
   const catOf = (x) => esc(state.config.categories[x.category] || x.category);
+  /* anchor rilis (0 views) untuk grafik "sejak rilis" — gabungan versi = rilis terlama */
+  let pubT = wibDayStartIso(v.published);
+  if (state.detailCombined) {
+    for (const x of groupAll) {
+      const p = wibDayStartIso(x.published);
+      if (p != null && (pubT == null || p < pubT)) pubT = p;
+    }
+  }
 
   /* ---- gaya bm-tracker: delta hari terukur terakhir + peringkat di antara video dipantau ---- */
   const dV = lastDayDelta(h, "v");
@@ -1681,7 +1689,7 @@ function openDetail(vid, combined) {
 
     <div class="sect">
       <h3 id="dailyTitle">Views ditambahkan per hari</h3>
-      <div class="legend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span>${h.some((p) => p.e === 1) ? `<span><i class="sw" style="background:${art.color}55"></i>Estimasi</span>` : ""}</div>
+      <div class="legend" id="dailyLegend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span></div>
       <div class="rangewrap" id="dailyRange">
         <button class="rangebtn ${state.dailyRange === "1" ? "active" : ""}" data-r="1">1 hari</button>
         <button class="rangebtn ${state.dailyRange === "7" ? "active" : ""}" data-r="7">7 hari</button>
@@ -1690,11 +1698,12 @@ function openDetail(vid, combined) {
         <button class="rangebtn ${state.dailyRange === "all" ? "active" : ""}" data-r="all">Sejak rilis</button>
       </div>
       <div class="chartbox"><canvas id="chartDaily"></canvas></div>
+      <p class="note" id="dailyHint" style="margin-top:6px"></p>
     </div>
 
     <div class="sect">
       <h3>Total views &amp; likes (sejak rilis)</h3>
-      <div class="legend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span>${h.some((p) => p.e === 1) ? `<span><i class="sw" style="background:${art.color}55"></i>Estimasi</span>` : ""}</div>
+      <div class="legend" id="cumLegend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span></div>
       <div class="chartbox"><canvas id="chartCum"></canvas></div>
       <p class="note" id="likeHint" style="margin-top:6px"></p>
       <p class="note">Semua titik di grafik ini adalah <b>data nyata</b> yang dikumpulkan dari berbagai sumber: <b>YouTube Data API</b> (direkam GitHub Actions tiap jam), <b>arsip Wayback Machine</b> (snapshot halaman video dari berbagai tanggal sejak rilis), dan <b>pengumuman resmi YG Entertainment/media</b> (tanggal milestone views). YouTube tidak menyediakan riwayat harian untuk publik (hanya pemilik channel bisa melihatnya di YouTube Studio), jadi antar titik sumber dihubungkan garis lurus — tanpa model estimasi. Untuk menambah kepadatan titik arsip, jalankan workflow <b>“Kumpulkan data (YouTube + Spotify)”</b> di tab Actions dengan mode <b>“wayback-mass”</b>.${state.detailCombined
@@ -1752,7 +1761,7 @@ function openDetail(vid, combined) {
         localStorage.setItem("py.range", state.dailyRange);
         rangeWrap.querySelectorAll(".rangebtn").forEach((x) => x.classList.toggle("active", x === b));
         destroyChartById("daily");
-        buildDailyChart(h, art.color);
+        buildDailyChart(h, art.color, pubT);
         if (state.detailCombined) {
           const t = $("#dailyTitle");
           if (t) t.textContent += " — gabungan semua versi";
@@ -1762,8 +1771,8 @@ function openDetail(vid, combined) {
   }
 
   if (h.length >= 2) {
-    buildDailyChart(h, art.color);
-    buildCumChart(h, art.color);
+    buildDailyChart(h, art.color, pubT);
+    buildCumChart(h, art.color, pubT);
     if (state.detailCombined) {
       const t = $("#dailyTitle");
       if (t) t.textContent += " — gabungan semua versi";
@@ -1792,44 +1801,144 @@ function daysFromHistory(h, key) {
   }
   return [...byDay.values()].sort((a, b) => a.t - b.t);
 }
-/* agregasi per bucket: day / week / month */
-function bucketize(days, gran) {
-  const bucketOf = (k) => (gran === "month" ? k.slice(0, 7) : gran === "week" ? weekKeyOf(k) : k);
-  const dailyDeltas = [];
-  for (let i = 1; i < days.length; i++) {
-    dailyDeltas.push({ v: Math.max(0, days[i].v - days[i - 1].v), est: days[i].e || days[i - 1].e, key: days[i].key });
-  }
-  const cumMap = new Map(), dMap = new Map();
-  for (const p of days) {
-    const k = bucketOf(p.key);
-    const b = cumMap.get(k);
-    if (!b) cumMap.set(k, { v: p.v, est: p.e, key: k, t: p.t });
-    else if (p.t > b.t) { b.v = p.v; b.t = p.t; b.est = b.est || p.e; }
-  }
-  for (const x of dailyDeltas) {
-    const k = bucketOf(x.key);
-    const b = dMap.get(k);
-    if (!b) dMap.set(k, { v: x.v, est: x.est, key: k });
-    else { b.v += x.v; b.est = b.est || x.est; }
-  }
-  return { cum: [...cumMap.values()], deltas: [...dMap.values()], gran };
+/* ---------- zona WIB dalam indeks hari (stabil di semua browser, bebas DST) ----------
+ * dayIndex i = hari kalender WIB; epoch tengah malam WIB tsb = i*86400 - 7 jam. */
+const WIB_OFF = 7 * 3600;
+function dayIndexOf(t) { return Math.floor((t + WIB_OFF) / 86400); }
+function tsOfDayIndex(i) { return i * 86400 - WIB_OFF; }
+function dateKeyOfDayIndex(i) { return new Date(i * 86400e3).toISOString().slice(0, 10); }
+function monthKeyOfDayIndex(i) { const d = new Date(i * 86400e3); return d.getUTCFullYear() + "-" + String(d.getUTCMonth() + 1).padStart(2, "0"); }
+function dayIndexOfMonthStart(i) {
+  const d = new Date(i * 86400e3); // instan i*86400 = 07:00 WIB hari ke-i → tanggal UTC = tanggal WIB
+  return dayIndexOf(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1) / 1000);
 }
-/* granularitas berdasar RENTANG WAKTU (bukan jumlah titik) — riwayat nyata yang berjarak
- * renggang (arsip/milestone) tetap di-bucket pekanan/bulanan agar garisnya terbaca */
-function granFor(days) {
-  const span = days.length ? days[days.length - 1].t - days[0].t : 0;
+function addMonthsFromDayIndex(i, n) {
+  const d = new Date(i * 86400e3);
+  return dayIndexOf(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + n, 1) / 1000);
+}
+function wibDayStartIso(iso) { const t = Date.parse((iso || "") + "T00:00:00+07:00"); return isFinite(t) ? Math.floor(t / 1000) : null; }
+
+/* ---------- interpolasi kubik monoton (Fritsch–Carlson, ruang log) — port dari collect.js ----------
+ * Menyambung titik-titik nyata dgn kurva LEMBUT yang selalu melewati tiap titik — laju harian
+ * tidak melompat di bulan bergantian walau jarak antar titik tidak seragam (milestone 2 tahun
+ * vs rekaman per jam). Monoton dijamin: nilai antara selalu di antara kedua titik. */
+function pchipCurve(nodes) {
+  const xs = nodes.map((n) => n.t);
+  const ys = nodes.map((n) => Math.log(Math.max(1, n.v)));
+  const n = xs.length;
+  if (n < 2) return () => (nodes.length ? Math.max(1, nodes[nodes.length - 1].v) : 1);
+  const h = [], d = [];
+  for (let i = 0; i < n - 1; i++) { h.push(xs[i + 1] - xs[i]); d.push((ys[i + 1] - ys[i]) / h[i]); }
+  const m = new Array(n).fill(0);
+  m[0] = d[0];
+  m[n - 1] = d[n - 2];
+  for (let i = 1; i < n - 1; i++) {
+    if (d[i - 1] * d[i] <= 0) m[i] = 0;
+    else {
+      const w1 = 2 * h[i] + h[i - 1], w2 = h[i] + 2 * h[i - 1];
+      m[i] = (w1 + w2) / (w1 / d[i - 1] + w2 / d[i]);
+    }
+  }
+  return (t) => {
+    if (t <= xs[0]) return Math.exp(ys[0] + m[0] * (t - xs[0]));
+    if (t >= xs[n - 1]) return Math.exp(ys[n - 1] + m[n - 1] * (t - xs[n - 1]));
+    let lo = 0;
+    while (lo < n - 2 && t > xs[lo + 1]) lo++;
+    const s = (t - xs[lo]) / h[lo];
+    const y = (2 * s * s * s - 3 * s * s + 1) * ys[lo] + (s * s * s - 2 * s * s + s) * h[lo] * m[lo]
+            + (-2 * s * s * s + 3 * s * s) * ys[lo + 1] + (s * s * s - s * s) * h[lo] * m[lo + 1];
+    return Math.exp(y);
+  };
+}
+
+/* ---------- bucket KONTINU utk grafik "ditambahkan per periode" ----------
+ * Dulu: bulan tanpa titik data DILEWATI lalu garis menyambung langsung antar bulan tersisa →
+ * muncul tebing/menurun palsu (milestone 400jt menjatuhkan delta 300jt ke satu bulan Agu).
+ * Sekarang: setiap bucket antara titik pertama & terakhir mendapat nilai dari kurva PCHIP
+ * yang melewati semua titik nyata — jumlahkan semua bucket = total kenaikan. Bucket yang
+ * isinya berasal dari segmen jarak renggang (>36 jam) ditandai ip = interpolasi. */
+function interpolatedBuckets(pts, gran, anchorT, clipFromIdx) {
+  const P = [];
+  for (const p of pts) {
+    if (p.v == null) continue;
+    if (P.length && p.t <= P[P.length - 1].t) continue;
+    if (P.length && p.v <= P[P.length - 1].v) continue; // jaga kemonotonan (mis-parse arsip)
+    P.push(p);
+  }
+  if (anchorT != null && P.length && anchorT < P[0].t) P.unshift({ t: anchorT, v: 1, e: 0 }); // rilis = 0 views (nyata)
+  if (P.length < 2) return [];
+  const f = pchipCurve(P);
+  const tA = P[0].t, tZ = P[P.length - 1].t;
+  const diA = dayIndexOf(tA);
+  let i0 = gran === "month" ? dayIndexOfMonthStart(diA) : gran === "week" ? diA - ((diA + 3) % 7) : diA;
+  if (clipFromIdx != null) i0 = Math.max(i0, clipFromIdx);
+  const iZ = dayIndexOf(tZ);
+  const out = [];
+  let i = i0;
+  while (i <= iZ) {
+    const iNext = gran === "month" ? addMonthsFromDayIndex(i, 1) : i + (gran === "week" ? 7 : 1);
+    const a = Math.max(tsOfDayIndex(i), tA);
+    const b = Math.min(tsOfDayIndex(iNext), tZ);
+    if (b > a) {
+      let ip = false, est = false;
+      for (let k = 0; k < P.length - 1; k++) {
+        const s = P[k].t, e2 = P[k + 1].t;
+        if (e2 > a && s < b) {
+          if (P[k].e || P[k + 1].e) est = true;
+          if (e2 - s > 36 * 3600) ip = true;
+        }
+      }
+      out.push({
+        key: gran === "month" ? monthKeyOfDayIndex(i) : dateKeyOfDayIndex(i),
+        v: Math.max(0, f(b) - f(a)), est, ip, t: tsOfDayIndex(i),
+      });
+    }
+    i = iNext;
+  }
+  /* bucket TERAKHIR = hari/pekan berjalan (parsial) — tanpa koreksi tampak seperti
+   * penurunan palsu di ujung kanan. Skala ke nilai setara periode penuh + tandai
+   * interpolasi. Bucket bulanan dibiarkan (bulan berjalan sudah lazim). */
+  if (out.length && (gran === "day" || gran === "week")) {
+    const last = out[out.length - 1];
+    const elapsed = tZ - last.t;
+    const full = gran === "day" ? 86400 : 7 * 86400;
+    if (elapsed >= 3 * 3600 && elapsed < full) {
+      const factor = Math.min(8, full / elapsed);
+      if (factor > 1.05) { last.v *= factor; last.ip = true; }
+    }
+  }
+  return out;
+}
+/* granularitas otomatis berdasar RENTANG WAKTU — data gersang tetap terbaca,
+ * video baru (rentang pendek) tetap dapat rincian harian */
+function granForSpan(days, anchorT) {
+  if (!days.length) return "day";
+  const t0 = anchorT != null && anchorT < days[0].t ? anchorT : days[0].t;
+  const span = days[days.length - 1].t - t0;
   return span < 90 * 86400 ? "day" : span < 420 * 86400 ? "week" : "month";
+}
+/* ambil titik dalam N hari terakhir + SATU titik sebelum jendela (kontinuitas interpolasi) */
+function sliceWindow(days, ndays) {
+  if (!days.length) return days;
+  const tCut = days[days.length - 1].t - ndays * 86400;
+  let k = 0;
+  while (k < days.length - 1 && days[k + 1].t <= tCut) k++;
+  return days.slice(k);
 }
 function bucketLabel(key, gran) {
   if (gran === "month") return MF.format(new Date(key + "-01T00:00:00"));
   if (gran === "hour") return key.slice(8, 10) + "/" + key.slice(5, 7) + " " + key.slice(11, 13) + ":00";
   return key.slice(8, 10) + "/" + key.slice(5, 7);
 }
+const DAY_MM = new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "2-digit" });
+const DAY_FULL = new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "short", year: "numeric" });
 
 /* grafik AREA utk nilai yang ditambahkan per periode (dulu grafik batang) — gaya sama
- * seperti kurva total views & likes: garis mulus + isian gradien, segmen putus-putus = estimasi */
+ * seperti kurva total views & likes: garis mulus + isian gradien.
+ * Segmen putus-putus/transparan = estimasi lama (e) atau interpolasi antar titik (ip). */
 function makeAreaChart(canvas, deltas, color, cid, unit, gran) {
-  const estFlags = deltas.map((b) => b.est);
+  const flags = deltas.map((b) => (b.est ? "est" : b.ip ? "ip" : null));
+  const dimmed = (i) => flags[i] != null;
   return newChart(canvas, {
     type: "line",
     data: {
@@ -1838,8 +1947,8 @@ function makeAreaChart(canvas, deltas, color, cid, unit, gran) {
         data: deltas.map((b) => b.v),
         borderColor: color, borderWidth: 2.4, pointRadius: 0, pointHitRadius: 12, tension: 0.25,
         segment: {
-          borderColor: (c) => (estFlags[c.p0DataIndex] || estFlags[c.p1DataIndex]) ? color + "55" : color,
-          borderDash: (c) => (estFlags[c.p0DataIndex] || estFlags[c.p1DataIndex]) ? [5, 4] : undefined,
+          borderColor: (c) => (dimmed(c.p0DataIndex) || dimmed(c.p1DataIndex)) ? color + "55" : color,
+          borderDash: (c) => (dimmed(c.p0DataIndex) || dimmed(c.p1DataIndex)) ? [5, 4] : undefined,
         },
         fill: true, backgroundColor: (ctx2) => {
           const g = ctx2.chart.ctx.createLinearGradient(0, 0, 0, ctx2.chart.height || 260);
@@ -1848,7 +1957,7 @@ function makeAreaChart(canvas, deltas, color, cid, unit, gran) {
         },
       }],
     },
-    options: chartOpts((c) => NF.format(c.parsed.y) + " " + unit + (estFlags[c.dataIndex] ? " (estimasi)" : "")),
+    options: chartOpts((c) => NF.format(Math.round(c.parsed.y)) + " " + unit + (flags[c.dataIndex] === "est" ? " (estimasi)" : flags[c.dataIndex] === "ip" ? " (interpolasi)" : "")),
   }, cid);
 }
 
@@ -1876,21 +1985,44 @@ function makeLineChart(canvas, cum, color, cid, unit, gran, extra) {
   }, cid);
 }
 
+/* ---------- poros waktu linier (proporsional tanggal) ----------
+ * Dulu poros KATEGORI: jarak antar titik dibagi sama rata walau tanggalnya 21 bulan vs 1
+ * hari → kurva terlihat melompat/menurun palsu. Sekarang sumbu-x = waktu asli (linier),
+ * jadi celah perekaman terlihat jujur sebagai garis lurus panjang, dan kurva likes yang
+ * baru mulai terekam tampil pendek di ujung kanan — bukan "menggantung" di tengah. */
+function timeTickFmt(spanMs) {
+  return spanMs > 420 * 86400e3
+    ? (v) => MF.format(new Date(v))
+    : (v) => DAY_MM.format(new Date(v));
+}
+function timeScaleOpts(tA, tZ) {
+  return {
+    type: "linear", min: tA * 1000, max: tZ * 1000,
+    grid: { color: cssVar("--chart-grid") },
+    ticks: {
+      color: cssVar("--chart-text"), maxTicksLimit: 8, font: { size: 10.5 },
+      autoSkip: true, callback: timeTickFmt((tZ - tA) * 1000),
+    },
+  };
+}
+
 /* grafik kumulatif dua metrik: views (poros kiri) + likes (poros kanan) */
-function makeDualLineChart(canvas, cum, likeMap, color, cid, gran) {
-  const estFlags = cum.map((p) => p.est);
+function makeDualLineChart(canvas, vpts, lpts, color, cid, anchorT) {
   const likeColor = "#b18cff";
-  const hasLikes = !!likeMap && likeMap.size > 1;
-  const likeEstFlags = hasLikes ? cum.map((p) => { const q = likeMap.get(p.key); return q ? !!q.est : false; }) : [];
+  const hasLikes = !!(lpts && lpts.length);
+  const tA = anchorT != null && anchorT < vpts[0].t ? anchorT : vpts[0].t;
+  const tZ = vpts[vpts.length - 1].t;
+  const vdata = [];
+  if (tA < vpts[0].t) vdata.push({ x: tA * 1000, y: 0 }); // rilis = 0 views (nyata)
+  for (const p of vpts) vdata.push({ x: p.t * 1000, y: p.v });
+  const ldata = hasLikes ? lpts.map((p) => ({ x: p.t * 1000, y: p.v })) : [];
   const datasets = [{
     label: "Views",
-    data: cum.map((p) => p.v),
-    borderColor: color, borderWidth: 2.4, pointRadius: 0, pointHitRadius: 12, tension: 0.25,
-    segment: {
-      borderColor: (c) => (estFlags[c.p0DataIndex] || estFlags[c.p1DataIndex]) ? color + "55" : color,
-      borderDash: (c) => (estFlags[c.p0DataIndex] || estFlags[c.p1DataIndex]) ? [5, 4] : undefined,
-    },
-    fill: true, backgroundColor: (ctx2) => {
+    data: vdata,
+    borderColor: color, borderWidth: 2.4,
+    pointRadius: vdata.length <= 14 ? 2.2 : 0, pointHitRadius: 14, tension: 0,
+    fill: true,
+    backgroundColor: (ctx2) => {
       const g = ctx2.chart.ctx.createLinearGradient(0, 0, 0, ctx2.chart.height || 260);
       g.addColorStop(0, color + "55"); g.addColorStop(1, color + "00");
       return g;
@@ -1899,26 +2031,19 @@ function makeDualLineChart(canvas, cum, likeMap, color, cid, gran) {
   if (hasLikes) {
     datasets.push({
       label: "Likes",
-      data: cum.map((p) => { const q = likeMap.get(p.key); return q ? q.v : null; }),
-      borderColor: likeColor, borderWidth: 1.8, pointRadius: 0, pointHitRadius: 10, tension: 0.25,
-      yAxisID: "y1", fill: false, spanGaps: true,
-      segment: {
-        borderColor: (c) => (likeEstFlags[c.p0DataIndex] || likeEstFlags[c.p1DataIndex]) ? likeColor + "77" : likeColor,
-        borderDash: (c) => (likeEstFlags[c.p0DataIndex] || likeEstFlags[c.p1DataIndex]) ? [4, 3] : undefined,
-      },
+      data: ldata,
+      borderColor: likeColor, borderWidth: 1.8, pointRadius: 2.2, pointHitRadius: 12,
+      tension: 0, yAxisID: "y1", fill: false, spanGaps: false,
     });
   }
   /* zoom/pan dinonaktifkan — scroll halaman harus selalu jalan di atas grafik */
   return newChart(canvas, {
     type: "line",
-    data: {
-      labels: cum.map((p) => bucketLabel(p.key, gran || "day")),
-      datasets,
-    },
+    data: { datasets },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      interaction: { intersect: false, mode: "index" },
+      interaction: { intersect: false, mode: "nearest" },
       animation: { duration: 250 },
       plugins: {
         legend: {
@@ -1929,24 +2054,72 @@ function makeDualLineChart(canvas, cum, likeMap, color, cid, gran) {
           backgroundColor: cssVar("--card"), titleColor: cssVar("--text"), bodyColor: cssVar("--text"),
           borderColor: cssVar("--border"), borderWidth: 1, padding: 10, displayColors: false,
           callbacks: {
+            title: (items) => items.length ? DAY_FULL.format(new Date(items[0].parsed.x)) : "",
             label: (c) => c.datasetIndex === 0
-              ? fmtExact(c.parsed.y) + " views" + (estFlags[c.dataIndex] ? " (estimasi)" : "")
-              : fmtExact(c.parsed.y) + " likes" + (likeEstFlags[c.dataIndex] ? " (estimasi)" : ""),
+              ? fmtExact(c.parsed.y) + " views"
+              : fmtExact(c.parsed.y) + " likes",
           },
         },
       },
       scales: {
-        x: { grid: { color: cssVar("--chart-grid") }, ticks: { color: cssVar("--chart-text"), maxTicksLimit: 8, font: { size: 10.5 } } },
+        x: timeScaleOpts(tA, tZ),
         y: {
+          beginAtZero: true,
           grid: { color: cssVar("--chart-grid") },
           ticks: { color: cssVar("--chart-text"), font: { size: 10.5 }, callback: (v) => fmtCompact(v) },
         },
         ...(hasLikes ? {
           y1: {
-            position: "right", grid: { drawOnChartArea: false },
+            position: "right", beginAtZero: true, grid: { drawOnChartArea: false },
             ticks: { color: likeColor, font: { size: 10.5 }, callback: (v) => fmtCompact(v) },
           },
         } : {}),
+      },
+    },
+  }, cid);
+}
+
+/* garis kumulatif SATU metrik pada poros waktu linier (modal channel) */
+function makeTimeLineChart(canvas, pts, color, cid, unit) {
+  const tA = pts[0].t, tZ = pts[pts.length - 1].t;
+  return newChart(canvas, {
+    type: "line",
+    data: {
+      datasets: [{
+        data: pts.map((p) => ({ x: p.t * 1000, y: p.v })),
+        borderColor: color, borderWidth: 2.4,
+        pointRadius: pts.length <= 14 ? 2.2 : 0, pointHitRadius: 14, tension: 0,
+        fill: true,
+        backgroundColor: (ctx2) => {
+          const g = ctx2.chart.ctx.createLinearGradient(0, 0, 0, ctx2.chart.height || 260);
+          g.addColorStop(0, color + "55"); g.addColorStop(1, color + "00");
+          return g;
+        },
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { intersect: false, mode: "nearest" },
+      animation: { duration: 250 },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: cssVar("--card"), titleColor: cssVar("--text"), bodyColor: cssVar("--text"),
+          borderColor: cssVar("--border"), borderWidth: 1, padding: 10, displayColors: false,
+          callbacks: {
+            title: (items) => items.length ? DAY_FULL.format(new Date(items[0].parsed.x)) : "",
+            label: (c) => fmtExact(c.parsed.y) + " " + unit,
+          },
+        },
+      },
+      scales: {
+        x: timeScaleOpts(tA, tZ),
+        y: {
+          beginAtZero: true,
+          grid: { color: cssVar("--chart-grid") },
+          ticks: { color: cssVar("--chart-text"), font: { size: 10.5 }, callback: (v) => fmtCompact(v) },
+        },
       },
     },
   }, cid);
@@ -1976,12 +2149,6 @@ function chartOpts(tooltipLabel, extra = {}) {
       },
     },
   };
-}
-
-function weekKeyOf(key) {
-  const d = new Date(key + "T00:00:00");
-  d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); // mulai Senin
-  return d.toISOString().slice(0, 10);
 }
 
 /* delta views PER JAM utk 24 jam terakhir (tombol “1 hari”) — sekitar 24 titik.
@@ -2015,57 +2182,84 @@ function hourlyDeltas(h, hours = 24) {
   return out;
 }
 
-function buildDailyChart(h, color) {
+function buildDailyChart(h, color, anchorT) {
   const box = $("#chartDaily") ? $("#chartDaily").closest(".chartbox") : null;
+  const wait = (m) => { if (box) box.innerHTML = `<div class="wait">${m}</div>`; };
   const days = daysFromHistory(h, "v");
-  if (days.length < 3) {
-    if (box) box.innerHTML = `<div class="wait">Belum cukup data untuk grafik harian.</div>`;
+  if (days.length < 2) {
+    wait("Belum cukup data untuk grafik harian.");
+    updateLegendIp("dailyLegend", false, false, color);
     return;
   }
-  const gran = state.dailyRange === "365" ? "week" : state.dailyRange === "all" ? "month" : state.dailyRange === "1" ? "hour" : "day";
-  let series;
-  if (gran === "hour") {
+  let gran, series;
+  if (state.dailyRange === "1") {
     const hb = hourlyDeltas(h, 24);
     if (hb.length < 2) {
-      if (box) box.innerHTML = `<div class="wait">Belum cukup data untuk grafik per jam.</div>`;
+      wait("Belum cukup data untuk grafik per jam.");
+      updateLegendIp("dailyLegend", false, false, color);
       return;
     }
-    series = { deltas: hb };
+    series = hb; gran = "hour";
   } else {
-    const sliced = state.dailyRange === "7" ? days.slice(-8) : state.dailyRange === "30" ? days.slice(-31) : days;
-    series = bucketize(sliced, gran);
+    if (state.dailyRange === "7" || state.dailyRange === "30") {
+      const nd = state.dailyRange === "7" ? 7 : 30;
+      const win = sliceWindow(days, nd);
+      gran = "day";
+      series = interpolatedBuckets(win, gran, null, dayIndexOf(days[days.length - 1].t - nd * 86400));
+    } else if (state.dailyRange === "365") {
+      const win = sliceWindow(days, 365);
+      gran = "week";
+      const tCut = days[days.length - 1].t - 365 * 86400;
+      const di = dayIndexOf(tCut);
+      series = interpolatedBuckets(win, gran, null, di - ((di + 3) % 7));
+    } else { // "all" = sejak rilis
+      gran = granForSpan(days, anchorT);
+      series = interpolatedBuckets(days, gran, anchorT, null);
+    }
+    if (series.length < 2) {
+      wait("Belum cukup data untuk grafik rentang ini.");
+      updateLegendIp("dailyLegend", false, false, color);
+      return;
+    }
   }
   const t = $("#dailyTitle");
   if (t) t.textContent = gran === "month" ? "Views ditambahkan per bulan" : gran === "week" ? "Views ditambahkan per pekan" : gran === "hour" ? "Views ditambahkan per jam · 24 jam terakhir" : "Views ditambahkan per hari";
-  makeAreaChart($("#chartDaily"), series.deltas, color, "daily", "views", gran);
+  const anyIp = series.some((b) => b.ip), anyEst = series.some((b) => b.est);
+  updateLegendIp("dailyLegend", anyEst, anyIp, color);
+  const hint = $("#dailyHint");
+  if (hint) hint.innerHTML = anyIp && gran !== "hour"
+    ? `Segmen putus-putus = <b>interpolasi</b> — hari/pekan/bulan tanpa perekaman diisi dari kurva mulus yang melewati semua titik data nyata (bukan estimasi model). Jumlahkan seluruh nilai = total kenaikan sejak titik awal. Makin rapat arsip (mode <b>“wayback-mass”</b>), makin panjang segmen data nyata.`
+    : "";
+  makeAreaChart($("#chartDaily"), series, color, "daily", "views", gran);
 }
 
-function buildCumChart(h, color) {
+function buildCumChart(h, color, anchorT) {
   const box = $("#chartCum") ? $("#chartCum").closest(".chartbox") : null;
   const days = daysFromHistory(h, "v");
   if (days.length < 2) {
     if (box) box.innerHTML = `<div class="wait">Belum cukup data untuk grafik kumulatif.</div>`;
     return;
   }
-  let gran = granFor(days);
   /* likes: hanya titik NYATA (pengukuran YouTube / arsip halaman) — tanpa backfill rasio,
-   * sesuai prinsip situs: tidak ada titik estimasi di grafik.
-   * Kalau titik likes masih sedikit & habis tergerus bucket besar, perhalus granularitas
-   * supaya kurva likes tetap terlihat. */
+   * sesuai prinsip situs: tidak ada titik estimasi di grafik. Poros-x waktu linier, jadi
+   * kurva likes yang baru mulai terekam tampil pendek di ujung kanan (jujur, bukan anomali). */
   const likeDays = daysFromHistory(h, "l");
-  if (likeDays.length >= 2) {
-    if (bucketize(likeDays, gran).cum.length < 2) {
-      gran = "week";
-      if (bucketize(likeDays, gran).cum.length < 2) gran = "day";
-    }
-  }
-  const series = bucketize(days, gran);
-  const likeMap = likeDays.length >= 2 ? new Map(bucketize(likeDays, gran).cum.map((p) => [p.key, p])) : null;
+  makeDualLineChart($("#chartCum"), days, likeDays, color, "cum", anchorT);
   const hint = $("#likeHint");
-  if (hint) hint.innerHTML = !likeMap
+  if (hint) hint.innerHTML = !likeDays.length
     ? "Kurva likes tampil setelah titik likes nyata pertama terekam — dari pengukuran YouTube (GitHub Actions) atau arsip halaman video."
-    : "";
-  makeDualLineChart($("#chartCum"), series.cum, likeMap, color, "cum", gran);
+    : (likeDays[0].t > (anchorT != null ? anchorT : days[0].t) + 36 * 3600
+      ? `Data likes video ini baru tersedia sejak <b>${fmtTs(likeDays[0].t)}</b> — sebelum tanggal itu jumlah like belum terekam dari sumber mana pun (arsip lama sering tidak menyimpannya). Kurva likes akan otomatis memanjang begitu mode <b>“wayback-mass”</b> menambah titik arsip.`
+      : "");
+}
+
+/* legenda kecil di bawah/atas grafik: Data nyata + (Estimasi) + (Interpolasi) */
+function updateLegendIp(id, anyEst, anyIp, color) {
+  const el = $("#" + id);
+  if (!el) return;
+  el.innerHTML = `<span><i class="sw" style="background:${color}"></i>Data nyata</span>`
+    + (anyEst ? `<span><i class="sw" style="background:${color}55"></i>Estimasi</span>` : "")
+    + (anyIp ? `<span><i class="sw" style="background:${color}55;border-top:2px dotted ${color}"></i>Interpolasi</span>` : "");
 }
 
 /* ===================== modal detail CHANNEL ===================== */
@@ -2139,7 +2333,7 @@ function openChannel(artId) {
       <button class="rangebtn ${state.chanRange === "365" ? "active" : ""}" data-r="365">1 tahun</button>
       <button class="rangebtn ${state.chanRange === "all" ? "active" : ""}" data-r="all">Sejak channel dibuat</button>
     </div>
-    <div class="legend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span>${h.some((p) => p.e === 1) ? '<span><i class="sw" style="background:' + art.color + '55"></i>Estimasi</span>' : ""}</div>
+    <div class="legend" id="chanLegend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span>${h.some((p) => p.e === 1) ? '<span><i class="sw" style="background:' + art.color + '55"></i>Estimasi</span>' : ""}</div>
     <div class="chartbox" style="margin-bottom:12px"><canvas id="chanLine"></canvas></div>
     <div class="chartbox"><canvas id="chanArea"></canvas></div>
     <p class="note">Semua titik di grafik ini adalah <b>data nyata</b> yang dikumpulkan dari berbagai sumber: <b>YouTube Data API</b> (direkam GitHub Actions tiap jam), <b>Social Blade</b> (rekaman harian), <b>Wikipedia</b> + arsip media, dan <b>pengumuman resmi YG Entertainment</b> (tanggal milestone). YouTube tidak menyediakan riwayat harian untuk publik (hanya pemilik channel bisa melihatnya di YouTube Studio), jadi antar titik sumber dihubungkan garis lurus — tanpa model estimasi.${h.some((p) => p.e === 1) ? " Segmen putus-putus/transparan = sisa estimasi dari data lama." : ""}</p>
@@ -2211,11 +2405,31 @@ function buildChanCharts(ch, color) {
   const unit = key === "v" ? "views" : "subscriber";
   const days = daysFromHistory(ch.history || [], key);
   if (days.length < 2) return;
-  const sliced = state.chanRange === "1" ? days.slice(-2) : state.chanRange === "7" ? days.slice(-8) : state.chanRange === "30" ? days.slice(-31) : days;
-  const gran = state.chanRange === "365" ? "week" : state.chanRange === "all" ? "month" : "day";
-  const series = bucketize(sliced, gran);
-  makeLineChart($("#chanLine"), series.cum, color, "chanLine", unit, gran);
-  makeAreaChart($("#chanArea"), series.deltas, color, "chanArea", unit + "/hari", gran);
+  /* garis kumulatif: poros waktu LINIAR — jarak antar titik proporsional tanggal
+   * (dulu poros kategori: milestone subscriber 2 tahun terlihat seperti 1 langkah) */
+  const tZ = days[days.length - 1].t;
+  let lineDays = days;
+  if (state.chanRange === "1") lineDays = sliceWindow(days, 2);
+  else if (state.chanRange === "7") lineDays = sliceWindow(days, 7);
+  else if (state.chanRange === "30") lineDays = sliceWindow(days, 30);
+  if (lineDays.length >= 2) makeTimeLineChart($("#chanLine"), lineDays, color, "chanLine", unit);
+  /* area delta: bucket kontinu + interpolasi (bulani/pekan/hari tanpa data tetap terisi) */
+  let gran, series;
+  if (state.chanRange === "1" || state.chanRange === "7" || state.chanRange === "30") {
+    const nd = state.chanRange === "1" ? 2 : state.chanRange === "7" ? 7 : 30;
+    gran = "day";
+    series = interpolatedBuckets(sliceWindow(days, nd), gran, null, dayIndexOf(tZ - nd * 86400));
+  } else if (state.chanRange === "365") {
+    gran = "week";
+    const di = dayIndexOf(tZ - 365 * 86400);
+    series = interpolatedBuckets(sliceWindow(days, 365), gran, null, di - ((di + 3) % 7));
+  } else {
+    gran = granForSpan(days, null);
+    series = interpolatedBuckets(days, gran, null, null);
+  }
+  const anyIp = series.some((b) => b.ip), anyEst = series.some((b) => b.est);
+  updateLegendIp("chanLegend", anyEst, anyIp, color);
+  if (series.length >= 2) makeAreaChart($("#chanArea"), series, color, "chanArea", unit + "/hari", gran);
 }
 
 function closeDetail() {
