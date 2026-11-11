@@ -5,8 +5,8 @@
   "spotifyId": "1SIocsqdEefUTE6XKGUiVS",
   "color": "#ff4d6d",
   "image": "https://image-cdn-fa.spotifycdn.com/image/ab676161000051747eed59dfba0a93af631a6654",
-  "monthlyListeners": 8023850,
-  "mlDelta": -21893,
+  "monthlyListeners": 8003596,
+  "mlDelta": -20254,
   "followers": null,
   "totalStreams": 2573300445,
   "dailyStreams": 3353808,
@@ -25,10 +25,10 @@
     "ml": 8023850
    },
    {
-    "t": 1794357374,
+    "t": 1794361918,
     "total": 2573300445,
     "daily": 3353808,
-    "ml": 8023850
+    "ml": 8003596
    }
   ],
   "openUrl": "https://open.spotify.com/artist/1SIocsqdEefUTE6XKGUiVS"
@@ -60,7 +60,7 @@
     "ml": 1900000
    },
    {
-    "t": 1794357383,
+    "t": 1794361926,
     "total": 1725941747,
     "daily": 493940,
     "ml": 1900000
