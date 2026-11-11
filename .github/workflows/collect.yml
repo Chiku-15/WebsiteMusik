@@ -5,7 +5,16 @@ on:
     # Setiap jam (WIB = UTC+7) — supaya grafik "1 hari" di situs bisa menampilkan
     # batang per jam (~24 batang). Kwantitas API YouTube tetap aman: ± 5 unit/run.
     - cron: "0 * * * *"
-  workflow_dispatch: # tombol jalankan manual di tab Actions
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Mode koleksi — 'wayback-mass' = tarik riwayat nyata semua video dari arsip Wayback Machine (jalankan 1–2 jam, aman diulang bila terputus)"
+        required: false
+        default: normal
+        type: choice
+        options:
+          - normal
+          - wayback-mass
 
 permissions:
   contents: write
@@ -18,7 +27,10 @@ concurrency:
 jobs:
   collect:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # mode wayback-mass menarik ±40 snapshot × 81 video dari web.archive.org (~2 jam);
+    # jeda sopan antar permintaan membuatnya lambat, jadi batas waktunya dilonggar.
+    # Putaran normal biasanya selesai < 10 menit — batas ini hanya pagarnya.
+    timeout-minutes: 300
     steps:
       - name: Ambil kode
         uses: actions/checkout@v4
@@ -32,6 +44,7 @@ jobs:
         id: yt
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          WAYBACK_MASS: ${{ github.event.inputs.mode == 'wayback-mass' && '1' || '' }}
         run: node collect.js
         # Kalau YouTube gagal (API key hilang / jaringan), Spotify tetap jalan dan
         # data apa pun yang berhasil dikumpulkan tetap disimpan — situs tidak macet.
