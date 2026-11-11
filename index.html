@@ -358,6 +358,7 @@
   .ms td.msest{opacity:.58}
   .offck{font-size:.72em;font-weight:800;vertical-align:2px;margin-left:1px}
   .cellno{color:var(--muted)}
+  table.ms tr.dimrow td{color:var(--muted)}
   tr[data-id]{cursor:pointer}
   tr[data-id]:hover td{background:color-mix(in srgb,var(--artist-color,#6a78ff) 8%,transparent)}
   tr[data-id]:hover td.sticky1{background:color-mix(in srgb,var(--artist-color,#6a78ff) 8%,var(--card))}
@@ -616,6 +617,13 @@ function recentEst(h, days) {
   return false;
 }
 function isEst(h) { return !!(h && h.length && h[h.length - 1].e === 1); }
+/* nilai terakhir yang BENAR-BENAR diketahui utk metrik s|v|c dari history channel.
+ * Dipakai utk jumlah video saat titik terakhir tidak membawanya
+ * (titik Social Blade tidak selalu mencatat jumlah video). */
+function lastKnown(h, key) {
+  for (let i = (h || []).length - 1; i >= 0; i--) if (h[i][key] != null) return h[i][key];
+  return null;
+}
 function cssVar(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
 
 /* selisih vs titik ~N hari lalu (toleransi) */
@@ -709,16 +717,30 @@ function releaseEpoch(v) {
   const t = Date.parse(v.published);
   return isNaN(t) ? null : t / 1000;
 }
-/* kapan kurva history menembus sebuah milestone (interpolasi antar titik) */
+/* kapan kurva history menembus sebuah milestone (interpolasi antar titik).
+ * est=true bila penembusan terjadi di segmen estimasi; src = label sumber titik nyata
+ * (mis. "YG (resmi)", "Social Blade", "Wikipedia") utk ditampilkan di tabel milestone. */
 function crossPoint(history, milestone) {
   if (!history || !history.length) return null;
-  let prev = history[0];
-  if (prev.v >= milestone) return { t: prev.t, est: prev.e === 1 };
-  for (let i = 1; i < history.length; i++) {
+  let prev = null;
+  for (const p of history) { if (p.v != null) { prev = p; break; } } // awali dari titik yg punya nilai
+  if (!prev) return null;
+  if (prev.v >= milestone) {
+    // jangkar pertama sudah melewati milestone: hanya dianggap nyata bila nilainya PERSIS
+    // milestone; selain itu tanggal sebelum data pertama = perkiraan
+    const exact = prev.v === milestone;
+    return { t: prev.t, est: prev.e === 1, src: exact ? prev.src || null : null, interp: !exact };
+  }
+  for (let i = history.indexOf(prev) + 1; i < history.length; i++) {
     const p = history[i];
+    if (p.v == null) continue; // titik tanpa nilai views (mis. jangkar subscriber saja) dilewati
     if (p.v >= milestone) {
       const frac = p.v > prev.v ? (milestone - prev.v) / (p.v - prev.v) : 1;
-      return { t: prev.t + frac * (p.t - prev.t), est: prev.e === 1 || p.e === 1 };
+      const src = !prev.e && p.src ? p.src : !p.e && prev.src ? prev.src : null;
+      /* interp = tanggal dihitung lurus di ANTARA dua titik data nyata (bukan tanggal resmi);
+       * hanya penembusan tepat di nilai sebuah jangkar (frac 0/1) yang dianggap tanggal nyata */
+      const interp = frac > 0.02 && frac < 0.98;
+      return { t: prev.t + frac * (p.t - prev.t), est: prev.e === 1 || p.e === 1, src: interp ? null : src, interp };
     }
     prev = p;
   }
@@ -1157,7 +1179,7 @@ function renderChannel() {
         </div>
         <div class="stat">
           <div class="k">Jumlah video</div>
-          <div class="v">${fmtExact(last.c)}</div>
+          <div class="v">${fmtExact(lastKnown(h, "c"))}</div>
           <div class="d">di channel YouTube</div>
         </div>
         <div class="stat">
@@ -1183,9 +1205,8 @@ function renderChannel() {
           <div class="s">rata-rata 7 hari${estRecent ? " (est.)" : ""}</div>
         </div>
       </div>
-      <div class="chhint"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>Klik kartu ini untuk detail lengkap channel — grafik sejak channel dibuat</div>
-    </div>
-    <div class="chcard" id="msBlock"></div>`;
+      <div class="chhint"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>Klik kartu ini untuk detail lengkap channel — grafik &amp; milestone video</div>
+    </div>`;
   const card = $("#chcard");
   if (card) {
     const open = () => openChannel(state.artist);
@@ -1194,8 +1215,6 @@ function renderChannel() {
     const link = card.querySelector("a");
     if (link) link.addEventListener("click", (e) => e.stopPropagation());
   }
-  /* milestone video sekarang bagian dari section channel — tampil langsung di bawah kartu */
-  renderMilestones();
 }
 
 /* ===================== render: sorotan halaman artis (gaya beranda, tersusun atas-bawah) =====================
@@ -2078,7 +2097,7 @@ function openChannel(artId) {
     for (const m of CHAN_MS) {
       const c = crossPoint(h, m);
       if (!c) break;
-      chRows.push({ m, t: c.t, est: c.est, gap: prevT != null ? Math.max(1, Math.round((c.t - prevT) / 86400)) : null });
+      chRows.push({ m, t: c.t, est: c.est, interp: !!c.interp, src: c.src || null, gap: prevT != null ? Math.max(1, Math.round((c.t - prevT) / 86400)) : null });
       prevT = c.t;
     }
   }
@@ -2106,7 +2125,7 @@ function openChannel(artId) {
         <div class="d">${d1 && d1.deltaS != null ? `<span class="up">${fmtDelta(d1.deltaS)}</span> hari ini${recentEst(h, 1) ? " (est.)" : ""}` : "menunggu data berikutnya"}</div></div>
       <div class="stat"><div class="k">Total ditonton</div><div class="v">${fmtExact(last.v)}</div>
         <div class="d">${d7 ? `<span class="up">${fmtDelta(d7.delta)}</span> minggu ini${estRecent ? " (est.)" : ""}` : "–"}</div></div>
-      <div class="stat"><div class="k">Jumlah video</div><div class="v">${fmtExact(last.c)}</div>
+      <div class="stat"><div class="k">Jumlah video</div><div class="v">${fmtExact(lastKnown(h, "c"))}</div>
         <div class="d">di channel YouTube</div></div>
       <div class="stat"><div class="k">Subscriber / hari</div><div class="v">${rateS7 ? fmtCompact(Math.round(rateS7)) : "–"}</div>
         <div class="d">rata-rata 7 hari${estRecent ? " (est.)" : ""}</div></div>
@@ -2127,10 +2146,10 @@ function openChannel(artId) {
       <button class="rangebtn ${state.chanRange === "365" ? "active" : ""}" data-r="365">1 tahun</button>
       <button class="rangebtn ${state.chanRange === "all" ? "active" : ""}" data-r="all">Sejak channel dibuat</button>
     </div>
-    <div class="legend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span><span><i class="sw" style="background:${art.color}55"></i>Estimasi</span></div>
+    <div class="legend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span>${h.some((p) => p.e === 1) ? '<span><i class="sw" style="background:' + art.color + '55"></i>Estimasi</span>' : ""}</div>
     <div class="chartbox" style="margin-bottom:12px"><canvas id="chanLine"></canvas></div>
     <div class="chartbox"><canvas id="chanArea"></canvas></div>
-    <p class="note">Garis transparan dan putus-putus = <b>estimasi</b> — dibangun dari tanggal channel dibuat + angka terkini (model pertumbuhan; BM 28 Des 2022, TREASURE 8 Feb 2019). Garis solid = pengukuran nyata yang menimpa estimasi setiap putaran GitHub Actions.</p>
+    <p class="note">Semua titik di grafik ini adalah <b>data nyata</b> yang dikumpulkan dari berbagai sumber: <b>YouTube Data API</b> (direkam GitHub Actions tiap jam), <b>Social Blade</b> (rekaman harian), <b>Wikipedia</b> + arsip media, dan <b>pengumuman resmi YG Entertainment</b> (tanggal milestone). YouTube tidak menyediakan riwayat harian untuk publik (hanya pemilik channel bisa melihatnya di YouTube Studio), jadi antar titik sumber dihubungkan garis lurus — tanpa model estimasi.${h.some((p) => p.e === 1) ? " Segmen putus-putus/transparan = sisa estimasi dari data lama." : ""}</p>
 
     <div class="sect">
       <h3>Milestone total views</h3>
@@ -2140,12 +2159,12 @@ function openChannel(artId) {
           <thead><tr><th>Milestone</th><th class="num">Tanggal dicapai</th><th class="num">Jarak dari sebelumnya</th></tr></thead>
           <tbody>
             ${chShown.map((r) => `
-              <tr><td>${fmtExact(r.m)} views</td><td class="num">${fmtDate(isoDate(r.t))}${r.est ? ' <span class="cellno">(est.)</span>' : ""}</td><td class="num">${r.gap != null ? NF.format(r.gap) + " hari" : "–"}</td></tr>`).join("")}
+              <tr${r.interp ? ' class="dimrow"' : ""}><td>${fmtExact(r.m)} views</td><td class="num" title="${r.est ? "Segmen estimasi lama" : r.interp ? "Perkiraan garis lurus di antara dua titik data nyata — bukan tanggal resmi" : r.src ? "Sumber: " + esc(r.src) : "Titik data nyata"}">${fmtDate(isoDate(r.t))}${r.est ? ' <span class="cellno">(est.)</span>' : r.interp ? ' <span class="cellno" title="Perkiraan di antara dua titik data nyata">(±)</span>' : ""}${r.src && !r.interp && !r.est ? ` <span class="cellno">· ${esc(r.src)}</span>` : ""}</td><td class="num">${r.gap != null ? NF.format(r.gap) + " hari" : "–"}</td></tr>`).join("")}
             ${chNext ? `
               <tr class="msnext"><td>${fmtExact(chNext)} views</td><td class="num">${etaText(chNext, last.v || 0, rateV7)}</td><td class="num">sisa ${fmtCompact(chNext - (last.v || 0))}</td></tr>` : ""}
           </tbody>
         </table>
-        <p class="note">Baris terakhir (disorot) = milestone berikutnya + perkiraan dari ritme views 7 hari terakhir. "Jarak" = berapa lama dari milestone sebelumnya sampai milestone ini.${chRows.length > chShown.length ? ` Menampilkan ${chShown.length} milestone terbaru dari total ${chRows.length}.` : ""} Tanggal bertanda (est.) berasal dari kurva estimasi sejak channel dibuat.</p>`
+        <p class="note">Tanggal <b>· Sumber</b> = penembusan tercatat tepat di titik data nyata (klik/arahkan utk sumbernya). Tanda <b>(±)</b> = perkiraan garis lurus di antara dua titik data nyata — bukan tanggal resmi. Baris terakhir (disorot) = milestone berikutnya + perkiraan dari ritme views 7 hari terakhir.${chRows.length > chShown.length ? ` Menampilkan ${chShown.length} milestone terbaru dari total ${chRows.length}.` : ""}</p>`
         : `<div class="wait">Milestone total views akan muncul setelah data pertama terekam.</div>`}
       </div>
     </div>
@@ -2165,11 +2184,14 @@ function openChannel(artId) {
         : `<div class="wait">Belum ada milestone berikutnya.</div>`}
       </div>
     </div>
+
+    <div class="sect" id="msBlock"></div>
   `;
   $("#overlay").classList.add("open");
   document.body.style.overflow = "hidden";
   $("#closeBtn").addEventListener("click", closeDetail);
   location.hash = "c=" + artId;
+  renderMilestones();
 
   $("#chanMetricTabs").querySelectorAll(".mtab").forEach((b) =>
     b.addEventListener("click", () => {

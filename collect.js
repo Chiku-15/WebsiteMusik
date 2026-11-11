@@ -380,21 +380,12 @@ function applyOfficialMilestones(rec, id) {
   return changed;
 }
 
-/* regenerasi estimasi channel (subs/views/video) dari tanggal channel dibuat */
+/* riwayat channel: TANPA estimasi model — hanya titik data nyata dari berbagai sumber
+ * (YouTube API tiap jam, Social Blade harian, pengumuman resmi YG/media, Wikipedia).
+ * Titik estimasi lama (e:1, model kurva) dibuang setiap putaran supaya tidak pernah
+ * tampil lagi di grafik; urutan dijaga kronologis. */
 function rebuildChannelEstimates(ch) {
-  const reals = (ch.history || []).filter((p) => p.e !== 1).sort((a, b) => a.t - b.t);
-  if (!reals.length || !ch.created) return;
-  const first = reals[0];
-  const pick = (k) => { for (const p of reals) if (p[k] > 0) return p[k]; return 0; };
-  const est = thinSeries(
-    buildChannelSeries(ch.created, first.t, {
-      s: { cur: pick("s"), p: 1.2 },
-      v: { cur: pick("v"), p: 1.0 },
-      c: { cur: pick("c"), p: 0.85 },
-    }, { seed: ch.channel_id || ch.name || "ch" }),
-    420, 110
-  );
-  ch.history = mergeHistory(est, reals);
+  ch.history = (ch.history || []).filter((p) => p.e !== 1).sort((a, b) => a.t - b.t);
 }
 
 /*
@@ -684,7 +675,7 @@ async function collectAPI() {
     ch.channel_id = artist.channel_id;
     ch.name = artist.name;
     ch.handle = artist.handle;
-    // tanggal dibuatnya channel (snippet.publishedAt) -> jangkar estimasi sejak awal
+    // tanggal dibuatnya channel (snippet.publishedAt) — referensi titik awal riwayat
     const createdIso = (it.snippet?.publishedAt || "").slice(0, 10);
     if (createdIso) ch.created = createdIso;
     else if (!ch.created && artist.created) ch.created = artist.created;
