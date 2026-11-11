@@ -87,7 +87,7 @@
   .chava{width:58px;height:58px;border-radius:50%;border:2px solid var(--border);object-fit:cover;background:var(--chip)}
   .chname{font-size:19px;font-weight:800}
   .chhandle{color:var(--muted);font-size:12.5px;font-weight:600}
-  .chstats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+  .chstats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
   .stat{
     background:var(--bg2);border:1px solid var(--border);border-radius:13px;padding:13px 15px;
     min-width:0;
@@ -95,6 +95,17 @@
   .stat .k{color:var(--muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px}
   .stat .v{font-size:21px;font-weight:800;margin-top:5px;letter-spacing:.3px}
   .stat .d{font-size:12px;margin-top:3px;color:var(--muted);font-weight:600}
+  /* baris detail kecil di bawah stat utama kartu channel (dibuat, rata-rata harian) */
+  .chextra{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+  .chextra .xs{background:var(--bg2);border:1px dashed var(--border);border-radius:11px;padding:9px 12px;min-width:0}
+  .chextra .xs .k{color:var(--muted);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+  .chextra .xs .v{font-size:13.5px;font-weight:800;margin-top:3px;letter-spacing:.2px}
+  .chextra .xs .s{color:var(--muted);font-size:11px;font-weight:600;margin-top:1px}
+  /* wadah milestone di dalam section channel (di bawah kartu channel) */
+  #msBlock{padding-bottom:6px}
+  #msBlock .hsect{margin-top:4px}
+  #msBlock .stabs{margin:10px 2px 12px}
+  #msBlock .tscroll{border:1px solid var(--border);border-radius:12px;background:var(--card)}
   .up{color:#2fd57b!important}
   .down{color:#ff6b81!important}
   /* ---------- toolbar ---------- */
@@ -367,8 +378,12 @@
   }
   @media (max-width:640px){
     .chstats{grid-template-columns:1fr 1fr}
+    .chextra{grid-template-columns:1fr 1fr}
     .dthumb{width:100%}
     .logo small{display:none}
+  }
+  @media (max-width:430px){
+    .chextra{grid-template-columns:1fr}
   }
   /* ---------- SPOTIFY ---------- */
   #platformTabs .tab[data-p="spotify"].active{background:linear-gradient(135deg,#1db954,#1ed760);color:#fff}
@@ -865,7 +880,7 @@ const state = {
   config: null, videos: null, channels: null, meta: null, milestones: {},
   view: "home",            // "home" | artistId — beranda selalu tampil pertama
   artist: null,
-  artistTab: "videos",     // "videos" | "milestones" — sub-tab di halaman artis
+  artistTab: "videos",     // (tidak dipakai lagi — tab Video/Milestone dihapus; milestone di section channel)
   msTab: "table",          // "table" | "upcoming" | "reached"
   filter: "all", sort: "views", query: "",
   charts: [], chartRegistry: [],
@@ -873,7 +888,7 @@ const state = {
   chanMetric: "s", chanRange: ["1", "7", "30", "365", "all"].includes(localStorage.getItem("py.chanrange")) ? localStorage.getItem("py.chanrange") : "all",
   detailVid: null, detailMode: null, detailCombined: false, // {type:"video"|"channel"|"sptrack", id}
   platform: "yt",          // "yt" | "spotify" — tombol di header
-  sp: { loading: null, error: null, meta: null, artists: null, albums: null, tracks: null },
+  sp: { loading: null, error: null, meta: null, artists: null, albums: null, tracks: null, raw: null, vers: null },
   spQuery: "",
   spRange: "all",
   spArtistTab: "albums",  // "albums" | "ms" — sub-tab di halaman artis Spotify
@@ -961,16 +976,19 @@ function loadSpData() {
       if (!r.ok) { if (must) throw new Error(u + " → HTTP " + r.status); return null; }
       return r.json();
     };
-    const [meta, arts, albs, trks] = await Promise.all([
+    const [meta, arts, albs, trks, rawr] = await Promise.all([
       got("data/spotify-meta.json", true),
       got("data/spotify-artists.json", true),
       got("data/spotify-albums.json", true),
       got("data/spotify-tracks.json", true),
+      got("data/spotify-tracks-raw.json", false),
     ]);
     state.sp.meta = meta;
     state.sp.artists = Object.values(arts || {});
     state.sp.albums = albs || {};
     state.sp.tracks = trks || {};
+    state.sp.raw = rawr || {};
+    state.sp.vers = spVersAll();
   })().catch((e) => {
     state.sp.error = (e && e.message) || String(e);
   });
@@ -981,24 +999,14 @@ function setView(v) {
   if (v !== "home" && !artistOf(v)) return;
   state.view = v;
   state.spQuery = "";   // kosongkan pencarian Spotify saat pindah halaman
-  if (v !== "home") { state.artist = v; state.artistTab = "videos"; state.msTab = "table"; }
+  if (v !== "home") { state.artist = v; state.msTab = "table"; }
   renderAll();
   window.scrollTo(0, 0);
 }
 
-/* ===================== render: tab Video / Milestone (per artis) ===================== */
-function renderViewTabs() {
-  const art = artistOf(state.artist);
-  const el = $("#viewTabs");
-  el.style.setProperty("--artist-color", art.color);
-  const n = allVideosFlat().filter((x) => x.channel === state.artist).length;
-  el.innerHTML = `
-    <button class="stab ${state.artistTab === "videos" ? "active" : ""}" data-t="videos">Video (${n})</button>
-    <button class="stab ${state.artistTab === "milestones" ? "active" : ""}" data-t="milestones">Milestone</button>`;
-  el.querySelectorAll(".stab").forEach((b) =>
-    b.addEventListener("click", () => { state.artistTab = b.dataset.t; renderAll(); })
-  );
-}
+/* ===================== render: halaman artis =====================
+ * Tab Video/Milestone dihapus — milestone video kini tampil di section channel
+ * (di bawah kartu channel), tabel video selalu tampil di bawah sorotan. */
 
 const MS_NOTE = "Catatan: angka = hari sejak tanggal rilis (versi situs). Sel bertanda <b>✓</b> = <b>data resmi</b> dari pengumuman YG Entertainment / media — arahkan kursor untuk sumber &amp; tanggal pastinya. Sel tanpa ✓ = dihitung dari kurva pemantauan situs; bagian sebelum pemantauan dimulai bersumber estimasi model + arsip Wayback Machine (ditandai est.) — makin lama situs berjalan, makin akurat.";
 
@@ -1081,7 +1089,8 @@ function msReachedHTML(vids) {
 
 function renderMilestones() {
   const art = artistOf(state.artist);
-  const sec = $("#msSection");
+  const sec = $("#msBlock");
+  if (!sec) return;
   sec.style.setProperty("--artist-color", art.color);
   const vids = allVideosFlat().filter((x) => x.channel === state.artist && lastV(x) > 0);
   const over10 = vids.filter((x) => lastV(x) >= MS_COLS[0]).sort((a, b) => lastV(b) - lastV(a));
@@ -1096,7 +1105,8 @@ function renderMilestones() {
   else if (state.msTab === "reached") body = msReachedHTML(over10);
   else body = msTableHTML(over10);
   sec.innerHTML = `
-    <div class="stabs" style="margin:24px 2px 14px">${chips}</div>
+    ${homeSectHead(art.color, ICO_FLAG, "Milestone video", "berapa hari sejak rilis tiap video menembus target views")}
+    <div class="stabs">${chips}</div>
     ${body}`;
   sec.querySelectorAll(".stab").forEach((b) =>
     b.addEventListener("click", () => { state.msTab = b.dataset.k; renderMilestones(); })
@@ -1118,6 +1128,11 @@ function renderChannel() {
   const h = ch.history, last = h[h.length - 1];
   const d1 = deltaDays(h, 1), d7 = deltaDays(h, 7);
   const rateS7 = d7 && d7.deltaS != null ? d7.deltaS / 7 : 0;
+  const rateV7 = d7 ? d7.rate : 0;
+  const estRecent = recentEst(h, 7);
+  const likes = channelLikeTotals(state.artist);
+  const created = ch.created || null;
+  const createdAge = created ? ageDays(created) : null;
   sec.innerHTML = `
     <div class="chcard clickable" id="chcard" style="--artist-color:${art.color}" tabindex="0" role="button" aria-label="Lihat detail channel ${esc(art.name)}" title="Klik untuk melihat detail channel">
       <div class="chtop">
@@ -1138,16 +1153,39 @@ function renderChannel() {
         <div class="stat">
           <div class="k">Total ditonton</div>
           <div class="v">${fmtCompact(last.v)}</div>
-          <div class="d">${d7 ? `<span class="up">${fmtDelta(d7.delta)}</span> minggu ini${recentEst(h, 7) ? " (est.)" : ""}` : "–"}</div>
+          <div class="d">${d7 ? `<span class="up">${fmtDelta(d7.delta)}</span> minggu ini${estRecent ? " (est.)" : ""}` : "–"}</div>
         </div>
         <div class="stat">
           <div class="k">Jumlah video</div>
           <div class="v">${fmtExact(last.c)}</div>
           <div class="d">di channel YouTube</div>
         </div>
+        <div class="stat">
+          <div class="k">Total likes</div>
+          <div class="v">${fmtCompact(likes.sum)}</div>
+          <div class="d">dari ${likes.n} video dipantau</div>
+        </div>
+      </div>
+      <div class="chextra">
+        <div class="xs">
+          <div class="k">Channel dibuat</div>
+          <div class="v">${created ? fmtDate(created) : "–"}</div>
+          <div class="s">${createdAge != null ? NF.format(createdAge) + " hari berjalan" : "&nbsp;"}</div>
+        </div>
+        <div class="xs">
+          <div class="k">Subscriber / hari</div>
+          <div class="v">${rateS7 ? "+" + fmtCompact(Math.round(rateS7)) : "–"}</div>
+          <div class="s">rata-rata 7 hari${estRecent ? " (est.)" : ""}</div>
+        </div>
+        <div class="xs">
+          <div class="k">Views / hari</div>
+          <div class="v">${rateV7 ? "+" + fmtCompact(Math.round(rateV7)) : "–"}</div>
+          <div class="s">rata-rata 7 hari${estRecent ? " (est.)" : ""}</div>
+        </div>
       </div>
       <div class="chhint"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>Klik kartu ini untuk detail lengkap channel — grafik sejak channel dibuat</div>
-    </div>`;
+    </div>
+    <div class="chcard" id="msBlock"></div>`;
   const card = $("#chcard");
   if (card) {
     const open = () => openChannel(state.artist);
@@ -1156,11 +1194,13 @@ function renderChannel() {
     const link = card.querySelector("a");
     if (link) link.addEventListener("click", (e) => e.stopPropagation());
   }
+  /* milestone video sekarang bagian dari section channel — tampil langsung di bawah kartu */
+  renderMilestones();
 }
 
 /* ===================== render: sorotan halaman artis (gaya beranda, tersusun atas-bawah) =====================
  * Tiga section seperti beranda — Paling banyak ditonton / Tren minggu ini / Rilisan terbaru —
- * tapi hanya berisi video milik artis ini, diletakkan DI ATAS tab Video & Milestone. */
+ * tapi hanya berisi video milik artis ini, di bawah section channel (kartu + milestone). */
 function renderArtistHighlights() {
   const el = $("#artistHl");
   const art = artistOf(state.artist);
@@ -1314,6 +1354,7 @@ const ICO_TROPHY = "M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.9
 const ICO_FIRE = "M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z";
 const ICO_NEW = "M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z";
 const ICO_PEOPLE = "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z";
+const ICO_FLAG = "M14.4 6L14 4H5v17h2v-7h5.6l.4 2h7V6z";
 function homeSectHead(c, ico, title, sub) {
   return `<div class="hsect"><h2>${sicIco(c, ico)}${title}</h2>${sub ? `<span class="sub">${sub}</span>` : ""}</div>`;
 }
@@ -1456,6 +1497,18 @@ function lastLikePoint(h) {
   if (!h || !h.length) return null;
   for (let i = h.length - 1; i >= 0; i--) if (h[i].l != null) return h[i];
   return null;
+}
+/* total likes level channel: YouTube tidak mengekspos angka likes channel, jadi dijumlahkan
+ * dari likes terkini seluruh video yang dipantau milik artis ini. Sebagian video performance
+ * belum punya rekaman likes (perekaman likes baru berjalan belakangan) — angka = "video dipantau". */
+function channelLikeTotals(artId) {
+  let sum = 0, n = 0;
+  for (const v of allVideosFlat()) {
+    if (v.channel !== artId) continue;
+    const p = lastLikePoint(v.history);
+    if (p && p.l != null) { sum += p.l; n++; }
+  }
+  return { sum, n };
 }
 
 function renderVideos() {
@@ -1748,16 +1801,26 @@ function bucketLabel(key, gran) {
   return key.slice(8, 10) + "/" + key.slice(5, 7);
 }
 
-function makeBarChart(canvas, deltas, color, cid, unit, gran) {
+/* grafik AREA utk nilai yang ditambahkan per periode (dulu grafik batang) — gaya sama
+ * seperti kurva total views & likes: garis mulus + isian gradien, segmen putus-putus = estimasi */
+function makeAreaChart(canvas, deltas, color, cid, unit, gran) {
   const estFlags = deltas.map((b) => b.est);
   return newChart(canvas, {
-    type: "bar",
+    type: "line",
     data: {
       labels: deltas.map((b) => bucketLabel(b.key, gran || "day")),
       datasets: [{
         data: deltas.map((b) => b.v),
-        backgroundColor: (c) => (estFlags[c.dataIndex] ? color + "45" : color),
-        borderRadius: 4, maxBarThickness: 22,
+        borderColor: color, borderWidth: 2.4, pointRadius: 0, pointHitRadius: 12, tension: 0.25,
+        segment: {
+          borderColor: (c) => (estFlags[c.p0DataIndex] || estFlags[c.p1DataIndex]) ? color + "55" : color,
+          borderDash: (c) => (estFlags[c.p0DataIndex] || estFlags[c.p1DataIndex]) ? [5, 4] : undefined,
+        },
+        fill: true, backgroundColor: (ctx2) => {
+          const g = ctx2.chart.ctx.createLinearGradient(0, 0, 0, ctx2.chart.height || 260);
+          g.addColorStop(0, color + "55"); g.addColorStop(1, color + "00");
+          return g;
+        },
       }],
     },
     options: chartOpts((c) => NF.format(c.parsed.y) + " " + unit + (estFlags[c.dataIndex] ? " (estimasi)" : "")),
@@ -1896,10 +1959,10 @@ function weekKeyOf(key) {
   return d.toISOString().slice(0, 10);
 }
 
-/* delta views PER JAM utk 24 jam terakhir (tombol “1 hari”) — sekitar 24 batang.
+/* delta views PER JAM utk 24 jam terakhir (tombol “1 hari”) — sekitar 24 titik.
  * Nilai tiap jam = interpolasi linier antara dua titik pengukuran yang mengapitnya.
- * Kalau jarak kedua pengukuran > 3 jam (perekaman masih jarang), batang ditandai estimasi;
- * begitu perekaman per jam berjalan, semua batang otomatis jadi data nyata. */
+ * Kalau jarak kedua pengukuran > 3 jam (perekaman masih jarang), titik ditandai estimasi;
+ * begitu perekaman per jam berjalan, semua titik otomatis jadi data nyata. */
 function hourlyDeltas(h, hours = 24) {
   if (!h || h.length < 2) return [];
   const endH = Math.floor(h[h.length - 1].t / 3600);
@@ -1949,7 +2012,7 @@ function buildDailyChart(h, color) {
   }
   const t = $("#dailyTitle");
   if (t) t.textContent = gran === "month" ? "Views ditambahkan per bulan" : gran === "week" ? "Views ditambahkan per pekan" : gran === "hour" ? "Views ditambahkan per jam · 24 jam terakhir" : "Views ditambahkan per hari";
-  makeBarChart($("#chartDaily"), series.deltas, color, "daily", "views", gran);
+  makeAreaChart($("#chartDaily"), series.deltas, color, "daily", "views", gran);
 }
 
 function buildCumChart(h, color) {
@@ -2008,6 +2071,7 @@ function openChannel(artId) {
   const msList = nextMilestones(last.s || 0, SUB_MS, 4);
   const rateV7 = d7 ? d7.rate : 0;
   const chNext = nextMilestones(last.v || 0, CHAN_MS, 1)[0] || null;
+  const likes = channelLikeTotals(artId);
   const chRows = [];
   {
     let prevT = null;
@@ -2048,6 +2112,8 @@ function openChannel(artId) {
         <div class="d">rata-rata 7 hari${estRecent ? " (est.)" : ""}</div></div>
       <div class="stat"><div class="k">Views / hari</div><div class="v">${rateV7 ? fmtCompact(Math.round(rateV7)) : "–"}</div>
         <div class="d">rata-rata 7 hari${estRecent ? " (est.)" : ""}</div></div>
+      <div class="stat"><div class="k">Total likes</div><div class="v">${fmtExact(likes.sum)}</div>
+        <div class="d">dari ${likes.n} video dipantau</div></div>
     </div>
 
     <div class="mtabs" id="chanMetricTabs">
@@ -2063,8 +2129,8 @@ function openChannel(artId) {
     </div>
     <div class="legend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span><span><i class="sw" style="background:${art.color}55"></i>Estimasi</span></div>
     <div class="chartbox" style="margin-bottom:12px"><canvas id="chanLine"></canvas></div>
-    <div class="chartbox"><canvas id="chanBar"></canvas></div>
-    <p class="note">Garis/batang transparan dan putus-putus = <b>estimasi</b> — dibangun dari tanggal channel dibuat + angka terkini (model pertumbuhan; BM 28 Des 2022, TREASURE 8 Feb 2019). Titik/batang solid = pengukuran nyata yang menimpa estimasi setiap putaran GitHub Actions.</p>
+    <div class="chartbox"><canvas id="chanArea"></canvas></div>
+    <p class="note">Garis transparan dan putus-putus = <b>estimasi</b> — dibangun dari tanggal channel dibuat + angka terkini (model pertumbuhan; BM 28 Des 2022, TREASURE 8 Feb 2019). Garis solid = pengukuran nyata yang menimpa estimasi setiap putaran GitHub Actions.</p>
 
     <div class="sect">
       <h3>Milestone total views</h3>
@@ -2125,7 +2191,7 @@ function openChannel(artId) {
 
 function buildChanCharts(ch, color) {
   destroyChartById("chanLine");
-  destroyChartById("chanBar");
+  destroyChartById("chanArea");
   const key = state.chanMetric === "v" ? "v" : "s";
   const unit = key === "v" ? "views" : "subscriber";
   const days = daysFromHistory(ch.history || [], key);
@@ -2134,7 +2200,7 @@ function buildChanCharts(ch, color) {
   const gran = state.chanRange === "365" ? "week" : state.chanRange === "all" ? "month" : "day";
   const series = bucketize(sliced, gran);
   makeLineChart($("#chanLine"), series.cum, color, "chanLine", unit, gran);
-  makeBarChart($("#chanBar"), series.deltas, color, "chanBar", unit + "/hari", gran);
+  makeAreaChart($("#chanArea"), series.deltas, color, "chanArea", unit + "/hari", gran);
 }
 
 function closeDetail() {
@@ -2193,6 +2259,52 @@ function spAvg7(tr) {
   const days = Math.max(1, (h[h.length - 1].t - first.t) / 86400);
   return Math.max(0, dd / days);
 }
+/* daftar VERSI lagu (tiap ID Spotify terpisah, dari data kworb mentah spotify-tracks-raw.json).
+ * Dipakai papan peringkat supaya setiap versi (remix, ver. JP, bonus track, dll) punya baris
+ * sendiri — tidak lagi dijumlahkan per judul. Kalau data mentah tak tersedia, fallback ke lagu
+ * gabungan supaya papan peringkat tetap terisi. */
+function spVersAll() {
+  const raw = state.sp.raw || {};
+  const out = [];
+  for (const t of Object.values(state.sp.tracks || {})) {
+    const rows = raw[t.artistId] || {};
+    const ids = t.trackIds || [];
+    for (const tid of ids) {
+      const r = rows[tid];
+      if (!r || !(r.total > 0)) continue;
+      out.push({ tid, key: t.key, name: r.name || t.name, artistId: t.artistId, total: r.total || 0, daily: r.daily || 0, cover: r.cover || t.cover, live: !!t.live });
+    }
+  }
+  if (!out.length) {
+    for (const t of Object.values(state.sp.tracks || {})) {
+      if (t.kworb && t.kworb.total > 0) out.push({ tid: null, key: t.key, name: t.name, artistId: t.artistId, total: t.kworb.total, daily: t.kworb.daily || 0, cover: t.cover, live: !!t.live });
+    }
+  }
+  return out;
+}
+/* baris milestone milik SATU artis utk kolom sorotan: target terdekat dulu, lalu terakhir tercapai */
+function spArtistMilestoneRows(a, limit) {
+  const next = [], ok = [];
+  for (const tr of Object.values(state.sp.tracks || {})) {
+    if (tr.artistId !== a.id || !tr.kworb || !tr.kworb.total) continue;
+    const tot = spTrackTotal(tr);
+    const ms = spMilestones(tr);
+    const n0 = ms.next[0];
+    if (n0) {
+      const rate = spAvg7(tr);
+      if (rate > 0) {
+        const days = (n0 - tot) / rate;
+        if (days > 0) next.push({ type: "next", tr, m: n0, tot, days });
+      }
+    }
+    const d0 = ms.done[0];
+    if (d0 && d0.at) ok.push({ type: "ok", tr, m: d0.m, tot, at: d0.at, real: d0.real });
+  }
+  next.sort((x, y) => x.days - y.days);
+  ok.sort((x, y) => y.at - x.at);
+  return next.concat(ok).slice(0, limit || 10);
+}
+
 function spMilestones(tr) {
   const tot = spTrackTotal(tr);
   const h = tr.history || [];
@@ -2247,25 +2359,25 @@ function renderSpHome(sec) {
   const tot = arts.reduce((s, a) => s + (a.totalStreams || 0), 0);
   const dl = arts.reduce((s, a) => s + (a.dailyStreams || 0), 0);
   const nAlb = Object.keys(state.sp.albums).length;
-  const top = [...withData].sort((a, b) => b.kworb.total - a.kworb.total).slice(0, 10);
-  const naik = [...withData].filter((t) => t.kworb.daily > 0).sort((a, b) => b.kworb.daily - a.kworb.daily).slice(0, 10);
+  /* peringkat per VERSI lagu (tiap ID Spotify dihitung terpisah — tidak dijumlahkan per judul) */
+  const top = [...(state.sp.vers || [])].sort((a, b) => b.total - a.total).slice(0, 10);
+  const naik = (state.sp.vers || []).filter((v) => v.daily > 0).sort((a, b) => b.daily - a.daily).slice(0, 10);
   const news = spNews();
 
-  const lbRow = (t, i) => {
-    const ar = spArtistOf(t.artistId) || {};
+  const lbRow = (v, i) => {
+    const ar = spArtistOf(v.artistId) || {};
     return `
-    <article class="lbrow ${i < 3 ? "top3" : ""}" data-spk="${esc(t.key)}" style="--ac:${ar.color || SP_GREEN}" tabindex="0" role="button" aria-label="${esc(t.name)}">
+    <article class="lbrow ${i < 3 ? "top3" : ""}" ${v.key ? `data-spk="${esc(v.key)}"` : ""} style="--ac:${ar.color || SP_GREEN}" tabindex="0" role="button" aria-label="${esc(v.name)}">
       <div class="lbrank">${i + 1}</div>
-      <img class="splbthumb" src="${esc(t.cover || "")}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
+      <img class="splbthumb" src="${esc(v.cover || "")}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
       <div class="lbmain">
-        <div class="lbtitle">${esc(t.name)}${t.live ? '<span class="typetag live">Live</span>' : ""}</div>
+        <div class="lbtitle">${esc(v.name)}${v.live ? '<span class="typetag live">Live</span>' : ""}</div>
         <div class="lbmeta">
           <span class="apill" style="background:${ar.color || SP_GREEN}">${esc(ar.name || "")}</span>
-          <span class="lbnum">${fmtCompact(t.kworb.total)} stream</span>
-          ${t.trackIds.length > 1 ? `<span class="lbnum">· ${t.trackIds.length} versi</span>` : ""}
+          <span class="lbnum">${fmtCompact(v.total)} stream</span>
         </div>
       </div>
-      <div class="lbstats"><div class="g up">+${fmtCompact(t.kworb.daily)}</div><div class="l">per hari</div></div>
+      <div class="lbstats"><div class="g up">+${fmtCompact(v.daily)}</div><div class="l">per hari</div></div>
     </article>`;
   };
 
@@ -2322,7 +2434,7 @@ function renderSpHome(sec) {
     <section class="hero sp">
       <span class="hbadge">SPOTIFY · PEMANTAUAN OTOMATIS TIAP JAM</span>
       <h1>Lagu K-pop <span class="grad">paling banyak di-stream</span> hari ini</h1>
-      <p>Papan peringkat gabungan semua versi lagu di Spotify — klik lagu mana pun untuk grafik stream harian &amp; prediksi milestone.</p>
+      <p>Papan peringkat lagu Spotify — setiap versi (remix, ver. JP, dll) dihitung terpisah — klik lagu mana pun untuk grafik stream harian &amp; prediksi milestone.</p>
       <div class="hstats">
         <div class="stat"><div class="k">Total stream</div><div class="v">${fmtCompact(tot)}</div><div class="d">gabungan semua artis</div></div>
         <div class="stat"><div class="k">Stream 24 jam</div><div class="v up">+${fmtCompact(dl)}</div><div class="d">gabungan semua artis</div></div>
@@ -2332,29 +2444,20 @@ function renderSpHome(sec) {
     </section>
     <div class="hgrid">
       <div>
-        ${spSectHead("#1ed760", ICO_SP_TROPHY, "Lagu paling banyak di-stream", "gabungan semua versi")}
+        ${spSectHead("#1ed760", ICO_SP_TROPHY, "Lagu paling banyak di-stream", "tiap versi dihitung terpisah")}
         <div class="lb">${top.map(lbRow).join("")}</div>
-        <p class="note">Peringkat = total stream gabungan semua versi lagu (remix, ver. JP, versi live dihitung terpisah) di semua artis yang dipantau · sumber angka: Spotify Charts (via kworb.net) · diperbarui otomatis tiap jam. Klik = grafik &amp; milestone.</p>
-        ${spSectHead("#38bdf8", ICO_SP_PEOPLE, "Jelajahi artis", "halaman lengkap per artis")}
-        <div class="chgrid two">${cards}</div>
+        <p class="note">Peringkat = stream tiap versi lagu (tiap ID Spotify dihitung terpisah, tidak dijumlahkan per judul) di semua artis yang dipantau · sumber angka: Spotify Charts (via kworb.net) · diperbarui otomatis tiap jam. Klik = grafik &amp; milestone.</p>
       </div>
       <div>
-        ${spSectHead("#ff4d6d", ICO_SP_FIRE, "Pertumbuhan harian tertinggi", "10 lagu · stream 24 jam terakhir")}
-        <div class="lb">${naik.map((t, i) => {
-            const ar = spArtistOf(t.artistId) || {};
-            return `
-            <article class="lbrow" data-spk="${esc(t.key)}" style="--ac:${ar.color || SP_GREEN}" tabindex="0" role="button" aria-label="${esc(t.name)}">
-              <div class="lbrank">${i + 1}</div>
-              <img class="splbthumb" src="${esc(t.cover || "")}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
-              <div class="lbmain">
-                <div class="lbtitle">${esc(t.name)}${t.live ? '<span class="typetag live">Live</span>' : ""}</div>
-                <div class="lbmeta"><span class="apill" style="background:${ar.color || SP_GREEN}">${esc(ar.name || "")}</span><span class="lbnum">${fmtCompact(spTrackTotal(t))} total</span></div>
-              </div>
-              <div class="lbstats"><div class="g up">+${fmtCompact(t.kworb.daily)}</div><div class="l">per hari</div></div>
-            </article>`;
-          }).join("")}</div>
+        ${spSectHead("#ff4d6d", ICO_SP_FIRE, "Harian tertinggi", "stream 24 jam terakhir")}
+        <div class="lb">${naik.map(lbRow).join("")}</div>
+        <p class="note">Diurutkan dari stream 24 jam terakhir tertinggi · sumber angka: Spotify Charts (via kworb.net) · diperbarui otomatis tiap jam. Klik = grafik &amp; milestone.</p>
       </div>
     </div>
+    <section style="margin-top:26px">
+      ${spSectHead("#38bdf8", ICO_SP_PEOPLE, "Jelajahi artis", "halaman lengkap per artis")}
+      <div class="chgrid two">${cards}</div>
+    </section>
     <section style="margin-top:26px">
       ${spSectHead("#ffb02e", "M9 18.7 13.2 10l4.2 8.7M12 3 3 21h3l1.7-3.6h8.6L18 21h3L12 3z", "Milestone &amp; sedang naik", "10 milestone terakhir + target terdekat")}
       <div class="msgrid">
@@ -2588,6 +2691,34 @@ function renderSpArtist(sec) {
       <div class="bd">${(q ? orphVis : orphans).map((tr, i) => spTrackRowHTML(tr, i)).join("")}</div>
     </div>` : "";
 
+  /* sorotan 3 kolom seperti halaman artis YouTube — stream terbanyak / harian tertinggi / milestone artis ini */
+  const mineVers = (state.sp.vers || []).filter((v) => v.artistId === a.id);
+  const vTop = [...mineVers].sort((x, y) => y.total - x.total).slice(0, 10);
+  const vNaik = mineVers.filter((v) => v.daily > 0).sort((x, y) => y.daily - x.daily).slice(0, 10);
+  const msRows = spArtistMilestoneRows(a, 10);
+  const spHlRow = (v, i) => `
+    <article class="lbrow ${i < 3 ? "top3" : ""}" data-spk="${esc(v.key)}" style="--ac:${a.color || SP_GREEN}" tabindex="0" role="button" aria-label="${esc(v.name)}">
+      <div class="lbrank">${i + 1}</div>
+      <img class="splbthumb" src="${esc(v.cover || "")}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
+      <div class="lbmain">
+        <div class="lbtitle">${esc(v.name)}${v.live ? '<span class="typetag live">Live</span>' : ""}</div>
+        <div class="lbmeta"><span class="lbnum">${fmtCompact(v.total)} stream</span></div>
+      </div>
+      <div class="lbstats"><div class="g up">+${fmtCompact(v.daily)}</div><div class="l">per hari</div></div>
+    </article>`;
+  const spMsHlRow = (r, i) => `
+    <article class="lbrow ${i < 3 ? "top3" : ""}" data-spk="${esc(r.tr.key)}" style="--ac:${a.color || SP_GREEN}" tabindex="0" role="button" aria-label="${esc(r.tr.name)}">
+      <div class="lbrank">${i + 1}</div>
+      <img class="splbthumb" src="${esc(r.tr.cover || "")}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
+      <div class="lbmain">
+        <div class="lbtitle">${esc(r.tr.name)}${r.tr.live ? '<span class="typetag live">Live</span>' : ""}</div>
+        <div class="lbmeta"><span class="lbnum">${fmtCompact(r.tot)} stream</span></div>
+      </div>
+      <div class="lbstats">${r.type === "next"
+        ? `<div class="g up">±${Math.ceil(r.days)} hari</div><div class="l">menuju ${fmtCompact(r.m)}</div>`
+        : `<div class="g up">✓ ${fmtCompact(r.m)}</div><div class="l">tercapai ${fmtDate(isoDate(r.at))}${r.real ? "" : " <span class='cellno'>(±)</span>"}</div>`}</div>
+    </article>`;
+
   sec.innerHTML = `
     <div class="chcard" style="--artist-color:${a.color || SP_GREEN};margin-top:6px">
       <div class="chtop">
@@ -2619,6 +2750,26 @@ function renderSpArtist(sec) {
       </div>
       <p class="note">Kurva terbentuk dari pengukuran rutin tiap jam; makin lama situs berjalan, makin panjang riwayatnya.${d1 > 0 ? ` Delta 24 jam terakhir: <span class="up">+${fmtCompact(d1)}</span>.` : ""}</p>
     </div>` : ""}
+    <div class="hgrid3">
+      <div>
+        ${spSectHead("#1ed760", ICO_SP_TROPHY, "Stream terbanyak", `stream terbanyak per versi ${esc(a.name)}`)}
+        ${vTop.length
+          ? `<div class="lb">${vTop.map(spHlRow).join("")}</div><p class="note">Peringkat = stream tiap versi lagu (tiap ID Spotify dihitung terpisah) milik ${esc(a.name)} · klik = detail lagu.</p>`
+          : `<div class="banner">Belum ada data stream untuk ${esc(a.name)}.</div>`}
+      </div>
+      <div>
+        ${spSectHead("#ff4d6d", ICO_SP_FIRE, "Harian tertinggi", "stream 24 jam terakhir")}
+        ${vNaik.length
+          ? `<div class="lb">${vNaik.map(spHlRow).join("")}</div><p class="note">Diurutkan dari stream 24 jam terakhir tertinggi milik ${esc(a.name)} · klik = grafik harian.</p>`
+          : `<div class="banner">Belum ada data pertumbuhan untuk ${esc(a.name)}.</div>`}
+      </div>
+      <div>
+        ${spSectHead("#ffb02e", "M9 18.7 13.2 10l4.2 8.7M12 3 3 21h3l1.7-3.6h8.6L18 21h3L12 3z", "Milestone", "target terdekat &amp; terakhir tercapai")}
+        ${msRows.length
+          ? `<div class="lb">${msRows.map(spMsHlRow).join("")}</div><p class="note">Milestone milik ${esc(a.name)} saja · ±hari = proyeksi dari ritme stream 7 hari · klik = detail lagu.</p>`
+          : `<div class="banner">Belum ada milestone untuk ${esc(a.name)}.</div>`}
+      </div>
+    </div>
     <div class="stabs" style="margin:24px 2px 14px">
       <button class="stab ${state.spArtistTab !== "ms" ? "active" : ""}" data-sptab="albums">Album &amp; lagu (${nSongs})</button>
       <button class="stab ${state.spArtistTab === "ms" ? "active" : ""}" data-sptab="ms">Milestone</button>
@@ -2839,21 +2990,19 @@ function renderAll() {
   if (state.platform === "spotify") { renderSpAll(); return; }
   $("#spSection").style.display = "none";
   const home = state.view === "home";
-  const ms = !home && state.artistTab === "milestones";
   $("#homeSection").style.display = home ? "" : "none";
   $("#channelSection").style.display = home ? "none" : "";
   $("#artistHl").style.display = home ? "none" : "";
-  $("#viewTabs").style.display = home ? "none" : "";
-  $("#msSection").style.display = ms ? "" : "none";
-  $("#toolbar").style.display = home || ms ? "none" : "";
-  $("#videoGrid").style.display = home || ms ? "none" : "";
+  /* tab Video/Milestone dihapus: milestone pindah ke section channel, video selalu tampil */
+  $("#viewTabs").style.display = "none";
+  $("#msSection").style.display = "none";
+  $("#toolbar").style.display = home ? "none" : "";
+  $("#videoGrid").style.display = home ? "none" : "";
   if (home) renderHome();
   else {
-    renderViewTabs();
     renderChannel();
     renderArtistHighlights();
-    if (ms) renderMilestones();
-    else renderVideos();
+    renderVideos();
   }
   renderTopline();
 }
