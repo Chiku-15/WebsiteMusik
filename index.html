@@ -476,6 +476,31 @@
   /* ---------- SPOTIFY WRAPPED (rekap bulanan & tahunan) ---------- */
   .wrapped{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:14px;align-items:stretch}
   @media (max-width:920px){.wrapped{grid-template-columns:1fr}}
+  /* kartu teaser Wrapped — TERTUTUP dulu, ditekan baru terbuka (ala kartu channel/artis) */
+  .wpteaser{
+    position:relative;overflow:hidden;border-radius:18px;padding:20px 22px;color:#eafff3;cursor:pointer;
+    transition:transform .18s, box-shadow .18s, border-color .18s;
+    background:linear-gradient(155deg,#0f6b3c,#0b3d24 55%,#0a1219 115%);
+    border:1px solid color-mix(in srgb,#1ed760 32%,transparent);
+  }
+  .wpteaser:hover,.wpteaser:focus-visible{
+    transform:translateY(-2px);border-color:color-mix(in srgb,#1ed760 62%,transparent);
+    box-shadow:0 12px 34px rgba(30,215,96,.16);outline:none;
+  }
+  .wpteaser::after{
+    content:"";position:absolute;right:-70px;top:-90px;width:260px;height:260px;border-radius:50%;
+    background:radial-gradient(closest-side,rgba(30,215,96,.35),transparent);filter:blur(6px);pointer-events:none;
+  }
+  .wptrow{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:10px;position:relative;z-index:1;flex-wrap:wrap}
+  .wptrow .wpbig{font-size:clamp(28px,4.6vw,42px)}
+  .wptfoot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:13px;position:relative;z-index:1;
+    font-size:12px;color:#bfe9cf;font-weight:700;flex-wrap:wrap}
+  .wptfoot .wptop{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .wptfoot .wpopen{display:inline-flex;align-items:center;gap:7px;color:#1ed760;font-weight:800;font-size:11px;
+    letter-spacing:1.4px;text-transform:uppercase;flex:none}
+  .wptfoot .wpopen svg{width:13px;height:13px;fill:#1ed760}
+  .wpteaser:hover .wpopen svg{transform:translateX(3px)}
+  .wptfoot .wpopen svg{transition:transform .18s}
   .wpcard{
     position:relative;overflow:hidden;border-radius:18px;padding:22px 22px 18px;color:#eafff3;
     background:linear-gradient(155deg,#0f6b3c,#0b3d24 55%,#0a1219 115%);
@@ -893,7 +918,13 @@ function versionsOf(vid) {
  * Tiap versi di-forward-fill (nilai kumulatif bertahan sampai titik berikutnya) supaya
  * versi yang jarang di-update tidak "menyusut" di hari tanpa titik. */
 function combinedHistory(vids) {
-  const perDay = vids.map((x) => daysFromHistory(x.history || [], "v"));
+  /* seri per versi: titik per hari kalender dgn views + likes (likes dibawa juga —
+   * dulu hilang di sini sehingga kurva likes mode gabungan selalu kosong) */
+  const perDay = vids.map((x) => {
+    const dv = daysFromHistory(x.history || [], "v");
+    const ml = new Map(daysFromHistory(x.history || [], "l").map((d) => [d.key, d.v]));
+    return dv.map((d) => ({ ...d, l: ml.has(d.key) ? ml.get(d.key) : null }));
+  });
   const keys = new Set();
   for (const arr of perDay) for (const d of arr) keys.add(d.key);
   const sorted = [...keys].sort();
@@ -960,6 +991,7 @@ const state = {
   spArtistTab: "albums",  // "albums" | "songs" | "ms" — sub-tab di halaman artis Spotify
   spSongSort: "stream",   // urutan daftar LAGU: "stream" | "daily" | "newest"
   spWrap: null,           // Wrapped Spotify: { gran: "month"|"year", key } — diisi saat render
+  spWrapOpen: false,      // Wrapped harus DITEKAN dulu baru terbuka (seperti kartu channel/artis)
   spMsTab: "table",       // "table" | "upcoming" | "reached"
   spSort: "stream",       // kategori daftar Album & lagu: "stream" | "daily" | "newest"
   spChanMetric: "total",  // metrik modal artis Spotify: "total" | "ml"
@@ -1801,10 +1833,10 @@ function openDetail(vid, combined) {
 
     <div class="sect">
       <h3>Total views &amp; likes (sejak rilis)</h3>
-      <div class="legend" id="cumLegend"><span><i class="sw" style="background:${art.color}"></i>Data nyata</span></div>
+      <div class="legend" id="cumLegend"><span><i class="sw" style="background:${art.color}"></i>Views (nyata)</span><span><i class="sw" style="background:#b18cff"></i>Likes (nyata)</span></div>
       <div class="chartbox"><canvas id="chartCum"></canvas></div>
       <p class="note" id="likeHint" style="margin-top:6px"></p>
-      <p class="note">Semua titik di grafik ini adalah <b>data nyata</b> yang dikumpulkan dari berbagai sumber: <b>YouTube Data API</b> (direkam GitHub Actions tiap jam), <b>arsip Wayback Machine</b> (snapshot halaman video dari berbagai tanggal sejak rilis), dan <b>pengumuman resmi YG Entertainment/media</b> (tanggal milestone views). YouTube tidak menyediakan riwayat harian untuk publik (hanya pemilik channel bisa melihatnya di YouTube Studio), jadi antar titik sumber dihubungkan garis lurus — tanpa model estimasi. Untuk menambah kepadatan titik arsip, jalankan workflow <b>“Kumpulkan data (YouTube + Spotify)”</b> di tab Actions dengan mode <b>“wayback-mass”</b>.${state.detailCombined
+      <p class="note">Titik <b>views</b> di grafik ini adalah <b>data nyata</b> yang dikumpulkan dari berbagai sumber: <b>YouTube Data API</b> (direkam GitHub Actions tiap jam), <b>arsip Wayback Machine</b> (snapshot halaman video dari berbagai tanggal sejak rilis), dan <b>pengumuman resmi YG Entertainment/media</b> (tanggal milestone views). YouTube tidak menyediakan riwayat harian untuk publik (hanya pemilik channel bisa melihatnya di YouTube Studio), jadi antar titik sumber dihubungkan garis lurus. Untuk <b>likes</b>: jumlah like resmi sebelum titik perekaman pertama tidak tersedia dari sumber mana pun, jadi bagian itu digambar sebagai <b>prediksi</b> (garis putus-putus) dari pola pertumbuhan views video tersebut — berlaku untuk semua lagu di situs ini. Untuk menambah kepadatan titik arsip, jalankan workflow <b>“Kumpulkan data (YouTube + Spotify)”</b> di tab Actions dengan mode <b>“wayback-mass”</b>.${state.detailCombined
         ? `<br><b>Mode gabungan:</b> angka = penjumlahan seluruh ${versions.length + 1} versi lagu ini, dijumlahkan per hari kalender.`
         : realPts.length ? `<br>Data nyata video ini mulai terekam: <b>${fmtTs(realPts[0].t)}</b>${watched != null ? ` — sejauh itu sudah ${NF.format(watched)} hari terpantau` : ""}.` : ""}</p>
     </div>
@@ -1870,7 +1902,17 @@ function openDetail(vid, combined) {
 
   if (h.length >= 2) {
     buildDailyChart(h, art.color, pubT);
-    buildCumChart(h, art.color, pubT);
+    /* rasio like/views rata-rata artis — cadangan prediksi likes utk lagu tanpa titik likes */
+    const fbRatio = (() => {
+      let sl = 0, sv = 0;
+      for (const x of allVideosFlat()) {
+        if (x.channel !== v.channel) continue;
+        const p = lastLikePoint(x.history || []);
+        if (p && p.l != null && p.v) { sl += p.l; sv += p.v; }
+      }
+      return sv > 0 ? sl / sv : null;
+    })();
+    buildCumChart(h, art.color, pubT, fbRatio);
     if (state.detailCombined) {
       const t = $("#dailyTitle");
       if (t) t.textContent += " — gabungan semua versi";
@@ -2041,7 +2083,6 @@ function makeAreaChart(canvas, deltas, color, cid, unit, gran) {
   const flags = deltas.map((b) => (b.est ? "est" : b.ip ? "ip" : null));
   const dimmed = (i) => flags[i] != null;
   const vals = deltas.map((b) => b.v);
-  const avg = vals.length >= 3 ? vals.reduce((s, x) => s + x, 0) / vals.length : null;
   const datasets = [{
     label: unit,
     data: vals,
@@ -2056,15 +2097,7 @@ function makeAreaChart(canvas, deltas, color, cid, unit, gran) {
       return g;
     },
   }];
-  /* garis rata-rata putus-putus — acuan cepat: periode mana yang di atas/bawah ritme biasa */
-  if (avg != null) {
-    datasets.push({
-      label: "Rata-rata",
-      data: vals.map(() => Math.round(avg)),
-      borderColor: cssVar("--chart-text") || "#8a93a8", borderWidth: 1.3,
-      borderDash: [7, 5], pointRadius: 0, pointHitRadius: 0, fill: false, tension: 0,
-    });
-  }
+  /* garis "Rata-rata" dihapus (permintaan) — grafik kini hanya menampilkan kurva data itu sendiri */
   const cfg = {
     type: "line",
     data: {
@@ -2072,18 +2105,11 @@ function makeAreaChart(canvas, deltas, color, cid, unit, gran) {
       datasets,
     },
     options: chartOpts((c) => {
-      if (c.datasetIndex === 1) return "Rata-rata: " + NF.format(Math.round(avg)) + " " + unit;
       const b = deltas[c.dataIndex] || {};
       return NF.format(Math.round(c.parsed.y)) + " " + unit
         + (b.partial ? " (periode berjalan)" : b.est ? " (estimasi)" : b.ip ? " (interpolasi)" : "");
     }),
   };
-  if (datasets.length > 1) {
-    cfg.options.plugins.legend = {
-      display: true,
-      labels: { color: cssVar("--chart-text"), boxWidth: 14, boxHeight: 2, font: { size: 10.5, weight: 700 } },
-    };
-  }
   return newChart(canvas, cfg, cid);
 }
 
@@ -2108,16 +2134,20 @@ function timeScaleOpts(tA, tZ) {
   };
 }
 
-/* grafik kumulatif dua metrik: views (poros kiri) + likes (poros kanan) */
-function makeDualLineChart(canvas, vpts, lpts, color, cid, anchorT) {
+/* grafik kumulatif dua metrik: views (poros kiri) + likes (poros kanan)
+ * lptsEst = titik PREDIKSI likes sejak rilis (bagian yang tak bisa diketahui resmi) —
+ * digambar putus-putus supaya jelas beda dari data nyata. */
+function makeDualLineChart(canvas, vpts, lpts, color, cid, anchorT, lptsEst) {
   const likeColor = "#b18cff";
   const hasLikes = !!(lpts && lpts.length);
+  const hasLEst = !!(lptsEst && lptsEst.length);
   const tA = anchorT != null && anchorT < vpts[0].t ? anchorT : vpts[0].t;
   const tZ = vpts[vpts.length - 1].t;
   const vdata = [];
   if (tA < vpts[0].t) vdata.push({ x: tA * 1000, y: 0 }); // rilis = 0 views (nyata)
   for (const p of vpts) vdata.push({ x: p.t * 1000, y: p.v });
   const ldata = hasLikes ? lpts.map((p) => ({ x: p.t * 1000, y: p.v })) : [];
+  const ledata = hasLEst ? lptsEst.map((p) => ({ x: p.t * 1000, y: p.v })) : [];
   const datasets = [{
     label: "Views",
     data: vdata,
@@ -2138,6 +2168,16 @@ function makeDualLineChart(canvas, vpts, lpts, color, cid, anchorT) {
       tension: 0, yAxisID: "y1", fill: false, spanGaps: false,
     });
   }
+  /* kurva likes PREDIKSI (sejak rilis s.d. titik likes nyata pertama) — putus-putus */
+  if (hasLEst) {
+    datasets.push({
+      label: "Likes (prediksi)",
+      data: ledata,
+      borderColor: likeColor, borderWidth: 2,
+      borderDash: [7, 5], pointRadius: 0, pointHitRadius: 8,
+      tension: 0, yAxisID: "y1", fill: false,
+    });
+  }
   /* zoom/pan dinonaktifkan — scroll halaman harus selalu jalan di atas grafik */
   return newChart(canvas, {
     type: "line",
@@ -2148,18 +2188,19 @@ function makeDualLineChart(canvas, vpts, lpts, color, cid, anchorT) {
       interaction: { intersect: false, mode: "nearest" },
       animation: { duration: 250 },
       plugins: {
-        legend: {
-          display: hasLikes,
-          labels: { color: cssVar("--chart-text"), boxWidth: 16, boxHeight: 4, font: { size: 11, weight: 700 } },
-        },
+        /* legenda digambar manual di #cumLegend (Data nyata vs Prediksi) */
+        legend: { display: false },
         tooltip: {
           backgroundColor: cssVar("--card"), titleColor: cssVar("--text"), bodyColor: cssVar("--text"),
           borderColor: cssVar("--border"), borderWidth: 1, padding: 10, displayColors: false,
           callbacks: {
             title: (items) => items.length ? DAY_FULL.format(new Date(items[0].parsed.x)) : "",
-            label: (c) => c.datasetIndex === 0
-              ? fmtExact(c.parsed.y) + " views" + cumDeltaTip(c, "views")
-              : fmtExact(c.parsed.y) + " likes" + cumDeltaTip(c, "likes"),
+            label: (c) => {
+              if (c.datasetIndex === 0) return fmtExact(c.parsed.y) + " views" + cumDeltaTip(c, "views");
+              const tag = c.datasetIndex === 2 ? " (prediksi)" : "";
+              return fmtExact(c.parsed.y) + " likes" + tag
+                + (c.datasetIndex === 2 ? "" : cumDeltaTip(c, "likes"));
+            },
           },
         },
       },
@@ -2346,24 +2387,76 @@ function buildDailyChart(h, color, anchorT) {
   makeAreaChart($("#chartDaily"), series, color, "daily", "views", gran);
 }
 
-function buildCumChart(h, color, anchorT) {
+/* ---------- PREDIKSI likes sejak rilis (permintaan: semua lagu) ----------
+ * Likes resmi sebelum titik perekaman pertama tidak tersedia dari sumber mana pun
+ * (arsip lama sering tidak menyimpan jumlah like). Sesuai permintaan, bagian itu
+ * DIPREDIKSI: kurva views sejak rilis diskalakan agar lewat titik likes nyata
+ * pertama (kalibrasi rasio like/views). Kalau lagu belum punya titik likes sama
+ * sekali, rasio diambil dari rata-rata likes/views seluruh lagu artis itu.
+ * Hasil digambar putus-putus + ditandai (prediksi) — bukan angka resmi. */
+function likeEstPoints(h, anchorT, likeDays, fbRatio) {
+  const est = [];
+  const t1 = likeDays.length ? likeDays[0].t : (h.length ? h[h.length - 1].t : null);
+  if (t1 == null) return est;
+  if (anchorT == null || !(anchorT < t1 - 20 * 3600)) return est; // harus ada jarak ≥ ±1 hari sejak rilis
+  /* kurva views sejak rilis: anchor rilis (0) + titik views nyata sebelum t1 */
+  const vp = daysFromHistory(h, "v").filter((p) => p.t <= t1);
+  const P = [{ t: anchorT, v: 0, e: 0 }, ...vp.filter((p) => p.t > anchorT && p.v > 0)];
+  if (P.length < 2) return est;
+  const vAt = (t) => { // views pada waktu t — interpolasi linier antar titik views
+    if (t <= P[0].t) return 0;
+    for (let i = 0; i < P.length - 1; i++) {
+      if (t <= P[i + 1].t) {
+        const a = P[i], b = P[i + 1];
+        const f = (t - a.t) / Math.max(1, b.t - a.t);
+        return a.v + (b.v - a.v) * f;
+      }
+    }
+    return P[P.length - 1].v;
+  };
+  const v1 = vAt(t1);
+  let ratio = null;
+  if (likeDays.length && v1 > 0) ratio = likeDays[0].v / v1;   // kalibrasi di titik likes nyata pertama
+  else if (fbRatio != null && fbRatio > 0) ratio = fbRatio;     // lagu tanpa titik likes → rasio artis
+  if (ratio == null || !(ratio > 0)) return est;
+  /* titik prediksi mengikuti bentuk kurva views (titik views nyata sebelum t1) + titik sambung di t1 */
+  for (const p of P) {
+    if (p.t >= t1) break;
+    est.push({ t: p.t, v: Math.max(0, Math.round(vAt(p.t) * ratio)), e: 1 });
+  }
+  est.push({ t: t1, v: Math.max(0, Math.round(vAt(t1) * ratio)), e: 1 });
+  return est;
+}
+
+function buildCumChart(h, color, anchorT, likeRatioFb) {
   const box = $("#chartCum") ? $("#chartCum").closest(".chartbox") : null;
   const days = daysFromHistory(h, "v");
   if (days.length < 2) {
     if (box) box.innerHTML = `<div class="wait">Belum cukup data untuk grafik kumulatif.</div>`;
     return;
   }
-  /* likes: hanya titik NYATA (pengukuran YouTube / arsip halaman) — tanpa backfill rasio,
-   * sesuai prinsip situs: tidak ada titik estimasi di grafik. Poros-x waktu linier, jadi
-   * kurva likes yang baru mulai terekam tampil pendek di ujung kanan (jujur, bukan anomali). */
+  /* likes nyata + PREDIKSI sejak rilis untuk bagian yang tak bisa diketahui resmi
+   * (putus-putus di grafik) — berlaku utk semua lagu, juga mode gabungan versi */
   const likeDays = daysFromHistory(h, "l");
-  makeDualLineChart($("#chartCum"), days, likeDays, color, "cum", anchorT);
+  const likeEst = likeEstPoints(h, anchorT, likeDays, likeRatioFb);
+  makeDualLineChart($("#chartCum"), days, likeDays, color, "cum", anchorT, likeEst);
+  /* legenda manual: Views · Likes nyata · Likes prediksi */
+  const lg = $("#cumLegend");
+  if (lg) {
+    lg.innerHTML = `<span><i class="sw" style="background:${color}"></i>Views (nyata)</span>`
+      + (likeDays.length ? `<span><i class="sw" style="background:#b18cff"></i>Likes (nyata)</span>` : "")
+      + (likeEst.length ? `<span><i class="sw" style="background:#b18cff55;border-top:2px dotted #b18cff"></i>Likes (prediksi)</span>` : "");
+  }
   const hint = $("#likeHint");
   if (hint) hint.innerHTML = !likeDays.length
-    ? "Kurva likes tampil setelah titik likes nyata pertama terekam — dari pengukuran YouTube (GitHub Actions) atau arsip halaman video."
-    : (likeDays[0].t > (anchorT != null ? anchorT : days[0].t) + 36 * 3600
-      ? `Data likes video ini baru tersedia sejak <b>${fmtTs(likeDays[0].t)}</b> — sebelum tanggal itu jumlah like belum terekam dari sumber mana pun (arsip lama sering tidak menyimpannya). Kurva likes akan otomatis memanjang begitu mode <b>“wayback-mass”</b> menambah titik arsip.`
-      : "");
+    ? (likeEst.length
+      ? "Likes video ini belum punya satu pun titik data nyata — <b>seluruh kurva likes (putus-putus) adalah prediksi</b>: pola pertumbuhan views sejak rilis dikalibrasi dengan rasio like/views rata-rata lagu artis yang sama. Titik nyata akan menggantikan prediksi begitu YouTube API / arsip merekam likes."
+      : "Kurva likes tampil setelah titik likes nyata pertama terekam — dari pengukuran YouTube (GitHub Actions) atau arsip halaman video.")
+    : (likeEst.length
+      ? `Likes resmi sebelum <b>${fmtTs(likeDays[0].t)}</b> tidak tersedia dari sumber mana pun (arsip lama sering tidak menyimpan jumlah like), jadi segmen <b>putus-putus</b> = <b>prediksi</b> — pola pertumbuhan views sejak rilis diskalakan dengan rasio like/views di titik likes nyata pertama. Mulai <b>${fmtTs(likeDays[0].t)}</b> kurva memakai likes nyata.`
+      : (likeDays[0].t > (anchorT != null ? anchorT : days[0].t) + 36 * 3600
+        ? `Data likes video ini baru tersedia sejak <b>${fmtTs(likeDays[0].t)}</b> — sebelum tanggal itu jumlah like belum terekam dari sumber mana pun (arsip lama sering tidak menyimpannya). Kurva likes akan otomatis memanjang begitu mode <b>“wayback-mass”</b> menambah titik arsip.`
+        : ""));
 }
 
 /* legenda kecil di bawah/atas grafik: Data nyata + (Estimasi) + (Interpolasi) */
@@ -2910,6 +3003,31 @@ function renderWrappedSection() {
     `<button class="mtab ${k === state.spWrap.key ? "active" : ""}" data-wkey="${k}">${esc(spWrappedChipLabel(state.spWrap.gran, k))}</button>`
   ).join("");
 
+  /* ---- TERTUTUP: kartu teaser ala kartu channel/artis — HARUS DITEKAN dulu baru rekap muncul ---- */
+  if (!state.spWrapOpen) {
+    const top0 = wd.songs.length ? wd.songs[0] : null;
+    return `
+    <section style="margin-top:26px" id="spWrapped">
+      ${spSectHead("#1ed760", "M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17l-6.1 3.6 1.4-6.8L2.2 9.1l6.9-.8z", "Wrapped", "rekap bulanan &amp; tahunan — ditekan dulu untuk dibuka")}
+      <div class="wpteaser" id="wrapTeaser" tabindex="0" role="button" aria-label="Buka rekap Wrapped ${esc(wLabel)}" title="Klik untuk membuka rekap Wrapped">
+        <div class="wpbadge">♪ SPOTIFY WRAPPED · ${state.spWrap.gran === "month" ? "REKAP BULANAN" : "REKAP TAHUNAN"}</div>
+        <div class="wptrow">
+          <div style="min-width:0">
+            <div class="wptitle" style="font-size:clamp(20px,3.2vw,28px)">${esc(wLabel)}</div>
+            <div class="wpsub">rekap stream ${state.spWrap.gran === "month" ? "bulan ini" : "setahun"} dari situs ini</div>
+          </div>
+          <div class="wpbig" style="text-align:right">+${fmtCompact(wd.total)}</div>
+        </div>
+        <div class="wptfoot">
+          <span class="wptop">${top0
+            ? `Lagu teratas: <b style="color:#fff">${esc(top0.tr.name)}</b> +${fmtCompact(top0.delta)} stream`
+            : "Belum ada stream tercatat pada periode ini"}</span>
+          <span class="wpopen">Tekan untuk buka <svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg></span>
+        </div>
+      </div>
+    </section>`;
+  }
+
   /* porsi artis dalam periode ini */
   const arRows = [...wd.perArtist.entries()]
     .map(([id, x]) => ({ a: spArtistOf(id) || { name: id, color: SP_GREEN }, delta: x.delta, n: x.n }))
@@ -2937,6 +3055,9 @@ function renderWrappedSection() {
   return `
   <section style="margin-top:26px" id="spWrapped">
     ${spSectHead("#1ed760", "M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17l-6.1 3.6 1.4-6.8L2.2 9.1l6.9-.8z", "Wrapped", "rekap bulanan &amp; tahunan — dihitung dari stream yang direkam situs ini")}
+    <div style="display:flex;justify-content:flex-end;margin:-4px 2px 8px">
+      <button class="mtab" id="wrapClose" title="Tutup rekap Wrapped">✕ Tutup</button>
+    </div>
     <div class="stabs" style="margin:0 2px 12px">
       <button class="stab ${state.spWrap.gran === "month" ? "active" : ""}" data-wgran="month">Bulanan</button>
       <button class="stab ${state.spWrap.gran === "year" ? "active" : ""}" data-wgran="year">Tahunan</button>
@@ -3109,6 +3230,27 @@ function renderSpHome(sec) {
       state.spWrap.key = b.dataset.wkey;
       try { localStorage.setItem("py.spwrap", JSON.stringify(state.spWrap)); } catch {}
       renderSpHome(sec);
+    });
+  });
+  /* Wrapped: kartu teaser dulu — ditekan baru terbuka, tombol ✕ untuk menutup lagi */
+  sec.querySelectorAll("#wrapTeaser").forEach((el) => {
+    const go = () => {
+      const y = window.scrollY;
+      state.spWrapOpen = true;
+      renderSpHome(sec);
+      window.scrollTo(0, y);   // jaga posisi scroll — rekap terbuka ke bawah
+    };
+    el.addEventListener("click", go);
+    el.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+  });
+  sec.querySelectorAll("#wrapClose").forEach((b) => {
+    b.addEventListener("click", () => {
+      const y = window.scrollY;
+      state.spWrapOpen = false;
+      renderSpHome(sec);
+      window.scrollTo(0, y);
+      const t = document.getElementById("spWrapped");
+      if (t) t.scrollIntoView({ block: "nearest" });
     });
   });
 }
