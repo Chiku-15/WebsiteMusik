@@ -42,10 +42,12 @@
   }
   .hwrap{max-width:1180px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .hbtns{display:flex;gap:8px;align-items:center}
-  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:.2px;cursor:pointer;border:none;background:none;color:inherit;padding:0;font-family:inherit}
-  .logo .dot{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#ff4d6d,#6a78ff);display:flex;align-items:center;justify-content:center;flex:none}
-  .logo .dot svg{width:16px;height:16px;fill:#fff}
-  .logo small{display:block;font-size:10.5px;font-weight:600;color:var(--muted);letter-spacing:.4px}
+  .logo{display:flex;align-items:center;gap:11px;cursor:pointer;border:none;background:none;color:inherit;padding:0;font-family:inherit;min-width:0}
+  .logo .dot{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#ff4d6d 0%,#8a5cf6 52%,#6a78ff 100%);display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 6px 18px rgba(138,92,246,.32)}
+  .logo .dot svg{width:20px;height:20px;fill:#fff}
+  .logo .lt{display:flex;flex-direction:column;line-height:1.12;min-width:0}
+  .logo .lt b{font-size:16.5px;font-weight:800;letter-spacing:.4px;white-space:nowrap}
+  .logo .lt small{display:block;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
   .spacer{flex:1}
   .tabs{display:flex;background:var(--chip);border:1px solid var(--border);border-radius:12px;padding:4px;gap:4px}
   .tab{
@@ -202,6 +204,7 @@
   .sect h3{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:16px 2px 10px}
   .chartbox{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;position:relative}
   .chartbox canvas{width:100%!important;height:260px!important}
+  .chartbox.tall canvas{height:340px!important}
   /* grafik mini di dalam kartu channel Spotify (lebih pendek dari grafik penuh) */
   .chartbox.mini{margin-top:14px;padding:12px 14px 10px;cursor:pointer}
   .chartbox.mini canvas{height:150px!important}
@@ -415,9 +418,8 @@
   .sprow .in{min-width:0}
   .sprow .in .n{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .sprow .in .n .dur{color:var(--muted);font-size:11px;font-weight:600}
-  .sprow .in .bar{margin-top:4px;height:4px;border-radius:2px;background:var(--chip);overflow:hidden}
-  .sprow .in .bar i{display:block;height:100%;border-radius:2px;background:linear-gradient(90deg,#1db954,#1ed760)}
-  .sprow .in .bm{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:3px;font-weight:600}
+  .sprow .in .bar{margin-top:5px;height:5px;border-radius:3px;background:var(--chip);overflow:hidden}
+  .sprow .in .bar i{display:block;height:100%;border-radius:3px;background:linear-gradient(90deg,#1db954,#1ed760)}
   .sprow .nums{text-align:right;flex:none;min-width:90px}
   .sprow .nums .d1{font-size:11.5px;font-weight:800;color:#1ed760;font-variant-numeric:tabular-nums}
   .sprow .nums .t{font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;margin-top:1px}
@@ -614,8 +616,18 @@
   .cmpside{border:1px solid var(--border);border-left:3px solid var(--cc);border-radius:12px;padding:10px 12px;background:var(--card);min-width:0}
   .cmpside .tag{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;background:var(--cc);color:#fff;font-weight:800;font-size:12px;margin-bottom:6px}
   .cmpsel{width:100%;background:var(--bg2);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:8px 9px;font:inherit;font-size:13px;font-weight:700}
-  .cmpinfo{margin-top:8px;font-size:11.5px;color:var(--muted);font-weight:700;line-height:1.55}
-  .cmpinfo b{color:var(--text)}
+  .cmpinfo{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+  .cmpinfo .ci{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:5px 9px;font-size:11px;font-weight:700;color:var(--muted);display:inline-flex;gap:5px;align-items:baseline}
+  .cmpinfo .ci b{color:var(--text);font-size:12.5px}
+  .cmphead{display:flex;align-items:center;gap:8px;margin-bottom:2px}
+  .cmphead b{font-size:13.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .cmpfind{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:0 9px;margin-top:9px}
+  .cmpfind svg{width:14px;height:14px;fill:var(--muted);flex:none}
+  .cmpfind input{flex:1;min-width:0;border:none;background:none;color:var(--text);font:600 12.5px var(--font);padding:7px 0;outline:none}
+  .cmpfind input::placeholder{color:var(--muted)}
+  .cmpfind .cnt{flex:none;font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.3px}
+  .cmptop{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 0}
+  .chartbox.tall canvas{height:340px!important}
   /* ---------- pencarian global ---------- */
   .search.big input{height:44px;font-size:15px}
   .srsgroup{font-size:10.5px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin:14px 2px 7px}
@@ -626,8 +638,13 @@
   .srsrow .nm{flex:1;min-width:0;font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .srsrow .meta{flex:none;font-size:11px;color:var(--muted);font-weight:700;text-align:right}
   /* kalender rilisan */
-  .calmonth{font-size:11.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin:18px 2px 8px}
-  .calmonth b{color:var(--text)}
+  .calyear{display:flex;align-items:center;gap:14px;margin:26px 2px 4px}
+  .calyear:first-child{margin-top:4px}
+  .calyear .yr{font-size:20px;font-weight:800;letter-spacing:1.5px;color:#fff;background:linear-gradient(135deg,#8b5cf6,#6a78ff);border-radius:999px;padding:6px 18px;box-shadow:0 8px 22px rgba(106,120,255,.22)}
+  .calyear .ln{flex:1;height:1px;background:var(--border)}
+  .calmonth{display:flex;align-items:center;gap:10px;font-size:11.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin:16px 2px 8px}
+  .calmonth::after{content:"";flex:1;height:1px;background:var(--border)}
+  .calmonth b{color:var(--text);background:var(--chip);border:1px solid var(--border);border-radius:999px;padding:3px 10px;font-size:10.5px;letter-spacing:.4px}
 </style>
 </head>
 <body>
@@ -664,8 +681,8 @@
 <header>
   <div class="hwrap">
     <div class="logo" id="logoHome" title="Kembali ke beranda" role="button" tabindex="0" aria-label="Kembali ke beranda">
-      <span class="dot"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg></span>
-      <span id="siteTitle">Pemantau YouTube<small id="siteSubtitle">—</small></span>
+      <span class="dot"><svg viewBox="0 0 24 24"><path d="M3 12h4.2l1.9-6.5 3.8 13 1.9-6.5H21"/></svg></span>
+      <span class="lt"><b id="siteTitle">K-POP PULSE</b><small id="siteSubtitle">Statistik YouTube &amp; Spotify</small></span>
     </div>
     <div class="spacer"></div>
     <nav class="tabs" id="platformTabs" aria-label="Pilih platform">
@@ -1280,9 +1297,11 @@ function menuRowHTML(plat) {
   return `<div class="menurow">${[cmp, rec, cal].map(card).join("")}</div>`;
 }
 function menuGo(k) {
+  /* Rekor/Kalender = halaman khusus beranda — dari halaman artis pun kembali ke beranda dulu
+   * supaya halamannya benar-benar tampil di kedua platform (YouTube & Spotify) */
   if (k === "cmp") openCompare();
-  else if (k === "rec") { state.recOpen = true; renderAll(); window.scrollTo(0, 0); }
-  else if (k === "cal") { state.calOpen = true; renderAll(); window.scrollTo(0, 0); }
+  else if (k === "rec") { state.recOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
+  else if (k === "cal") { state.calOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
 }
 function bindMenu(root) {
   if (!root) return;
@@ -1397,17 +1416,20 @@ function renderSpRecords(sec) {
     acc.v += s.dv; acc.e = acc.e || s.e;
     perDay.set(k, acc);
   }
-  const bestDays = [...perDay.entries()].map(([k, x]) => ({ k, ...x })).sort((a, b) => b.v - a.v).slice(0, 3);
+  const bestDays = [...perDay.entries()].map(([k, x]) => ({ k, ...x })).sort((a, b) => b.v - a.v).slice(0, 10);
   /* tercepat capai milestone */
+  /* 2 lagu tercepat untuk tiap milestone — total sampai 10 baris */
   const fastMs = [];
-  for (const m of [1e7, 5e7, 1e8]) {
-    let best = null;
+  for (const m of [1e6, 5e6, 1e7, 5e7, 1e8]) {
+    const cands = [];
     for (const tr of trs) {
       const c = spCrossDays(tr, m);
-      if (c && (!best || c.days < best.days)) best = { tr, days: c.days, est: c.est };
+      if (c) cands.push({ tr, days: c.days, est: c.est });
     }
-    if (best) fastMs.push({ m, ...best });
+    cands.sort((x, y) => x.days - y.days);
+    for (const c of cands.slice(0, 2)) fastMs.push({ m, ...c });
   }
+  fastMs.sort((x, y) => x.days - y.days);
   /* papan artis */
   const artRows = (state.sp.artists || []).map((a) => {
     const mine = trs.filter((t) => t.artistId === a.id);
@@ -1415,34 +1437,34 @@ function renderSpRecords(sec) {
   }).sort((x, y) => y.tot - x.tot);
   const totAll = artRows.reduce((s, x) => s + x.tot, 0);
   const spRecRow = (o, i, val, sub) => `
-    <div class="wprow" data-spk="${esc(o.tr.key)}" tabindex="0" role="button" aria-label="${esc(o.tr.name)}">
+    <div class="wprow${i < 3 ? " top3" : ""}" data-spk="${esc(o.tr.key)}" tabindex="0" role="button" aria-label="${esc(o.tr.name)}">
       <div class="rk">${i + 1}</div>
       ${o.tr.cover ? `<img class="cv" src="${esc(o.tr.cover)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : `<div class="cv" style="display:grid;place-items:center;color:var(--muted)">♪</div>`}
       <div class="nm">${esc(o.tr.name)}<span class="wbsub">${esc((spArtistOf(o.tr.artistId) || {}).name || "")}</span></div>
       <div class="del"><div class="d1">${val}</div><div class="d2">${sub}</div></div>
     </div>`;
-  const topList = trs.slice().sort((x, y) => spTrackTotal(y) - spTrackTotal(x)).slice(0, 6);
+  const topList = trs.slice().sort((x, y) => spTrackTotal(y) - spTrackTotal(x)).slice(0, 10);
   const dash = "M3.5 18.5 9 13l3.5 3.5L20 9l1.4 1.4-8.9 8.9L9 15.8l-4.1 4.1z";
   sec.innerHTML = `
   <section style="margin-top:26px">
     ${pageCloseBar("Rekor &amp; Fakta — Spotify", "rekor sepanjang situs memantau · klik lagu untuk detail")}
     <div class="hgrid">
       <div>
-        ${featSectHead("#1ed760", ICO_SP_TROPHY, "Stream terbanyak", "sepanjang pencatatan")}
+        ${featSectHead("#1ed760", ICO_SP_TROPHY, "Stream terbanyak", "10 besar sepanjang pencatatan")}
         <div style="display:flex;flex-direction:column;gap:7px">${topList.map((t, i) => spRecRow({ tr: t }, i, fmtCompact(spTrackTotal(t)), "total stream" + (isEst(t.history) ? ' <span class="cellno">(est.)</span>' : ""))).join("") || '<div class="banner">Belum ada data.</div>'}</div>
       </div>
       <div>
-        ${featSectHead("#ff4d6d", ICO_SP_FIRE, "Lonjakan harian tertinggi", "tambah stream terbesar dalam sehari")}
-        <div style="display:flex;flex-direction:column;gap:7px">${spikes.slice(0, 6).map((s, i) => spRecRow(s, i, "+" + fmtCompact(s.dv), fmtDate(isoDate(s.at)) + (s.e ? " <span class='cellno'>(est.)</span>" : ""))).join("") || '<div class="banner">Belum ada data.</div>'}</div>
+        ${featSectHead("#ff4d6d", ICO_SP_FIRE, "Lonjakan harian tertinggi", "10 besar · tambahan stream terbesar dalam sehari")}
+        <div style="display:flex;flex-direction:column;gap:7px">${spikes.slice(0, 10).map((s, i) => spRecRow(s, i, "+" + fmtCompact(s.dv), fmtDate(isoDate(s.at)) + (s.e ? " <span class='cellno'>(est.)</span>" : ""))).join("") || '<div class="banner">Belum ada data.</div>'}</div>
       </div>
     </div>
     <div class="hgrid" style="margin-top:18px">
       <div>
-        ${featSectHead("#38bdf8", dash, "Tercepat capai milestone", "hari sejak rilis")}
+        ${featSectHead("#38bdf8", dash, "Tercepat capai milestone", "2 tercepat tiap milestone")}
         <div style="display:flex;flex-direction:column;gap:7px">${fastMs.map((x, i) => spRecRow(x, i, NF.format(x.days) + " hari", fmtCompact(x.m) + (x.est ? " <span class='cellno'>(±)</span>" : ""))).join("") || '<div class="banner">Belum ada data.</div>'}</div>
       </div>
       <div>
-        ${featSectHead("#ffb02e", ICO_SP_FIRE, "Hari terbaik situs", "total stream sehari (semua lagu)")}
+        ${featSectHead("#ffb02e", ICO_SP_FIRE, "Hari terbaik situs", "10 hari terbaik (semua lagu)")}
         <div style="display:flex;flex-direction:column;gap:7px">${bestDays.map((d, i) => `
           <div class="wprow" style="cursor:default">
             <div class="rk">${i + 1}</div>
@@ -1479,19 +1501,22 @@ function renderYtRecords(sec) {
     bindPageClose(sec);
     return;
   }
-  const by7 = vids.slice().sort((a, b) => { const da = deltaDays(a.history, 7), db = deltaDays(b.history, 7); return (db ? db.delta : -1) - (da ? da.delta : -1); }).slice(0, 6);
-  const spikes = vids.map((v) => { const d = deltaDays(v.history, 1); return { v, d }; }).filter((x) => x.d && x.d.delta > 0).sort((a, b) => b.d.delta - a.d.delta).slice(0, 6);
+  const by7 = vids.slice().sort((a, b) => { const da = deltaDays(a.history, 7), db = deltaDays(b.history, 7); return (db ? db.delta : -1) - (da ? da.delta : -1); }).slice(0, 10);
+  const spikes = vids.map((v) => { const d = deltaDays(v.history, 1); return { v, d }; }).filter((x) => x.d && x.d.delta > 0).sort((a, b) => b.d.delta - a.d.delta).slice(0, 10);
+  /* 2 lagu tercepat untuk tiap milestone — total sampai 10 baris */
   const fastMs = [];
-  for (const m of [1e7, 5e7, 1e8]) {
-    let best = null;
+  for (const m of [1e7, 3e7, 5e7, 1e8, 2e8]) {
+    const cands = [];
     for (const v of vids) {
       const off = officialDays(v, m);
       const d = off != null ? off : daysToReach(v, v.history, m);
       if (d == null) continue;
-      if (!best || d < best.days) best = { v, days: d, off: off != null };
+      cands.push({ v, days: d, off: off != null });
     }
-    if (best) fastMs.push({ m, ...best });
+    cands.sort((x, y) => x.days - y.days);
+    for (const c of cands.slice(0, 2)) fastMs.push({ m, ...c });
   }
+  fastMs.sort((x, y) => x.days - y.days);
   const chRows = state.config.artists.map((a) => {
     const ch = state.channels && state.channels[a.id];
     const h = ch && ch.history;
@@ -1499,7 +1524,7 @@ function renderYtRecords(sec) {
   }).sort((x, y) => (y.last ? y.last.v : 0) - (x.last ? x.last.v : 0));
   const totAll = chRows.reduce((s, x) => s + (x.last ? x.last.v : 0), 0);
   const ytRow = (v, i, val, sub) => `
-    <div class="wprow" data-id="${v.id}" tabindex="0" role="button" aria-label="${esc(rowTitleOf(v, v.art))}">
+    <div class="wprow${i < 3 ? " top3" : ""}" data-id="${v.id}" tabindex="0" role="button" aria-label="${esc(rowTitleOf(v, v.art))}">
       <div class="rk">${i + 1}</div>
       <img class="cv" src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy">
       <div class="nm">${esc(rowTitleOf(v, v.art))}<span class="wbsub">${esc(v.art.name)}</span></div>
@@ -1511,21 +1536,21 @@ function renderYtRecords(sec) {
     ${pageCloseBar("Rekor &amp; Fakta — YouTube", "rekor sepanjang situs memantau · klik video untuk detail")}
     <div class="hgrid">
       <div>
-        ${featSectHead("#ffb02e", ICO_TROPHY, "Views terbanyak", "sepanjang pencatatan")}
-        <div style="display:flex;flex-direction:column;gap:7px">${vids.slice().sort((a, b) => lastV(b) - lastV(a)).slice(0, 6).map((v, i) => ytRow(v, i, fmtCompact(lastV(v)), "total views")).join("")}</div>
+        ${featSectHead("#ffb02e", ICO_TROPHY, "Views terbanyak", "10 besar sepanjang pencatatan")}
+        <div style="display:flex;flex-direction:column;gap:7px">${vids.slice().sort((a, b) => lastV(b) - lastV(a)).slice(0, 10).map((v, i) => ytRow(v, i, fmtCompact(lastV(v)), "total views")).join("")}</div>
       </div>
       <div>
-        ${featSectHead("#ff4d6d", ICO_FIRE, "Tumbuh paling cepat", "views 7 hari tertinggi")}
+        ${featSectHead("#ff4d6d", ICO_FIRE, "Tumbuh paling cepat", "10 besar · views 7 hari tertinggi")}
         <div style="display:flex;flex-direction:column;gap:7px">${by7.map((v, i) => { const d = deltaDays(v.history, 7); return ytRow(v, i, "+" + fmtCompact(d ? d.delta : 0), "7 hari" + (recentEst(v.history, 7) ? " <span class='cellno'>(est.)</span>" : "")); }).join("")}</div>
       </div>
     </div>
     <div class="hgrid" style="margin-top:18px">
       <div>
-        ${featSectHead("#38bdf8", dash, "Tercepat capai milestone", "hari sejak diunggah")}
-        <div style="display:flex;flex-direction:column;gap:7px">${fastMs.map((x, i) => ytRow(x.v, i, NF.format(x.days) + " hari", fmtCompact(x.m) + (x.off ? " · data resmi ✓" : " · hitungan situs"))).join("") || '<div class="banner">Belum ada data.</div>'}</div>
+        ${featSectHead("#38bdf8", dash, "Tercepat capai milestone", "2 tercepat tiap milestone")}
+        <div style="display:flex;flex-direction:column;gap:7px">${fastMs.map((x, i) => ytRow(x.v, i, NF.format(x.days) + " hari", "capai " + fmtCompact(x.m) + (x.off ? " · resmi ✓" : " · hitungan situs"))).join("") || '<div class="banner">Belum ada data.</div>'}</div>
       </div>
       <div>
-        ${featSectHead("#a78bfa", ICO_FIRE, "Lonjakan harian tertinggi", "views 1 hari terbesar")}
+        ${featSectHead("#a78bfa", ICO_FIRE, "Lonjakan harian tertinggi", "10 besar · views 1 hari terbesar")}
         <div style="display:flex;flex-direction:column;gap:7px">${spikes.map((s, i) => ytRow(s.v, i, "+" + fmtCompact(s.d.delta), "sehari" + (recentEst(s.v.history, 1) ? " <span class='cellno'>(est.)</span>" : ""))).join("") || '<div class="banner">Belum ada data.</div>'}</div>
       </div>
     </div>
@@ -1565,9 +1590,13 @@ function renderSpCalendar(sec) {
   rels.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
   const months = new Map();
   for (const r of rels) { const k = (r.date || "?").slice(0, 7); if (!months.has(k)) months.set(k, []); months.get(k).push(r); }
+  let lastYr = null;
   const monthHTML = [...months.entries()].map(([k, list]) => {
     const lbl = k === "?" ? "Tanpa tanggal" : MFULL.format(new Date(k + "-01T00:00:00"));
-    return `<div class="calmonth">${esc(lbl)} · <b>${list.length} rilisan</b></div>
+    const yr = k === "?" ? null : k.slice(0, 4);
+    const yHead = yr && yr !== lastYr ? `<div class="calyear"><span class="yr">${yr}</span><span class="ln"></span></div>` : "";
+    if (yr) lastYr = yr;
+    return `${yHead}<div class="calmonth"><span>${esc(lbl)}</span><b>${list.length} rilisan</b></div>
     <div style="display:flex;flex-direction:column;gap:7px">${list.map((r) => `
       <div class="srsrow" ${r.kind === "album" ? `data-galb="${esc(r.id)}"` : `data-gsp="${esc(r.id)}"`} tabindex="0" role="button" aria-label="${esc(r.name)}">
         ${r.cover ? `<img class="cv" src="${esc(r.cover)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : `<div class="cv" style="display:grid;place-items:center;color:var(--muted)">♪</div>`}
@@ -1598,9 +1627,13 @@ function renderYtCalendar(sec) {
   const vids = allVideosFlat().slice().sort((a, b) => (b.published || "").localeCompare(a.published || ""));
   const months = new Map();
   for (const v of vids) { const k = (v.published || "?").slice(0, 7); if (!months.has(k)) months.set(k, []); months.get(k).push(v); }
+  let lastYr = null;
   const monthHTML = [...months.entries()].map(([k, list]) => {
     const lbl = k === "?" ? "Tanpa tanggal" : MFULL.format(new Date(k + "-01T00:00:00"));
-    return `<div class="calmonth">${esc(lbl)} · <b>${list.length} video</b></div>
+    const yr = k === "?" ? null : k.slice(0, 4);
+    const yHead = yr && yr !== lastYr ? `<div class="calyear"><span class="yr">${yr}</span><span class="ln"></span></div>` : "";
+    if (yr) lastYr = yr;
+    return `${yHead}<div class="calmonth"><span>${esc(lbl)}</span><b>${list.length} video</b></div>
     <div style="display:flex;flex-direction:column;gap:7px">${list.map((v) => `
       <div class="srsrow" data-id="${v.id}" tabindex="0" role="button" aria-label="${esc(rowTitleOf(v, v.art))}">
         <img class="cv" src="https://i.ytimg.com/vi/${v.id}/mqdefault.jpg" alt="" loading="lazy">
@@ -1672,21 +1705,89 @@ function cmpDays(id, m) {
   const d = daysToReach(v, v.history, m);
   return d != null ? { days: d, est: false } : null;
 }
-function makeCompareChart(canvas, sA, sB, nA, nB, unit) {
+function makeCompareChart(canvas, sA, sB, nA, nB, unit, marks) {
   const mk = (s, color) => ({
     data: s.pts.map((p) => ({ x: Math.round(p.x * 10) / 10, y: p.y })),
     borderColor: color, borderWidth: 2.4, pointRadius: 0, pointHitRadius: 10, tension: 0.25, fill: false,
     segment: { borderDash: (c) => (((s.pts[c.p0DataIndex] || {}).e || (s.pts[c.p1DataIndex] || {}).e) ? [5, 4] : undefined) },
   });
+  const FONT = (typeof Chart !== "undefined" && Chart.defaults.font.family) || "sans-serif";
+  /* label total di ujung kurva — perbandingan terlihat LANGSUNG, tanpa geser kursor */
+  const endLabel = (chart, s, color, otherY) => {
+    const ctx = chart.ctx;
+    const last = s.pts[s.pts.length - 1];
+    const x = chart.scales.x.getPixelForValue(last.x);
+    let y = chart.scales.y.getPixelForValue(last.y);
+    if (otherY != null && Math.abs(otherY - y) < 16) y = otherY + (y >= otherY ? 16 : -16);
+    const txt = fmtCompact(Math.round(last.y));
+    ctx.save();
+    ctx.font = "800 10.5px " + FONT;
+    const w = ctx.measureText(txt).width + 12;
+    let rx = x + 6;
+    if (rx + w > chart.canvas.clientWidth - 2) rx = x - 6 - w;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(rx, y - 9, w, 18, 9); else ctx.rect(rx, y - 9, w, 18);
+    ctx.fill();
+    ctx.fillStyle = "#fff";
+    ctx.textBaseline = "middle";
+    ctx.fillText(txt, rx + 6, y);
+    ctx.restore();
+    return y;
+  };
+  const plugin = {
+    id: "cmpLabels",
+    afterDatasetsDraw(chart) {
+      const { ctx } = chart;
+      const xl = chart.scales.x, yl = chart.scales.y;
+      const yA = endLabel(chart, sA, CMP_COLORS[0], null);
+      endLabel(chart, sB, CMP_COLORS[1], yA);
+      /* kelompokkan milestone per (sisi, hari) supaya labelnya satu baris rapi */
+      const groups = new Map();
+      for (const m of marks) {
+        const g = groups.get(m.side + "|" + m.x) || { side: m.side, x: m.x, days: m.days, ms: [] };
+        g.ms.push(m);
+        groups.set(m.side + "|" + m.x, g);
+      }
+      for (const g of groups.values()) {
+        const px = xl.getPixelForValue(g.x);
+        if (px < xl.left - 1 || px > xl.right + 1) continue;
+        for (const m of g.ms) {
+          const py = yl.getPixelForValue(m.m);
+          ctx.save();
+          ctx.fillStyle = CMP_COLORS[g.side];
+          ctx.strokeStyle = cssVar("--card") || "#fff";
+          ctx.lineWidth = 1.4;
+          ctx.beginPath();
+          ctx.arc(px, py, 3.6, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          ctx.restore();
+        }
+        const top = g.ms.reduce((b, c) => (c.m > b.m ? c : b));
+        const py = yl.getPixelForValue(top.m);
+        const txt = g.ms.map((m) => fmtCompact(m.m)).join(" & ") + " · " + NF.format(g.days) + " hr";
+        ctx.save();
+        ctx.font = "700 9.5px " + FONT;
+        ctx.fillStyle = CMP_COLORS[g.side];
+        ctx.textBaseline = g.side === 0 ? "bottom" : "top";
+        let tx = px + 6;
+        if (tx + ctx.measureText(txt).width > chart.canvas.clientWidth - 4) { tx = px - 6; ctx.textAlign = "right"; }
+        ctx.fillText(txt, tx, py + (g.side === 0 ? -5 : 5));
+        ctx.restore();
+      }
+    },
+  };
   return newChart(canvas, {
     type: "line",
     data: { datasets: [{ label: nA, ...mk(sA, CMP_COLORS[0]) }, { label: nB, ...mk(sB, CMP_COLORS[1]) }] },
     options: {
       responsive: true, maintainAspectRatio: false,
       interaction: { mode: "nearest", intersect: false },
+      layout: { padding: { right: 78, top: 18, bottom: 4 } },
       scales: {
         x: { type: "linear", title: { display: true, text: "hari sejak rilis", color: cssVar("--chart-text"), font: { size: 10.5 } }, grid: { color: cssVar("--chart-grid") }, ticks: { color: cssVar("--chart-text"), maxTicksLimit: 9, font: { size: 10.5 }, callback: (v) => NF.format(v) } },
-        y: { grid: { color: cssVar("--chart-grid") }, ticks: { color: cssVar("--chart-text"), font: { size: 10.5 }, callback: (v) => fmtCompact(v) } },
+        y: { beginAtZero: true, grace: "5%", grid: { color: cssVar("--chart-grid") }, ticks: { color: cssVar("--chart-text"), font: { size: 10.5 }, callback: (v) => fmtCompact(v) } },
       },
       plugins: {
         legend: { labels: { color: cssVar("--chart-text"), usePointStyle: true, boxWidth: 8, font: { size: 11 } } },
@@ -1698,12 +1799,14 @@ function makeCompareChart(canvas, sA, sB, nA, nB, unit) {
         },
       },
     },
+    plugins: [plugin],
   }, "cmpChart");
 }
 function openCompare() {
   const opts = cmpOptions().sort((x, y) => y.tot - x.tot);
   state.detailMode = { type: "compare" };
   destroyCharts();
+  if (!state.cmpQuery) state.cmpQuery = ["", ""];
   if (opts.length < 2) {
     $("#sheet").innerHTML = `<button class="close" id="closeBtn" aria-label="Tutup">✕</button><div class="banner">Butuh minimal dua lagu/video dengan data untuk dibandingkan.</div>`;
     $("#closeBtn").addEventListener("click", closeDetail);
@@ -1717,25 +1820,70 @@ function openCompare() {
   if (!opts.find((o) => o.id === b) || b === a) b = (opts.find((o) => o.id !== a) || {}).id || "";
   state.cmpSel = [a, b];
   const unit = state.platform === "spotify" ? "stream" : "views";
-  const selHTML = (val, idx) => `
-    <select class="cmpsel" id="cmpSel${idx}" aria-label="Pilih ${idx === 0 ? "peserta A" : "peserta B"}">
-      ${opts.map((o) => `<option value="${esc(o.id)}"${o.id === val ? " selected" : ""}>${esc(o.name)}${o.ar ? " — " + esc(o.ar) : ""}</option>`).join("")}
-    </select>`;
+  const findHTML = (idx) => `
+    <div class="cmpfind">
+      <svg viewBox="0 0 24 24"><path d="M10 2a8 8 0 1 0 4.9 14.3l5 5a1 1 0 0 0 1.4-1.4l-5-5A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12z"/></svg>
+      <input id="cmpFind${idx}" type="text" placeholder="Cari judul atau artis…" value="${esc(state.cmpQuery[idx] || "")}" aria-label="Cari peserta ${idx === 0 ? "A" : "B"}">
+      <span class="cnt" id="cmpCnt${idx}"></span>
+    </div>`;
   $("#sheet").innerHTML = `
     <button class="close" id="closeBtn" aria-label="Tutup">✕</button>
     <h2 class="dtitle" style="margin-bottom:2px">Perbandingan ${unit === "stream" ? "lagu" : "video"}</h2>
-    <p class="note">Kurva kumulatif sejak hari rilis — siapa lebih cepat menembus tiap milestone · garis putus-putus = titik estimasi.</p>
-    <div class="cmpgrid">
-      <div class="cmpside" style="--cc:${CMP_COLORS[0]}"><span class="tag">A</span>${selHTML(state.cmpSel[0], 0)}<div class="cmpinfo" id="cmpInfo0"></div></div>
-      <div class="cmpside" style="--cc:${CMP_COLORS[1]}"><span class="tag">B</span>${selHTML(state.cmpSel[1], 1)}<div class="cmpinfo" id="cmpInfo1"></div></div>
+    <p class="note">Kurva kumulatif sejak hari rilis — titik milestone &amp; total terakhir langsung tergambar di grafik (tanpa hover) · garis putus-putus = titik estimasi.</p>
+    <div class="cmptop">
+      <button class="mtab" id="cmpSwap">⇄ Tukar A &amp; B</button>
+      <span class="lbnum">ketik di kotak pencarian untuk mempersempit daftar pilihan</span>
     </div>
-    <div class="chartbox"><canvas id="cmpChart"></canvas></div>
+    <div class="cmpgrid">
+      <div class="cmpside" style="--cc:${CMP_COLORS[0]}">
+        <div class="cmphead"><span class="tag">A</span><b id="cmpName0"></b></div>
+        ${findHTML(0)}
+        <select class="cmpsel" id="cmpSel0" aria-label="Pilih peserta A"></select>
+        <div class="cmpinfo" id="cmpInfo0"></div>
+      </div>
+      <div class="cmpside" style="--cc:${CMP_COLORS[1]}">
+        <div class="cmphead"><span class="tag">B</span><b id="cmpName1"></b></div>
+        ${findHTML(1)}
+        <select class="cmpsel" id="cmpSel1" aria-label="Pilih peserta B"></select>
+        <div class="cmpinfo" id="cmpInfo1"></div>
+      </div>
+    </div>
+    <div class="chartbox tall"><canvas id="cmpChart"></canvas></div>
     <div id="cmpTable" style="margin-top:14px"></div>`;
   $("#closeBtn").addEventListener("click", closeDetail);
   $("#overlay").classList.add("open");
   document.body.style.overflow = "hidden";
-  $("#cmpSel0").addEventListener("change", (e) => { state.cmpSel[0] = e.target.value; drawCompare(); });
-  $("#cmpSel1").addEventListener("change", (e) => { state.cmpSel[1] = e.target.value; drawCompare(); });
+
+  const fillSelect = (idx) => {
+    const q = (state.cmpQuery[idx] || "").toLowerCase();
+    const cur = state.cmpSel[idx];
+    const list = opts.filter((o) => !q || (o.name + " " + o.ar).toLowerCase().includes(q));
+    const sel = document.getElementById("cmpSel" + idx);
+    const shown = list.length ? list : opts.filter((o) => o.id === cur);
+    sel.innerHTML = shown
+      .map((o) => `<option value="${esc(o.id)}"${o.id === cur ? " selected" : ""}>${esc(o.name)}${o.ar ? " — " + esc(o.ar) : ""}</option>`).join("");
+    if (!shown.find((o) => o.id === cur) && shown.length) { state.cmpSel[idx] = shown[0].id; sel.value = shown[0].id; }
+    document.getElementById("cmpCnt" + idx).textContent = q ? list.length + "/" + opts.length : opts.length + " pilihan";
+  };
+  for (const idx of [0, 1]) {
+    fillSelect(idx);
+    document.getElementById("cmpFind" + idx).addEventListener("input", (e) => {
+      state.cmpQuery[idx] = e.target.value.trim();
+      fillSelect(idx);
+      drawCompare();
+    });
+    document.getElementById("cmpSel" + idx).addEventListener("change", (e) => { state.cmpSel[idx] = e.target.value; drawCompare(); });
+  }
+  $("#cmpSwap").addEventListener("click", () => {
+    state.cmpSel = [state.cmpSel[1], state.cmpSel[0]];
+    state.cmpQuery = [state.cmpQuery[1], state.cmpQuery[0]];
+    for (const idx of [0, 1]) {
+      const f = document.getElementById("cmpFind" + idx);
+      if (f) f.value = state.cmpQuery[idx] || "";
+      fillSelect(idx);
+    }
+    drawCompare();
+  });
   drawCompare();
 }
 function drawCompare() {
@@ -1745,9 +1893,21 @@ function drawCompare() {
   const iA = cmpItem(a), iB = cmpItem(b);
   const sA = cmpPoints(a), sB = cmpPoints(b);
   const unit = state.platform === "spotify" ? "stream" : "views";
+  for (const [idx, it] of [[0, iA], [1, iB]]) {
+    const el = document.getElementById("cmpName" + idx);
+    if (el) el.textContent = it ? it.name : "—";
+  }
   if (sA && sB && sA.pts.length >= 2 && sB.pts.length >= 2) {
     destroyChartById("cmpChart");
-    makeCompareChart(cv, sA, sB, iA ? iA.name : "A", iB ? iB.name : "B", unit);
+    const msList = state.platform === "spotify" ? [1e6, 5e6, 1e7, 2e7, 5e7, 1e8, 2e8, 3e8] : [1e7, 2e7, 5e7, 1e8, 2e8, 3e8];
+    const marks = [];
+    for (const [side, id] of [[0, a], [1, b]]) {
+      for (const m of msList) {
+        const d = cmpDays(id, m);
+        if (d) marks.push({ side, x: d.days, m, days: d.days });
+      }
+    }
+    makeCompareChart(cv, sA, sB, iA ? iA.name : "A", iB ? iB.name : "B", unit, marks);
   } else if (cv.closest(".chartbox")) {
     cv.closest(".chartbox").innerHTML = `<div class="wait">Belum cukup titik data untuk menggambar kurva.</div>`;
   }
@@ -1755,14 +1915,16 @@ function drawCompare() {
     const el = document.getElementById(elId);
     if (!el) return;
     el.innerHTML = s && s.pts.length >= 2
-      ? `<b>${fmtCompact(Math.round(s.pts[s.pts.length - 1].y))}</b> ${unit} sekarang · <b>+${fmtCompact(Math.round(cmpRate(s)))}</b>/hari (7 hari)${o && o.rel ? " · rilis " + fmtDate(new Date(o.rel * 1000).toISOString().slice(0, 10)) : ""}`
-      : "Belum cukup data untuk peserta ini.";
+      ? `<span class="ci"><b>${fmtCompact(Math.round(s.pts[s.pts.length - 1].y))}</b> ${unit} sekarang</span>
+         <span class="ci"><b>+${fmtCompact(Math.round(cmpRate(s)))}</b> /hari (7 hari)</span>
+         ${o && o.rel ? `<span class="ci">rilis <b>${fmtDate(new Date(o.rel * 1000).toISOString().slice(0, 10))}</b></span>` : ""}`
+      : `<span class="ci">Belum cukup data untuk peserta ini</span>`;
   };
   info(iA, sA, "cmpInfo0");
   info(iB, sB, "cmpInfo1");
-  const msList = state.platform === "spotify" ? [1e6, 5e6, 1e7, 2e7, 5e7, 1e8, 2e8, 3e8] : [1e7, 2e7, 5e7, 1e8, 2e8, 3e8];
+  const msList2 = state.platform === "spotify" ? [1e6, 5e6, 1e7, 2e7, 5e7, 1e8, 2e8, 3e8] : [1e7, 2e7, 5e7, 1e8, 2e8, 3e8];
   const rows = [];
-  for (const m of msList) {
+  for (const m of msList2) {
     const dA = cmpDays(a, m), dB = cmpDays(b, m);
     if (!dA && !dB) continue;
     let w = "";
@@ -1785,7 +1947,7 @@ function drawCompare() {
   const tEl = document.getElementById("cmpTable");
   if (tEl) tEl.innerHTML = `
     <div class="tscroll"><table class="ms">
-      <thead><tr><th>Milestone</th><th class="num">A — ${esc(iA ? iA.name : "")}</th><th class="num">B — ${esc(iB ? iB.name : "")}</th></tr></thead>
+      <thead><tr><th>Milestone</th><th class="num" style="color:${CMP_COLORS[0]}">A — ${esc(iA ? iA.name : "")}</th><th class="num" style="color:${CMP_COLORS[1]}">B — ${esc(iB ? iB.name : "")}</th></tr></thead>
       <tbody>${rows.join("")}</tbody>
     </table></div>
     ${concl ? `<p class="note">Kesimpulan: ${concl} ★ = lebih cepat.</p>` : ""}`;
@@ -2241,6 +2403,7 @@ function renderArtistHighlights() {
   }).join("");
 
   el.innerHTML = `
+    ${menuRowHTML("yt")}
     <div class="hgrid3">
       <div>
         ${homeSectHead("#ffb02e", ICO_TROPHY, "Paling banyak ditonton", `views terbanyak per video ${esc(art.name)}`)}
@@ -2263,6 +2426,7 @@ function renderArtistHighlights() {
     </div>
   `;
   bindCards(el);
+  bindMenu(el);
   bindWatch(el);
 }
 
@@ -3757,7 +3921,10 @@ function spWrappedCompute(gran, key, noPrev) {
   if (a >= nowT) return null;
   const bEff = Math.min(b, nowT);
   const dayKeys = [];
-  for (let di = dayIndexOf(a); di <= dayIndexOf(bEff); di++) dayKeys.push(dateKeyOfDayIndex(di));
+  /* batas atas EKSKLUSIF: hari pertama periode berikutnya tak dihitung (dulu 1 Jan ikut masuk
+   * rekap tahun sebelumnya — sebabnya muncul dua batang "Jan" di rincian bulanan) */
+  const endIdx = dayIndexOf(Math.min(b - 1, bEff));
+  for (let di = dayIndexOf(a); di <= endIdx; di++) dayKeys.push(dateKeyOfDayIndex(di));
   const perDay = new Map();
   const songs = [];
   const perArtist = new Map();
@@ -3952,7 +4119,7 @@ function renderWrappedPage(sec) {
       <div class="del"><div class="d1">+${fmtCompact(s.delta)}</div><div class="d2">stream</div></div>
     </div>`;
   const topRows = wd.songs.slice(0, 10).map(wpRowHTML).join("");
-  const baru = wd.songs.filter((s) => s.releasedIn).slice(0, 5);
+  const baru = wd.songs.filter((s) => s.releasedIn).slice(0, 10);
   const baruRows = baru.map((s, i) => wpRowHTML(s, i)).join("");
 
   /* milestone yang ditembus di tengah periode */
@@ -4070,7 +4237,7 @@ function renderWrappedPage(sec) {
       <div>
         ${spSectHead("#38bdf8", ICO_SP_PEOPLE, "Porsi artis", "kontribusi tiap artis periode ini")}
         <div class="sharecard">${shareRows || '<div style="font-size:12px;color:var(--muted)">Belum ada porsi artis.</div>'}</div>
-        ${baruRows ? `<div style="margin-top:16px">${spSectHead("#ff4d6d", ICO_SP_FIRE, "Rilisan terbaru teratas", "rilis di tengah periode")}<div style="display:flex;flex-direction:column;gap:7px">${baruRows}</div></div>` : ""}
+        ${baruRows ? `<div style="margin-top:16px">${spSectHead("#ff4d6d", ICO_SP_FIRE, "Rilisan terbaru teratas", "10 rilisan teratas yang rilis di tengah periode")}<div style="display:flex;flex-direction:column;gap:7px">${baruRows}</div></div>` : ""}
         ${msRows ? `<div style="margin-top:16px">${spSectHead("#ffb02e", "M9 18.7 13.2 10l4.2 8.7M12 3 3 21h3l1.7-3.6h8.6L18 21h3L12 3z", "Milestone ditembus", "dicapai di tengah periode ini")}<div style="display:flex;flex-direction:column;gap:7px">${msRows}</div></div>` : ""}
       </div>
     </div>
@@ -4404,15 +4571,15 @@ function spTrackRowHTML(tr, i) {
   const tot = spTrackTotal(tr);
   const ms = spMilestones(tr);
   const nxt = ms.next[0] || null;
-  const idx = nxt ? SP_MS.indexOf(nxt) : SP_MS.length - 1;
-  const prevStep = nxt ? (SP_MS[idx - 1] || 0) : tot;
   const pct = nxt ? Math.min(100, (tot / nxt) * 100) : 100;
-  return `<div class="sprow" data-spk="${esc(tr.key)}" tabindex="0" role="button" aria-label="${esc(tr.name)}">
+  const tip = nxt
+    ? fmtCompact(tot) + " stream · menuju " + fmtCompact(nxt) + " (" + Math.round(pct) + "%)"
+    : fmtCompact(tot) + " stream · sudah di puncak milestone";
+  return `<div class="sprow" data-spk="${esc(tr.key)}" tabindex="0" role="button" aria-label="${esc(tr.name)}" title="${esc(tip)}">
     <span class="idx">${i + 1}</span>
     <div class="in">
       <div class="n">${esc(tr.name)}${tr.live ? '<span class="typetag live">Live</span>' : ""} <span class="dur">${tr.duration ? fmtDurSp(tr.duration) : ""}</span></div>
       <div class="bar"><i style="width:${pct}%"></i></div>
-      <div class="bm"><span>${fmtCompact(prevStep)}</span><span>${nxt ? fmtCompact(nxt) : "★ puncak"}</span></div>
     </div>
     <button class="wlbtn${wlOn("sp:" + tr.key) ? " on" : ""}" data-wl="sp:${esc(tr.key)}" title="Pantau lagu ini" aria-label="Pantau ${esc(tr.name)}">★</button>
     <div class="nums">
@@ -4571,6 +4738,7 @@ function renderSpArtist(sec) {
       </div>` : ""}
       <div class="chhint"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>Klik kartu ini untuk grafik lengkap + pilihan rentang waktu &amp; milestone — seperti kartu channel YouTube</div>
     </div>
+    ${menuRowHTML("spotify")}
     <div class="hgrid3">
       <div>
         ${spSectHead("#1ed760", ICO_SP_TROPHY, "Stream terbanyak", `stream terbanyak per versi ${esc(a.name)}`)}
@@ -4649,6 +4817,7 @@ function renderSpArtist(sec) {
   sec.querySelectorAll("[data-albopen]").forEach((b) => {
     b.addEventListener("click", (e) => { e.stopPropagation(); openSpAlbum(b.dataset.albopen); });
   });
+  bindMenu(sec);
   bindWatch(sec);
   sec.querySelectorAll("[data-spk]").forEach((el) => {
     const go = () => openSpTrack(el.dataset.spk);
@@ -4948,7 +5117,7 @@ const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-
 
 function applySiteTitle() {
   const t = state.config ? state.config.site : { title: "K-POP PULSE", subtitle: "Statistik YouTube Artis K-pop" };
-  $("#siteTitle").childNodes[0].textContent = t.title + " ";
+  $("#siteTitle").textContent = t.title;
   $("#siteSubtitle").textContent = t.subtitle;
   document.title = `${t.title} — ${t.subtitle}`;
 }
