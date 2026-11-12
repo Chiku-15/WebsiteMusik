@@ -41,7 +41,7 @@
     border-bottom:1px solid var(--border);
   }
   .hwrap{max-width:1180px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:.2px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:.2px;cursor:pointer;border:none;background:none;color:inherit;padding:0;font-family:inherit}
   .logo .dot{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#ff4d6d,#6a78ff);display:flex;align-items:center;justify-content:center;flex:none}
   .logo .dot svg{width:16px;height:16px;fill:#fff}
   .logo small{display:block;font-size:10.5px;font-weight:600;color:var(--muted);letter-spacing:.4px}
@@ -473,6 +473,47 @@
     .sprow{grid-template-columns:22px minmax(0,1fr) auto}
     .splbthumb{width:44px}
   }
+  /* ---------- SPOTIFY WRAPPED (rekap bulanan & tahunan) ---------- */
+  .wrapped{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:14px;align-items:stretch}
+  @media (max-width:920px){.wrapped{grid-template-columns:1fr}}
+  .wpcard{
+    position:relative;overflow:hidden;border-radius:18px;padding:22px 22px 18px;color:#eafff3;
+    background:linear-gradient(155deg,#0f6b3c,#0b3d24 55%,#0a1219 115%);
+    border:1px solid color-mix(in srgb,#1ed760 32%,transparent);
+    display:flex;flex-direction:column;
+  }
+  .wpcard::after{
+    content:"";position:absolute;right:-70px;top:-90px;width:260px;height:260px;border-radius:50%;
+    background:radial-gradient(closest-side,rgba(30,215,96,.35),transparent);filter:blur(6px);pointer-events:none;
+  }
+  .wpbadge{display:inline-flex;align-items:center;gap:7px;font-size:10px;font-weight:800;letter-spacing:2.2px;color:#1ed760;
+    border:1px solid color-mix(in srgb,#1ed760 45%,transparent);border-radius:999px;padding:6px 14px;background:rgba(30,215,96,.10);width:max-content}
+  .wptitle{font-size:clamp(22px,3.6vw,32px);font-weight:800;margin:12px 0 2px;letter-spacing:.3px;position:relative;z-index:1}
+  .wpbig{font-size:clamp(36px,6.4vw,54px);font-weight:800;font-variant-numeric:tabular-nums;line-height:1.08;position:relative;z-index:1;
+    background:linear-gradient(92deg,#1ed760,#c8ffd9);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .wpsub{color:#9fd8b4;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;margin-top:3px}
+  .wpstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px;position:relative;z-index:1}
+  .wpstats .ws{background:rgba(0,0,0,.28);border:1px solid rgba(30,215,96,.22);border-radius:12px;padding:9px 11px;
+    font-size:10.5px;color:#bfe9cf;font-weight:700;line-height:1.45;min-width:0}
+  .wpstats .ws b{display:block;color:#fff;font-size:14px;font-weight:800;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .wpshare{margin-top:14px;display:flex;flex-direction:column;gap:9px;position:relative;z-index:1}
+  .shr .shn{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:11.5px;font-weight:700;color:#cfe9d9;margin-bottom:4px}
+  .shr .shn b{color:#fff;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .shr .shb{height:6px;border-radius:3px;background:rgba(255,255,255,.14);overflow:hidden}
+  .shr .shb i{display:block;height:100%;border-radius:3px}
+  .wpnote{margin-top:12px;font-size:10.5px;color:#9fd8b4;line-height:1.5;position:relative;z-index:1}
+  .wpright{display:flex;flex-direction:column;gap:7px;min-width:0}
+  .wprhead{font-size:11.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin:0 2px}
+  .wprow{display:flex;align-items:center;gap:11px;background:var(--card);border:1px solid var(--border);border-radius:12px;
+    padding:7px 12px;cursor:pointer;transition:.15s;min-width:0}
+  .wprow:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:color-mix(in srgb,#1ed760 40%,var(--border))}
+  .wprow .rk{width:28px;font-size:15px;font-weight:800;text-align:center;color:var(--muted);flex:none;font-variant-numeric:tabular-nums}
+  .wprow.top3 .rk{font-size:18px;background:linear-gradient(135deg,#1db954,#a9e8bd);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .wprow .cv{width:38px;height:38px;border-radius:8px;object-fit:cover;flex:none;border:1px solid var(--border);background:var(--chip)}
+  .wprow .nm{flex:1;min-width:0;font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .wprow .del{text-align:right;flex:none}
+  .wprow .del .d1{color:#1ed760;font-weight:800;font-size:13px;font-variant-numeric:tabular-nums}
+  .wprow .del .d2{color:var(--muted);font-size:10px;font-weight:700;margin-top:1px}
 </style>
 </head>
 <body>
@@ -508,7 +549,7 @@
 
 <header>
   <div class="hwrap">
-    <div class="logo">
+    <div class="logo" id="logoHome" title="Kembali ke beranda" role="button" tabindex="0" aria-label="Kembali ke beranda">
       <span class="dot"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg></span>
       <span id="siteTitle">Pemantau YouTube<small id="siteSubtitle">—</small></span>
     </div>
@@ -517,7 +558,6 @@
       <button class="tab active" data-p="yt" id="ptabYT">YouTube</button>
       <button class="tab" data-p="spotify" id="ptabSP">Spotify</button>
     </nav>
-    <nav class="tabs" id="artistTabs" aria-label="Pilih artis"></nav>
     <button class="iconbtn" id="themeBtn" title="Ganti tema" aria-label="Ganti tema">
       <svg id="iconMoon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
       <svg id="iconSun" viewBox="0 0 24 24" style="display:none"><path d="M12 17a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0 2a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0v-2a1 1 0 0 1 1-1zm0-18a1 1 0 0 1 1 1v2a1 1 0 1 1-2 0V2a1 1 0 0 1 1-1zm10 10a1 1 0 0 1-1 1h-2a1 1 0 1 1 0-2h2a1 1 0 0 1 1 1zM5 12a1 1 0 0 1-1 1H2a1 1 0 1 1 0-2h2a1 1 0 0 1 1 1zm13.66-6.66a1 1 0 0 1 0 1.41l-1.41 1.42a1 1 0 1 1-1.42-1.42l1.42-1.41a1 1 0 0 1 1.41 0zM8.17 15.83a1 1 0 0 1 0 1.41l-1.41 1.42A1 1 0 1 1 5.34 17l1.41-1.41a1 1 0 0 1 1.42 0zm10.49 2.83a1 1 0 0 1-1.41 0l-1.42-1.42a1 1 0 0 1 1.42-1.41l1.41 1.41a1 1 0 0 1 0 1.42zM8.17 8.17a1 1 0 0 1-1.42 0L5.34 6.75a1 1 0 0 1 1.41-1.41l1.42 1.41a1 1 0 0 1 0 1.42z"/></svg>
@@ -917,7 +957,9 @@ const state = {
   sp: { loading: null, error: null, meta: null, artists: null, albums: null, tracks: null, raw: null, vers: null },
   spQuery: "",
   spRange: "all",
-  spArtistTab: "albums",  // "albums" | "ms" — sub-tab di halaman artis Spotify
+  spArtistTab: "albums",  // "albums" | "songs" | "ms" — sub-tab di halaman artis Spotify
+  spSongSort: "stream",   // urutan daftar LAGU: "stream" | "daily" | "newest"
+  spWrap: null,           // Wrapped Spotify: { gran: "month"|"year", key } — diisi saat render
   spMsTab: "table",       // "table" | "upcoming" | "reached"
   spSort: "stream",       // kategori daftar Album & lagu: "stream" | "daily" | "newest"
   spChanMetric: "total",  // metrik modal artis Spotify: "total" | "ml"
@@ -930,6 +972,50 @@ const hasZoom = (() => {
   catch { return false; }
 })();
 const isCoarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+
+/* ---------- plugin crosshair (garis bantu vertikal) ----------
+ * Garis putus-putus mengikuti kursor supaya jelas titik mana yang dibaca tooltip —
+ * bikin grafik lebih mudah dibaca, apalagi di kurva panjang dengan banyak titik. */
+const kpCrosshair = {
+  id: "kpcrosshair",
+  afterDatasetsDraw(chart) {
+    const x = chart.$kpX;
+    if (x == null || !chart.chartArea) return;
+    const { ctx, chartArea: ar } = chart;
+    ctx.save();
+    ctx.strokeStyle = cssVar("--chart-text") || "#8a93a8";
+    ctx.globalAlpha = .38;
+    ctx.setLineDash([4, 4]);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x, ar.top);
+    ctx.lineTo(x, ar.bottom);
+    ctx.stroke();
+    ctx.restore();
+  },
+  afterEvent(chart, args) {
+    const e = args.event;
+    let x = null;
+    if (args.inChartArea && e.type === "mousemove") {
+      const els = chart.getElementsAtEventForMode(e, "index", { intersect: false }, true);
+      if (els && els.length) x = els[0].element.x;
+    }
+    const prev = chart.$kpX;
+    chart.$kpX = x;
+    if ((prev == null) !== (x == null) || (x != null && prev != null && Math.abs(prev - x) > .5)) args.changed = true;
+  },
+};
+if (typeof Chart !== "undefined" && Chart.register) {
+  try { Chart.register(kpCrosshair); } catch {}
+}
+
+/* tooltip label tambahan: selisih vs titik sebelumnya (kumulatif terasa "berapa nambahnya") */
+function cumDeltaTip(c, unit, estTxt) {
+  const arr = (c.dataset && c.dataset.data) || [];
+  const prev = c.dataIndex > 0 ? arr[c.dataIndex - 1] : null;
+  const d = prev && prev.y != null ? c.parsed.y - prev.y : null;
+  return (estTxt ? estTxt + " " : "") + (d != null && d > 0 ? "  ·  +" + fmtCompact(Math.round(d)) + " dari titik sebelumnya" : "");
+}
 
 function destroyChartById(cid) {
   state.chartRegistry = state.chartRegistry.filter((c) => {
@@ -964,15 +1050,10 @@ async function loadData() {
 function artistOf(id) { return state.config.artists.find((a) => a.id === id); }
 
 /* ===================== render: tabs & navigasi ===================== */
+/* Tombol Beranda dihapus — menekan tab YouTube/Spotify LANGSUNG membawa ke beranda
+ * platform itu. Pindah halaman artis lewat kartu channel/artis di beranda; kembali ke
+ * beranda lewat tab platform (klik lagi) atau logo situs di kiri atas. */
 function renderTabs() {
-  const nav = $("#artistTabs");
-  const btn = (id, label) => `<button class="tab ${state.view === id ? "active" : ""}" data-id="${id}">${esc(label)}</button>`;
-  /* hanya Beranda — pindah halaman artis lewat kartu channel di beranda */
-  nav.innerHTML = btn("home", "Beranda");
-  nav.querySelectorAll(".tab").forEach((b) =>
-    b.addEventListener("click", () => setView(b.dataset.id))
-  );
-  /* tombol platform YouTube/Spotify + hitungan item yang dipantau */
   const spN = state.sp.tracks ? Object.keys(state.sp.tracks).length : null;
   const ytN = state.videos ? watchedIds().size : null;
   $("#ptabYT").textContent = "YouTube" + (ytN ? " (" + ytN + ")" : "");
@@ -984,14 +1065,18 @@ function renderTabs() {
 }
 
 async function setPlatform(p) {
-  if (state.platform === p) return;
-  state.platform = p;
-  if (p === "spotify" && !state.sp.tracks && !state.sp.error) {
-    renderAll();               // tampil "Memuat data Spotify…"
-    await loadSpData();
-    renderAll();
-    window.scrollTo(0, 0);
-    return;
+  const same = state.platform === p;
+  if (same && state.view === "home") return;   // sudah di beranda platform ini
+  state.view = "home";                          // menekan tab platform = masuk beranda
+  if (!same) {
+    state.platform = p;
+    if (p === "spotify" && !state.sp.tracks && !state.sp.error) {
+      renderAll();               // tampil "Memuat data Spotify…"
+      await loadSpData();
+      renderAll();
+      window.scrollTo(0, 0);
+      return;
+    }
   }
   renderAll();
   window.scrollTo(0, 0);
@@ -1910,14 +1995,17 @@ function interpolatedBuckets(pts, gran, anchorT, clipFromIdx) {
   }
   /* bucket TERAKHIR = hari/pekan berjalan (parsial) — tanpa koreksi tampak seperti
    * penurunan palsu di ujung kanan. Skala ke nilai setara periode penuh + tandai
-   * interpolasi. Bucket bulanan dibiarkan (bulan berjalan sudah lazim). */
+   * interpolasi & "periode berjalan" di tooltip. Faktor DIBATASI 3× — dulu sampai 8×,
+   * membuat batang terakhir melonjak jauh lebih tinggi dari hari-hari normal
+   * (salah satu grafik yang terlihat "aneh"). Bucket bulanan dibiarkan (bulan berjalan
+   * sudah lazim). */
   if (out.length && (gran === "day" || gran === "week")) {
     const last = out[out.length - 1];
     const elapsed = tZ - last.t;
     const full = gran === "day" ? 86400 : 7 * 86400;
     if (elapsed >= 3 * 3600 && elapsed < full) {
-      const factor = Math.min(8, full / elapsed);
-      if (factor > 1.05) { last.v *= factor; last.ip = true; }
+      const factor = Math.min(3, full / elapsed);
+      if (factor > 1.05) { last.v *= factor; last.ip = true; last.partial = true; }
     }
   }
   return out;
@@ -1952,50 +2040,51 @@ const DAY_FULL = new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "shor
 function makeAreaChart(canvas, deltas, color, cid, unit, gran) {
   const flags = deltas.map((b) => (b.est ? "est" : b.ip ? "ip" : null));
   const dimmed = (i) => flags[i] != null;
-  return newChart(canvas, {
+  const vals = deltas.map((b) => b.v);
+  const avg = vals.length >= 3 ? vals.reduce((s, x) => s + x, 0) / vals.length : null;
+  const datasets = [{
+    label: unit,
+    data: vals,
+    borderColor: color, borderWidth: 2.4, pointRadius: 0, pointHitRadius: 12, tension: 0.25,
+    segment: {
+      borderColor: (c) => (dimmed(c.p0DataIndex) || dimmed(c.p1DataIndex)) ? color + "55" : color,
+      borderDash: (c) => (dimmed(c.p0DataIndex) || dimmed(c.p1DataIndex)) ? [5, 4] : undefined,
+    },
+    fill: true, backgroundColor: (ctx2) => {
+      const g = ctx2.chart.ctx.createLinearGradient(0, 0, 0, ctx2.chart.height || 260);
+      g.addColorStop(0, color + "55"); g.addColorStop(1, color + "00");
+      return g;
+    },
+  }];
+  /* garis rata-rata putus-putus — acuan cepat: periode mana yang di atas/bawah ritme biasa */
+  if (avg != null) {
+    datasets.push({
+      label: "Rata-rata",
+      data: vals.map(() => Math.round(avg)),
+      borderColor: cssVar("--chart-text") || "#8a93a8", borderWidth: 1.3,
+      borderDash: [7, 5], pointRadius: 0, pointHitRadius: 0, fill: false, tension: 0,
+    });
+  }
+  const cfg = {
     type: "line",
     data: {
       labels: deltas.map((b) => bucketLabel(b.key, gran || "day")),
-      datasets: [{
-        data: deltas.map((b) => b.v),
-        borderColor: color, borderWidth: 2.4, pointRadius: 0, pointHitRadius: 12, tension: 0.25,
-        segment: {
-          borderColor: (c) => (dimmed(c.p0DataIndex) || dimmed(c.p1DataIndex)) ? color + "55" : color,
-          borderDash: (c) => (dimmed(c.p0DataIndex) || dimmed(c.p1DataIndex)) ? [5, 4] : undefined,
-        },
-        fill: true, backgroundColor: (ctx2) => {
-          const g = ctx2.chart.ctx.createLinearGradient(0, 0, 0, ctx2.chart.height || 260);
-          g.addColorStop(0, color + "55"); g.addColorStop(1, color + "00");
-          return g;
-        },
-      }],
+      datasets,
     },
-    options: chartOpts((c) => NF.format(Math.round(c.parsed.y)) + " " + unit + (flags[c.dataIndex] === "est" ? " (estimasi)" : flags[c.dataIndex] === "ip" ? " (interpolasi)" : "")),
-  }, cid);
-}
-
-function makeLineChart(canvas, cum, color, cid, unit, gran, extra) {
-  const estFlags = cum.map((p) => p.est);
-  return newChart(canvas, {
-    type: "line",
-    data: {
-      labels: cum.map((p) => bucketLabel(p.key, gran || "day")),
-      datasets: [{
-        data: cum.map((p) => p.v),
-        borderColor: color, borderWidth: 2.4, pointRadius: 0, pointHitRadius: 12, tension: 0.25,
-        segment: {
-          borderColor: (c) => (estFlags[c.p0DataIndex] || estFlags[c.p1DataIndex]) ? color + "55" : color,
-          borderDash: (c) => (estFlags[c.p0DataIndex] || estFlags[c.p1DataIndex]) ? [5, 4] : undefined,
-        },
-        fill: true, backgroundColor: (ctx2) => {
-          const g = ctx2.chart.ctx.createLinearGradient(0, 0, 0, ctx2.chart.height || 260);
-          g.addColorStop(0, color + "55"); g.addColorStop(1, color + "00");
-          return g;
-        },
-      }],
-    },
-    options: chartOpts((c) => fmtExact(c.parsed.y) + " " + unit + (estFlags[c.dataIndex] ? " (estimasi)" : ""), extra || {}),
-  }, cid);
+    options: chartOpts((c) => {
+      if (c.datasetIndex === 1) return "Rata-rata: " + NF.format(Math.round(avg)) + " " + unit;
+      const b = deltas[c.dataIndex] || {};
+      return NF.format(Math.round(c.parsed.y)) + " " + unit
+        + (b.partial ? " (periode berjalan)" : b.est ? " (estimasi)" : b.ip ? " (interpolasi)" : "");
+    }),
+  };
+  if (datasets.length > 1) {
+    cfg.options.plugins.legend = {
+      display: true,
+      labels: { color: cssVar("--chart-text"), boxWidth: 14, boxHeight: 2, font: { size: 10.5, weight: 700 } },
+    };
+  }
+  return newChart(canvas, cfg, cid);
 }
 
 /* ---------- poros waktu linier (proporsional tanggal) ----------
@@ -2069,8 +2158,8 @@ function makeDualLineChart(canvas, vpts, lpts, color, cid, anchorT) {
           callbacks: {
             title: (items) => items.length ? DAY_FULL.format(new Date(items[0].parsed.x)) : "",
             label: (c) => c.datasetIndex === 0
-              ? fmtExact(c.parsed.y) + " views"
-              : fmtExact(c.parsed.y) + " likes",
+              ? fmtExact(c.parsed.y) + " views" + cumDeltaTip(c, "views")
+              : fmtExact(c.parsed.y) + " likes" + cumDeltaTip(c, "likes"),
           },
         },
       },
@@ -2078,12 +2167,13 @@ function makeDualLineChart(canvas, vpts, lpts, color, cid, anchorT) {
         x: timeScaleOpts(tA, tZ),
         y: {
           beginAtZero: true,
+          grace: "5%",
           grid: { color: cssVar("--chart-grid") },
           ticks: { color: cssVar("--chart-text"), font: { size: 10.5 }, callback: (v) => fmtCompact(v) },
         },
         ...(hasLikes ? {
           y1: {
-            position: "right", beginAtZero: true, grid: { drawOnChartArea: false },
+            position: "right", beginAtZero: true, grace: "5%", grid: { drawOnChartArea: false },
             ticks: { color: likeColor, font: { size: 10.5 }, callback: (v) => fmtCompact(v) },
           },
         } : {}),
@@ -2105,8 +2195,8 @@ function makeTimeLineChart(canvas, pts, color, cid, unit, opts) {
         borderColor: color, borderWidth: 2.4,
         pointRadius: pts.length <= 14 ? 2.2 : 0, pointHitRadius: 14, tension: 0,
         segment: o.dimEst ? {
-          borderColor: (c) => (dim(c.p0DataIndex) || dim(c.p1DataIndex)) ? color + "55" : color,
-          borderDash: (c) => (dim(c.p0DataIndex) || dim(c.p1DataIndex)) ? [5, 4] : undefined,
+          borderColor: (c) => (dim(c.p0DataIndex) || dim(c.p1DataIndex)) ? color + "77" : color,
+          borderDash: (c) => (dim(c.p0DataIndex) || dim(c.p1DataIndex)) ? [4, 3] : undefined,
         } : undefined,
         fill: true,
         backgroundColor: (ctx2) => {
@@ -2119,6 +2209,7 @@ function makeTimeLineChart(canvas, pts, color, cid, unit, opts) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      ...(o.paddingTop ? { layout: { padding: { top: o.paddingTop } } } : {}),
       interaction: { intersect: false, mode: "nearest" },
       animation: { duration: 250 },
       plugins: {
@@ -2128,7 +2219,9 @@ function makeTimeLineChart(canvas, pts, color, cid, unit, opts) {
           borderColor: cssVar("--border"), borderWidth: 1, padding: 10, displayColors: false,
           callbacks: {
             title: (items) => items.length ? DAY_FULL.format(new Date(items[0].parsed.x)) : "",
-            label: (c) => fmtExact(c.parsed.y) + " " + unit + (pts[c.dataIndex] && pts[c.dataIndex].e ? " (estimasi)" : ""),
+            label: (c) => fmtExact(c.parsed.y) + " " + unit
+              + (pts[c.dataIndex] && pts[c.dataIndex].e ? " (estimasi)" : "")
+              + cumDeltaTip(c, unit),
           },
         },
       },
@@ -2136,6 +2229,7 @@ function makeTimeLineChart(canvas, pts, color, cid, unit, opts) {
         x: timeScaleOpts(tA, tZ),
         y: {
           beginAtZero: true,
+          grace: "5%",
           grid: { color: cssVar("--chart-grid") },
           ticks: { color: cssVar("--chart-text"), font: { size: 10.5 }, callback: (v) => fmtCompact(v) },
         },
@@ -2671,8 +2765,211 @@ function renderSpAll() {
   renderTopline();
 }
 
+/* ===================== SPOTIFY WRAPPED (rekap bulanan & tahunan) =====================
+ * Ala Spotify Wrapped: rekap TAHUNAN hadir tiap akhir tahun, plus rekap BULANAN tiap
+ * bulan. Semua angka dihitung dari riwayat stream yang direkam situs ini (Spotify Charts
+ * via kworb.net): nilai lagu di ujung periode dikurangi nilai di awal periode
+ * (carry-forward antar titik rekam), lagu yang rilis di tengah periode dihitung sejak 0.
+ * Titik dari kurva estimasi ditandai (est.) supaya rekap tetap jujur. */
+const MFULL = new Intl.DateTimeFormat("id-ID", { month: "long", year: "numeric" });
+
+function spWrappedLabel(gran, key) {
+  return gran === "month" ? MFULL.format(new Date(key + "-01T00:00:00")) : "Tahun " + key;
+}
+function spWrappedChipLabel(gran, key) {
+  return gran === "month" ? MF.format(new Date(key + "-01T00:00:00")) : key;
+}
+function spWrappedPrevKey(gran, key) {
+  if (gran === "month") {
+    const [y, m] = key.split("-").map(Number);
+    const d = new Date(Date.UTC(y, m - 2, 1));
+    return d.getUTCFullYear() + "-" + String(d.getUTCMonth() + 1).padStart(2, "0");
+  }
+  return String(Number(key) - 1);
+}
+function spWrappedBounds(gran, key) {
+  if (gran === "month") {
+    const [y, m] = key.split("-").map(Number);
+    return { a: Math.floor(Date.UTC(y, m - 1, 1) / 1000 - WIB_OFF), b: Math.floor(Date.UTC(y, m, 1) / 1000 - WIB_OFF) };
+  }
+  const y = Number(key);
+  return { a: Math.floor(Date.UTC(y, 0, 1) / 1000 - WIB_OFF), b: Math.floor(Date.UTC(y + 1, 0, 1) / 1000 - WIB_OFF) };
+}
+/* daftar periode yang tersedia dari data (terbaru dulu) — bulan dibatasi 12 terakhir */
+function spWrappedPeriodList() {
+  let minT = Infinity;
+  for (const tr of Object.values(state.sp.tracks || {})) {
+    for (const p of tr.history || []) if (p.t < minT) minT = p.t;
+    const r = spRelT(tr);
+    if (r != null && r < minT) minT = r;
+  }
+  if (!isFinite(minT)) return { months: [], years: [] };
+  const w0 = new Date((minT + WIB_OFF) * 1000);
+  const wn = new Date((Date.now() / 1000 + WIB_OFF) * 1000);
+  const months = [], years = [];
+  let y = w0.getUTCFullYear(), m = w0.getUTCMonth();
+  while (y < wn.getUTCFullYear() || (y === wn.getUTCFullYear() && m <= wn.getUTCMonth())) {
+    months.push(y + "-" + String(m + 1).padStart(2, "0"));
+    m++; if (m > 11) { m = 0; y++; }
+  }
+  for (let yy = w0.getUTCFullYear(); yy <= wn.getUTCFullYear(); yy++) years.push(String(yy));
+  return { months: months.reverse().slice(0, 12), years: years.reverse() };
+}
+/* nilai lagu pada batas waktu t (carry-forward titik rekam terakhir ≤ t) */
+function spTrackValueAt(tr, t) {
+  const h = tr.history || [];
+  let best = null;
+  for (const p of h) { if (p.t <= t) best = p; else break; }
+  return best ? { v: best.v, e: best.e === 1 } : null;
+}
+/* rekap satu periode. noPrev = jangan hitung periode pembanding (hindari rekursi) */
+function spWrappedCompute(gran, key, noPrev) {
+  const { a, b } = spWrappedBounds(gran, key);
+  const nowT = Date.now() / 1000;
+  if (a >= nowT) return null;
+  const bEff = Math.min(b, nowT);
+  const dayKeys = [];
+  for (let di = dayIndexOf(a); di <= dayIndexOf(bEff); di++) dayKeys.push(dateKeyOfDayIndex(di));
+  const perDay = new Map();
+  const songs = [];
+  const perArtist = new Map();
+  let total = 0, anyEst = false, nSongs = 0;
+  for (const tr of Object.values(state.sp.tracks || {})) {
+    if (!tr.history || !tr.history.length) continue;
+    const h = tr.history.slice().sort((x, y) => x.t - y.t);
+    const ends = new Map();
+    let i = 0;
+    for (const k of dayKeys) {
+      const endT = (wibDayStartIso(k) || 0) + 86399;
+      while (i < h.length && h[i].t <= endT) { ends.set(k, { v: h[i].v, e: h[i].e === 1 }); i++; }
+    }
+    if (!ends.size) continue;
+    const rel = spRelT(tr);
+    const va = spTrackValueAt(tr, a - 1);
+    let v0 = null, v0e = false;
+    if (va) { v0 = va.v; v0e = va.e; }
+    else if (rel != null && rel >= a && rel < bEff) v0 = 0;   // rilis di tengah periode → mulai 0
+    else continue;                                            // tak ada dasar pembanding → lewati
+    let prevV = v0, prevE = v0e, estFlag = v0e;
+    for (const k of dayKeys) {
+      const p = ends.get(k);
+      if (!p) continue;
+      const dv = Math.max(0, p.v - prevV);
+      if (dv > 0) {
+        const acc = perDay.get(k) || { v: 0, est: false };
+        acc.v += dv;
+        acc.est = acc.est || p.e || prevE;
+        perDay.set(k, acc);
+      }
+      prevV = p.v; prevE = p.e; estFlag = estFlag || p.e;
+    }
+    const delta = Math.max(0, prevV - v0);
+    total += delta;
+    nSongs++;
+    anyEst = anyEst || estFlag;
+    const ar = perArtist.get(tr.artistId) || { delta: 0, n: 0 };
+    ar.delta += delta; ar.n++;
+    perArtist.set(tr.artistId, ar);
+    if (delta > 0) songs.push({ tr, delta, est: estFlag, releasedIn: rel != null && rel >= a && rel < bEff });
+  }
+  songs.sort((x, y) => y.delta - x.delta);
+  let bestDay = null;
+  for (const [k, acc] of perDay) if (!bestDay || acc.v > bestDay.v) bestDay = { key: k, v: acc.v, est: acc.est };
+  let prev = null, pct = null;
+  if (!noPrev) {
+    const pk = spWrappedPrevKey(gran, key);
+    if (pk) prev = spWrappedCompute(gran, pk, true);
+    if (prev && prev.total > 0) pct = ((total - prev.total) / prev.total) * 100;
+  }
+  return {
+    gran, key, a, b: bEff, total, songs, perArtist, bestDay,
+    avgPerDay: total / Math.max(1, dayKeys.length), nDays: dayKeys.length, nSongs,
+    prev, pct, anyEst,
+  };
+}
+
+function renderWrappedSection() {
+  if (!state.spWrap) {
+    try { state.spWrap = JSON.parse(localStorage.getItem("py.spwrap") || "null"); } catch { state.spWrap = null; }
+    if (!state.spWrap || (state.spWrap.gran !== "month" && state.spWrap.gran !== "year")) state.spWrap = { gran: "year", key: null };
+  }
+  const plist = spWrappedPeriodList();
+  const avail = state.spWrap.gran === "month" ? plist.months : plist.years;
+  if (!avail.length) return "";
+  if (!state.spWrap.key || !avail.includes(state.spWrap.key)) state.spWrap.key = avail[0];
+  const wd = spWrappedCompute(state.spWrap.gran, state.spWrap.key);
+  if (!wd || wd.nSongs === 0) {
+    return `
+    <section style="margin-top:26px">
+      ${spSectHead("#1ed760", "M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17l-6.1 3.6 1.4-6.8L2.2 9.1l6.9-.8z", "Wrapped", "rekap bulanan &amp; tahunan ala Spotify Wrapped")}
+      <div class="banner">Belum ada data stream untuk rekap Wrapped — jalankan dulu workflow “Kumpulkan data” di tab Actions.</div>
+    </section>`;
+  }
+  const wLabel = spWrappedLabel(state.spWrap.gran, state.spWrap.key);
+  const chips = avail.map((k) =>
+    `<button class="mtab ${k === state.spWrap.key ? "active" : ""}" data-wkey="${k}">${esc(spWrappedChipLabel(state.spWrap.gran, k))}</button>`
+  ).join("");
+
+  /* porsi artis dalam periode ini */
+  const arRows = [...wd.perArtist.entries()]
+    .map(([id, x]) => ({ a: spArtistOf(id) || { name: id, color: SP_GREEN }, delta: x.delta, n: x.n }))
+    .sort((x, y) => y.delta - x.delta);
+  const shareRows = arRows.map((x) => {
+    const pctA = wd.total > 0 ? (x.delta / wd.total) * 100 : 0;
+    return `<div class="shr">
+      <div class="shn"><span>${esc(x.a.name)} · ${x.n} lagu</span><b>${fmtCompact(x.delta)} · ${pctA.toFixed(1).replace(".", ",")}%</b></div>
+      <div class="shb"><i style="width:${Math.max(2, pctA)}%;background:linear-gradient(90deg,${x.a.color || SP_GREEN},#b9ffce)"></i></div>
+    </div>`;
+  }).join("");
+
+  const prevLbl = wd.prev ? esc(spWrappedChipLabel(state.spWrap.gran, spWrappedPrevKey(state.spWrap.gran, state.spWrap.key))) : "periode sebelumnya";
+  const pctTxt = wd.pct != null
+    ? (wd.pct >= 0 ? "▲ +" : "▼ −") + Math.abs(wd.pct).toFixed(1).replace(".", ",") + "%"
+    : (wd.prev ? "± 0%" : "periode pertama");
+  const topRows = wd.songs.slice(0, 10).map((s, i) => `
+    <div class="wprow ${i < 3 ? "top3" : ""}" data-spk="${esc(s.tr.key)}" tabindex="0" role="button" aria-label="${esc(s.tr.name)}">
+      <div class="rk">${i + 1}</div>
+      ${s.tr.cover ? `<img class="cv" src="${esc(s.tr.cover)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : `<div class="cv" style="display:grid;place-items:center;color:var(--muted)">♪</div>`}
+      <div class="nm">${esc(s.tr.name)}${s.tr.live ? '<span class="typetag live">Live</span>' : ""}${s.releasedIn ? ' <span class="typetag">baru rilis</span>' : ""}${s.est ? ' <span class="cellno">(est.)</span>' : ""}</div>
+      <div class="del"><div class="d1">+${fmtCompact(s.delta)}</div><div class="d2">stream</div></div>
+    </div>`).join("");
+
+  return `
+  <section style="margin-top:26px" id="spWrapped">
+    ${spSectHead("#1ed760", "M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17l-6.1 3.6 1.4-6.8L2.2 9.1l6.9-.8z", "Wrapped", "rekap bulanan &amp; tahunan — dihitung dari stream yang direkam situs ini")}
+    <div class="stabs" style="margin:0 2px 12px">
+      <button class="stab ${state.spWrap.gran === "month" ? "active" : ""}" data-wgran="month">Bulanan</button>
+      <button class="stab ${state.spWrap.gran === "year" ? "active" : ""}" data-wgran="year">Tahunan</button>
+    </div>
+    <div class="mtabs" style="margin:0 2px 14px">${chips}</div>
+    <div class="wrapped">
+      <div class="wpcard">
+        <div class="wpbadge">♪ SPOTIFY WRAPPED · ${state.spWrap.gran === "month" ? "REKAP BULANAN" : "REKAP TAHUNAN"}</div>
+        <div class="wptitle">${esc(wLabel)}</div>
+        <div class="wpbig">+${fmtCompact(wd.total)}</div>
+        <div class="wpsub">stream periode ini</div>
+        <div class="wpstats">
+          <div class="ws"><b>${pctTxt}</b>vs ${prevLbl}</div>
+          <div class="ws"><b>+${fmtCompact(Math.round(wd.avgPerDay))}</b>rata-rata per hari</div>
+          <div class="ws"><b>${wd.bestDay ? fmtDate(wd.bestDay.key) : "–"}</b>hari terbaik${wd.bestDay ? ` (+${fmtCompact(wd.bestDay.v)})` : ""}</div>
+        </div>
+        <div class="wpshare">${shareRows || '<div class="ws">Belum ada porsi artis.</div>'}</div>
+        ${wd.anyEst ? '<div class="wpnote">Sebagian angka memakai kurva estimasi sejak rilis (ditandai est.) — makin lama situs berjalan, makin akurat rekapnya.</div>' : ""}
+      </div>
+      <div class="wpright">
+        <div class="wprhead">Lagu teratas ${esc(wLabel)}</div>
+        ${topRows || '<div class="banner">Belum ada stream tercatat pada periode ini.</div>'}
+      </div>
+    </div>
+    <p class="note">Dihitung dari riwayat stream seluruh lagu yang dipantau situs ini (Spotify Charts via kworb.net): nilai di ujung periode dikurangi nilai di awal periode — lagu yang rilis di tengah periode dihitung sejak 0. Rekap tahunan ala Spotify Wrapped selalu hadir tiap akhir tahun; rekap bulanan diperbarui otomatis setiap bulan.</p>
+  </section>`;
+}
+
 function renderSpHome(sec) {
   const arts = state.sp.artists;
+  /* reset warna artis — dulu warna halaman artis terakhir "bocor" ke beranda Spotify
+   * (chips/tab aktif jadi memakai warna artis itu, bukan hijau Spotify) */
+  sec.style.setProperty("--artist-color", SP_GREEN);
   const all = Object.values(state.sp.tracks);
   const withData = all.filter((t) => t.kworb && t.kworb.total > 0);
   const tot = arts.reduce((s, a) => s + (a.totalStreams || 0), 0);
@@ -2749,6 +3046,9 @@ function renderSpHome(sec) {
     msPairs += (okCards[i] || "<div></div>") + (nextCards[i] || "<div></div>");
   }
 
+  /* rekap Wrapped bulanan & tahunan (ala Spotify Wrapped) dari data situs ini */
+  const wrapHTML = renderWrappedSection();
+
   sec.innerHTML = `
     <section class="hero sp">
       <span class="hbadge">SPOTIFY · PEMANTAUAN OTOMATIS TIAP JAM</span>
@@ -2761,6 +3061,7 @@ function renderSpHome(sec) {
         <div class="stat"><div class="k">Album dipantau</div><div class="v">${nAlb}</div><div class="d">album, EP &amp; singel</div></div>
       </div>
     </section>
+    ${wrapHTML}
     <div class="hgrid">
       <div>
         ${spSectHead("#1ed760", ICO_SP_TROPHY, "Lagu paling banyak di-stream", "tiap versi dihitung terpisah")}
@@ -2795,6 +3096,20 @@ function renderSpHome(sec) {
     const go = () => setView(el.dataset.art);
     el.addEventListener("click", go);
     el.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+  });
+  /* Wrapped: pindah Bulanan/Tahunan + pilih periode (tersimpan di localStorage) */
+  sec.querySelectorAll("[data-wgran]").forEach((b) => {
+    b.addEventListener("click", () => {
+      state.spWrap = { gran: b.dataset.wgran, key: null };
+      renderSpHome(sec);
+    });
+  });
+  sec.querySelectorAll("[data-wkey]").forEach((b) => {
+    b.addEventListener("click", () => {
+      state.spWrap.key = b.dataset.wkey;
+      try { localStorage.setItem("py.spwrap", JSON.stringify(state.spWrap)); } catch {}
+      renderSpHome(sec);
+    });
   });
 }
 
@@ -3055,6 +3370,35 @@ function renderSpArtist(sec) {
         : `<div class="g up">✓ ${fmtCompact(r.m)}</div><div class="l">tercapai ${fmtDate(isoDate(r.at))}${r.real ? "" : " <span class='cellno'>(±)</span>"}</div>`}</div>
     </article>`;
 
+  /* ---------- tab LAGU: daftar datar seluruh lagu artis ini, bisa diurutkan ----------
+   * Terpisah dari tab ALBUM supaya gampang melihat lagu dengan stream terbanyak,
+   * harian tertinggi, atau rilisan terbaru tanpa membuka album satu per satu. */
+  const allSongs = Object.values(state.sp.tracks).filter((t) => t.artistId === a.id);
+  const songsSorted = allSongs.slice();
+  if (state.spSongSort === "stream") songsSorted.sort((x, y) => spTrackTotal(y) - spTrackTotal(x));
+  else if (state.spSongSort === "daily") songsSorted.sort((x, y) => spTrackDaily(y) - spTrackDaily(x));
+  else songsSorted.sort((x, y) => (y.releaseDate || "").localeCompare(x.releaseDate || ""));
+  const songsVis = songsSorted.filter(matchT);
+  const songsHTML = `
+    <div class="stabs" style="margin:0 2px 10px">
+      <button class="stab ${state.spSongSort === "stream" ? "active" : ""}" data-spsongsort="stream">Stream terbanyak</button>
+      <button class="stab ${state.spSongSort === "daily" ? "active" : ""}" data-spsongsort="daily">Harian tertinggi</button>
+      <button class="stab ${state.spSongSort === "newest" ? "active" : ""}" data-spsongsort="newest">Rilisan terbaru</button>
+    </div>
+    <div class="toolbar" style="margin-top:2px">
+      <div class="search">
+        <svg viewBox="0 0 24 24"><path d="M10 2a8 8 0 1 0 4.9 14.3l5 5a1 1 0 0 0 1.4-1.4l-5-5A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12z"/></svg>
+        <input id="spSearch" type="text" placeholder="Cari lagu…" aria-label="Cari lagu" value="${esc(state.spQuery || "")}">
+      </div>
+      <div class="grow"></div>
+      <span class="lbnum">${songsVis.length} lagu · klik = grafik &amp; milestone · <span class="up">+angka</span> = stream 24 jam</span>
+    </div>
+    <div class="tscroll" style="padding:8px">
+      ${songsVis.length
+        ? songsVis.map((tr, i) => spTrackRowHTML(tr, i)).join("")
+        : (q ? `<div class="note" style="padding:10px">Tidak ada lagu yang cocok dengan “${esc(state.spQuery)}”.</div>` : `<div class="note" style="padding:10px">Belum ada lagu.</div>`)}
+    </div>`;
+
   sec.innerHTML = `
     <div class="chcard clickable" id="spChCard" style="--artist-color:${a.color || SP_GREEN};margin-top:6px" tabindex="0" role="button" aria-label="Lihat detail lengkap Spotify ${esc(a.name)}" title="Klik untuk melihat detail lengkap">
       <div class="chtop">
@@ -3104,10 +3448,11 @@ function renderSpArtist(sec) {
       </div>
     </div>
     <div class="stabs" style="margin:24px 2px 14px">
-      <button class="stab ${state.spArtistTab !== "ms" ? "active" : ""}" data-sptab="albums">Album &amp; lagu (${nSongs})</button>
+      <button class="stab ${state.spArtistTab === "albums" ? "active" : ""}" data-sptab="albums">Album (${albums.length})</button>
+      <button class="stab ${state.spArtistTab === "songs" ? "active" : ""}" data-sptab="songs">Lagu (${nSongs})</button>
       <button class="stab ${state.spArtistTab === "ms" ? "active" : ""}" data-sptab="ms">Milestone</button>
     </div>
-    ${state.spArtistTab === "ms" ? spMsHTML(a) : `
+    ${state.spArtistTab === "ms" ? spMsHTML(a) : state.spArtistTab === "songs" ? songsHTML : `
     <div class="stabs" style="margin:0 2px 10px">
       <button class="stab ${state.spSort === "stream" ? "active" : ""}" data-spsort="stream">Stream terbanyak</button>
       <button class="stab ${state.spSort === "daily" ? "active" : ""}" data-spsort="daily">Harian tertinggi</button>
@@ -3126,9 +3471,12 @@ function renderSpArtist(sec) {
 
   destroyChartById("spCard");
   const cardCv = $("#spCardChart");
-  if (cardCv && ser.length >= 2) makeTimeLineChart(cardCv, ser, a.color || SP_GREEN, "spCard", "stream", { dimEst: true });
+  if (cardCv && ser.length >= 2) makeTimeLineChart(cardCv, ser, a.color || SP_GREEN, "spCard", "stream", { dimEst: true, paddingTop: 56 });
   sec.querySelectorAll("[data-spsort]").forEach((b) => {
     b.addEventListener("click", () => { state.spSort = b.dataset.spsort; renderSpArtist(sec); });
+  });
+  sec.querySelectorAll("[data-spsongsort]").forEach((b) => {
+    b.addEventListener("click", () => { state.spSongSort = b.dataset.spsongsort; renderSpArtist(sec); });
   });
   const spCard = $("#spChCard");
   if (spCard) {
@@ -3415,12 +3763,14 @@ function drawSpTrackChart(tr, color) {
   const last = h[h.length - 1].t;
   const pts = h
     .filter((p) => state.spRange === "all" || p.t >= last - state.spRange * 86400)
-    .map((p) => ({ key: isoDate(p.t), t: p.t, v: p.v, est: p.e === 1 }));
+    .map((p) => ({ t: p.t, v: p.v, e: p.e === 1 }));
   if (pts.length < 2) {
     if (box) box.innerHTML = `<div class="wait">Belum cukup data untuk grafik — cek lagi setelah pengukuran berikutnya (tiap jam).</div>`;
     return;
   }
-  makeLineChart($("#spTrackChart"), pts, color, "spTrack", "stream", "day", { layout: { padding: { top: 64 } } });
+  /* poros waktu LINIER (proporsional tanggal) — sama seperti grafik lain; celah perekaman
+   * tampil jujur sebagai jarak, bukan dipipihkan sama rata (salah satu grafik yg "aneh") */
+  makeTimeLineChart($("#spTrackChart"), pts, color, "spTrack", "stream", { dimEst: true, paddingTop: 64 });
 }
 
 /* ===================== theme ===================== */
@@ -3583,6 +3933,13 @@ function renderTopline() {
 
   $("#searchBox").addEventListener("input", (e) => { state.query = e.target.value.trim(); renderVideos(); });
   $("#sortSel").addEventListener("change", (e) => { state.sort = e.target.value; renderVideos(); });
+
+  /* logo situs = kembali ke beranda platform aktif */
+  const lg = $("#logoHome");
+  if (lg) {
+    lg.addEventListener("click", () => setView("home"));
+    lg.addEventListener("keydown", (e) => { if (e.key === "Enter") setView("home"); });
+  }
 })();
 </script>
 </body>
