@@ -578,13 +578,21 @@
   /* ---------- kartu menu beranda (Bandingkan / Rekor / Kalender) ---------- */
   .menurow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}
   @media (max-width:760px){.menurow{grid-template-columns:1fr}}
-  .mcard{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);
-    border-left:3px solid var(--mc,#1ed760);border-radius:14px;padding:14px 16px;cursor:pointer;min-width:0;
+  .mcard{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--border);
+    border-left:3px solid var(--mc,#1ed760);border-radius:14px;padding:13px 16px;cursor:pointer;min-width:0;position:relative;overflow:hidden;
     transition:transform .15s,box-shadow .15s,border-color .15s}
+  .mcard::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(120deg,color-mix(in srgb,var(--mc,#1ed760) 9%,transparent),transparent 62%)}
   .mcard:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--mc,#1ed760) 45%,var(--border))}
   .mcard b{font-size:14px;display:block}
   .mcard span{font-size:11px;color:var(--muted);font-weight:700;display:block;margin-top:2px}
-  .mcard .sic{flex:none}
+  .mcard .sic{flex:none;width:42px;height:42px;border-radius:13px;
+    background:linear-gradient(135deg,var(--c,#1ed760),color-mix(in srgb,var(--c,#1ed760) 45%,#0a0d16));
+    box-shadow:0 6px 16px color-mix(in srgb,var(--c,#1ed760) 35%,transparent);transition:transform .22s ease}
+  .mcard .sic svg{width:21px;height:21px;fill:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.28))}
+  .mcard:hover .sic{transform:scale(1.09) rotate(-5deg)}
+  .mcard .go{flex:none;margin-left:auto;color:var(--muted);font-size:15px;font-weight:800;transition:transform .2s,color .2s}
+  .mcard:hover .go{transform:translateX(3px);color:var(--mc,#1ed760)}
   /* ---------- tombol bintang pantauan ---------- */
   .thumbwrap{position:relative}
   .wlbtn{flex:none;width:30px;height:30px;border-radius:9px;border:1px solid var(--border);background:var(--chip);
@@ -616,7 +624,7 @@
   .cmpside{border:1px solid var(--border);border-left:3px solid var(--cc);border-radius:12px;padding:10px 12px;background:var(--card);min-width:0}
   .cmpside .tag{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;background:var(--cc);color:#fff;font-weight:800;font-size:12px;margin-bottom:6px}
   .cmpsel{width:100%;background:var(--bg2);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:8px 9px;font:inherit;font-size:13px;font-weight:700}
-  .cmpinfo{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+  .cmpinfo{display:flex;flex-wrap:wrap;gap:6px;margin:7px 0 1px}
   .cmpinfo .ci{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:5px 9px;font-size:11px;font-weight:700;color:var(--muted);display:inline-flex;gap:5px;align-items:baseline}
   .cmpinfo .ci b{color:var(--text);font-size:12.5px}
   .cmphead{display:flex;align-items:center;gap:8px;margin-bottom:2px}
@@ -638,10 +646,14 @@
   .srsrow .nm{flex:1;min-width:0;font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .srsrow .meta{flex:none;font-size:11px;color:var(--muted);font-weight:700;text-align:right}
   /* kalender rilisan */
-  .calyear{display:flex;align-items:center;gap:14px;margin:26px 2px 4px}
-  .calyear:first-child{margin-top:4px}
-  .calyear .yr{font-size:20px;font-weight:800;letter-spacing:1.5px;color:#fff;background:linear-gradient(135deg,#8b5cf6,#6a78ff);border-radius:999px;padding:6px 18px;box-shadow:0 8px 22px rgba(106,120,255,.22)}
-  .calyear .ln{flex:1;height:1px;background:var(--border)}
+  /* pita pergantian tahun: full width biru-ungu, angka tahun besar di tengah */
+  .calyear{display:flex;align-items:center;gap:16px;margin:30px 0 12px;padding:13px 20px;border-radius:16px;
+    background:linear-gradient(90deg,#7c3aed,#8b5cf6 45%,#6a78ff);border:1px solid rgba(167,139,250,.55);
+    box-shadow:0 10px 26px rgba(124,58,237,.28)}
+  .calyear:first-child{margin-top:8px}
+  .calyear .ln{flex:1;height:2px;border-radius:2px;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.75))}
+  .calyear .ln:last-child{background:linear-gradient(90deg,rgba(255,255,255,.75),rgba(255,255,255,0))}
+  .calyear .yr{font-size:clamp(22px,3.4vw,30px);font-weight:900;letter-spacing:4px;color:#fff;text-shadow:0 2px 12px rgba(15,10,40,.45)}
   .calmonth{display:flex;align-items:center;gap:10px;font-size:11.5px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin:16px 2px 8px}
   .calmonth::after{content:"";flex:1;height:1px;background:var(--border)}
   .calmonth b{color:var(--text);background:var(--chip);border:1px solid var(--border);border-radius:999px;padding:3px 10px;font-size:10.5px;letter-spacing:.4px}
@@ -1204,10 +1216,11 @@ function artistOf(id) { return state.config.artists.find((a) => a.id === id); }
 function featSectHead(c, ico, title, sub) {
   return `<div class="hsect"><h2><span class="sic" style="--c:${c}"><svg viewBox="0 0 24 24"><path d="${ico}"/></svg></span>${title}</h2>${sub ? `<span class="sub">${sub}</span>` : ""}</div>`;
 }
-function pageCloseBar(title, sub) {
+function pageCloseBar(title, sub, ico, color) {
+  const chip = ico ? `<span class="sic" style="--c:${color || "#6a78ff"};width:40px;height:40px;border-radius:12px"><svg viewBox="0 0 24 24"><path d="${ico}"/></svg></span>` : "";
   return `
   <div class="pagehead">
-    <div><div class="ptitle">${title}</div>${sub ? `<div class="psub">${sub}</div>` : ""}</div>
+    <div style="display:flex;align-items:center;gap:12px;min-width:0">${chip}<div style="min-width:0"><div class="ptitle">${title}</div>${sub ? `<div class="psub">${sub}</div>` : ""}</div></div>
     <button class="mtab" id="pageClose" title="Kembali ke beranda">✕ Kembali</button>
   </div>`;
 }
@@ -1283,16 +1296,19 @@ function watchSummaryHTML(plat) {
 }
 
 /* ---------- kartu menu beranda: Bandingkan / Rekor / Kalender ---------- */
+const ICO_SWAP = "M6.99 11 3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 15V9z";
+const ICO_CAL = "M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2v2zm2 18H5V8h14v11z";
 function menuRowHTML(plat) {
   const cmp = plat === "spotify"
-    ? ["cmp", "#1ed760", "M8 5.5v13l11-6.5z", "Bandingkan lagu", "adu 2 lagu sejak hari rilis"]
-    : ["cmp", "#1ed760", "M8 5.5v13l11-6.5z", "Bandingkan video", "adu 2 video sejak diunggah"];
+    ? ["cmp", "#1ed760", ICO_SWAP, "Bandingkan lagu", "adu 2 lagu sejak hari rilis"]
+    : ["cmp", "#1ed760", ICO_SWAP, "Bandingkan video", "adu 2 video sejak diunggah"];
   const rec = ["rec", "#ffb02e", ICO_TROPHY, "Rekor &amp; Fakta", "rekor sepanjang situs berjalan"];
-  const cal = ["cal", "#8b5cf6", ICO_NEW, "Kalender rilisan", "garis waktu MV &amp; album"];
+  const cal = ["cal", "#8b5cf6", ICO_CAL, "Kalender rilisan", "garis waktu MV &amp; album"];
   const card = ([k, c, ico, t, s]) => `
     <div class="mcard" data-menu="${k}" style="--mc:${c}" tabindex="0" role="button" aria-label="${t}">
       <span class="sic" style="--c:${c}"><svg viewBox="0 0 24 24"><path d="${ico}"/></svg></span>
-      <div style="min-width:0"><b>${t}</b><span>${s}</span></div>
+      <div style="min-width:0;flex:1"><b>${t}</b><span>${s}</span></div>
+      <span class="go">→</span>
     </div>`;
   return `<div class="menurow">${[cmp, rec, cal].map(card).join("")}</div>`;
 }
@@ -1418,7 +1434,7 @@ function renderSpRecords(sec) {
   }
   const bestDays = [...perDay.entries()].map(([k, x]) => ({ k, ...x })).sort((a, b) => b.v - a.v).slice(0, 10);
   /* tercepat capai milestone */
-  /* 2 lagu tercepat untuk tiap milestone — total sampai 10 baris */
+  /* 3 lagu tercepat untuk tiap milestone — total sampai 15 baris */
   const fastMs = [];
   for (const m of [1e6, 5e6, 1e7, 5e7, 1e8]) {
     const cands = [];
@@ -1427,7 +1443,7 @@ function renderSpRecords(sec) {
       if (c) cands.push({ tr, days: c.days, est: c.est });
     }
     cands.sort((x, y) => x.days - y.days);
-    for (const c of cands.slice(0, 2)) fastMs.push({ m, ...c });
+    for (const c of cands.slice(0, 3)) fastMs.push({ m, ...c });
   }
   fastMs.sort((x, y) => x.days - y.days);
   /* papan artis */
@@ -1444,10 +1460,31 @@ function renderSpRecords(sec) {
       <div class="del"><div class="d1">${val}</div><div class="d2">${sub}</div></div>
     </div>`;
   const topList = trs.slice().sort((x, y) => spTrackTotal(y) - spTrackTotal(x)).slice(0, 10);
+  /* pertumbuhan 7 hari tertinggi */
+  const nowSp = Date.now() / 1000;
+  const grow7 = trs.map((t) => {
+    const v7 = spTrackValueAt(t, nowSp - 7 * 86400);
+    const d = v7 ? spTrackTotal(t) - v7.v : 0;
+    return d > 0 ? { tr: t, d } : null;
+  }).filter((x) => x).sort((a, b) => b.d - a.d).slice(0, 10);
+  /* rata-rata stream/hari sejak hari rilis */
+  const avgDaily = trs.map((t) => {
+    const rel = spRelT(t);
+    if (!rel) return null;
+    const days = Math.max(1, (nowSp - rel) / 86400);
+    return { tr: t, avg: spTrackTotal(t) / days };
+  }).filter((x) => x).sort((a, b) => b.avg - a.avg).slice(0, 10);
+  const totAllTr = trs.reduce((s, t) => s + spTrackTotal(t), 0);
   const dash = "M3.5 18.5 9 13l3.5 3.5L20 9l1.4 1.4-8.9 8.9L9 15.8l-4.1 4.1z";
   sec.innerHTML = `
   <section style="margin-top:26px">
-    ${pageCloseBar("Rekor &amp; Fakta — Spotify", "rekor sepanjang situs memantau · klik lagu untuk detail")}
+    ${pageCloseBar("Rekor &amp; Fakta — Spotify", "rekor sepanjang situs memantau · klik lagu untuk detail", ICO_TROPHY, "#ffb02e")}
+    <div class="wpgrid" style="margin-top:14px">
+      <div class="whl"><div class="k">Total stream gabungan</div><div class="em">Σ</div><div class="v">${fmtCompact(totAllTr)}</div><div class="d">${trs.length} lagu dipantau</div></div>
+      <div class="whl"><div class="k">Hari terbaik situs</div><div class="em">↑</div><div class="v">${bestDays.length ? fmtDate(bestDays[0].k) : "–"}</div><div class="d">${bestDays.length ? "+" + fmtCompact(bestDays[0].v) + " stream" : "belum ada data"}</div></div>
+      <div class="whl"><div class="k">Lonjakan terbesar</div><div class="em">▲</div><div class="v">${spikes.length ? esc(spikes[0].tr.name) : "–"}</div><div class="d">${spikes.length ? "+" + fmtCompact(spikes[0].dv) + " sehari" : "–"}</div></div>
+      <div class="whl"><div class="k">Milestone tercepat</div><div class="em">★</div><div class="v">${fastMs.length ? esc(fastMs[0].tr.name) : "–"}</div><div class="d">${fastMs.length ? NF.format(fastMs[0].days) + " hari capai " + fmtCompact(fastMs[0].m) : "–"}</div></div>
+    </div>
     <div class="hgrid">
       <div>
         ${featSectHead("#1ed760", ICO_SP_TROPHY, "Stream terbanyak", "10 besar sepanjang pencatatan")}
@@ -1460,7 +1497,7 @@ function renderSpRecords(sec) {
     </div>
     <div class="hgrid" style="margin-top:18px">
       <div>
-        ${featSectHead("#38bdf8", dash, "Tercepat capai milestone", "2 tercepat tiap milestone")}
+        ${featSectHead("#38bdf8", dash, "Tercepat capai milestone", "3 tercepat tiap milestone")}
         <div style="display:flex;flex-direction:column;gap:7px">${fastMs.map((x, i) => spRecRow(x, i, NF.format(x.days) + " hari", fmtCompact(x.m) + (x.est ? " <span class='cellno'>(±)</span>" : ""))).join("") || '<div class="banner">Belum ada data.</div>'}</div>
       </div>
       <div>
@@ -1472,6 +1509,16 @@ function renderSpRecords(sec) {
             <div class="nm">${fmtDate(d.k)}<span class="wbsub">semua lagu dipantau</span></div>
             <div class="del"><div class="d1">+${fmtCompact(d.v)}</div><div class="d2">stream${d.e ? " <span class='cellno'>(est.)</span>" : ""}</div></div>
           </div>`).join("") || '<div class="banner">Belum ada data.</div>'}</div>
+      </div>
+    </div>
+    <div class="hgrid" style="margin-top:18px">
+      <div>
+        ${featSectHead("#22c55e", dash, "Pertumbuhan 7 hari", "10 besar · tambahan stream seminggu terakhir")}
+        <div style="display:flex;flex-direction:column;gap:7px">${grow7.map((s, i) => spRecRow(s, i, "+" + fmtCompact(s.d), "7 hari terakhir")).join("") || '<div class="banner">Belum ada data.</div>'}</div>
+      </div>
+      <div>
+        ${featSectHead("#38bdf8", ICO_NEW, "Rata-rata stream/hari", "10 besar · dihitung sejak hari rilis")}
+        <div style="display:flex;flex-direction:column;gap:7px">${avgDaily.map((s, i) => spRecRow(s, i, fmtCompact(Math.round(s.avg)), "per hari sejak rilis")).join("") || '<div class="banner">Belum ada data.</div>'}</div>
       </div>
     </div>
     <section style="margin-top:18px">
@@ -1503,7 +1550,7 @@ function renderYtRecords(sec) {
   }
   const by7 = vids.slice().sort((a, b) => { const da = deltaDays(a.history, 7), db = deltaDays(b.history, 7); return (db ? db.delta : -1) - (da ? da.delta : -1); }).slice(0, 10);
   const spikes = vids.map((v) => { const d = deltaDays(v.history, 1); return { v, d }; }).filter((x) => x.d && x.d.delta > 0).sort((a, b) => b.d.delta - a.d.delta).slice(0, 10);
-  /* 2 lagu tercepat untuk tiap milestone — total sampai 10 baris */
+  /* 3 lagu tercepat untuk tiap milestone — total sampai 15 baris */
   const fastMs = [];
   for (const m of [1e7, 3e7, 5e7, 1e8, 2e8]) {
     const cands = [];
@@ -1514,7 +1561,7 @@ function renderYtRecords(sec) {
       cands.push({ v, days: d, off: off != null });
     }
     cands.sort((x, y) => x.days - y.days);
-    for (const c of cands.slice(0, 2)) fastMs.push({ m, ...c });
+    for (const c of cands.slice(0, 3)) fastMs.push({ m, ...c });
   }
   fastMs.sort((x, y) => x.days - y.days);
   const chRows = state.config.artists.map((a) => {
@@ -1530,10 +1577,33 @@ function renderYtRecords(sec) {
       <div class="nm">${esc(rowTitleOf(v, v.art))}<span class="wbsub">${esc(v.art.name)}</span></div>
       <div class="del"><div class="d1">${val}</div><div class="d2">${sub}</div></div>
     </div>`;
+  /* rata-rata views/hari sejak diunggah */
+  const nowYt = Date.now() / 1000;
+  const avgDaily = vids.map((v) => {
+    const rel = releaseEpoch(v);
+    if (rel == null) return null;
+    const days = Math.max(1, (nowYt - rel) / 86400);
+    return { v, avg: lastV(v) / days };
+  }).filter((x) => x).sort((a, b) => b.avg - a.avg).slice(0, 10);
+  /* debut: views 24 jam pertama yang tercatat situs */
+  const debut = vids.map((v) => {
+    const h = v.history.slice().sort((x, y) => x.t - y.t);
+    if (h.length < 2) return null;
+    const d = h[1].v - h[0].v;
+    return d > 0 ? { v, d } : null;
+  }).filter((x) => x).sort((a, b) => b.d - a.d).slice(0, 10);
+  const totAllV = vids.reduce((s, v) => s + lastV(v), 0);
+  const topAll = vids.slice().sort((a, b) => lastV(b) - lastV(a))[0] || null;
   const dash = "M3.5 18.5 9 13l3.5 3.5L20 9l1.4 1.4-8.9 8.9L9 15.8l-4.1 4.1z";
   sec.innerHTML = `
   <section style="margin-top:26px">
-    ${pageCloseBar("Rekor &amp; Fakta — YouTube", "rekor sepanjang situs memantau · klik video untuk detail")}
+    ${pageCloseBar("Rekor &amp; Fakta — YouTube", "rekor sepanjang situs memantau · klik video untuk detail", ICO_TROPHY, "#ffb02e")}
+    <div class="wpgrid" style="margin-top:14px">
+      <div class="whl"><div class="k">Total views gabungan</div><div class="em">Σ</div><div class="v">${fmtCompact(totAllV)}</div><div class="d">${vids.length} video dipantau</div></div>
+      <div class="whl"><div class="k">Video terpopuler</div><div class="em">★</div><div class="v">${topAll ? esc(rowTitleOf(topAll, topAll.art)) : "–"}</div><div class="d">${topAll ? fmtCompact(lastV(topAll)) + " views" : "–"}</div></div>
+      <div class="whl"><div class="k">Lonjakan terbesar</div><div class="em">▲</div><div class="v">${spikes.length ? esc(rowTitleOf(spikes[0].v, spikes[0].v.art)) : "–"}</div><div class="d">${spikes.length ? "+" + fmtCompact(spikes[0].d.delta) + " sehari" : "–"}</div></div>
+      <div class="whl"><div class="k">Milestone tercepat</div><div class="em">★</div><div class="v">${fastMs.length ? esc(rowTitleOf(fastMs[0].v, fastMs[0].v.art)) : "–"}</div><div class="d">${fastMs.length ? NF.format(fastMs[0].days) + " hari capai " + fmtCompact(fastMs[0].m) : "–"}</div></div>
+    </div>
     <div class="hgrid">
       <div>
         ${featSectHead("#ffb02e", ICO_TROPHY, "Views terbanyak", "10 besar sepanjang pencatatan")}
@@ -1546,12 +1616,22 @@ function renderYtRecords(sec) {
     </div>
     <div class="hgrid" style="margin-top:18px">
       <div>
-        ${featSectHead("#38bdf8", dash, "Tercepat capai milestone", "2 tercepat tiap milestone")}
+        ${featSectHead("#38bdf8", dash, "Tercepat capai milestone", "3 tercepat tiap milestone")}
         <div style="display:flex;flex-direction:column;gap:7px">${fastMs.map((x, i) => ytRow(x.v, i, NF.format(x.days) + " hari", "capai " + fmtCompact(x.m) + (x.off ? " · resmi ✓" : " · hitungan situs"))).join("") || '<div class="banner">Belum ada data.</div>'}</div>
       </div>
       <div>
         ${featSectHead("#a78bfa", ICO_FIRE, "Lonjakan harian tertinggi", "10 besar · views 1 hari terbesar")}
         <div style="display:flex;flex-direction:column;gap:7px">${spikes.map((s, i) => ytRow(s.v, i, "+" + fmtCompact(s.d.delta), "sehari" + (recentEst(s.v.history, 1) ? " <span class='cellno'>(est.)</span>" : ""))).join("") || '<div class="banner">Belum ada data.</div>'}</div>
+      </div>
+    </div>
+    <div class="hgrid" style="margin-top:18px">
+      <div>
+        ${featSectHead("#38bdf8", ICO_NEW, "Rata-rata views/hari", "10 besar · dihitung sejak diunggah")}
+        <div style="display:flex;flex-direction:column;gap:7px">${avgDaily.map((s, i) => ytRow(s.v, i, fmtCompact(Math.round(s.avg)), "views/hari sejak rilis")).join("") || '<div class="banner">Belum ada data.</div>'}</div>
+      </div>
+      <div>
+        ${featSectHead("#22c55e", dash, "Debut terbesar", "10 besar · views hari pertama tercatat situs")}
+        <div style="display:flex;flex-direction:column;gap:7px">${debut.map((s, i) => ytRow(s.v, i, "+" + fmtCompact(s.d), "24 jam pertama tercatat")).join("") || '<div class="banner">Belum ada data.</div>'}</div>
       </div>
     </div>
     <section style="margin-top:18px">
@@ -1594,7 +1674,7 @@ function renderSpCalendar(sec) {
   const monthHTML = [...months.entries()].map(([k, list]) => {
     const lbl = k === "?" ? "Tanpa tanggal" : MFULL.format(new Date(k + "-01T00:00:00"));
     const yr = k === "?" ? null : k.slice(0, 4);
-    const yHead = yr && yr !== lastYr ? `<div class="calyear"><span class="yr">${yr}</span><span class="ln"></span></div>` : "";
+    const yHead = yr && yr !== lastYr ? `<div class="calyear"><span class="ln"></span><span class="yr">${yr}</span><span class="ln"></span></div>` : "";
     if (yr) lastYr = yr;
     return `${yHead}<div class="calmonth"><span>${esc(lbl)}</span><b>${list.length} rilisan</b></div>
     <div style="display:flex;flex-direction:column;gap:7px">${list.map((r) => `
@@ -1606,7 +1686,7 @@ function renderSpCalendar(sec) {
   }).join("");
   sec.innerHTML = `
   <section style="margin-top:26px">
-    ${pageCloseBar("Kalender rilisan — Spotify", "album, EP &amp; singel dari yang terbaru · ikut otomatis dengan data terbaru")}
+    ${pageCloseBar("Kalender rilisan — Spotify", "album, EP &amp; singel dari yang terbaru · ikut otomatis dengan data terbaru", ICO_CAL, "#8b5cf6")}
     ${rels.length ? monthHTML : '<div class="banner">Belum ada rilisan.</div>'}
     <p class="note">Rilisan dengan tanggal di masa depan otomatis diberi hitung mundur begitu tanggalnya masuk data.</p>
   </section>`;
@@ -1631,7 +1711,7 @@ function renderYtCalendar(sec) {
   const monthHTML = [...months.entries()].map(([k, list]) => {
     const lbl = k === "?" ? "Tanpa tanggal" : MFULL.format(new Date(k + "-01T00:00:00"));
     const yr = k === "?" ? null : k.slice(0, 4);
-    const yHead = yr && yr !== lastYr ? `<div class="calyear"><span class="yr">${yr}</span><span class="ln"></span></div>` : "";
+    const yHead = yr && yr !== lastYr ? `<div class="calyear"><span class="ln"></span><span class="yr">${yr}</span><span class="ln"></span></div>` : "";
     if (yr) lastYr = yr;
     return `${yHead}<div class="calmonth"><span>${esc(lbl)}</span><b>${list.length} video</b></div>
     <div style="display:flex;flex-direction:column;gap:7px">${list.map((v) => `
@@ -1643,7 +1723,7 @@ function renderYtCalendar(sec) {
   }).join("");
   sec.innerHTML = `
   <section style="margin-top:26px">
-    ${pageCloseBar("Kalender rilisan — YouTube", "MV, performance &amp; practice dari yang terbaru")}
+    ${pageCloseBar("Kalender rilisan — YouTube", "MV, performance &amp; practice dari yang terbaru", ICO_CAL, "#8b5cf6")}
     ${vids.length ? monthHTML : '<div class="banner">Belum ada video.</div>'}
     <p class="note">Video dengan tanggal di masa depan otomatis diberi hitung mundur begitu tanggalnya masuk data.</p>
   </section>`;
@@ -1712,6 +1792,31 @@ function makeCompareChart(canvas, sA, sB, nA, nB, unit, marks) {
     segment: { borderDash: (c) => (((s.pts[c.p0DataIndex] || {}).e || (s.pts[c.p1DataIndex] || {}).e) ? [5, 4] : undefined) },
   });
   const FONT = (typeof Chart !== "undefined" && Chart.defaults.font.family) || "sans-serif";
+  /* mode interaksi khusus cmpX: SATU titik terdekat (dibidang x saja) per dataset —
+   * tooltip selalu memuat KEDUA lagu sekaligus, walau titik data jarang */
+  if (typeof Chart !== "undefined" && Chart.Interaction && !Chart.Interaction.modes.cmpX) {
+    const grp = (Chart.helpers && Chart.helpers.getRelativePosition) || ((e, c) => ({ x: e.x, y: e.y }));
+    Chart.Interaction.modes.cmpX = (chart, e, options, useFinalPosition) => {
+      const pos = grp(e, chart);
+      const area = chart.chartArea || { left: 0, right: 0 };
+      const tol = Math.max(18, (area.right - area.left) * 0.02);
+      const out = [];
+      for (const meta of chart.getSortedVisibleDatasetMetas()) {
+        let best = null, bestD = Infinity;
+        const pts = meta.data || [];
+        for (let i = 0; i < pts.length; i++) {
+          const el = pts[i];
+          if (!el || el.skip) continue;
+          const c = el.getCenterPoint(useFinalPosition);
+          if (c.x < area.left - 1 || c.x > area.right + 1) continue;
+          const d = Math.abs(c.x - pos.x);
+          if (d < bestD) { bestD = d; best = { element: el, datasetIndex: meta.index, index: i }; }
+        }
+        if (best && bestD <= tol) out.push(best);
+      }
+      return out;
+    };
+  }
   /* label total di ujung kurva — perbandingan terlihat LANGSUNG, tanpa geser kursor */
   const endLabel = (chart, s, color, otherY) => {
     const ctx = chart.ctx;
@@ -1783,7 +1888,7 @@ function makeCompareChart(canvas, sA, sB, nA, nB, unit, marks) {
     data: { datasets: [{ label: nA, ...mk(sA, CMP_COLORS[0]) }, { label: nB, ...mk(sB, CMP_COLORS[1]) }] },
     options: {
       responsive: true, maintainAspectRatio: false,
-      interaction: { mode: "nearest", intersect: false },
+      interaction: { mode: "cmpX", intersect: false },
       layout: { padding: { right: 78, top: 18, bottom: 4 } },
       scales: {
         x: { type: "linear", title: { display: true, text: "hari sejak rilis", color: cssVar("--chart-text"), font: { size: 10.5 } }, grid: { color: cssVar("--chart-grid") }, ticks: { color: cssVar("--chart-text"), maxTicksLimit: 9, font: { size: 10.5 }, callback: (v) => NF.format(v) } },
@@ -1793,8 +1898,19 @@ function makeCompareChart(canvas, sA, sB, nA, nB, unit, marks) {
         legend: { labels: { color: cssVar("--chart-text"), usePointStyle: true, boxWidth: 8, font: { size: 11 } } },
         tooltip: {
           callbacks: {
-            title: (it) => (it && it.length ? "hari ke-" + NF.format(Math.round(it[0].parsed.x)) : ""),
-            label: (c) => (c.dataset.label || "") + ": " + NF.format(Math.round(c.parsed.y)) + " " + unit,
+            title: (it) => (it && it.length ? "Hari ke-" + NF.format(Math.round(it[0].parsed.x)) : ""),
+            label: (c) => (c.dataset.label || "") + ": " + fmtCompact(Math.round(c.parsed.y)) + " " + unit,
+            /* total DUA lagu tampil sekaligus + selisihnya, tanpa perlu menebak */
+            afterBody: (it) => {
+              if (!it || it.length < 2) return [];
+              const va = it.find((x) => x.datasetIndex === 0);
+              const vb = it.find((x) => x.datasetIndex === 1);
+              if (!va || !vb) return [];
+              const d = Math.round(va.parsed.y - vb.parsed.y);
+              if (d === 0) return ["Selisih: nilainya sama persis di titik ini"];
+              const who = d >= 0 ? va.dataset.label || "A" : vb.dataset.label || "B";
+              return ["Selisih: " + who + " unggul " + fmtCompact(Math.abs(d)) + " " + unit];
+            },
           },
         },
       },
@@ -1828,8 +1944,8 @@ function openCompare() {
     </div>`;
   $("#sheet").innerHTML = `
     <button class="close" id="closeBtn" aria-label="Tutup">✕</button>
-    <h2 class="dtitle" style="margin-bottom:2px">Perbandingan ${unit === "stream" ? "lagu" : "video"}</h2>
-    <p class="note">Kurva kumulatif sejak hari rilis — titik milestone &amp; total terakhir langsung tergambar di grafik (tanpa hover) · garis putus-putus = titik estimasi.</p>
+    <h2 class="dtitle" style="margin-bottom:2px;display:flex;align-items:center;gap:10px"><span class="sic" style="--c:#1ed760;width:34px;height:34px;border-radius:10px"><svg viewBox="0 0 24 24"><path d="${ICO_SWAP}"/></svg></span>Perbandingan ${unit === "stream" ? "lagu" : "video"}</h2>
+    <p class="note">Geser kursor di grafik — total kedua lagu/video langsung tampil berdampingan di tooltip lengkap dengan selisihnya · titik milestone &amp; total terakhir juga tergambar di grafik · garis putus-putus = estimasi.</p>
     <div class="cmptop">
       <button class="mtab" id="cmpSwap">⇄ Tukar A &amp; B</button>
       <span class="lbnum">ketik di kotak pencarian untuk mempersempit daftar pilihan</span>
@@ -1837,15 +1953,15 @@ function openCompare() {
     <div class="cmpgrid">
       <div class="cmpside" style="--cc:${CMP_COLORS[0]}">
         <div class="cmphead"><span class="tag">A</span><b id="cmpName0"></b></div>
+        <div class="cmpinfo" id="cmpInfo0"></div>
         ${findHTML(0)}
         <select class="cmpsel" id="cmpSel0" aria-label="Pilih peserta A"></select>
-        <div class="cmpinfo" id="cmpInfo0"></div>
       </div>
       <div class="cmpside" style="--cc:${CMP_COLORS[1]}">
         <div class="cmphead"><span class="tag">B</span><b id="cmpName1"></b></div>
+        <div class="cmpinfo" id="cmpInfo1"></div>
         ${findHTML(1)}
         <select class="cmpsel" id="cmpSel1" aria-label="Pilih peserta B"></select>
-        <div class="cmpinfo" id="cmpInfo1"></div>
       </div>
     </div>
     <div class="chartbox tall"><canvas id="cmpChart"></canvas></div>
@@ -2403,7 +2519,6 @@ function renderArtistHighlights() {
   }).join("");
 
   el.innerHTML = `
-    ${menuRowHTML("yt")}
     <div class="hgrid3">
       <div>
         ${homeSectHead("#ffb02e", ICO_TROPHY, "Paling banyak ditonton", `views terbanyak per video ${esc(art.name)}`)}
@@ -4130,6 +4245,27 @@ function renderWrappedPage(sec) {
       <span class="dt">${x.at ? fmtDate(isoDate(x.at)) : "dalam periode ini"}${x.real ? "" : ' <span class="cellno">±</span>'}</span>
     </div>`).join("");
 
+  /* lonjakan harian terbesar periode ini — mengisi kolom kiri di bawah Lagu teratas */
+  const spkAll = [];
+  for (const s of wd.songs) {
+    const h = s.tr.history.slice().sort((x, y) => x.t - y.t);
+    let best = null;
+    for (let i = 1; i < h.length; i++) {
+      if (h[i].t < wd.a || h[i].t >= wd.b) continue;
+      const dv = h[i].v - h[i - 1].v;
+      if (dv > 0 && (!best || dv > best.dv)) best = { dv, at: h[i].t, e: h[i].e === 1 || h[i - 1].e === 1 };
+    }
+    if (best) spkAll.push({ tr: s.tr, ...best });
+  }
+  spkAll.sort((x, y) => y.dv - x.dv);
+  const spkRows = spkAll.slice(0, 8).map((s, i) => `
+    <div class="wprow ${i < 3 ? "top3" : ""}" data-spk="${esc(s.tr.key)}" tabindex="0" role="button" aria-label="${esc(s.tr.name)}">
+      <div class="rk">${i + 1}</div>
+      ${s.tr.cover ? `<img class="cv" src="${esc(s.tr.cover)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : `<div class="cv" style="display:grid;place-items:center;color:var(--muted)">♪</div>`}
+      <div class="nm">${esc(s.tr.name)}<span class="wbsub">${s.at ? fmtDate(isoDate(s.at)) : "di tengah periode"}${s.e ? ' <span class="cellno">(est.)</span>' : ""}</span></div>
+      <div class="del"><div class="d1">+${fmtCompact(s.dv)}</div><div class="d2">stream sehari</div></div>
+    </div>`).join("");
+
   /* kartu sorotan ala Spotify Wrapped */
   const s0 = wd.songs[0] || null;
   const b0 = baru[0] || null;
@@ -4233,6 +4369,7 @@ function renderWrappedPage(sec) {
       <div>
         ${spSectHead("#1ed760", ICO_SP_TROPHY, "Lagu teratas", "10 besar " + (isMonth ? "bulan" : "tahun") + " ini")}
         <div style="display:flex;flex-direction:column;gap:7px">${topRows || '<div class="banner">Belum ada stream tercatat pada periode ini.</div>'}</div>
+        ${spkRows ? `<div style="margin-top:16px">${spSectHead("#38bdf8", "M3.5 18.5 9 13l3.5 3.5L20 9l1.4 1.4-8.9 8.9L9 15.8l-4.1 4.1z", "Lonjakan harian terbesar", "8 lonjakan stream terbesar di periode ini")}<div style="display:flex;flex-direction:column;gap:7px">${spkRows}</div></div>` : ""}
       </div>
       <div>
         ${spSectHead("#38bdf8", ICO_SP_PEOPLE, "Porsi artis", "kontribusi tiap artis periode ini")}
@@ -4738,7 +4875,6 @@ function renderSpArtist(sec) {
       </div>` : ""}
       <div class="chhint"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>Klik kartu ini untuk grafik lengkap + pilihan rentang waktu &amp; milestone — seperti kartu channel YouTube</div>
     </div>
-    ${menuRowHTML("spotify")}
     <div class="hgrid3">
       <div>
         ${spSectHead("#1ed760", ICO_SP_TROPHY, "Stream terbanyak", `stream terbanyak per versi ${esc(a.name)}`)}
