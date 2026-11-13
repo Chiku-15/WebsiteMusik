@@ -204,7 +204,7 @@
   .sect h3{font-size:13px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin:16px 2px 10px}
   .chartbox{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;position:relative}
   .chartbox canvas{width:100%!important;height:260px!important}
-  .chartbox.tall canvas{height:340px!important}
+  .chartbox.tall canvas{height:380px!important}
   /* grafik mini di dalam kartu channel Spotify (lebih pendek dari grafik penuh) */
   .chartbox.mini{margin-top:14px;padding:12px 14px 10px;cursor:pointer}
   .chartbox.mini canvas{height:150px!important}
@@ -218,6 +218,14 @@
   table.ms td{padding:9px 10px;border-bottom:1px solid var(--border);font-weight:600}
   table.ms tr:last-child td{border-bottom:none}
   table.ms td.num{text-align:right;font-variant-numeric:tabular-nums}
+  /* tabel perbandingan (modal Bandingkan): kolom rata & sejajar */
+  table.ms.cmp{table-layout:fixed}
+  table.ms.cmp th{font-size:10.5px;padding:10px 8px;text-align:center;overflow:hidden;text-overflow:ellipsis}
+  table.ms.cmp th:first-child{text-align:left;width:26%}
+  table.ms.cmp th .mschip{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:5px;background:var(--cc);color:#fff;font-size:9.5px;font-weight:800;margin-right:6px;vertical-align:-3px}
+  table.ms.cmp td{padding:10px 8px;text-align:center}
+  table.ms.cmp td:first-child{text-align:left;font-weight:800}
+  table.ms.cmp tbody tr:nth-child(odd) td{background:var(--bg2)}
   .wait{color:var(--muted);font-size:13px;background:var(--bg2);border:1px dashed var(--border);border-radius:12px;padding:18px;text-align:center}
   /* ---------- legenda data nyata vs estimasi ---------- */
   .legend{display:flex;gap:16px;flex-wrap:wrap;align-items:center;margin:0 2px 10px;color:var(--muted);font-size:11.5px;font-weight:700}
@@ -635,7 +643,7 @@
   .cmpfind input::placeholder{color:var(--muted)}
   .cmpfind .cnt{flex:none;font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.3px}
   .cmptop{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 0}
-  .chartbox.tall canvas{height:340px!important}
+  .chartbox.tall canvas{height:380px!important}
   /* ---------- pencarian global ---------- */
   .search.big input{height:44px;font-size:15px}
   .srsgroup{font-size:10.5px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--muted);margin:14px 2px 7px}
@@ -1433,19 +1441,11 @@ function renderSpRecords(sec) {
     perDay.set(k, acc);
   }
   const bestDays = [...perDay.entries()].map(([k, x]) => ({ k, ...x })).sort((a, b) => b.v - a.v).slice(0, 10);
-  /* tercepat capai milestone */
-  /* 3 lagu tercepat untuk tiap milestone — total sampai 15 baris */
-  const fastMs = [];
-  for (const m of [1e6, 5e6, 1e7, 5e7, 1e8]) {
-    const cands = [];
-    for (const tr of trs) {
-      const c = spCrossDays(tr, m);
-      if (c) cands.push({ tr, days: c.days, est: c.est });
-    }
-    cands.sort((x, y) => x.days - y.days);
-    for (const c of cands.slice(0, 3)) fastMs.push({ m, ...c });
-  }
-  fastMs.sort((x, y) => x.days - y.days);
+  /* milestone terbanyak: berapa milestone 10 jt stream yang sudah ditembus tiap lagu (10 besar) */
+  const mostMs = trs.map((t) => {
+    const n = Math.floor(spTrackTotal(t) / 1e7);
+    return n > 0 ? { tr: t, n, hi: n * 1e7 } : null;
+  }).filter((x) => x).sort((a, b) => b.n - a.n).slice(0, 10);
   /* papan artis */
   const artRows = (state.sp.artists || []).map((a) => {
     const mine = trs.filter((t) => t.artistId === a.id);
@@ -1483,7 +1483,7 @@ function renderSpRecords(sec) {
       <div class="whl"><div class="k">Total stream gabungan</div><div class="em">Σ</div><div class="v">${fmtCompact(totAllTr)}</div><div class="d">${trs.length} lagu dipantau</div></div>
       <div class="whl"><div class="k">Hari terbaik situs</div><div class="em">↑</div><div class="v">${bestDays.length ? fmtDate(bestDays[0].k) : "–"}</div><div class="d">${bestDays.length ? "+" + fmtCompact(bestDays[0].v) + " stream" : "belum ada data"}</div></div>
       <div class="whl"><div class="k">Lonjakan terbesar</div><div class="em">▲</div><div class="v">${spikes.length ? esc(spikes[0].tr.name) : "–"}</div><div class="d">${spikes.length ? "+" + fmtCompact(spikes[0].dv) + " sehari" : "–"}</div></div>
-      <div class="whl"><div class="k">Milestone tercepat</div><div class="em">★</div><div class="v">${fastMs.length ? esc(fastMs[0].tr.name) : "–"}</div><div class="d">${fastMs.length ? NF.format(fastMs[0].days) + " hari capai " + fmtCompact(fastMs[0].m) : "–"}</div></div>
+      <div class="whl"><div class="k">Milestone terbanyak</div><div class="em">★</div><div class="v">${mostMs.length ? esc(mostMs[0].tr.name) : "–"}</div><div class="d">${mostMs.length ? NF.format(mostMs[0].n) + " milestone (" + fmtCompact(mostMs[0].hi) + ")" : "–"}</div></div>
     </div>
     <div class="hgrid">
       <div>
@@ -1497,8 +1497,8 @@ function renderSpRecords(sec) {
     </div>
     <div class="hgrid" style="margin-top:18px">
       <div>
-        ${featSectHead("#38bdf8", dash, "Tercepat capai milestone", "3 tercepat tiap milestone")}
-        <div style="display:flex;flex-direction:column;gap:7px">${fastMs.map((x, i) => spRecRow(x, i, NF.format(x.days) + " hari", fmtCompact(x.m) + (x.est ? " <span class='cellno'>(±)</span>" : ""))).join("") || '<div class="banner">Belum ada data.</div>'}</div>
+        ${featSectHead("#38bdf8", dash, "Milestone terbanyak", "10 besar · milestone 10 jt stream yang sudah ditembus")}
+        <div style="display:flex;flex-direction:column;gap:7px">${mostMs.map((x, i) => spRecRow(x, i, NF.format(x.n) + " milestone", "tertinggi " + fmtCompact(x.hi))).join("") || '<div class="banner">Belum ada data.</div>'}</div>
       </div>
       <div>
         ${featSectHead("#ffb02e", ICO_SP_FIRE, "Hari terbaik situs", "10 hari terbaik (semua lagu)")}
@@ -1550,20 +1550,11 @@ function renderYtRecords(sec) {
   }
   const by7 = vids.slice().sort((a, b) => { const da = deltaDays(a.history, 7), db = deltaDays(b.history, 7); return (db ? db.delta : -1) - (da ? da.delta : -1); }).slice(0, 10);
   const spikes = vids.map((v) => { const d = deltaDays(v.history, 1); return { v, d }; }).filter((x) => x.d && x.d.delta > 0).sort((a, b) => b.d.delta - a.d.delta).slice(0, 10);
-  /* 3 lagu tercepat untuk tiap milestone — total sampai 15 baris */
-  const fastMs = [];
-  for (const m of [1e7, 3e7, 5e7, 1e8, 2e8]) {
-    const cands = [];
-    for (const v of vids) {
-      const off = officialDays(v, m);
-      const d = off != null ? off : daysToReach(v, v.history, m);
-      if (d == null) continue;
-      cands.push({ v, days: d, off: off != null });
-    }
-    cands.sort((x, y) => x.days - y.days);
-    for (const c of cands.slice(0, 3)) fastMs.push({ m, ...c });
-  }
-  fastMs.sort((x, y) => x.days - y.days);
+  /* milestone terbanyak: berapa milestone 10 jt yang sudah ditembus tiap video (10 besar) */
+  const mostMs = vids.map((v) => {
+    const n = Math.floor(lastV(v) / 1e7);
+    return n > 0 ? { v, n, hi: n * 1e7 } : null;
+  }).filter((x) => x).sort((a, b) => b.n - a.n).slice(0, 10);
   const chRows = state.config.artists.map((a) => {
     const ch = state.channels && state.channels[a.id];
     const h = ch && ch.history;
@@ -1585,12 +1576,39 @@ function renderYtRecords(sec) {
     const days = Math.max(1, (nowYt - rel) / 86400);
     return { v, avg: lastV(v) / days };
   }).filter((x) => x).sort((a, b) => b.avg - a.avg).slice(0, 10);
-  /* debut: views 24 jam pertama yang tercatat situs */
+  /* debut: views 24 jam pertama sejak rilis — dikurasi dari pengumuman resmi YG (✓),
+   * media (✓ KBS/NME/Korea Herald) & laporan penggemar terpercaya (±). Dulu dihitung
+   * dari selisih dua titik rekam pertama — bisa melompati berbulan-bulan (entri
+   * milestone resmi) dan menghasilkan angka absurd (mis. +300 jt "sehari"). */
+  const DEBUT_REAL = {
+    "2wA_b6YHjqQ": { v: 24400000, src: "resmi ✓ YG · Korea Herald" },      // SHEESH
+    "olDWm2veCrM": { v: 22590000, src: "resmi ✓ YG · NME" },               // BATTER UP
+    "Zp-Jhuhq0bQ": { v: 18000000, src: "± laporan penggemar" },            // DRIP
+    "o9V8HrgJgIg": { v: 14900000, src: "± laporan penggemar" },            // WE GO UP perf.
+    "yd_uG3TtREs": { v: 13000000, src: "± laporan penggemar (13 jt+)" },   // PSYCHO
+    "oC6brLXQe4I": { v: 12600000, src: "± laporan penggemar" },            // DESERVE
+    "ZJaKdBBzUYk": { v: 11316000, src: "± laporan penggemar" },            // JIKJIN
+    "wlHwjkYpSr0": { v: 10200000, src: "± laporan penggemar" },            // WE GO UP
+    "JSAfPh1A25E": { v: 9153000, src: "± laporan penggemar" },             // BOY
+    "gxeyC1cPJsA": { v: 8453000, src: "± laporan penggemar" },             // BONA BONA
+    "QERKD90hG98": { v: 8330000, src: "± laporan penggemar" },             // IF I
+    "aPd9exmH17o": { v: 7760000, src: "± laporan penggemar" },             // HELLO
+    "xn8mQqz2xmM": { v: 7920000, src: "resmi ✓ YG" },                      // HOT SAUCE
+    "GsV1i0QHi-o": { v: 10000000, src: "media ✓ KBS" },                    // Stuck In The Middle
+    "_hFarg-Obuc": { v: 5520000, src: "± laporan penggemar" },             // I LOVE YOU
+    "RjbNMogQw8s": { v: 5490000, src: "± laporan penggemar" },             // MMM
+    "p9LLoijPQfg": { v: 5142000, src: "± laporan penggemar" },             // MY TREASURE
+    "IR8gXjm507Y": { v: 4794000, src: "± laporan penggemar" },             // MOVE (T5)
+    "eBrvBlnhR9c": { v: 4180000, src: "± laporan penggemar" },             // LAST NIGHT
+  };
   const debut = vids.map((v) => {
+    const cur = DEBUT_REAL[v.id];
+    if (cur) return { v, d: cur.v, src: cur.src };
+    /* cadangan: data situs dipakai HANYA bila titik rekam pertama jatuh ≤72 jam sejak rilis */
     const h = v.history.slice().sort((x, y) => x.t - y.t);
-    if (h.length < 2) return null;
-    const d = h[1].v - h[0].v;
-    return d > 0 ? { v, d } : null;
+    const rel = releaseEpoch(v);
+    if (h.length && rel != null && h[0].v > 0 && h[0].t - rel <= 72 * 3600) return { v, d: h[0].v, src: "tercatat situs (±)" };
+    return null;
   }).filter((x) => x).sort((a, b) => b.d - a.d).slice(0, 10);
   const totAllV = vids.reduce((s, v) => s + lastV(v), 0);
   const topAll = vids.slice().sort((a, b) => lastV(b) - lastV(a))[0] || null;
@@ -1602,7 +1620,7 @@ function renderYtRecords(sec) {
       <div class="whl"><div class="k">Total views gabungan</div><div class="em">Σ</div><div class="v">${fmtCompact(totAllV)}</div><div class="d">${vids.length} video dipantau</div></div>
       <div class="whl"><div class="k">Video terpopuler</div><div class="em">★</div><div class="v">${topAll ? esc(rowTitleOf(topAll, topAll.art)) : "–"}</div><div class="d">${topAll ? fmtCompact(lastV(topAll)) + " views" : "–"}</div></div>
       <div class="whl"><div class="k">Lonjakan terbesar</div><div class="em">▲</div><div class="v">${spikes.length ? esc(rowTitleOf(spikes[0].v, spikes[0].v.art)) : "–"}</div><div class="d">${spikes.length ? "+" + fmtCompact(spikes[0].d.delta) + " sehari" : "–"}</div></div>
-      <div class="whl"><div class="k">Milestone tercepat</div><div class="em">★</div><div class="v">${fastMs.length ? esc(rowTitleOf(fastMs[0].v, fastMs[0].v.art)) : "–"}</div><div class="d">${fastMs.length ? NF.format(fastMs[0].days) + " hari capai " + fmtCompact(fastMs[0].m) : "–"}</div></div>
+      <div class="whl"><div class="k">Milestone terbanyak</div><div class="em">★</div><div class="v">${mostMs.length ? esc(rowTitleOf(mostMs[0].v, mostMs[0].v.art)) : "–"}</div><div class="d">${mostMs.length ? NF.format(mostMs[0].n) + " milestone (" + fmtCompact(mostMs[0].hi) + ")" : "–"}</div></div>
     </div>
     <div class="hgrid">
       <div>
@@ -1616,8 +1634,8 @@ function renderYtRecords(sec) {
     </div>
     <div class="hgrid" style="margin-top:18px">
       <div>
-        ${featSectHead("#38bdf8", dash, "Tercepat capai milestone", "3 tercepat tiap milestone")}
-        <div style="display:flex;flex-direction:column;gap:7px">${fastMs.map((x, i) => ytRow(x.v, i, NF.format(x.days) + " hari", "capai " + fmtCompact(x.m) + (x.off ? " · resmi ✓" : " · hitungan situs"))).join("") || '<div class="banner">Belum ada data.</div>'}</div>
+        ${featSectHead("#38bdf8", dash, "Milestone terbanyak", "10 besar · milestone 10 jt yang sudah ditembus")}
+        <div style="display:flex;flex-direction:column;gap:7px">${mostMs.map((x, i) => ytRow(x.v, i, NF.format(x.n) + " milestone", "tertinggi " + fmtCompact(x.hi))).join("") || '<div class="banner">Belum ada data.</div>'}</div>
       </div>
       <div>
         ${featSectHead("#a78bfa", ICO_FIRE, "Lonjakan harian tertinggi", "10 besar · views 1 hari terbesar")}
@@ -1630,8 +1648,8 @@ function renderYtRecords(sec) {
         <div style="display:flex;flex-direction:column;gap:7px">${avgDaily.map((s, i) => ytRow(s.v, i, fmtCompact(Math.round(s.avg)), "views/hari sejak rilis")).join("") || '<div class="banner">Belum ada data.</div>'}</div>
       </div>
       <div>
-        ${featSectHead("#22c55e", dash, "Debut terbesar", "10 besar · views hari pertama tercatat situs")}
-        <div style="display:flex;flex-direction:column;gap:7px">${debut.map((s, i) => ytRow(s.v, i, "+" + fmtCompact(s.d), "24 jam pertama tercatat")).join("") || '<div class="banner">Belum ada data.</div>'}</div>
+        ${featSectHead("#22c55e", dash, "Debut terbesar", "10 besar · views 24 jam pertama sejak rilis")}
+        <div style="display:flex;flex-direction:column;gap:7px">${debut.map((s, i) => ytRow(s.v, i, fmtCompact(s.d), "24 jam pertama · " + s.src)).join("") || '<div class="banner">Belum ada data.</div>'}</div>
       </div>
     </div>
     <section style="margin-top:18px">
@@ -1642,7 +1660,7 @@ function renderYtRecords(sec) {
         <div class="shb"><i style="width:${Math.max(2, pct)}%;background:linear-gradient(90deg,${x.a.color},#ffffff88)"></i></div></div>`;
       }).join("")}</div>
     </section>
-    <p class="note">Rekor dihitung dari riwayat yang direkam situs ini — makin lama situs berjalan, makin lengkap rekornya. Tanda ✓ = angka resmi YG/media.</p>
+    <p class="note">Rekor dihitung dari riwayat yang direkam situs ini — makin lama situs berjalan, makin lengkap rekornya. <b>Debut</b> = views 24 jam pertama sejak rilis, dari angka resmi YG (✓), media (✓) &amp; laporan penggemar terkurasi (±) — video tanpa sumber yang bisa dipertanggungjawabkan sengaja tidak ditampilkan supaya tidak ada angka tak masuk akal.</p>
   </section>`;
   bindPageClose(sec);
   bindCards(sec);
@@ -1788,7 +1806,8 @@ function cmpDays(id, m) {
 function makeCompareChart(canvas, sA, sB, nA, nB, unit, marks) {
   const mk = (s, color) => ({
     data: s.pts.map((p) => ({ x: Math.round(p.x * 10) / 10, y: p.y })),
-    borderColor: color, borderWidth: 2.4, pointRadius: 0, pointHitRadius: 10, tension: 0.25, fill: false,
+    borderColor: color, borderWidth: 3, pointRadius: 0, pointHitRadius: 12, tension: 0.25, fill: false,
+    pointHoverRadius: 4.5, pointHoverBackgroundColor: color, pointHoverBorderColor: "#fff", pointHoverBorderWidth: 2,
     segment: { borderDash: (c) => (((s.pts[c.p0DataIndex] || {}).e || (s.pts[c.p1DataIndex] || {}).e) ? [5, 4] : undefined) },
   });
   const FONT = (typeof Chart !== "undefined" && Chart.defaults.font.family) || "sans-serif";
@@ -1799,7 +1818,6 @@ function makeCompareChart(canvas, sA, sB, nA, nB, unit, marks) {
     Chart.Interaction.modes.cmpX = (chart, e, options, useFinalPosition) => {
       const pos = grp(e, chart);
       const area = chart.chartArea || { left: 0, right: 0 };
-      const tol = Math.max(18, (area.right - area.left) * 0.02);
       const out = [];
       for (const meta of chart.getSortedVisibleDatasetMetas()) {
         let best = null, bestD = Infinity;
@@ -1812,7 +1830,7 @@ function makeCompareChart(canvas, sA, sB, nA, nB, unit, marks) {
           const d = Math.abs(c.x - pos.x);
           if (d < bestD) { bestD = d; best = { element: el, datasetIndex: meta.index, index: i }; }
         }
-        if (best && bestD <= tol) out.push(best);
+        if (best) out.push(best);   // SELALU satu titik terdekat per lagu — tooltip tak pernah cuma 1 lagu
       }
       return out;
     };
@@ -1826,7 +1844,7 @@ function makeCompareChart(canvas, sA, sB, nA, nB, unit, marks) {
     if (otherY != null && Math.abs(otherY - y) < 16) y = otherY + (y >= otherY ? 16 : -16);
     const txt = fmtCompact(Math.round(last.y));
     ctx.save();
-    ctx.font = "800 10.5px " + FONT;
+    ctx.font = "800 11.5px " + FONT;
     const w = ctx.measureText(txt).width + 12;
     let rx = x + 6;
     if (rx + w > chart.canvas.clientWidth - 2) rx = x - 6 - w;
@@ -1839,6 +1857,26 @@ function makeCompareChart(canvas, sA, sB, nA, nB, unit, marks) {
     ctx.fillText(txt, rx + 6, y);
     ctx.restore();
     return y;
+  };
+  /* garis bantu vertikal mengikuti kursor — hari yang dibaca jadi jelas */
+  const cross = {
+    id: "cmpCross",
+    afterDatasetsDraw(chart) {
+      const act = chart.tooltip && chart.tooltip.getActiveElements();
+      if (!act || !act.length) return;
+      const x = act[0].element.x;
+      const { ctx, chartArea } = chart;
+      if (!chartArea) return;
+      ctx.save();
+      ctx.strokeStyle = cssVar("--chart-grid") || "#888";
+      ctx.setLineDash([4, 4]);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x, chartArea.top);
+      ctx.lineTo(x, chartArea.bottom);
+      ctx.stroke();
+      ctx.restore();
+    },
   };
   const plugin = {
     id: "cmpLabels",
@@ -1873,7 +1911,7 @@ function makeCompareChart(canvas, sA, sB, nA, nB, unit, marks) {
         const py = yl.getPixelForValue(top.m);
         const txt = g.ms.map((m) => fmtCompact(m.m)).join(" & ") + " · " + NF.format(g.days) + " hr";
         ctx.save();
-        ctx.font = "700 9.5px " + FONT;
+        ctx.font = "700 10.5px " + FONT;
         ctx.fillStyle = CMP_COLORS[g.side];
         ctx.textBaseline = g.side === 0 ? "bottom" : "top";
         let tx = px + 6;
@@ -1891,15 +1929,23 @@ function makeCompareChart(canvas, sA, sB, nA, nB, unit, marks) {
       interaction: { mode: "cmpX", intersect: false },
       layout: { padding: { right: 78, top: 18, bottom: 4 } },
       scales: {
-        x: { type: "linear", title: { display: true, text: "hari sejak rilis", color: cssVar("--chart-text"), font: { size: 10.5 } }, grid: { color: cssVar("--chart-grid") }, ticks: { color: cssVar("--chart-text"), maxTicksLimit: 9, font: { size: 10.5 }, callback: (v) => NF.format(v) } },
-        y: { beginAtZero: true, grace: "5%", grid: { color: cssVar("--chart-grid") }, ticks: { color: cssVar("--chart-text"), font: { size: 10.5 }, callback: (v) => fmtCompact(v) } },
+        x: { type: "linear", title: { display: true, text: "hari sejak rilis", color: cssVar("--chart-text"), font: { size: 11.5 } }, grid: { color: cssVar("--chart-grid") }, ticks: { color: cssVar("--chart-text"), maxTicksLimit: 9, font: { size: 11.5 }, callback: (v) => NF.format(v) } },
+        y: { beginAtZero: true, grace: "5%", grid: { color: cssVar("--chart-grid") }, ticks: { color: cssVar("--chart-text"), font: { size: 11.5 }, callback: (v) => fmtCompact(v) } },
       },
       plugins: {
-        legend: { labels: { color: cssVar("--chart-text"), usePointStyle: true, boxWidth: 8, font: { size: 11 } } },
+        legend: { labels: { color: cssVar("--chart-text"), usePointStyle: true, boxWidth: 10, font: { size: 12 } } },
         tooltip: {
+          labelColor: (c) => ({ borderColor: "transparent", backgroundColor: CMP_COLORS[c.datasetIndex] || "#888" }),
           callbacks: {
-            title: (it) => (it && it.length ? "Hari ke-" + NF.format(Math.round(it[0].parsed.x)) : ""),
-            label: (c) => (c.dataset.label || "") + ": " + fmtCompact(Math.round(c.parsed.y)) + " " + unit,
+            title: (it) => (it && it.length && it[0].parsed ? "Hari ke-" + NF.format(Math.round(it[0].parsed.x)) : ""),
+            label: (c) => {
+              if (!c.parsed) return "";
+              const dps = c.chart && c.chart.tooltip ? (c.chart.tooltip.dataPoints || []) : [];
+              const p0 = dps.length ? dps[0] : null;
+              const x0 = p0 && p0.parsed ? p0.parsed.x : c.parsed.x;
+              const dx = Math.abs(c.parsed.x - x0);
+              return (c.dataset.label || "") + ": " + fmtCompact(Math.round(c.parsed.y)) + " " + unit + (dx > 1 ? "  ·  tercatat hr ke-" + NF.format(Math.round(c.parsed.x)) : "");
+            },
             /* total DUA lagu tampil sekaligus + selisihnya, tanpa perlu menebak */
             afterBody: (it) => {
               if (!it || it.length < 2) return [];
@@ -1915,7 +1961,7 @@ function makeCompareChart(canvas, sA, sB, nA, nB, unit, marks) {
         },
       },
     },
-    plugins: [plugin],
+    plugins: [plugin, cross],
   }, "cmpChart");
 }
 function openCompare() {
@@ -1945,7 +1991,7 @@ function openCompare() {
   $("#sheet").innerHTML = `
     <button class="close" id="closeBtn" aria-label="Tutup">✕</button>
     <h2 class="dtitle" style="margin-bottom:2px;display:flex;align-items:center;gap:10px"><span class="sic" style="--c:#1ed760;width:34px;height:34px;border-radius:10px"><svg viewBox="0 0 24 24"><path d="${ICO_SWAP}"/></svg></span>Perbandingan ${unit === "stream" ? "lagu" : "video"}</h2>
-    <p class="note">Geser kursor di grafik — total kedua lagu/video langsung tampil berdampingan di tooltip lengkap dengan selisihnya · titik milestone &amp; total terakhir juga tergambar di grafik · garis putus-putus = estimasi.</p>
+    <p class="note">Geser kursor di grafik — total kedua lagu/video SELALU tampil berdampingan di tooltip lengkap dengan selisihnya (tak pernah cuma satu lagu) · titik milestone &amp; total terakhir juga tergambar langsung di grafik · garis bantu vertikal mengikuti kursor · garis putus-putus = estimasi.</p>
     <div class="cmptop">
       <button class="mtab" id="cmpSwap">⇄ Tukar A &amp; B</button>
       <span class="lbnum">ketik di kotak pencarian untuk mempersempit daftar pilihan</span>
@@ -2040,15 +2086,35 @@ function drawCompare() {
   info(iB, sB, "cmpInfo1");
   const msList2 = state.platform === "spotify" ? [1e6, 5e6, 1e7, 2e7, 5e7, 1e8, 2e8, 3e8] : [1e7, 2e7, 5e7, 1e8, 2e8, 3e8];
   const rows = [];
+  /* hari menembus milestone + tanda ≤ bila penembusan terjadi SEBELUM titik rekam pertama */
+  const dayInfoCmp = (id, m) => {
+    if (state.platform === "spotify") {
+      const tr = (state.sp.tracks || {})[id];
+      const c = tr ? crossPoint(tr.history || [], m) : null;
+      if (!c) return null;
+      const rel = spRelT(tr);
+      return rel ? { days: Math.max(1, Math.round((c.t - rel) / 86400)), pre: !!c.pre, est: !!c.est } : null;
+    }
+    const off = officialDays(id, m);
+    if (off != null) return { days: off, pre: false, off: true };
+    const v = state.videos ? state.videos[id] : null;
+    if (!v) return null;
+    const c = crossPoint(v.history, m);
+    if (!c) return null;
+    const rel = releaseEpoch(v);
+    if (rel == null) return null;
+    return { days: Math.max(1, Math.ceil((c.t - rel) / 86400)), pre: !!c.pre, est: !!c.est };
+  };
+  const dayCell = (d, win) => `<td class="num${win ? " fastest" : ""}">${d ? (d.pre ? "≤ " : "") + NF.format(d.days) + " hari" : "–"}${win ? " ★" : ""}</td>`;
   for (const m of msList2) {
-    const dA = cmpDays(a, m), dB = cmpDays(b, m);
+    const dA = dayInfoCmp(a, m), dB = dayInfoCmp(b, m);
     if (!dA && !dB) continue;
     let w = "";
     if (dA && dB) w = dA.days < dB.days ? "a" : dA.days > dB.days ? "b" : "";
     rows.push(`<tr>
       <td><b>${fmtCompact(m)}</b></td>
-      <td class="num${w === "a" ? " fastest" : ""}">${dA ? NF.format(dA.days) + " hari" : "–"}${w === "a" ? " ★" : ""}</td>
-      <td class="num${w === "b" ? " fastest" : ""}">${dB ? NF.format(dB.days) + " hari" : "–"}${w === "b" ? " ★" : ""}</td>
+      ${dayCell(dA, w === "a")}
+      ${dayCell(dB, w === "b")}
     </tr>`);
   }
   let concl = "";
@@ -2062,11 +2128,11 @@ function drawCompare() {
   }
   const tEl = document.getElementById("cmpTable");
   if (tEl) tEl.innerHTML = `
-    <div class="tscroll"><table class="ms">
-      <thead><tr><th>Milestone</th><th class="num" style="color:${CMP_COLORS[0]}">A — ${esc(iA ? iA.name : "")}</th><th class="num" style="color:${CMP_COLORS[1]}">B — ${esc(iB ? iB.name : "")}</th></tr></thead>
+    <div class="tscroll"><table class="ms cmp">
+      <thead><tr><th>Milestone</th><th><span class="mschip" style="--cc:${CMP_COLORS[0]}">A</span><span style="color:${CMP_COLORS[0]}">${esc(iA ? iA.name : "")}</span></th><th><span class="mschip" style="--cc:${CMP_COLORS[1]}">B</span><span style="color:${CMP_COLORS[1]}">${esc(iB ? iB.name : "")}</span></th></tr></thead>
       <tbody>${rows.join("")}</tbody>
     </table></div>
-    ${concl ? `<p class="note">Kesimpulan: ${concl} ★ = lebih cepat.</p>` : ""}`;
+    <p class="note">★ = lebih cepat mencapai milestone itu · ≤ = batas atas — pencapaian terjadi sebelum titik rekam pertama lagu · angka mengikuti data resmi YG/media bila tersedia.${concl ? ` Kesimpulan: ${concl}` : ""}</p>`;
 }
 
 /* ---------- pencarian global (satu kotak untuk semuanya) ---------- */
@@ -4164,7 +4230,7 @@ function spWrappedMilestones(wd) {
     }
   }
   out.sort((x, y) => (y.at || 0) - (x.at || 0));
-  return out.slice(0, 8);
+  return out.slice(0, 10);
 }
 
 /* ---------- HALAMAN WRAPPED PENUH ----------
@@ -4258,7 +4324,7 @@ function renderWrappedPage(sec) {
     if (best) spkAll.push({ tr: s.tr, ...best });
   }
   spkAll.sort((x, y) => y.dv - x.dv);
-  const spkRows = spkAll.slice(0, 8).map((s, i) => `
+  const spkRows = spkAll.slice(0, 10).map((s, i) => `
     <div class="wprow ${i < 3 ? "top3" : ""}" data-spk="${esc(s.tr.key)}" tabindex="0" role="button" aria-label="${esc(s.tr.name)}">
       <div class="rk">${i + 1}</div>
       ${s.tr.cover ? `<img class="cv" src="${esc(s.tr.cover)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : `<div class="cv" style="display:grid;place-items:center;color:var(--muted)">♪</div>`}
@@ -4369,13 +4435,13 @@ function renderWrappedPage(sec) {
       <div>
         ${spSectHead("#1ed760", ICO_SP_TROPHY, "Lagu teratas", "10 besar " + (isMonth ? "bulan" : "tahun") + " ini")}
         <div style="display:flex;flex-direction:column;gap:7px">${topRows || '<div class="banner">Belum ada stream tercatat pada periode ini.</div>'}</div>
-        ${spkRows ? `<div style="margin-top:16px">${spSectHead("#38bdf8", "M3.5 18.5 9 13l3.5 3.5L20 9l1.4 1.4-8.9 8.9L9 15.8l-4.1 4.1z", "Lonjakan harian terbesar", "8 lonjakan stream terbesar di periode ini")}<div style="display:flex;flex-direction:column;gap:7px">${spkRows}</div></div>` : ""}
+        ${spkRows ? `<div style="margin-top:16px">${spSectHead("#38bdf8", "M3.5 18.5 9 13l3.5 3.5L20 9l1.4 1.4-8.9 8.9L9 15.8l-4.1 4.1z", "Lonjakan harian terbesar", "10 lonjakan stream terbesar di periode ini")}<div style="display:flex;flex-direction:column;gap:7px">${spkRows}</div></div>` : ""}
       </div>
       <div>
         ${spSectHead("#38bdf8", ICO_SP_PEOPLE, "Porsi artis", "kontribusi tiap artis periode ini")}
         <div class="sharecard">${shareRows || '<div style="font-size:12px;color:var(--muted)">Belum ada porsi artis.</div>'}</div>
         ${baruRows ? `<div style="margin-top:16px">${spSectHead("#ff4d6d", ICO_SP_FIRE, "Rilisan terbaru teratas", "10 rilisan teratas yang rilis di tengah periode")}<div style="display:flex;flex-direction:column;gap:7px">${baruRows}</div></div>` : ""}
-        ${msRows ? `<div style="margin-top:16px">${spSectHead("#ffb02e", "M9 18.7 13.2 10l4.2 8.7M12 3 3 21h3l1.7-3.6h8.6L18 21h3L12 3z", "Milestone ditembus", "dicapai di tengah periode ini")}<div style="display:flex;flex-direction:column;gap:7px">${msRows}</div></div>` : ""}
+        ${msRows ? `<div style="margin-top:16px">${spSectHead("#ffb02e", "M9 18.7 13.2 10l4.2 8.7M12 3 3 21h3l1.7-3.6h8.6L18 21h3L12 3z", "Milestone ditembus", "10 terbaru yang dicapai di tengah periode ini")}<div style="display:flex;flex-direction:column;gap:7px">${msRows}</div></div>` : ""}
       </div>
     </div>
     <p class="note">Dihitung dari riwayat stream seluruh lagu yang dipantau situs ini (Spotify Charts via kworb.net): nilai di ujung periode dikurangi nilai di awal periode — lagu yang rilis di tengah periode dihitung sejak 0. Rekap tahunan ala Spotify Wrapped selalu hadir tiap akhir tahun; rekap bulanan diperbarui otomatis setiap bulan. Klik lagu mana pun untuk grafik &amp; milestone.</p>
