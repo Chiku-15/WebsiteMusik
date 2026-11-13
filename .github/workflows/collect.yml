@@ -44,6 +44,9 @@ jobs:
         id: yt
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          # Opsional - isi 2 secret ini untuk notifikasi Telegram (video baru & alert koleksi gagal):
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
           WAYBACK_MASS: ${{ github.event.inputs.mode == 'wayback-mass' && '1' || '' }}
         run: node collect.js
         # Kalau YouTube gagal (API key hilang / jaringan), Spotify tetap jalan dan
