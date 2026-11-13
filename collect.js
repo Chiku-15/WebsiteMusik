@@ -880,6 +880,7 @@ async function collectAPI() {
       t: now,
       v: parseInt(st.viewCount || "0", 10) || 0,
       l: st.likeCount != null ? parseInt(st.likeCount, 10) || 0 : null,
+      c: st.commentCount != null ? parseInt(st.commentCount, 10) || 0 : null,
     })) updated++;
     videos[it.id] = rec;
   }

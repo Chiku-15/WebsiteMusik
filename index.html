@@ -213,6 +213,45 @@
   .rangebtn{border:1px solid var(--border);background:var(--chip);color:var(--muted);font:600 11.5px var(--font);padding:5px 12px;border-radius:999px;cursor:pointer}
   .rangebtn.active{background:var(--text);color:var(--bg);border-color:var(--text)}
   .note{color:var(--muted);font-size:12px;margin:8px 2px 0;line-height:1.5}
+  /* ---------- analisis lanjutan: momentum, vs grup, anggota, trofi, jadwal ---------- */
+  .vsduel{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch}
+  .vsduel .vscol{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px;display:flex;flex-direction:column;gap:9px;min-width:0}
+  .vsduel .vscol h4{margin:0;font-size:13px;display:flex;align-items:center;gap:8px}
+  .vsduel .vscol h4 .dot{width:10px;height:10px;border-radius:50%;background:var(--vc,#1ed760);flex:none}
+  .vsduel .vsrow{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;color:var(--muted)}
+  .vsduel .vsrow b{color:var(--text);font-size:11.5px;text-align:right;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .vsduel .vsmid{display:grid;place-items:center;font-weight:900;color:var(--muted);font-size:14px;letter-spacing:1px}
+  .mombadge{display:inline-block;padding:1px 7px;border-radius:999px;font-size:10px;font-weight:800;background:color-mix(in srgb,#22c55e 18%,transparent);color:#22c55e}
+  .mombadge.warn{background:color-mix(in srgb,#ffb02e 18%,transparent);color:#ffb02e}
+  .memgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:12px}
+  .memcard{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;text-align:center;position:relative;overflow:hidden}
+  .memcard::before{content:"";position:absolute;inset:0 0 auto;height:58px;background:linear-gradient(160deg,color-mix(in srgb,var(--mc,#6a78ff) 30%,transparent),transparent);pointer-events:none}
+  .memava{width:62px;height:62px;border-radius:50%;margin:2px auto 8px;display:grid;place-items:center;font-weight:900;font-size:19px;color:#fff;background:linear-gradient(140deg,var(--mc,#6a78ff),#ffffff44);box-shadow:0 6px 16px -8px var(--mc,#6a78ff);position:relative}
+  .memcard .nm{font-weight:800;font-size:14px;position:relative}
+  .memcard .rl{font-size:10.5px;color:var(--muted);margin-top:1px;position:relative}
+  .mempos{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:7px;position:relative}
+  .mempos span{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:999px;background:color-mix(in srgb,var(--mc,#6a78ff) 15%,transparent);color:color-mix(in srgb,var(--mc,#6a78ff) 80%,var(--text))}
+  .membday{margin-top:9px;font-size:11px;color:var(--muted);position:relative}
+  .membday b{color:var(--text)}
+  .bdcnt{margin-top:4px;font-size:10.5px;font-weight:800;color:var(--mc,#6a78ff);position:relative}
+  .cdlive{font-variant-numeric:tabular-nums}
+  .trobadg{display:inline-block;padding:2px 9px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.4px}
+  .trobadg.win{background:color-mix(in srgb,#22c55e 16%,transparent);color:#22c55e}
+  .trobadg.nom{background:color-mix(in srgb,#8a93a8 16%,transparent);color:var(--muted)}
+  .popbar{height:7px;border-radius:999px;background:var(--border);overflow:hidden;margin-top:5px}
+  .popbar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#1ed760,#a7f3c9)}
+  .subgoal{margin-top:12px;background:color-mix(in srgb,var(--artist-color,#6a78ff) 9%,transparent);border:1px solid color-mix(in srgb,var(--artist-color,#6a78ff) 24%,var(--border));border-radius:14px;padding:12px 14px}
+  .subgoal .sgtop{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12px;color:var(--muted)}
+  .subgoal .sgtop b{color:var(--text);font-size:13px}
+  .sgbar{height:9px;border-radius:999px;background:var(--border);overflow:hidden;margin-top:8px}
+  .sgbar i{display:block;height:100%;background:linear-gradient(90deg,var(--artist-color,#6a78ff),#ffffff66)}
+  .chiprow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .chipstat{flex:1 1 130px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:9px 12px;min-width:0}
+  .chipstat .k{font-size:9.5px;color:var(--muted);font-weight:800;letter-spacing:.4px}
+  .chipstat .v{font-size:15px;font-weight:900;margin-top:2px}
+  .chipstat .d{font-size:10.5px;color:var(--muted);margin-top:1px}
+  .schtype{display:inline-block;padding:2px 8px;border-radius:999px;font-size:9.5px;font-weight:800;letter-spacing:.4px}
+  .schcnt{font-size:13px;font-weight:900;color:#a78bfa;white-space:nowrap}
   /* ---------- peta panas harian (heatmap) ---------- */
   .hm-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-top:2px}
   .hm-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:11px}
@@ -1154,6 +1193,9 @@ const state = {
   spChanRange: ["1", "7", "30", "365", "all"].includes(localStorage.getItem("py.spchanrange")) ? localStorage.getItem("py.spchanrange") : "all",
   watch: null,            // Set kunci pantauan ("sp:<key>" / "yt:<id>") — dari localStorage py.watch
   recOpen: false,         // halaman Rekor & Fakta (isi mengikuti platform aktif)
+  memOpen: false,         // halaman Profil anggota (17 anggota)
+  troOpen: false,         // halaman Trofi & Penghargaan
+  schOpen: false,         // halaman Jadwal & Countdown
   calOpen: false,         // halaman Kalender rilisan (isi mengikuti platform aktif)
   spAlbumOpen: false,     // halaman album Spotify terbuka?
   spAlbum: null,          // id album yang dibuka
@@ -1230,15 +1272,20 @@ function resetAllZoom() { for (const c of state.chartRegistry) { try { c.resetZo
 
 async function loadData() {
   const bust = "?v=" + Date.now();
-  const [cfg, vids, chans, meta, ms] = await Promise.all([
+  const [cfg, vids, chans, meta, ms, memb, trofi, jadwal, spPop] = await Promise.all([
     fetch("config.json" + bust).then((r) => r.json()),
     fetch("data/videos.json" + bust).then((r) => r.json()).catch(() => ({})),
     fetch("data/channels.json" + bust).then((r) => r.json()).catch(() => ({})),
     fetch("data/meta.json" + bust).then((r) => r.json()).catch(() => null),
     fetch("data/milestones.json" + bust).then((r) => r.json()).catch(() => ({})),
+    fetch("data/members.json" + bust).then((r) => r.json()).catch(() => null),
+    fetch("data/trofi.json" + bust).then((r) => r.json()).catch(() => null),
+    fetch("data/jadwal.json" + bust).then((r) => r.json()).catch(() => null),
+    fetch("data/spotify-popularity.json" + bust).then((r) => r.json()).catch(() => null),
   ]);
   state.config = cfg; state.videos = vids; state.channels = chans; state.meta = meta;
   state.milestones = ms.videos || {};
+  state.members = memb; state.trofi = trofi; state.jadwal = jadwal; state.spPop = spPop;
 }
 
 function artistOf(id) { return state.config.artists.find((a) => a.id === id); }
@@ -1260,6 +1307,7 @@ function pageCloseBar(title, sub, ico, color) {
 function bindPageClose(sec) {
   sec.querySelectorAll("#pageClose").forEach((b) => b.addEventListener("click", () => {
     state.recOpen = false; state.calOpen = false;
+    state.memOpen = false; state.troOpen = false; state.schOpen = false;
     renderAll(); window.scrollTo(0, 0);
   }));
 }
@@ -1331,6 +1379,7 @@ function watchSummaryHTML(plat) {
 /* ---------- kartu menu beranda: Bandingkan / Rekor / Kalender ---------- */
 const ICO_SWAP = "M6.99 11 3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 15V9z";
 const ICO_CAL = "M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2v2zm2 18H5V8h14v11z";
+const ICO_MEDAL = "M12 2a6 6 0 0 0-4 10.47V17h8v-4.53A6 6 0 0 0 12 2zM8.5 18 7 22l5-2 5 2-1.5-4z";
 function menuRowHTML(plat) {
   const cmp = plat === "spotify"
     ? ["cmp", "#1ed760", ICO_SWAP, "Bandingkan lagu", "adu 2 lagu sejak hari rilis"]
@@ -1343,7 +1392,10 @@ function menuRowHTML(plat) {
       <div style="min-width:0;flex:1"><b>${t}</b><span>${s}</span></div>
       <span class="go">→</span>
     </div>`;
-  return `<div class="menurow">${[cmp, rec, cal].map(card).join("")}</div>`;
+  const tro = ["tro", "#f59e0b", ICO_MEDAL, "Trofi &amp; Penghargaan", "menang acara musik &amp; penghargaan"];
+  const mem = ["mem", "#f472b6", ICO_PEOPLE, "Profil anggota", "17 anggota · ulang tahun &amp; posisi"];
+  const sch = ["sch", "#38bdf8", ICO_CAL, "Jadwal &amp; Countdown", "tur, rilisan &amp; hitung mundur"];
+  return `<div class="menurow">${[cmp, rec, cal, tro, mem, sch].map(card).join("")}</div>`;
 }
 function menuGo(k) {
   /* Rekor/Kalender = halaman khusus beranda — dari halaman artis pun kembali ke beranda dulu
@@ -1351,6 +1403,9 @@ function menuGo(k) {
   if (k === "cmp") openCompare();
   else if (k === "rec") { state.recOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
   else if (k === "cal") { state.calOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
+  else if (k === "tro") { state.troOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
+  else if (k === "mem") { state.memOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
+  else if (k === "sch") { state.schOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
 }
 function bindMenu(root) {
   if (!root) return;
@@ -1442,6 +1497,314 @@ function renderSpAlbumPage(sec) {
   bindWatch(sec);
 }
 
+/* ===================== HALAMAN BARU: profil anggota / trofi / jadwal ===================== */
+
+/* tanggal longgar: terima "2024", "2024-11", "2024-11-23" */
+function fmtDateLoose(d) {
+  if (!d) return "–";
+  if (d.length === 4) return d;
+  if (d.length === 7) return MFULL.format(new Date(d + "-01T00:00:00"));
+  return fmtDate(d);
+}
+/* kejadian tahunan berikutnya (ulang tahun / anniv debut) — mengembalikan {date:"YYYY-MM-DD", nth} */
+function nextYearly(iso) {
+  const [y, m, d] = iso.split("-").map(Number);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  for (let yy = now.getFullYear() - 1; yy <= now.getFullYear() + 1; yy++) {
+    const t = new Date(yy, m - 1, d);
+    const isoD = t.getFullYear() + "-" + String(t.getMonth() + 1).padStart(2, "0") + "-" + String(t.getDate()).padStart(2, "0");
+    if (t.getTime() >= today.getTime()) return { date: isoD, nth: yy - y };
+  }
+  return null;
+}
+
+/* ---------- helper analisis bersama (momentum, awet, konsisten) ---------- */
+/* nilai kumulatif terakhir pada/sebelum ts (lewati titik estimasi) — riwayat video YT */
+function valAtYt(h, ts) {
+  let best = null;
+  for (const p of (h || [])) { if (p.e === 1) continue; if (p.t <= ts) best = p; else break; }
+  return best ? { v: best.v } : null;
+}
+/* delta per hari kalender WIB dari riwayat titik ({t, v, e}) — dipakai YT & Spotify */
+function dailyDeltasOf(h) {
+  const byDay = new Map();
+  for (const p of (h || [])) {
+    if (p.e === 1 || p.v == null) continue;
+    byDay.set(dayKeyOf(p.t), p.v);
+  }
+  const arr = [...byDay.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+  const out = [];
+  for (let i = 1; i < arr.length; i++) out.push({ k: arr[i][0], d: arr[i][1] - arr[i - 1][1] });
+  return out;
+}
+/* delta harian per video dalam jendela N hari — lewati lompatan antar hari berselang >2 hari
+ * (titik impor arsip/jangkar jarang tidak dihitung sebagai "lonjakan sehari") */
+function dailyDeltasBounded(h, daysBack) {
+  const cutoff = Date.now() / 1000 - (daysBack || 60) * 86400;
+  const byDay = new Map();
+  for (const p of (h || [])) {
+    if (p.e === 1 || p.v == null || p.t < cutoff) continue;
+    byDay.set(dayKeyOf(p.t), p.v);
+  }
+  const arr = [...byDay.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+  const out = [];
+  for (let i = 1; i < arr.length; i++) {
+    const gap = (new Date(arr[i][0] + "T12:00:00") - new Date(arr[i - 1][0] + "T12:00:00")) / 86400000;
+    if (gap <= 2) out.push({ k: arr[i][0], d: arr[i][1] - arr[i - 1][1] });
+  }
+  return out;
+}
+function haveX(list) { return list.filter((v) => (v.history || []).some((p) => p.e !== 1 && p.v != null)).length; }
+/* titik riwayat terdekat ke ts (dalam toleransi hari) — untuk membandingkan dua pekan secara adil */
+function closestPoint(h, ts, tolDays) {
+  let best = null, bd = Infinity;
+  for (const p of (h || [])) {
+    if (p.e === 1 || p.v == null) continue;
+    const df = Math.abs(p.t - ts);
+    if (df < bd) { bd = df; best = p; }
+  }
+  return best && bd <= (tolDays || 1.5) * 86400 ? best : null;
+}
+/* total katalog per hari (carry-forward: nilai tiap video dibawa maju ke hari berikutnya
+ * sampai ada titik baru, supaya titik jangkar yang jeda bulanan tidak terhitung sebagai
+ * "lonjakan sehari" — dulu total 7 hari bisa muncul angka miliaran yang salah) */
+function catalogDaily(vids, daysBack) {
+  const win = (daysBack || 90) * 86400;
+  const cutoff = Date.now() / 1000 - win;
+  const allDays = new Set();
+  const per = [];
+  for (const v of vids) {
+    const pts = (v.history || []).filter((p) => p.e !== 1 && p.v != null && p.t >= cutoff - 3 * 86400);
+    if (!pts.length) continue;
+    const m = new Map();
+    for (const p of pts) m.set(dayKeyOf(p.t), p.v);
+    per.push(m);
+    for (const k of m.keys()) allDays.add(k);
+  }
+  const days = [...allDays].sort();
+  const out = [];
+  for (const k of days) {
+    let sum = 0;
+    for (const m of per) {
+      if (m.has(k)) m.set("__cur", m.get(k));
+      if (m.has("__cur")) sum += m.get("__cur");
+    }
+    out.push([k, sum]);
+  }
+  return out;
+}
+/* ---- halaman PROFIL ANGGOTA (fitur no 15) ---- */
+function renderMembersPage(sec) {
+  const G = state.members && state.members.groups;
+  if (!G) {
+    sec.innerHTML = `<section style="margin-top:26px">${pageCloseBar("Profil anggota", "", ICO_PEOPLE, "#f472b6")}<div class="banner">Data anggota belum tersedia.</div></section>`;
+    bindPageClose(sec);
+    return;
+  }
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let html = `<section style="margin-top:26px">
+    ${pageCloseBar("Profil anggota", "17 anggota BABYMONSTER &amp; TREASURE · posisi, ulang tahun, umur", ICO_PEOPLE, "#f472b6")}
+    <p class="note">Umur &amp; hitung mundur ulang tahun dihitung waktu Jakarta · sumber profil: kprofiles.com &amp; fandom wiki resmi tiap grup.</p>`;
+  for (const gid of ["babymonster", "treasure"]) {
+    const g = G[gid];
+    if (!g) continue;
+    const art = artistOf(gid) || {};
+    const color = art.color || g.color || "#6a78ff";
+    html += `<div class="calyear" style="margin-top:22px"><span class="ln"></span><span class="yr" style="color:${color}">${esc(g.name)}</span><span class="ln"></span></div>
+    <p class="note" style="margin-top:4px">Debut ${fmtDate(g.debut)} · ${g.members.length} anggota</p>
+    <div class="memgrid">` + g.members.map((m) => {
+      const nb = nextYearly(m.bd);
+      const dd = nb ? Math.round((new Date(nb.date + "T00:00:00") - today) / 86400000) : null;
+      const age = Math.floor((today - new Date(m.bd + "T00:00:00")) / (365.25 * 86400000));
+      const ini = m.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+      const isBd = dd === 0;
+      const soon = dd != null && dd > 0 && dd <= 30;
+      return `<div class="memcard" style="--mc:${color}">
+        <div class="memava">${ini}</div>
+        <div class="nm">${esc(m.name)}</div>
+        <div class="rl">${esc(m.real || "")}${m.nat ? " · " + esc(m.nat) : ""}</div>
+        <div class="mempos">${(m.pos || []).map((p) => `<span>${esc(p)}</span>`).join("")}</div>
+        <div class="membday">ultah <b>${fmtDate(m.bd)}</b> · ${age} tahun${m.height ? " · " + NF.format(m.height) + " cm" : ""}</div>
+        <div class="bdcnt">${isBd ? "SELAMAT ULANG TAHUN HARI INI" : soon ? `ultah berikutnya: ${NF.format(dd)} hari lagi` : `ultah berikutnya: ${fmtDate(nb.date)}`}</div>
+      </div>`;
+    }).join("") + `</div>`;
+  }
+  html += `</section>`;
+  sec.innerHTML = html;
+  bindPageClose(sec);
+  startCountdownTick();
+}
+/* ---- halaman TROFI & PENGHARGAAN (fitur no 16 + 17) ---- */
+function renderTrofiPage(sec) {
+  const T = state.trofi && state.trofi.groups;
+  if (!T) {
+    sec.innerHTML = `<section style="margin-top:26px">${pageCloseBar("Trofi & Penghargaan", "", ICO_MEDAL, "#f59e0b")}<div class="banner">Data trofi belum tersedia.</div></section>`;
+    bindPageClose(sec);
+    return;
+  }
+  let html = `<section style="margin-top:26px">
+    ${pageCloseBar("Trofi &amp; Penghargaan", "menang acara musik &amp; penghargaan besar — hasil kurasi sumber publik", ICO_MEDAL, "#f59e0b")}
+    <p class="note">Disusun dari pengumuman resmi &amp; media: YG (yg-life), Mnet (riwayat MAMA), Soompi, Forbes, Golden Disc, fandom wiki. Tanggal parsial (bulan/tahun saja) berarti hanya itu yang bisa dipastikan dari sumber.</p>`;
+  for (const gid of ["babymonster", "treasure"]) {
+    const g = T[gid];
+    if (!g) continue;
+    const art = artistOf(gid) || {};
+    const color = art.color || "#6a78ff";
+    const wins = g.wins || [], awards = g.awards || [];
+    html += `<div class="calyear" style="margin-top:24px"><span class="ln"></span><span class="yr" style="color:${color}">${esc(g.name)} · ${wins.length} trofi musik</span><span class="ln"></span></div>`;
+    html += `<div class="hgrid" style="margin-top:12px">
+      <div>
+        ${featSectHead(color, ICO_MEDAL, "Menang acara musik", "Show Champion · M Countdown · Music Bank · Inkigayo")}
+        <div style="display:flex;flex-direction:column;gap:7px">` + wins.map((w, i) => `
+          <div class="wprow${i < 3 ? " top3" : ""}" style="cursor:default">
+            <div class="rk">${i + 1}</div>
+            <div class="cv" style="display:grid;place-items:center;color:${color}"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="${ICO_MEDAL}"/></svg></div>
+            <div class="nm"><b>${esc(w.song)}</b><span class="wbsub">${esc(w.show)} · ${fmtDateLoose(w.date)}${w.src ? " · " + esc(w.src) : ""}</span></div>
+            <div class="del"><div class="d1">${fmtDateLoose(w.date)}</div><div class="d2">${esc(w.note || "")}</div></div>
+          </div>`).join("") + `</div>
+      </div>
+      <div>
+        ${featSectHead("#ffb02e", ICO_TROPHY, "Penghargaan besar", "MAMA · GDA · SMA · KGMA — hijau = menang")}
+        <div style="display:flex;flex-direction:column;gap:7px">` + awards.map((a) => `
+          <div class="wprow" style="cursor:default">
+            <div class="rk">•</div>
+            <div class="cv" style="display:grid;place-items:center;color:${a.result === "win" ? "#22c55e" : "var(--muted)"}"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="${ICO_TROPHY}"/></svg></div>
+            <div class="nm"><b>${esc(a.name)}</b><span class="wbsub">${esc(a.cat)}${a.src ? " · " + esc(a.src) : ""}</span></div>
+            <div class="del"><div class="d1"><span class="trobadg ${a.result === "win" ? "win" : "nom"}">${a.result === "win" ? "MENANG" : "NOMINASI"}</span></div><div class="d2">${fmtDateLoose(a.date)}${a.note ? " · " + esc(a.note) : ""}</div></div>
+          </div>`).join("") + `</div>
+      </div>
+    </div>`;
+  }
+  html += `<p class="note">Ada trofi yang belum tercantum? File <b>data/trofi.json</b> bisa diedit langsung — situs memuatnya otomatis saat halaman dibuka.</p></section>`;
+  sec.innerHTML = html;
+  bindPageClose(sec);
+  startCountdownTick();
+}
+/* ---- halaman JADWAL & COUNTDOWN (fitur no 18 + 34) ---- */
+function renderSchedulePage(sec) {
+  const evs = [];
+  /* 1) event manual dari data/jadwal.json */
+  for (const e of (state.jadwal && state.jadwal.events) || []) evs.push({ ...e, auto: false });
+  /* 2) ulang tahun debut (tahunan) */
+  const DEB = { babymonster: "2023-11-27", treasure: "2020-08-07" };
+  for (const [gid, d] of Object.entries(DEB)) {
+    const na = nextYearly(d);
+    if (!na) continue;
+    const art = artistOf(gid) || { name: gid };
+    evs.push({ date: na.date, title: `Ulang tahun debut ke-${NF.format(na.nth)} ${art.name}`, group: gid, type: "anniversary", auto: true, note: `debut ${fmtDate(d)}` });
+  }
+  /* 3) ulang tahun anggota (tahunan) */
+  const G = (state.members && state.members.groups) || {};
+  for (const [gid, g] of Object.entries(G)) {
+    for (const m of g.members || []) {
+      const na = nextYearly(m.bd);
+      if (!na) continue;
+      evs.push({ date: na.date, title: `Ulang tahun ${m.name} (ke-${NF.format(na.nth)})`, group: gid, type: "birthday", auto: true, note: `ultah ${fmtDate(m.bd)}` });
+    }
+  }
+  /* 4) rilisan video yang tanggalnya di masa depan (masuk otomatis dari data) */
+  const todayIso = isoDate(Date.now() / 1000);
+  for (const v of allVideosFlat()) {
+    if (v.published && v.published > todayIso) evs.push({ date: v.published, title: rowTitleOf(v, v.art), group: v.channel, type: "release", auto: true, note: "video baru di data" });
+  }
+  const upcoming = evs.filter((e) => e.date && e.date >= todayIso).sort((a, b) => a.date.localeCompare(b.date));
+  const past = evs.filter((e) => e.date && e.date < todayIso).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
+  const TYPE = { tour: ["TUR", "#38bdf8"], release: ["RILIS", "#a78bfa"], anniversary: ["ANNIV", "#f59e0b"], birthday: ["ULTAH", "#f472b6"], event: ["EVENT", "#22c55e"] };
+  const evRow = (e, live) => {
+    const t = TYPE[e.type] || TYPE.event;
+    const art = artistOf(e.group) || {};
+    const color = art.color || "#6a78ff";
+    const dt = Date.parse(e.date.length <= 10 ? e.date + "T00:00:00+07:00" : e.date);
+    const cd = live && !isNaN(dt) && dt > Date.now()
+      ? `<span class="schcnt cdlive" data-cdown="${Math.round(dt / 1000)}">${cdText(Math.round(dt / 1000))}</span>` : "";
+    const dObj = new Date(e.date.length <= 10 ? e.date + "T12:00:00" : e.date);
+    const day = String(dObj.getDate()).padStart(2, "0");
+    const mon = dObj.toLocaleString("id-ID", { month: "short" });
+    return `<div class="srsrow" style="cursor:default">
+      <div class="cv" style="display:grid;place-items:center;line-height:1.05"><b style="font-size:17px">${day}</b><span style="font-size:10px;color:var(--muted)">${mon}</span></div>
+      <div class="nm"><b>${esc(e.title)}</b>${e.auto ? '<span class="typetag" style="background:var(--border);color:var(--muted)">otomatis</span>' : ""}
+        <span class="wbsub"><span class="schtype" style="background:color-mix(in srgb,${t[1]} 20%,transparent);color:${t[1]}">${t[0]}</span> <span style="color:${color};font-weight:800">${esc(art.name || "")}</span>${e.venue ? " · " + esc(e.venue) : ""}${e.note ? " · " + esc(e.note) : ""}</span></div>
+      <div class="del"><div class="d2" style="text-align:right">${fmtDateLoose(e.date)}</div>${cd}</div>
+    </div>`;
+  };
+  /* kelompokkan per bulan seperti kalender rilisan */
+  const months = new Map();
+  for (const e of upcoming) { const k = e.date.slice(0, 7); if (!months.has(k)) months.set(k, []); months.get(k).push(e); }
+  let monthHTML = [...months.entries()].map(([k, list]) =>
+    `<div class="calmonth"><span>${esc(MFULL.format(new Date(k + "-01T00:00:00")))}</span><b>${list.length} acara</b></div>
+    <div style="display:flex;flex-direction:column;gap:7px">${list.map((e) => evRow(e, true)).join("")}</div>`).join("");
+  sec.innerHTML = `<section style="margin-top:26px">
+    ${pageCloseBar("Jadwal &amp; Countdown", "tur, penghargaan, ulang tahun &amp; rilisan — hitung mundur hidup sampai jam-menit-detik", ICO_CAL, "#38bdf8")}
+    ${featSectHead("#38bdf8", ICO_CAL, "Akan datang", "diurut dari yang paling dekat · hitung mundur berjalan sendiri")}
+    ${monthHTML || '<div class="banner">Belum ada acara mendatang.</div>'}
+    <div style="margin-top:20px">${featSectHead("#8a93a8", ICO_CAL, "Sudah lewat", "10 acara terakhir")}</div>
+    <div style="display:flex;flex-direction:column;gap:7px">${past.map((e) => evRow(e, false)).join("") || '<div class="banner">Belum ada riwayat.</div>'}</div>
+    <p class="note">Acara <b>otomatis</b> (ulang tahun anggota, ulang tahun debut, rilisan baru) dihitung situs sendiri dari data. Jadwal tur/event manual ada di <b>data/jadwal.json</b> — tambah/edit di file itu. Sumber tur [CHOOM]: ygfamily.com &amp; Wikipedia.</p>
+  </section>`;
+  bindPageClose(sec);
+  startCountdownTick();
+}
+
+/* ---- porsi kontribusi 30 hari (donat) — halaman artis YT & Spotify (fitur no 4) ---- */
+const CONTRIB_COLORS = ["#1ed760", "#38bdf8", "#f59e0b", "#f472b6", "#a78bfa", "#fb7185", "#34d399", "#94a3b8"];
+function contribSectionHTML(artistId, color, plat) {
+  const label = plat === "sp" ? "stream" : "views";
+  return `<section style="margin-top:18px">
+    ${featSectHead(color, ICO_FIRE, "Porsi kontribusi 30 hari", `lagu mana penyumbang ${label} terbesar sebulan terakhir`)}
+    <div class="chartbox" style="max-width:540px"><canvas id="contrib_${plat}_${esc(artistId)}"></canvas></div>
+    <p class="note">Donat = tambahan ${label} 30 hari terakhir per lagu — 7 lagu teratas dipisah, sisanya digabung sebagai "Lainnya".</p>
+  </section>`;
+}
+function mountContribChart(artistId, color, plat) {
+  const cv = document.getElementById("contrib_" + plat + "_" + artistId);
+  if (!cv) return;
+  const gains = new Map();
+  const nowT = Date.now() / 1000;
+  if (plat === "sp") {
+    for (const t of Object.values(state.sp.tracks || {})) {
+      if (t.artistId !== artistId || !(t.kworb && t.kworb.total > 0)) continue;
+      const nm = t.name + (t.live ? " (Live)" : "");
+      const p30 = spTrackValueAt(t, nowT - 30 * 86400);
+      const g = p30 ? spTrackTotal(t) - p30.v : (spTrackDaily(t) || 0) * 30;
+      if (g > 0) gains.set(nm, (gains.get(nm) || 0) + g);
+    }
+  } else {
+    for (const v of allVideosFlat()) {
+      if (v.art.id !== artistId) continue;
+      const nm = rowTitleOf(v, v.art);
+      const p30 = valAtYt(v.history, nowT - 30 * 86400);
+      const g = p30 ? lastV(v) - p30.v : ((deltaDays(v.history, 30) || {}).delta || 0);
+      if (g > 0) gains.set(nm, (gains.get(nm) || 0) + g);
+    }
+  }
+  const rows = [...gains.entries()].sort((a, b) => b[1] - a[1]);
+  const box = cv.closest(".chartbox");
+  if (!rows.length) {
+    if (box) box.innerHTML = `<div class="wait">Belum ada data — donat muncul setelah beberapa hari perekaman.</div>`;
+    return;
+  }
+  const top = rows.slice(0, 7);
+  const rest = rows.slice(7).reduce((s, x) => s + x[1], 0);
+  if (rest > 0) top.push(["Lainnya (" + (rows.length - 7) + " lagu)", rest]);
+  destroyChartById("contrib_" + plat);
+  newChart(cv, {
+    type: "doughnut",
+    data: {
+      labels: top.map((x) => x[0]),
+      datasets: [{ data: top.map((x) => Math.round(x[1])), backgroundColor: top.map((_, i) => CONTRIB_COLORS[i % CONTRIB_COLORS.length]), borderWidth: 0, hoverOffset: 6 }],
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: "56%",
+      plugins: {
+        legend: { position: "right", labels: { color: cssVar("--text") || "#e8ecf4", boxWidth: 11, font: { size: 10.5 } } },
+        tooltip: { callbacks: { label: (c) => " " + c.label + ": +" + fmtCompact(c.parsed) } },
+      },
+    },
+  }, "contrib_" + plat);
+}
+
 /* ---------- halaman Rekor & Fakta — SPOTIFY ---------- */
 function renderSpRecords(sec) {
   const trs = Object.values(state.sp.tracks || {}).filter((t) => t.history && t.history.length && t.kworb && t.kworb.total > 0);
@@ -1500,6 +1863,85 @@ function renderSpRecords(sec) {
     return { tr: t, avg: spTrackTotal(t) / days };
   }).filter((x) => x).sort((a, b) => b.avg - a.avg).slice(0, 10);
   const totAllTr = trs.reduce((s, t) => s + spTrackTotal(t), 0);
+  /* ===== analisis lanjutan: rekap pekan, momentum, awet, konsisten, popularity ===== */
+  const nowSp2 = Date.now() / 1000;
+  let sum7 = 0, sum7p = 0, nNew7 = 0;
+  const daySum = new Map();
+  for (const t of trs) {
+    const h = t.history || [];
+    const a = closestPoint(h, nowSp2 - 7 * 86400);
+    let base7 = a ? a.v : null;
+    if (!a) {
+      const first = h.find((p) => p.e !== 1 && p.v != null);
+      if (!first) continue;
+      base7 = first.v; nNew7++;
+    }
+    sum7 += Math.max(0, spTrackTotal(t) - base7);
+    const b = closestPoint(h, nowSp2 - 14 * 86400);
+    if (a && b) sum7p += Math.max(0, a.v - b.v);
+    for (const d of dailyDeltasBounded(h, 12)) {
+      if (d.k >= isoDate(nowSp2 - 7 * 86400)) daySum.set(d.k, (daySum.get(d.k) || 0) + d.d);
+    }
+  }
+  const wowPct = sum7p > 0 ? ((sum7 - sum7p) / sum7p) * 100 : null;
+  const bestDayWk = [...daySum.entries()].map(([k, d]) => ({ k, d })).sort((a, b) => b.d - a.d)[0];
+  const mom = trs.map((t) => {
+    const a = spTrackValueAt(t, nowSp2 - 7 * 86400);
+    const b = spTrackValueAt(t, nowSp2 - 14 * 86400);
+    const g7 = a ? spTrackTotal(t) - a.v : 0;
+    if (g7 <= 0) return null;
+    const g7p = a && b ? a.v - b.v : null;
+    return { tr: t, g7, ratio: g7p != null && g7p > 0 ? g7 / g7p : null };
+  }).filter(Boolean);
+  const champ = mom.slice().sort((a, b) => b.g7 - a.g7)[0] || null;
+  const momTop = mom.slice().sort((a, b) => (b.ratio || 0) - (a.ratio || 0) || b.g7 - a.g7).slice(0, 10);
+  const awet = trs.map((t) => {
+    const rel = spRelT(t);
+    if (!rel) return null;
+    const age = (nowSp2 - rel) / 86400;
+    if (age < 56) return null;
+    const f = spTrackValueAt(t, rel + 28 * 86400);
+    const l = spTrackValueAt(t, nowSp2 - 28 * 86400);
+    if (!f || f.v <= 0 || !l) return null;
+    const gFirst = f.v / 4, gLast = (spTrackTotal(t) - l.v) / 4;
+    if (gFirst <= 0) return null;
+    return { tr: t, pct: (gLast / gFirst) * 100, age: Math.round(age) };
+  }).filter((x) => x && x.pct > 0).sort((a, b) => b.pct - a.pct).slice(0, 10);
+  const konsisten = trs.map((t) => {
+    const dd = dailyDeltasOf(t.history).slice(-30);
+    if (dd.length < 10) return null;
+    const mean = dd.reduce((s, x) => s + x.d, 0) / dd.length;
+    if (mean <= 0) return null;
+    const sd = Math.sqrt(dd.reduce((s, x) => s + (x.d - mean) ** 2, 0) / dd.length);
+    return { tr: t, score: Math.max(0, Math.round(100 - (sd / mean) * 70)), sd };
+  }).filter(Boolean).sort((a, b) => b.score - a.score).slice(0, 10);
+  /* popularity tertinggi (no 14) */
+  const popRows = trs.map((t) => {
+    const pop = state.spPop || {};
+    let cur = null, curT = null;
+    for (const tid of (t.trackIds || [])) {
+      const arr = pop[tid];
+      if (arr && arr.length) { const last = arr[arr.length - 1]; if (cur == null || last.t > curT) { cur = last.p; curT = last.t; } }
+    }
+    return cur != null ? { tr: t, pop: cur, at: curT } : null;
+  }).filter(Boolean).sort((a, b) => b.pop - a.pop).slice(0, 10);
+  /* VS grup (no 5) — dari data Spotify */
+  const vsRows = (state.sp.artists || []).map((a) => {
+    const mine = trs.filter((t) => t.artistId === a.id);
+    const tot = mine.reduce((s, t) => s + spTrackTotal(t), 0);
+    const top = mine.slice().sort((x, y) => spTrackTotal(y) - spTrackTotal(x))[0] || null;
+    return { a, tot, n: mine.length, top, followers: a.followers || null };
+  });
+  const pctOf = (x) => { const tt = vsRows.reduce((s, y) => s + y.tot, 0); return tt > 0 ? (x / tt) * 100 : 50; };
+  const vsCol = (r) => `
+    <div class="vscol" style="--vc:${r.a.color || SP_GREEN}">
+      <h4><span class="dot"></span>${esc(r.a.name)}</h4>
+      <div class="vsrow"><span>Total stream</span><b>${fmtCompact(r.tot)} · ${pctOf(r.tot).toFixed(1).replace(".", ",")}%</b></div>
+      <div class="vsrow"><span>Lagu dipantau</span><b>${NF.format(r.n)}</b></div>
+      <div class="vsrow"><span>Lagu terpopuler</span><b>${r.top ? esc(r.top.name) : "–"}</b></div>
+      <div class="vsrow"><span>Stream lagu terpopuler</span><b>${r.top ? fmtCompact(spTrackTotal(r.top)) : "–"}</b></div>
+      <div class="vsrow"><span>Followers Spotify</span><b>${r.followers ? fmtCompact(r.followers) : "–"}</b></div>
+    </div>`;
   const dash = "M3.5 18.5 9 13l3.5 3.5L20 9l1.4 1.4-8.9 8.9L9 15.8l-4.1 4.1z";
   sec.innerHTML = `
   <section style="margin-top:26px">
@@ -1510,6 +1952,16 @@ function renderSpRecords(sec) {
       <div class="whl"><div class="k">Lonjakan terbesar</div><div class="em">▲</div><div class="v">${spikes.length ? esc(spikes[0].tr.name) : "–"}</div><div class="d">${spikes.length ? "+" + fmtCompact(spikes[0].dv) + " sehari" : "–"}</div></div>
       <div class="whl"><div class="k">Milestone terbanyak</div><div class="em">★</div><div class="v">${mostMs.length ? esc(mostMs[0].tr.name) : "–"}</div><div class="d">${mostMs.length ? NF.format(mostMs[0].n) + " milestone (" + fmtCompact(mostMs[0].hi) + ")" : "–"}</div></div>
     </div>
+    <div class="wpgrid" style="margin-top:10px">
+      <div class="whl"><div class="k">Total 7 hari (semua lagu)</div><div class="em">Σ</div><div class="v">+${fmtCompact(sum7)}</div><div class="d">${nNew7 ? NF.format(nNew7) + " lagu baru terekam dihitung sejak titik pertamanya · " : ""}${haveX(trs)} lagu lainnya</div></div>
+      <div class="whl"><div class="k">Dibanding pekan lalu</div><div class="em">↗</div><div class="v">${wowPct != null ? (wowPct >= 0 ? "+" : "") + wowPct.toFixed(1).replace(".", ",") + "%" : "–"}</div><div class="d">${wowPct != null ? (wowPct >= 0 ? "lebih ramai dari pekan sebelumnya" : "lebih sepi dari pekan sebelumnya") + (nNew7 ? " · " + NF.format(nNew7) + " video baru ikut dihitung" : "") : "pekan lalu belum ada data"}</div></div>
+      <div class="whl"><div class="k">Juara pekan ini</div><div class="em">★</div><div class="v">${champ ? esc(champ.tr.name) : "–"}</div><div class="d">${champ ? "+" + fmtCompact(champ.g7) + " stream 7 hari" : "–"}</div></div>
+      <div class="whl"><div class="k">Hari terbaik pekan ini</div><div class="em">↑</div><div class="v">${bestDayWk ? fmtDate(bestDayWk.k) : "–"}</div><div class="d">${bestDayWk ? "+" + fmtCompact(bestDayWk.d) + " stream sehari" : "–"}</div></div>
+    </div>
+    <section style="margin-top:16px">
+      ${featSectHead("#ff4d6d", ICO_SP_FIRE, "BABYMONSTER vs TREASURE", "duel langsung dua artis — dari data Spotify")}
+      <div class="vsduel">${vsCol(vsRows[0])}<div class="vsmid">VS</div>${vsCol(vsRows[1] || vsRows[0])}</div>
+    </section>
     <div class="hgrid">
       <div>
         ${featSectHead("#1ed760", ICO_SP_TROPHY, "Stream terbanyak", "10 besar sepanjang pencatatan")}
@@ -1544,6 +1996,26 @@ function renderSpRecords(sec) {
       <div>
         ${featSectHead("#38bdf8", ICO_NEW, "Rata-rata stream/hari", "10 besar · dihitung sejak hari rilis")}
         <div style="display:flex;flex-direction:column;gap:7px">${avgDaily.map((s, i) => spRecRow(s, i, fmtCompact(Math.round(s.avg)), "per hari sejak rilis")).join("") || '<div class="banner">Belum ada data.</div>'}</div>
+      </div>
+    </div>
+    <div class="hgrid" style="margin-top:18px">
+      <div>
+        ${featSectHead("#22c55e", ICO_SP_FIRE, "Momentum 7 hari", "lonjakan pekan ini vs pekan lalu — yang paling memburu paling atas")}
+        <div style="display:flex;flex-direction:column;gap:7px">${momTop.map((s, i) => spRecRow(s, i, "+" + fmtCompact(s.g7), s.ratio != null ? `<span class="mombadge${s.ratio < 1 ? " warn" : ""}">${s.ratio >= 1 ? "▲" : "▼"} ${s.ratio.toFixed(1).replace(".", ",")}× vs pekan lalu</span>` : "pekan lalu belum ada data")).join("") || '<div class="banner">Belum ada data.</div>'}</div>
+      </div>
+      <div>
+        ${featSectHead("#38bdf8", ICO_NEW, "Paling awet", "ritme 4 pekan terakhir vs 4 pekan pertama sejak rilis")}
+        <div style="display:flex;flex-direction:column;gap:7px">${awet.map((s, i) => spRecRow(s, i, s.pct.toFixed(0) + "%", "umur " + NF.format(s.age) + " hari · perkiraan")).join("") || '<div class="banner">Butuh lagu berumur minimal 8 pekan.</div>'}</div>
+      </div>
+    </div>
+    <div class="hgrid" style="margin-top:18px">
+      <div>
+        ${featSectHead("#a78bfa", dash, "Skor konsistensi", "100 = tambahan stream tiap hari paling stabil (30 hari)")}
+        <div style="display:flex;flex-direction:column;gap:7px">${konsisten.map((s, i) => spRecRow(s, i, NF.format(s.score) + "/100", "deviasi harian ±" + fmtCompact(Math.round(s.sd)))).join("") || '<div class="banner">Butuh minimal 10 hari data.</div>'}</div>
+      </div>
+      <div>
+        ${featSectHead("#1ed760", ICO_SP_FIRE, "Popularity tertinggi", "angka resmi Spotify 0-100 · direkam collector tiap koleksi")}
+        <div style="display:flex;flex-direction:column;gap:7px">${popRows.map((s, i) => spRecRow(s, i, NF.format(s.pop) + "/100", `<span class="popbar" style="width:110px;display:inline-block;vertical-align:middle;margin-right:6px"><i style="width:${Math.max(2, s.pop)}%"></i></span> direkam ${fmtDate(isoDate(s.at))}`)).join("") || '<div class="banner">Popularity terisi setelah collector versi baru berjalan sekali (pakai SPOTIFY_CLIENT_ID/SECRET atau token anonim).</div>'}</div>
       </div>
     </div>
     <section style="margin-top:18px">
@@ -1637,6 +2109,104 @@ function renderYtRecords(sec) {
   }).filter((x) => x).sort((a, b) => b.d - a.d).slice(0, 10);
   const totAllV = vids.reduce((s, v) => s + lastV(v), 0);
   const topAll = vids.slice().sort((a, b) => lastV(b) - lastV(a))[0] || null;
+  /* ===== analisis lanjutan: rekap pekan, momentum, awet, konsisten, lonjakan aneh, likes ===== */
+  const nowT = Date.now() / 1000;
+  /* rekap pekan otomatis (no 6) — per video; titik pertama video yang baru terekam
+   * (impor arsip) dipakai sebagai dasar supaya tidak dihitung sebagai lonjakan sehari */
+  let sum7 = 0, sum7p = 0, nNew7 = 0;
+  const daySum = new Map();
+  for (const v of vids) {
+    const h = v.history || [];
+    const a = closestPoint(h, nowT - 7 * 86400);
+    let base7 = a ? a.v : null;
+    if (!a) {
+      const first = h.find((p) => p.e !== 1 && p.v != null);
+      if (!first) continue;
+      base7 = first.v; nNew7++;
+    }
+    sum7 += Math.max(0, lastV(v) - base7);
+    const b = closestPoint(h, nowT - 14 * 86400);
+    if (a && b) sum7p += Math.max(0, a.v - b.v);
+    for (const d of dailyDeltasBounded(h, 12)) {
+      if (d.k >= isoDate(nowT - 7 * 86400)) daySum.set(d.k, (daySum.get(d.k) || 0) + d.d);
+    }
+  }
+  const wowPct = sum7p > 0 ? ((sum7 - sum7p) / sum7p) * 100 : null;
+  const bestDayWk = [...daySum.entries()].map(([k, d]) => ({ k, d })).sort((a, b) => b.d - a.d)[0];
+  /* momentum 7 hari (no 1): pekan ini dibanding pekan lalu */
+  const mom = vids.map((v) => {
+    const a = valAtYt(v.history, nowT - 7 * 86400);
+    const b = valAtYt(v.history, nowT - 14 * 86400);
+    const g7 = a ? lastV(v) - a.v : ((deltaDays(v.history, 7) || {}).delta || 0);
+    if (g7 <= 0) return null;
+    const g7p = a && b ? a.v - b.v : null;
+    return { v, g7, ratio: g7p != null && g7p > 0 ? g7 / g7p : null };
+  }).filter(Boolean);
+  const champ = mom.slice().sort((a, b) => b.g7 - a.g7)[0] || null;
+  const momTop = mom.slice().sort((a, b) => (b.ratio || 0) - (a.ratio || 0) || b.g7 - a.g7).slice(0, 10);
+  /* paling awet (no 2): ritme 4 pekan terakhir vs 4 pekan pertama */
+  const awet = vids.map((v) => {
+    const rel = releaseEpoch(v);
+    if (rel == null) return null;
+    const age = (nowT - rel) / 86400;
+    if (age < 56) return null;
+    const f = valAtYt(v.history, rel + 28 * 86400);
+    const l = valAtYt(v.history, nowT - 28 * 86400);
+    if (!f || f.v <= 0 || !l) return null;
+    const gFirst = f.v / 4, gLast = (lastV(v) - l.v) / 4;
+    if (gFirst <= 0) return null;
+    return { v, pct: (gLast / gFirst) * 100, age: Math.round(age) };
+  }).filter((x) => x && x.pct > 0).sort((a, b) => b.pct - a.pct).slice(0, 10);
+  /* skor konsistensi (no 8) */
+  const konsisten = vids.map((v) => {
+    const dd = dailyDeltasOf(v.history).slice(-30);
+    if (dd.length < 10) return null;
+    const mean = dd.reduce((s, x) => s + x.d, 0) / dd.length;
+    if (mean <= 0) return null;
+    const sd = Math.sqrt(dd.reduce((s, x) => s + (x.d - mean) ** 2, 0) / dd.length);
+    return { v, score: Math.max(0, Math.round(100 - (sd / mean) * 70)), sd };
+  }).filter(Boolean).sort((a, b) => b.score - a.score).slice(0, 10);
+  /* lonjakan tidak biasa (no 10) */
+  const aneh = vids.map((v) => {
+    const d1 = deltaDays(v.history, 1);
+    if (!d1 || d1.delta <= 0) return null;
+    const dd = dailyDeltasOf(v.history).slice(-31, -1);
+    if (dd.length < 8) return null;
+    const med = dd.map((x) => x.d).sort((a, b) => a - b)[Math.floor(dd.length / 2)] || 0;
+    const ratio = d1.delta / Math.max(med, 1);
+    if (ratio < 2.5) return null;
+    return { v, ratio, d1 };
+  }).filter(Boolean).sort((a, b) => b.ratio - a.ratio).slice(0, 6);
+  /* paling banyak disukai & dikomentari (no 11) */
+  const likers = vids.map((v) => {
+    const p = lastLikePoint(v.history);
+    if (!p || p.l == null) return null;
+    return { v, l: p.l, c: lastKnown(v.history, "c"), vws: lastV(v) };
+  }).filter(Boolean).sort((a, b) => b.l - a.l).slice(0, 10);
+  const commenters = vids.map((v) => {
+    const c = lastKnown(v.history, "c");
+    if (c == null || c <= 0) return null;
+    return { v, c };
+  }).filter(Boolean).sort((a, b) => b.c - a.c).slice(0, 10);
+  /* VS grup (no 5) */
+  const vsRows = state.config.artists.map((a) => {
+    const mine = vids.filter((x) => x.art.id === a.id);
+    const tot = mine.reduce((s, x) => s + lastV(x), 0);
+    const top = mine.slice().sort((x, y) => lastV(y) - lastV(x))[0] || null;
+    const ch = state.channels[a.id];
+    const subs = ch && ch.history && ch.history.length ? ch.history[ch.history.length - 1].s : null;
+    return { a, tot, n: mine.length, top, subs };
+  });
+  const pctOf = (x) => { const tt = vsRows.reduce((s, y) => s + y.tot, 0); return tt > 0 ? (x / tt) * 100 : 50; };
+  const vsCol = (r) => `
+    <div class="vscol" style="--vc:${r.a.color}">
+      <h4><span class="dot"></span>${esc(r.a.name)}</h4>
+      <div class="vsrow"><span>Total views</span><b title="${fmtExact(r.tot)}">${fmtCompact(r.tot)} · ${pctOf(r.tot).toFixed(1).replace(".", ",")}%</b></div>
+      <div class="vsrow"><span>Video dipantau</span><b>${NF.format(r.n)}</b></div>
+      <div class="vsrow"><span>MV terpopuler</span><b>${r.top ? esc(rowTitleOf(r.top, r.top.art)) : "–"}</b></div>
+      <div class="vsrow"><span>Views MV terpopuler</span><b>${r.top ? fmtCompact(lastV(r.top)) : "–"}</b></div>
+      <div class="vsrow"><span>Subscriber channel</span><b>${r.subs ? fmtCompact(r.subs) : "–"}</b></div>
+    </div>`;
   const dash = "M3.5 18.5 9 13l3.5 3.5L20 9l1.4 1.4-8.9 8.9L9 15.8l-4.1 4.1z";
   sec.innerHTML = `
   <section style="margin-top:26px">
@@ -1647,6 +2217,16 @@ function renderYtRecords(sec) {
       <div class="whl"><div class="k">Lonjakan terbesar</div><div class="em">▲</div><div class="v">${spikes.length ? esc(rowTitleOf(spikes[0].v, spikes[0].v.art)) : "–"}</div><div class="d">${spikes.length ? "+" + fmtCompact(spikes[0].d.delta) + " sehari" : "–"}</div></div>
       <div class="whl"><div class="k">Milestone terbanyak</div><div class="em">★</div><div class="v">${mostMs.length ? esc(rowTitleOf(mostMs[0].v, mostMs[0].v.art)) : "–"}</div><div class="d">${mostMs.length ? NF.format(mostMs[0].n) + " milestone (" + fmtCompact(mostMs[0].hi) + ")" : "–"}</div></div>
     </div>
+    <div class="wpgrid" style="margin-top:10px">
+      <div class="whl"><div class="k">Total 7 hari (semua video)</div><div class="em">Σ</div><div class="v">+${fmtCompact(sum7)}</div><div class="d">${nNew7 ? NF.format(nNew7) + " video baru terekam dihitung sejak titik pertamanya · " : ""}${haveX(vids)} video lainnya</div></div>
+      <div class="whl"><div class="k">Dibanding pekan lalu</div><div class="em">↗</div><div class="v">${wowPct != null ? (wowPct >= 0 ? "+" : "") + wowPct.toFixed(1).replace(".", ",") + "%" : "–"}</div><div class="d">${wowPct != null ? (wowPct >= 0 ? "lebih ramai dari pekan sebelumnya" : "lebih sepi dari pekan sebelumnya") + (nNew7 ? " · " + NF.format(nNew7) + " lagu baru ikut dihitung" : "") : "pekan lalu belum ada data"}</div></div>
+      <div class="whl"><div class="k">Juara pekan ini</div><div class="em">★</div><div class="v">${champ ? esc(rowTitleOf(champ.v, champ.v.art)) : "–"}</div><div class="d">${champ ? "+" + fmtCompact(champ.g7) + " views 7 hari" : "–"}</div></div>
+      <div class="whl"><div class="k">Hari terbaik pekan ini</div><div class="em">↑</div><div class="v">${bestDayWk ? fmtDate(bestDayWk.k) : "–"}</div><div class="d">${bestDayWk ? "+" + fmtCompact(bestDayWk.d) + " views sehari" : "–"}</div></div>
+    </div>
+    <section style="margin-top:16px">
+      ${featSectHead("#ff4d6d", ICO_FIRE, "BABYMONSTER vs TREASURE", "duel langsung dua channel — dari data YouTube")}
+      <div class="vsduel">${vsCol(vsRows[0])}<div class="vsmid">VS</div>${vsCol(vsRows[1] || vsRows[0])}</div>
+    </section>
     <div class="hgrid">
       <div>
         ${featSectHead("#ffb02e", ICO_TROPHY, "Views terbanyak", "10 besar sepanjang pencatatan")}
@@ -1677,6 +2257,36 @@ function renderYtRecords(sec) {
         <div style="display:flex;flex-direction:column;gap:7px">${debut.map((s, i) => ytRow(s.v, i, fmtCompact(s.d), "24 jam pertama · " + s.src)).join("") || '<div class="banner">Belum ada data.</div>'}</div>
       </div>
     </div>
+    <div class="hgrid" style="margin-top:18px">
+      <div>
+        ${featSectHead("#22c55e", ICO_FIRE, "Momentum 7 hari", "lonjakan pekan ini vs pekan lalu — yang paling memburu paling atas")}
+        <div style="display:flex;flex-direction:column;gap:7px">${momTop.map((s, i) => ytRow(s.v, i, "+" + fmtCompact(s.g7), s.ratio != null ? `<span class="mombadge${s.ratio < 1 ? " warn" : ""}">${s.ratio >= 1 ? "▲" : "▼"} ${s.ratio.toFixed(1).replace(".", ",")}× vs pekan lalu</span>` : "pekan lalu belum ada data")).join("") || '<div class="banner">Belum ada data.</div>'}</div>
+      </div>
+      <div>
+        ${featSectHead("#38bdf8", ICO_NEW, "Paling awet", "ritme 4 pekan terakhir vs 4 pekan pertama sejak rilis")}
+        <div style="display:flex;flex-direction:column;gap:7px">${awet.map((s, i) => ytRow(s.v, i, s.pct.toFixed(0) + "%", "umur " + NF.format(s.age) + " hari · perkiraan")).join("") || '<div class="banner">Butuh video berumur minimal 8 pekan.</div>'}</div>
+      </div>
+    </div>
+    <div class="hgrid" style="margin-top:18px">
+      <div>
+        ${featSectHead("#a78bfa", dash, "Skor konsistensi", "100 = tambahan views tiap hari paling stabil (30 hari)")}
+        <div style="display:flex;flex-direction:column;gap:7px">${konsisten.map((s, i) => ytRow(s.v, i, NF.format(s.score) + "/100", "deviasi harian ±" + fmtCompact(Math.round(s.sd)))).join("") || '<div class="banner">Butuh minimal 10 hari data.</div>'}</div>
+      </div>
+      <div>
+        ${featSectHead("#ffb02e", ICO_FIRE, "Lonjakan tidak biasa", "naik 2,5× lipat atau lebih dari ritme 30 hari — sering kali karena viral di TikTok")}
+        <div style="display:flex;flex-direction:column;gap:7px">${aneh.map((s, i) => ytRow(s.v, i, "+" + fmtCompact(s.d1.delta), `<span class="mombadge warn">${s.ratio.toFixed(1).replace(".", ",")}× lipat dari biasanya</span>`)).join("") || '<div class="banner">Tidak ada lonjakan aneh — semuanya normal.</div>'}</div>
+      </div>
+    </div>
+    <div class="hgrid" style="margin-top:18px">
+      <div>
+        ${featSectHead("#f472b6", ICO_PEOPLE, "Paling banyak disukai", "10 besar · jumlah like terukur terakhir dari YouTube")}
+        <div style="display:flex;flex-direction:column;gap:7px">${likers.map((s, i) => ytRow(s.v, i, fmtCompact(s.l), (s.c != null ? NF.format(s.c) + " komentar · " : "") + (s.vws ? (s.l / s.vws * 1000).toFixed(1).replace(".", ",") + " like per 1000 views" : ""))).join("") || '<div class="banner">Likes terukur mulai muncul setelah collector versi baru berjalan.</div>'}</div>
+      </div>
+      <div>
+        ${featSectHead("#38bdf8", ICO_NEW, "Paling banyak dikomentari", "10 besar · jumlah komentar terukur terakhir")}
+        <div style="display:flex;flex-direction:column;gap:7px">${commenters.map((s, i) => ytRow(s.v, i, NF.format(s.c), "komentar · komentar mulai direkam collector versi baru")).join("") || '<div class="banner">Komentar mulai terekam setelah collector versi baru berjalan.</div>'}</div>
+      </div>
+    </div>
     <section style="margin-top:18px">
       ${featSectHead("#38bdf8", ICO_PEOPLE, "Papan channel", "total views sepanjang pencatatan")}
       <div class="sharecard">${chRows.map((x) => {
@@ -1696,10 +2306,24 @@ function renderYtRecords(sec) {
 function countdownBadge(releaseIso) {
   if (!releaseIso) return "";
   const t = Date.parse(releaseIso.length <= 10 ? releaseIso + "T00:00:00+07:00" : releaseIso);
-  if (isNaN(t)) return "";
-  const dd = Math.ceil((t - Date.now()) / 86400000);
-  if (dd <= 0) return "";
-  return ` <span class="typetag" style="background:#8b5cf6">rilis ${dd} hari lagi</span>`;
+  if (isNaN(t) || t <= Date.now()) return "";
+  const ts = Math.round(t / 1000);
+  return ` <span class="typetag cdlive" style="background:#8b5cf6" data-cdown="${ts}">${cdText(ts)}</span>`;
+}
+/* teks hitung mundur hidup: "3 hari 07:41:22" — diperbarui tiap detik oleh startCountdownTick (fitur no 34) */
+function cdText(tSec) {
+  let s = Math.max(0, tSec - Date.now() / 1000);
+  const d = Math.floor(s / 86400); s -= d * 86400;
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), ss = Math.floor(s % 60);
+  const p = (n) => String(n).padStart(2, "0");
+  return d > 0 ? `${d} hari ${p(h)}:${p(m)}:${p(ss)}` : `${p(h)}:${p(m)}:${p(ss)}`;
+}
+let cdTimer = null;
+function startCountdownTick() {
+  if (cdTimer) return;
+  cdTimer = setInterval(() => {
+    document.querySelectorAll("[data-cdown]").forEach((el) => { el.textContent = cdText(+el.dataset.cdown); });
+  }, 1000);
 }
 function renderSpCalendar(sec) {
   const rels = [];
@@ -1745,6 +2369,7 @@ function renderSpCalendar(sec) {
     el.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
   });
   bindWatch(sec);
+  startCountdownTick();
 }
 function renderYtCalendar(sec) {
   const vids = allVideosFlat().slice().sort((a, b) => (b.published || "").localeCompare(a.published || ""));
@@ -1773,6 +2398,7 @@ function renderYtCalendar(sec) {
   bindPageClose(sec);
   bindCards(sec);
   bindWatch(sec);
+  startCountdownTick();
 }
 
 /* ---------- modal perbandingan (lagu Spotify / video YouTube) ---------- */
@@ -2284,7 +2910,7 @@ async function setPlatform(p) {
   if (same && state.view === "home" && !state.spWrapOpen) return;   // sudah di beranda platform ini
   state.view = "home";                          // menekan tab platform = masuk beranda
   state.spWrapOpen = false;                     // …sekaligus menutup halaman Wrapped bila terbuka
-  state.recOpen = false; state.calOpen = false; state.spAlbumOpen = false;
+  state.recOpen = false; state.calOpen = false; state.memOpen = false; state.troOpen = false; state.schOpen = false; state.spAlbumOpen = false;
   if (!same) {
     state.platform = p;
     if (p === "spotify" && !state.sp.tracks && !state.sp.error) {
@@ -2332,7 +2958,7 @@ function setView(v) {
   if (v !== "home" && !artistOf(v)) return;
   state.view = v;
   state.spWrapOpen = false;   // pindah halaman = halaman khusus (Wrapped/Rekor/Kalender/Album) ditutup
-  state.recOpen = false; state.calOpen = false; state.spAlbumOpen = false;
+  state.recOpen = false; state.calOpen = false; state.memOpen = false; state.troOpen = false; state.schOpen = false; state.spAlbumOpen = false;
   state.spQuery = "";   // kosongkan pencarian Spotify saat pindah halaman
   if (v !== "home") { state.artist = v; state.msTab = "table"; }
   renderAll();
@@ -2518,8 +3144,12 @@ function renderChannel() {
           <div class="s">rata-rata 7 hari${estRecent ? " (est.)" : ""}</div>
         </div>
       </div>
+      ${subGoalHTML(last.s, rateS7)}
       <div class="chhint"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>Klik kartu ini untuk detail lengkap channel — grafik &amp; milestone video</div>
     </div>`;
+  /* porsi kontribusi 30 hari (fitur no 4) */
+  sec.insertAdjacentHTML("beforeend", contribSectionHTML(state.artist, art.color, "yt"));
+  mountContribChart(state.artist, art.color, "yt");
   const card = $("#chcard");
   if (card) {
     const open = () => openChannel(state.artist);
@@ -2970,6 +3600,16 @@ function renderHome() {
 }
 
 /* ===================== render: channel & videos (per artis) ===================== */
+/* progres menuju milestone subscriber berikutnya (fitur no 12) */
+function subGoalHTML(cur, rate) {
+  if (!cur || cur <= 0) return "";
+  const target = Math.ceil((cur + 1) / 1e6) * 1e6;
+  const base = target - 1e6;
+  const pct = Math.max(0, Math.min(100, ((cur - base) / 1e6) * 100));
+  return `<div class="subgoal"><div class="sgtop"><span>Menuju <b>${fmtCompact(target)} subscriber</b></span><b>${pct.toFixed(1).replace(".", ",")}%</b></div>
+  <div class="sgbar"><i style="width:${Math.max(2, pct)}%"></i></div>
+  <div style="margin-top:7px;font-size:11px;color:var(--muted)">tinggal ${fmtCompact(target - cur)} lagi${rate ? " · perkiraan " + etaText(target, cur, rate) : ""}</div></div>`;
+}
 function watchedIds() {
   const s = new Set();
   for (const a of state.config.artists) for (const v of a.videos) s.add(v.id);
@@ -3084,6 +3724,8 @@ function openDetail(vid, combined) {
   }
   const lpt = state.detailCombined ? (sumL != null ? { l: sumL, v: sumLv || last.v } : null) : lastLikePoint(own);
   const per1000 = lpt && lpt.v ? (lpt.l / lpt.v) * 1000 : null;
+  /* komentar terukur terakhir (titik riwayat terbaru yang membawa c) */
+  const cCt = (() => { let best = null; for (const x of groupAll) for (const p of (x.history || [])) if (p.c != null && (!best || p.t > best.t)) best = p; return best ? best.c : null; })();
   const realPts = own.filter((p) => p.e !== 1);
   let firstRealT = null, lastRealT = null;
   for (const x of groupAll) for (const p of (x.history || [])) {
@@ -3163,6 +3805,11 @@ function openDetail(vid, combined) {
       <div class="dstat hero"><div class="k">Likes</div>
         <div class="v">${lpt ? fmtExact(lpt.l) : "–"}</div>
         <div class="d">${lpt && dLday ? `<span class="up">+${fmtGrow(dLday.delta)}</span>&nbsp;· ${relDay(dLday.key)}${dLday.est ? " · est." : ""}` : (lpt ? "sesuai YouTube" : "menunggu pengukuran")}</div></div>
+    </div>
+
+    <div class="chiprow">
+      <div class="chipstat"><div class="k">KOMENTAR</div><div class="v">${cCt != null ? NF.format(cCt) : "–"}</div><div class="d">${cCt != null ? "jumlah komentar video" : "mulai terekam oleh collector versi baru"}</div></div>
+      <div class="chipstat"><div class="k">LIKE / 1000 VIEWS</div><div class="v">${per1000 ? per1000.toFixed(1).replace(".", ",") : "–"}</div><div class="d">rasio like terhadap views</div></div>
     </div>
 
     ${versions.length ? `
@@ -4222,6 +4869,9 @@ function renderSpAll() {
     if (state.spWrapOpen) renderWrappedPage(sec);
     else if (state.recOpen) renderSpRecords(sec);
     else if (state.calOpen) renderSpCalendar(sec);
+    else if (state.troOpen) renderTrofiPage(sec);
+    else if (state.memOpen) renderMembersPage(sec);
+    else if (state.schOpen) renderSchedulePage(sec);
     else renderSpHome(sec);
   }
   else renderSpArtist(sec);
@@ -5178,6 +5828,9 @@ function renderSpArtist(sec) {
   destroyChartById("spCard");
   const cardCv = $("#spCardChart");
   if (cardCv && ser.length >= 2) makeTimeLineChart(cardCv, ser, a.color || SP_GREEN, "spCard", "stream", { dimEst: true, paddingTop: 56 });
+  /* porsi kontribusi 30 hari (fitur no 4) */
+  sec.insertAdjacentHTML("beforeend", contribSectionHTML(a.id, a.color || SP_GREEN, "sp"));
+  mountContribChart(a.id, a.color || SP_GREEN, "sp");
   sec.querySelectorAll("[data-spsort]").forEach((b) => {
     b.addEventListener("click", () => { state.spSort = b.dataset.spsort; renderSpArtist(sec); });
   });
@@ -5385,6 +6038,11 @@ function openSpTrack(key) {
   destroyCharts();
   const albChips = (tr.albumIds || []).map((id) => state.sp.albums[id] ? `<button class="pill pillbtn" data-albopen="${esc(id)}" title="Buka halaman album">${esc(state.sp.albums[id].name)}</button>` : "").join("");
   const next = ms.next.slice(0, 4);
+  /* popularity resmi Spotify 0-100 (fitur no 14) */
+  const popPts = spPopData(tr);
+  const popCur = popPts ? popPts[popPts.length - 1].p : null;
+  const popOld = (() => { if (!popPts) return null; const t30 = Date.now() / 1000 - 30 * 86400; let best = null; for (const p of popPts) { if (p.t <= t30) best = p; else break; } return best ? best.p : null; })();
+  const popDelta = popCur != null && popOld != null ? popCur - popOld : null;
 
   $("#sheet").innerHTML = `
     <button class="close" id="closeBtn" aria-label="Tutup">✕</button>
@@ -5413,6 +6071,17 @@ function openSpTrack(key) {
         <div class="d">${ms.next[0] ? `sisa ${fmtCompact(ms.next[0] - tot)}` : "semua tercapai"}</div></div>
       <div class="stat"><div class="k">Perkiraan tercapai</div><div class="v" style="font-size:15px;line-height:1.5;padding-top:4px">${ms.next[0] ? etaText(ms.next[0], tot, rate) : "–"}</div><div class="d">dari ritme 7 hari</div></div>
     </div>
+
+    ${popCur != null ? `
+    <div class="sect">
+      <div class="secthead"><h3>Popularity Spotify (0-100)</h3></div>
+      <div class="chiprow" style="margin:0 0 10px">
+        <div class="chipstat" style="flex:0 0 auto;min-width:130px"><div class="k">SAAT INI</div><div class="v">${NF.format(popCur)}</div><div class="d">${popDelta != null ? (popDelta >= 0 ? "+" : "") + popDelta + " vs 30 hari lalu" : "baru mulai direkam"}</div></div>
+        <div class="chipstat" style="flex:1;min-width:180px"><div class="k">SKALA</div><div class="popbar" style="margin-top:12px"><i style="width:${Math.max(2, popCur)}%"></i></div><div class="d">angka resmi Spotify Web API · direkam tiap koleksi</div></div>
+      </div>
+      <div class="chartbox" style="height:170px"><canvas id="spPopChart"></canvas></div>
+      <p class="note">Popularity = seberapa besar lagu ini diperhitungkan algoritma Spotify saat ini (0-100) — naik-turunnya sering mendahului perubahan jumlah stream.</p>
+    </div>` : ""}
 
     <div class="sect">
       <div class="secthead"><h3>Total stream (sejak rilis)</h3></div>
@@ -5461,6 +6130,22 @@ function openSpTrack(key) {
     })
   );
   drawSpTrackChart(tr, ar.color || SP_GREEN);
+  if ($("#spPopChart")) drawSpPopChart(tr, ar.color || SP_GREEN);
+}
+/* data popularity gabungan untuk lagu — pakai versi/ID yang riwayatnya paling baru */
+function spPopData(tr) {
+  const pop = state.spPop || {};
+  let pts = [];
+  for (const tid of (tr.trackIds || [])) {
+    const arr = pop[tid];
+    if (arr && arr.length) pts = pts.length ? (arr[arr.length - 1].t > pts[pts.length - 1].t ? arr : pts) : arr;
+  }
+  return pts.length ? pts : null;
+}
+function drawSpPopChart(tr, color) {
+  const pts = spPopData(tr);
+  if (!pts || pts.length < 2) return;
+  makeTimeLineChart($("#spPopChart"), pts.map((p) => ({ t: p.t, v: p.p, e: false })), color, "spPopLine", "popularity", { dimEst: false });
 }
 
 function drawSpTrackChart(tr, color) {
@@ -5558,6 +6243,9 @@ function renderAll() {
   if (home) {
     if (state.recOpen) renderYtRecords($("#homeSection"));       // halaman Rekor & Fakta
     else if (state.calOpen) renderYtCalendar($("#homeSection")); // halaman Kalender rilisan
+    else if (state.troOpen) renderTrofiPage($("#homeSection"));  // halaman Trofi & Penghargaan
+    else if (state.memOpen) renderMembersPage($("#homeSection")); // halaman Profil anggota
+    else if (state.schOpen) renderSchedulePage($("#homeSection")); // halaman Jadwal & Countdown
     else renderHome();
   }
   else {

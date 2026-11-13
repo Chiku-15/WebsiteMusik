@@ -1,0 +1,36 @@
+{
+ "_info": "Profil 17 anggota BABYMONSTER & TREASURE. Sumber: kprofiles.com, fandom wiki (treasuremaker/babymonster), Weverse resmi. Perbarui manual bila ada perubahan posisi.",
+ "groups": {
+  "babymonster": {
+   "name": "BABYMONSTER",
+   "debut": "2023-11-27",
+   "color": "#ff4d6d",
+   "members": [
+    {"name": "Ruka", "real": "Kawai Ruka", "bd": "2002-03-20", "nat": "Jepang", "pos": ["Main Dancer", "Main Rapper"], "height": 158},
+    {"name": "Pharita", "real": "Pharita Boonpakdeethaveeyod", "bd": "2005-08-26", "nat": "Thailand", "pos": ["Vocalist", "Visual"], "height": 167},
+    {"name": "Asa", "real": "Enami Asa", "bd": "2006-04-17", "nat": "Jepang", "pos": ["Main Rapper", "Vocalist", "Dancer"], "height": 161},
+    {"name": "Ahyeon", "real": "Jung Ahyeon", "bd": "2007-04-11", "nat": "Korea", "pos": ["Main Vocalist", "Rapper", "Center"], "height": 163},
+    {"name": "Rami", "real": "Shin Haram", "bd": "2007-10-17", "nat": "Korea", "pos": ["Main Vocalist"], "height": null},
+    {"name": "Rora", "real": "Lee Dain", "bd": "2008-08-14", "nat": "Korea", "pos": ["Lead Vocalist", "Visual"], "height": 167},
+    {"name": "Chiquita", "real": "Riracha Phondechaphiphat", "bd": "2009-02-17", "nat": "Thailand", "pos": ["Vocalist", "Dancer", "Maknae"], "height": 165}
+   ]
+  },
+  "treasure": {
+   "name": "TREASURE",
+   "debut": "2020-08-07",
+   "color": "#38bdf8",
+   "members": [
+    {"name": "Hyunsuk", "real": "Choi Hyun-suk", "bd": "1999-04-21", "nat": "Korea", "pos": ["Leader", "Main Rapper", "Dancer"], "height": 171},
+    {"name": "Jihoon", "real": "Park Ji-hoon", "bd": "2000-03-14", "nat": "Korea", "pos": ["Co-Leader", "Vocalist", "Dancer"], "height": 178},
+    {"name": "Yoshi", "real": "Kanemoto Yoshinori", "bd": "2000-05-15", "nat": "Jepang", "pos": ["Main Rapper"], "height": 179},
+    {"name": "Junkyu", "real": "Kim Jun-kyu", "bd": "2000-09-09", "nat": "Korea", "pos": ["Vocalist", "Visual"], "height": 178},
+    {"name": "Jaehyuk", "real": "Yoon Jae-hyuk", "bd": "2001-07-23", "nat": "Korea", "pos": ["Vocalist"], "height": 178},
+    {"name": "Asahi", "real": "Hamada Asahi", "bd": "2001-08-20", "nat": "Jepang", "pos": ["Vocalist", "Visual"], "height": 172},
+    {"name": "Doyoung", "real": "Kim Do-young", "bd": "2003-12-04", "nat": "Korea", "pos": ["Dancer", "Vocalist"], "height": 177},
+    {"name": "Haruto", "real": "Watanabe Haruto", "bd": "2004-04-05", "nat": "Jepang", "pos": ["Main Rapper", "Visual"], "height": 183},
+    {"name": "Jeongwoo", "real": "Park Jeong-woo", "bd": "2004-09-28", "nat": "Korea", "pos": ["Main Vocalist"], "height": 181},
+    {"name": "Junghwan", "real": "So Jung-hwan", "bd": "2005-02-18", "nat": "Korea", "pos": ["Vocalist", "Dancer", "Maknae"], "height": 180}
+   ]
+  }
+ }
+}

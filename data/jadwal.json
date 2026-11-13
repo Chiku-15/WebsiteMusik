@@ -1,0 +1,15 @@
+{
+ "_info": "Jadwal manual. Tambahkan event baru ke 'events' dengan format: date (YYYY-MM-DD atau ISO penuh), title, group (babymonster|treasure), type (tour|release|event), venue, note. Ulang tahun anggota, ulang tahun debut & rilisan video baru ditambahkan OTOMATIS oleh situs. Sumber tur: ygfamily.com & Wikipedia (Choom World Tour).",
+ "events": [
+  {"date": "2026-11-14", "title": "World Tour [CHOOM] — Kuala Lumpur", "group": "babymonster", "type": "tour", "venue": "Unifi Arena, Malaysia"},
+  {"date": "2026-11-21", "title": "World Tour [CHOOM] — Taipei", "group": "babymonster", "type": "tour", "venue": "Taipei Arena · 21-22 Nov"},
+  {"date": "2026-11-28", "title": "World Tour [CHOOM] — Singapura", "group": "babymonster", "type": "tour", "venue": "Singapore Indoor Stadium · 28-29 Nov"},
+  {"date": "2026-12-08", "title": "World Tour [CHOOM] — Auckland", "group": "babymonster", "type": "tour", "venue": "Spark Arena, Selandia Baru"},
+  {"date": "2026-12-11", "title": "World Tour [CHOOM] — Melbourne", "group": "babymonster", "type": "tour", "venue": "Rod Laver Arena, Australia"},
+  {"date": "2026-12-13", "title": "World Tour [CHOOM] — Sydney", "group": "babymonster", "type": "tour", "venue": "Qudos Bank Arena, Australia"},
+  {"date": "2027-01-08", "title": "World Tour [CHOOM] — Hong Kong", "group": "babymonster", "type": "tour", "venue": "AsiaWorld-Arena · 8-10 Jan 2027"},
+  {"date": "2026-11-07", "title": "Korea Grand Music Awards 2026", "group": "treasure", "type": "event", "venue": "Gocheok Sky Dome, Seoul", "note": "TREASURE membawa pulang Grand Song (Daesang pertama grup) + 3 trofi lain"},
+  {"date": "2026-10-17", "title": "World Tour [CHOOM] — Jakarta", "group": "babymonster", "type": "tour", "venue": "Indonesia Arena, Jakarta"},
+  {"date": "2026-06-26", "title": "World Tour [CHOOM] — pembukaan di Seoul", "group": "babymonster", "type": "tour", "venue": "Jamsil Indoor Stadium · 26-28 Jun"}
+ ]
+}
