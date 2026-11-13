@@ -127,6 +127,26 @@ Edit `.github/workflows/collect.yml` bagian `cron` (zona UTC):
 - 1× sehari → hapus salah satu baris cron (sisakan `0 0 * * *` = 07:00 WIB)
 - 4× sehari → tambah `0 6 * * *` dan `0 18 * * *`
 
+## Notifikasi Telegram (opsional, disarankan)
+
+Supaya situs makin "hidup sendiri": collector mengirim pesan Telegram tiap ada video baru
+terdeteksi (yang langsung masuk pantauan, maupun yang butuh review) dan alert saat koleksi
+gagal — web tidak mati diam-diam. Cara aktifkan:
+
+1. Chat [@BotFather](https://t.me/BotFather) di Telegram → `/newbot` → salin token yang diberikan.
+2. Kirim satu pesan apa pun ke bot kamu, lalu buka `https://api.telegram.org/bot<TOKEN>/getUpdates` → salin `chat.id`.
+3. Simpan 2 Secret di repo (*Settings → Secrets and variables → Actions*):
+   - `TELEGRAM_BOT_TOKEN` — token dari BotFather
+   - `TELEGRAM_CHAT_ID` — id chat tujuan
+4. Selesai — tidak perlu konfigurasi lain. Tanpa 2 secret ini collector tetap jalan normal
+   (deteksi video baru tetap berfungsi, hanya tidak ada pesan Telegram).
+
+Cara kerja deteksi: playlist uploads (via API, ±200 unggahan terakhir) **dan** RSS channel
+YouTube (±15 unggahan terakhir, tanpa kuota API) dipindai setiap putaran. Judul yang dikenali
+(MV / dance practice / performance video) otomatis masuk pantauan pada putaran yang sama;
+sisanya hanya dilaporkan. Daftar id yang sudah dilaporkan disimpan di `data/notified.json`
+agar tidak ada pesan ganda, dan putaran pertama hanya sinkronisasi (tidak spam).
+
 ## Memperbarui repo yang sudah terpasang (versi lama → versi ini)
 
 1. Unduh ZIP terbaru, lalu **ganti semua file** di repo (termasuk seluruh isi `data/`). Cara termudah: hapus file lama di repo, unggah semua file baru. File baru di versi ini: `collect_spotify.js`, `data/spotify-*.json`, dan `config.json` yang menambah field Spotify per artis.

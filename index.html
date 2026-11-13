@@ -213,6 +213,31 @@
   .rangebtn{border:1px solid var(--border);background:var(--chip);color:var(--muted);font:600 11.5px var(--font);padding:5px 12px;border-radius:999px;cursor:pointer}
   .rangebtn.active{background:var(--text);color:var(--bg);border-color:var(--text)}
   .note{color:var(--muted);font-size:12px;margin:8px 2px 0;line-height:1.5}
+  /* ---------- peta panas harian (heatmap) ---------- */
+  .hm-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-top:2px}
+  .hm-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:11px}
+  .hm-sum{font-size:13px;color:var(--muted);min-width:0}
+  .hm-sum b{color:var(--text)}
+  .hmseg{display:flex;background:var(--chip);border:1px solid var(--border);border-radius:10px;padding:3px;gap:3px;flex:none}
+  .hmseg button{border:none;background:transparent;color:var(--muted);font:inherit;font-weight:700;font-size:12px;padding:5px 11px;border-radius:8px;cursor:pointer;transition:.15s}
+  .hmseg button:hover{color:var(--text)}
+  .hmseg button.on{background:var(--card2);color:var(--text);box-shadow:var(--shadow)}
+  .hm-scroll{overflow-x:auto;padding-bottom:4px}
+  .hm-inner{position:relative;display:inline-block;min-width:100%;padding-bottom:2px}
+  .hm-months{display:grid;grid-auto-columns:12px;grid-template-rows:14px;gap:3px;margin-bottom:4px;font-size:10.5px;font-weight:700;color:var(--muted)}
+  .hm-months span{white-space:nowrap;align-self:end}
+  .hm-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,12px);grid-auto-columns:12px;gap:3px}
+  .hm-c{width:12px;height:12px;border-radius:3px;cursor:pointer}
+  .hm-c:hover{outline:1.5px solid var(--text);outline-offset:0}
+  .hm-c.blank{visibility:hidden;cursor:default}
+  .hm-c.blank:hover{outline:none}
+  .hm-c.nd{background:var(--bg2);border:1px solid var(--border)}
+  .hm-legend{display:flex;align-items:center;gap:5px;margin-top:10px;font-size:11px;color:var(--muted);flex-wrap:wrap}
+  .hm-legend .hm-c{cursor:default}
+  .hm-legend .hm-c:hover{outline:none}
+  .hm-tip{position:absolute;z-index:20;background:var(--overlay);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:10px;padding:7px 11px;font-size:12px;pointer-events:none;display:none;box-shadow:var(--shadow);white-space:nowrap}
+  .hm-tip b{display:block;font-weight:800}
+  .hm-tip .t2{display:block;color:var(--muted);font-size:11px;margin-top:2px}
   table.ms{width:100%;border-collapse:collapse;font-size:13.5px}
   table.ms th{color:var(--muted);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.6px;padding:8px 10px;border-bottom:1px solid var(--border)}
   table.ms td{padding:9px 10px;border-bottom:1px solid var(--border);font-weight:600}
@@ -2669,6 +2694,169 @@ function homeSectHead(c, ico, title, sub) {
   return `<div class="hsect"><h2>${sicIco(c, ico)}${title}</h2>${sub ? `<span class="sub">${sub}</span>` : ""}</div>`;
 }
 
+/* ===================== peta panas harian (heatmap ala GitHub) ===================== */
+const HM_MONTH = new Intl.DateTimeFormat("id-ID", { month: "short", timeZone: "UTC" });
+const HM_WDAY = new Intl.DateTimeFormat("id-ID", { weekday: "short", timeZone: "UTC" });
+const HM_DATE_LONG = new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+const HM_DATE_SHORT = new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", timeZone: "UTC" });
+const HM_ICO = "M3 3h4v4H3V3zm7 0h4v4h-4V3zm7 0h4v4h-4V3zM3 10h4v4H3v-4zm7 0h4v4h-4v-4zm7 0h4v4h-4v-4zM3 17h4v4H3v-4zm7 0h4v4h-4v-4zm7 0h4v4h-4v-4z";
+let HM_RANGE = (() => { try { return JSON.parse(localStorage.getItem("py.hmrange") || "{}") || {}; } catch { return {}; } })();
+function hmUnit(plat) { return plat === "spotify" ? "stream" : "view"; }
+function hmUnitPl(plat) { return plat === "spotify" ? "stream" : "views"; }
+function hmAccent(plat) { return plat === "spotify" ? "#1ed760" : "#ff4d6d"; }
+function hmHexA(hex, a) {
+  const n = parseInt(hex.slice(1), 16);
+  return "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")";
+}
+function hmLvA(lv) { return lv <= 0 ? 0.16 : 0.18 + lv * 0.19; }
+/* delta harian gabungan semua lagu/video = selisih nilai akhir hari vs hari sebelumnya.
+ * - Hari pertama tiap lagu tidak dihitung (delta belum diketahui) supaya video/lagu baru
+ *   tidak membuat lonjakan palsu berupa seluruh angka totalnya.
+ * - Jika jarak antar pengukuran lebar (mis. jangkar milestone resmi berjarak ratusan hari),
+ *   selisihnya dibagi rata ke semua hari di jarak itu agar tidak ada lonjakan palsu di satu hari. */
+function hmSeries(plat, weeks) {
+  const items = plat === "spotify"
+    ? Object.values(state.sp.tracks || {}).filter((t) => t.history && t.history.length)
+    : allVideosFlat().map((v) => ({ history: v.history }));
+  const nowIdx = dayIndexOf(Date.now() / 1000);
+  /* weekday dari TANGGAL WIB-nya (bukan instan tsOfDayIndex yang bergeser -7 jam) */
+  const dowNow = (new Date(dateKeyOfDayIndex(nowIdx) + "T00:00:00Z").getUTCDay() + 6) % 7; // 0=Senin
+  const startIdx = nowIdx - dowNow - (weeks - 1) * 7;
+  const gain = new Map(), cum = new Map();
+  for (const it of items) {
+    const days = daysFromHistory(it.history, "v");
+    for (let i = 0; i < days.length; i++) {
+      const idx = dayIndexOf(days[i].t);
+      if (idx < startIdx || idx > nowIdx) continue;
+      cum.set(idx, (cum.get(idx) || 0) + (days[i].v || 0));
+      if (i === 0) continue;
+      const g = Math.max(0, (days[i].v || 0) - (days[i - 1].v || 0));
+      const pIdx = dayIndexOf(days[i - 1].t);
+      const span = Math.max(1, idx - pIdx);
+      const diWin = [];
+      for (let j = 1; j <= span; j++) { const di = pIdx + j; if (di >= startIdx && di <= nowIdx) diWin.push(di); }
+      if (!diWin.length) continue;
+      const per = Math.floor(g / diWin.length);
+      let rem = g - per * diWin.length;
+      for (const di of diWin) {
+        const val = per + (rem > 0 ? 1 : 0);
+        if (rem > 0) rem--;
+        gain.set(di, (gain.get(di) || 0) + val);
+      }
+    }
+  }
+  const days = [];
+  for (let i = startIdx; i <= nowIdx; i++) {
+    days.push({ idx: i, g: gain.has(i) ? gain.get(i) : null, c: cum.has(i) ? cum.get(i) : null });
+  }
+  const pos = days.map((d) => d.g).filter((v) => v > 0).sort((a, b) => a - b);
+  const q = (p) => (pos.length ? pos[Math.min(pos.length - 1, Math.floor(p * pos.length))] : 0);
+  const th = [q(0.25), q(0.5), q(0.75), q(0.92)];
+  for (const d of days) d.lv = d.g == null ? -1 : d.g <= 0 ? 0 : d.g >= th[3] ? 4 : d.g >= th[2] ? 3 : d.g >= th[1] ? 2 : 1;
+  return { days, weeks, startIdx, nowIdx };
+}
+function hmBodyHTML(plat, weeks) {
+  const acc = hmAccent(plat);
+  const unitPl = hmUnitPl(plat);
+  const S = hmSeries(plat, weeks);
+  const cells = [];
+  for (let w = 0; w < weeks; w++) {
+    for (let r = 0; r < 7; r++) {
+      const idx = S.startIdx + w * 7 + r;
+      if (idx > S.nowIdx) { cells.push('<div class="hm-c blank"></div>'); continue; }
+      const d = S.days[idx - S.startIdx];
+      const st = d.lv < 0 ? "" : ` style="background:${hmHexA(acc, hmLvA(d.lv))}"`;
+      cells.push(`<div class="hm-c${d.lv < 0 ? " nd" : ""}" data-i="${d.idx}" data-g="${d.g == null ? "" : d.g}" data-c="${d.c == null ? "" : d.c}"${st}></div>`);
+    }
+  }
+  const months = [];
+  let ms = 0;
+  for (let w = 0; w < weeks; w++) {
+    const mk = monthKeyOfDayIndex(S.startIdx + w * 7);
+    const nxt = w + 1 < weeks ? monthKeyOfDayIndex(S.startIdx + (w + 1) * 7) : null;
+    if (nxt === mk) continue;
+    const span = w - ms + 1;
+    if (span >= 2) months.push(`<span style="grid-column:${ms + 1} / span ${span}">${HM_MONTH.format(new Date(tsOfDayIndex(Math.min(S.startIdx + ms * 7 + 3, S.nowIdx)) * 1000))}</span>`);
+    ms = w + 1;
+  }
+  let tot = 0, busy = null;
+  for (const d of S.days) { if (d.g > 0) { tot += d.g; if (!busy || d.g > busy.g) busy = d; } }
+  const sumHTML = busy
+    ? `Total ${weeks === 52 ? "1 tahun" : "6 bulan"} terakhir: <b>+${fmtCompact(tot)}</b> ${unitPl} baru · Hari tersibuk: <b>${HM_DATE_SHORT.format(new Date(tsOfDayIndex(busy.idx) * 1000))}</b> (+${fmtCompact(busy.g)})`
+    : `Belum ada pertumbuhan terekam dalam rentang ini.`;
+  const legend = [0, 1, 2, 3, 4].map((l) => `<div class="hm-c" style="background:${hmHexA(acc, hmLvA(l))}"></div>`).join("");
+  return `
+  <div class="hm-bar">
+    <div class="hm-sum">${sumHTML}</div>
+    <div class="hmseg">
+      <button type="button" data-hm-r="26"${weeks === 26 ? ' class="on"' : ""}>6 bulan</button>
+      <button type="button" data-hm-r="52"${weeks === 52 ? ' class="on"' : ""}>1 tahun</button>
+    </div>
+  </div>
+  <div class="hm-scroll"><div class="hm-inner">
+    <div class="hm-months">${months.join("")}</div>
+    <div class="hm-grid">${cells.join("")}</div>
+    <div class="hm-tip"></div>
+  </div></div>
+  <div class="hm-legend"><span>Kurang</span>${legend}<span>Banyak</span><div class="hm-c nd"></div><span>tanpa data</span></div>`;
+}
+function heatSectionHTML(plat) {
+  const sub = plat === "spotify" ? "stream baru tiap hari, semua lagu digabung" : "view baru tiap hari, semua video digabung";
+  return `
+  <section style="margin-top:26px">
+    ${featSectHead(hmAccent(plat), HM_ICO, "Peta panas harian", sub)}
+    <div class="hm-card">
+      <div data-hm-host></div>
+      <p class="note">Setiap kotak = 1 hari kalender WIB · makin terah = ${hmUnit(plat)} baru makin banyak (selisih total antar hari, gabungan semua ${plat === "spotify" ? "lagu" : "video"}; jika jarak pengukuran lebar, selisih dibagi rata ke harinya) · kotak berbingkai = hari tanpa pengukuran · disertakan juga titik estimasi situs ini untuk hari sebelum pantauan berjalan.</p>
+    </div>
+  </section>`;
+}
+function mountHeatmap(sec, plat) {
+  const host = sec.querySelector("[data-hm-host]");
+  if (!host) return;
+  const weeks = HM_RANGE[plat] || 26;
+  host.innerHTML = hmBodyHTML(plat, weeks);
+  const tip = host.querySelector(".hm-tip");
+  const inner = host.querySelector(".hm-inner");
+  const unit = hmUnit(plat);
+  let lastCell = null;
+  const show = (cell) => {
+    const dt = new Date(tsOfDayIndex(parseInt(cell.dataset.i, 10)) * 1000);
+    const g = cell.dataset.g === "" ? null : parseInt(cell.dataset.g, 10);
+    const c = cell.dataset.c === "" ? null : parseInt(cell.dataset.c, 10);
+    tip.innerHTML = `<b>${HM_WDAY.format(dt)}, ${HM_DATE_LONG.format(dt)}</b>` +
+      `<span class="t2">${g != null ? "+" + fmtCompact(g) + " " + unit + " baru" : "tanpa data"}</span>` +
+      (c != null ? `<span class="t2">total gabungan ${fmtCompact(c)} ${hmUnitPl(plat)}</span>` : "");
+    tip.style.visibility = "hidden";
+    tip.style.display = "block";
+    let left = cell.offsetLeft + cell.offsetWidth / 2 - tip.offsetWidth / 2;
+    left = Math.max(2, Math.min(left, inner.offsetWidth - tip.offsetWidth - 2));
+    let top = cell.offsetTop - tip.offsetHeight - 7;
+    if (top < 0) top = cell.offsetTop + cell.offsetHeight + 7;
+    tip.style.left = left + "px";
+    tip.style.top = top + "px";
+    tip.style.visibility = "visible";
+  };
+  const hide = () => { tip.style.display = "none"; lastCell = null; };
+  host.addEventListener("mouseover", (e) => {
+    const c = e.target.closest(".hm-c[data-i]");
+    if (c) { lastCell = c; show(c); } else hide();
+  });
+  host.addEventListener("mouseleave", hide);
+  host.addEventListener("click", (e) => {
+    const c = e.target.closest(".hm-c[data-i]");
+    if (c && c !== lastCell) { lastCell = c; show(c); }
+    else if (!c || c === lastCell) hide();
+  });
+  host.querySelectorAll("[data-hm-r]").forEach((b) => {
+    b.addEventListener("click", () => {
+      HM_RANGE[plat] = parseInt(b.dataset.hmR, 10) || 26;
+      try { localStorage.setItem("py.hmrange", JSON.stringify(HM_RANGE)); } catch {}
+      mountHeatmap(sec, plat);
+    });
+  });
+}
+
 function renderHome() {
   const sec = $("#homeSection");
   const vids = allVideosFlat();
@@ -2753,6 +2941,7 @@ function renderHome() {
     ${hero}
     ${menuRowHTML("yt")}
     ${watchSummaryHTML("yt")}
+    ${heatSectionHTML("yt")}
     <div class="hgrid">
       <div>
         ${homeSectHead("#ffb02e", ICO_TROPHY, "Video paling banyak ditonton", "tiap versi dihitung terpisah")}
@@ -2772,6 +2961,7 @@ function renderHome() {
   bindCards(sec);
   bindMenu(sec);
   bindWatch(sec);
+  mountHeatmap(sec, "yt");
   sec.querySelectorAll("[data-art]").forEach((c) => {
     const go = () => setView(c.dataset.art);
     c.addEventListener("click", go);
@@ -4579,6 +4769,7 @@ function renderSpHome(sec) {
     ${menuRowHTML("spotify")}
     ${wrapHTML}
     ${watchSummaryHTML("spotify")}
+    ${heatSectionHTML("spotify")}
     <div class="hgrid">
       <div>
         ${spSectHead("#1ed760", ICO_SP_TROPHY, "Lagu paling banyak di-stream", "tiap versi dihitung terpisah")}
@@ -4622,6 +4813,7 @@ function renderSpHome(sec) {
   });
   bindMenu(sec);
   bindWatch(sec);
+  mountHeatmap(sec, "spotify");
 }
 
 function spNews() {

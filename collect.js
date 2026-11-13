@@ -18,6 +18,8 @@ const ROOT = __dirname;
 const DATA_DIR = path.join(ROOT, "data");
 const CONFIG = JSON.parse(fs.readFileSync(path.join(ROOT, "config.json"), "utf-8"));
 const API_KEY = process.env.YOUTUBE_API_KEY || process.env.YT_API_KEY || ""; // nama baru + fallback nama lama
+const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN || ""; // opsional: token bot utk notifikasi Telegram
+const TG_CHAT = process.env.TELEGRAM_CHAT_ID || "";    // opsional: id chat/@channel tujuan
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 
@@ -634,7 +636,7 @@ function isoDurationToSeconds(iso) {
  * PERFORMANCE VIDEO (lagu sendiri, bukan solo) — kategori dance_performance. */
 const RE_EXCLUDE =
   /focus\s*cut|solo\s*dance|solo\s*performance|solo\s*ver\.?|choreography|dance\s*cover|stage\s*practice|stage\s*cam|fancam|live\s*performance|performance\s*film|japanese\s*ver\.?|-?jp\s*ver\.?|japan\s*ver\.?|\bjapan\b|raw\s*version|raw\s*ver\.?|anime|concert|making|behind|teaser|trailer|visual\s*film|jacket|mashup|reaction|highlight|reply\b|countdown|spoiler|preview\b|episode\b|commentary|shorts\b|out now|watch now|part\s*switch|eye\s*contact|drake|a\$ap|lil pump|timtim|jenny from the block|vocal\s*clip|close[-\s]?up|d[-\s]?day\b|hits\s*\d+|teumecam|\bof\s+treasure\b|응원법|비하인드|매거진|촬영|포커스|回应|リリース/i;
-const RE_MV = /\bm\s*\/\s*v\b/i;
+const RE_MV = /\bm\s*\/\s*v\b|music\s*video/i;
 const RE_PRACTICE = /dance\s*practice|practice\s*video/i;
 const RE_DANCE_PERF = /dance\s*performance|performance\s*video/i;
 
@@ -644,6 +646,121 @@ function classifyTitle(title) {
   if (RE_MV.test(title)) return "mv";
   if (RE_PRACTICE.test(title)) return "dance_practice";
   return null;
+}
+
+// ---------- deteksi video baru (RSS + API) & notifikasi Telegram ----------
+function escTg(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+async function notifyTelegram(text) {
+  if (!TG_TOKEN || !TG_CHAT) { log("telegram: TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID belum diisi — notifikasi dilewati"); return false; }
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: TG_CHAT, text, parse_mode: "HTML", disable_web_page_preview: false }),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text()).slice(0, 140)}`);
+    return true;
+  } catch (e) {
+    log(`! telegram gagal: ${e}`);
+    return false;
+  }
+}
+
+function xmlDecode(s) {
+  return String(s || "")
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
+    .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"').replace(/&#0?39;|&apos;/g, "'");
+}
+
+/* RSS channel YouTube (±15 unggahan terakhir) — TANPA kuota API, pendeteksi paling awal */
+async function rssEntries(channelId) {
+  return retry(async () => {
+    const xml = await fetchText(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`);
+    const out = [];
+    const re = /<entry>([\s\S]*?)<\/entry>/g;
+    let m;
+    while ((m = re.exec(xml))) {
+      const e = m[1];
+      const id = /<yt:videoId>([^<]+)<\/yt:videoId>/.exec(e);
+      const tt = /<title>([\s\S]*?)<\/title>/.exec(e);
+      const pb = /<published>([^<]+)<\/published>/.exec(e);
+      if (id) out.push({ id: id[1].trim(), title: xmlDecode(tt ? tt[1] : "").trim(), published: pb ? pb[1].slice(0, 10) : "" });
+    }
+    return out;
+  }, 3, 2000);
+}
+
+/* state anti-notifikasi-ganda: RSS selalu memuat ±15 unggahan terakhir, jadi id yang sudah
+ * dilaporkan dicatat ke data/notified.json (ikut ter-commit bersama data/). */
+function loadNotified() { return readJSON("notified.json", { seeded: false, ids: [] }); }
+function saveNotified(st) { st.ids = (st.ids || []).slice(-3000); st.seeded = true; writeJSON("notified.json", st); }
+
+/* deteksi video baru utk semua artis: playlist uploads via API (bila ada key) + RSS channel
+ * (selalu jalan, tahan banting, tanpa kuota). Judul yang dikenali klasifikasinya langsung
+ * masuk pantauan; yang tidak dikenali hanya dilaporkan ke Telegram supaya bisa ditambah
+ * manual di config.json bila perlu. */
+async function discoverNewVideos(videos) {
+  const notified = loadNotified();
+  const firstRun = !notified.seeded;
+  const seen = new Set(notified.ids || []);
+  const knownAll = new Set();
+  for (const a of CONFIG.artists) for (const v of a.videos) knownAll.add(v.id);
+  const newIds = [];
+  const added = [], skipped = [];
+  let configChanged = false;
+
+  for (const artist of CONFIG.artists) {
+    const exclude = new Set(artist.exclude_ids || []);
+    const cand = new Map(); // id -> {id,title,published,src}
+    if (API_KEY) {
+      try {
+        const uploadsId = "UU" + artist.channel_id.slice(2);
+        for (const r of await retry(() => apiPlaylistRecent(uploadsId, DISCOVERY_PAGES))) {
+          if (!cand.has(r.id)) cand.set(r.id, { id: r.id, title: r.title, published: "", src: "playlist-api" });
+        }
+      } catch (e) { log(`! Gagal baca playlist uploads ${artist.name}: ${e}`); }
+    }
+    try {
+      for (const r of await rssEntries(artist.channel_id)) {
+        if (!cand.has(r.id)) cand.set(r.id, { ...r, src: "rss" });
+      }
+    } catch (e) { log(`! Gagal baca RSS ${artist.name}: ${e}`); }
+
+    const known = new Set(artist.videos.map((v) => v.id));
+    for (const r of cand.values()) {
+      if (known.has(r.id) || knownAll.has(r.id) || exclude.has(r.id) || videos[r.id]) {
+        if (!seen.has(r.id)) { seen.add(r.id); newIds.push(r.id); }
+        continue;
+      }
+      const cat = classifyTitle(r.title);
+      if (!seen.has(r.id)) {
+        seen.add(r.id); newIds.push(r.id);
+        const url = `https://youtu.be/${r.id}`;
+        if (cat) added.push(`${artist.name} — <b>${escTg(r.title)}</b>\n${url}\nKategori: ${CONFIG.categories[cat] || cat} → masuk pantauan otomatis`);
+        else skipped.push(`${artist.name} — <b>${escTg(r.title)}</b>\n${url}\nKategori tidak dikenali → tidak masuk pantauan (tambah manual di config.json bila perlu)`);
+      }
+      if (cat && !known.has(r.id)) {
+        const entry = { id: r.id, category: cat, featured: false, discovered: true };
+        if (r.published) entry.published = r.published;
+        artist.videos.push(entry);
+        known.add(r.id); knownAll.add(r.id);
+        configChanged = true;
+        log(`+ video baru terdeteksi (${r.src}): ${artist.name} — ${r.title}`);
+      }
+    }
+  }
+  if (newIds.length) saveNotified({ seeded: true, ids: [...(notified.ids || []), ...newIds] });
+  if (firstRun) {
+    log("sinkronisasi awal RSS — unggahan yang sudah ada tidak dilaporkan ke Telegram");
+  } else if ((added.length || skipped.length) && (TG_TOKEN && TG_CHAT)) {
+    const parts = [];
+    if (added.length) parts.push(`<b>Video baru terdeteksi (${added.length}):</b>\n\n${added.join("\n\n")}`);
+    if (skipped.length) parts.push(`<b>Terdeteksi, tidak masuk pantauan (${skipped.length}):</b>\n\n${skipped.join("\n\n")}`);
+    await notifyTelegram(parts.join("\n\n──────────\n\n"));
+  }
+  return { configChanged };
 }
 
 // ---------- mode API ----------
@@ -729,30 +846,9 @@ async function collectAPI() {
     rebuildChannelEstimates(ch);
   }
 
-  // 2) discovery video baru dari playlist uploads terbaru
-  let configChanged = false;
-  const seenDiscovery = new Set(); // cegah video yang sama masuk 2 artis
-  for (const artist of CONFIG.artists) {
-    const uploadsId = "UU" + artist.channel_id.slice(2);
-    const known = new Set(artist.videos.map((v) => v.id));
-    let recent = [];
-    try {
-      recent = await retry(() => apiPlaylistRecent(uploadsId, DISCOVERY_PAGES));
-    } catch (e) {
-      log(`! Gagal baca playlist uploads ${artist.name}: ${e}`);
-    }
-    const exclude = new Set(artist.exclude_ids || []);
-    for (const r of recent) {
-      if (known.has(r.id) || exclude.has(r.id) || videos[r.id] || seenDiscovery.has(r.id)) continue;
-      const cat = classifyTitle(r.title);
-      if (!cat) continue;
-      seenDiscovery.add(r.id);
-      artist.videos.push({ id: r.id, category: cat, featured: false, discovered: true });
-      known.add(r.id);
-      configChanged = true;
-      log(`+ video baru terdeteksi: ${artist.name} — ${r.title}`);
-    }
-  }
+  // 2) deteksi video baru (playlist uploads via API + RSS channel) & notifikasi Telegram
+  const disc = await discoverNewVideos(videos);
+  const configChanged = disc.configChanged;
 
   // 3) statistik semua video terpantau
   const allIds = [];
@@ -1032,6 +1128,10 @@ async function collectScrape() {
     await sleep(800);
   }
 
+  // deteksi video baru via RSS (mode scraping tidak punya akses playlist API) — ikut discrape di run ini
+  const disc = await discoverNewVideos(videos);
+  if (disc.configChanged) { fs.writeFileSync(path.join(ROOT, "config.json"), JSON.stringify(CONFIG, null, 2)); log("config.json diperbarui (video baru)"); }
+
   const total = CONFIG.artists.reduce((n, a) => n + a.videos.length, 0);
   let i = 0;
   for (const artist of CONFIG.artists) {
@@ -1094,6 +1194,10 @@ async function main() {
     console.error("GAGAL:", e);
     process.exitCode = 1;
     result = null;
+    // kesehatan data: kabari pemilik situs (kalau Telegram dikonfigurasi) supaya web tidak mati diam-diam
+    if (TG_TOKEN && TG_CHAT) {
+      await notifyTelegram(`<b>ALERT: koleksi data YouTube gagal</b>\n\n${escTg(String((e && e.message) || e)).slice(0, 400)}\n\nCek detail di tab Actions repo.`);
+    }
   }
   if (result) {
     writeJSON("meta.json", {
