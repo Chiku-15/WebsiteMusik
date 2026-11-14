@@ -797,6 +797,12 @@
     .tlrow,.tlrow.r{width:100%;margin-left:0;padding:8px 0 8px 30px}
     .tldot,.tlrow.r .tldot{left:3px;right:auto}
   }
+  /* ---------- porsi kontribusi di dalam kartu channel ---------- */
+  .chcontrib{margin-top:16px;padding-top:14px;border-top:1px dashed var(--border);cursor:default}
+  .chcontrib .cchead{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;justify-content:space-between;margin-bottom:10px}
+  .chcontrib .cct b{font-size:14.5px}
+  .chcontrib .cct span{display:block;color:var(--muted);font-size:11.5px;margin-top:2px}
+  .chcontrib .chartbox{max-width:520px}
 </style>
 </head>
 <body>
@@ -1384,7 +1390,7 @@ function bindPageClose(sec) {
     state.recOpen = false; state.calOpen = false;
     state.memOpen = false; state.troOpen = false; state.schOpen = false;
     state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false;
-    state.tmlOpen = false;
+    state.tmlOpen = false; state.heatOpen = false;
     renderAll(); window.scrollTo(0, 0);
   }));
 }
@@ -1482,7 +1488,8 @@ function menuRowHTML(plat) {
   const dis = ["dis", "#a78bfa", ICO_DISC, "Diskografi", "album &amp; singel beserta stream-nya"];
   const bru = ["bru", "#22c55e", ICO_NEWS, "Berita K-pop", "berita terbaru dua grup"];
   const tml = ["tml", "#14b8a6", ICO_TML, "Timeline Grup", "perjalanan debut → sekarang"];
-  return `<div class="menurow">${[cmp, rec, cal, tro, mem, sch, soc, cha, dis, bru, tml].map(card).join("")}</div>`;
+  const heat = ["heat", hmAccent("yt"), HM_ICO, "Peta panas harian", "view/stream baru tiap hari"];
+  return `<div class="menurow">${[cmp, rec, cal, tro, mem, sch, soc, cha, dis, bru, tml, heat].map(card).join("")}</div>`;
 }
 function menuGo(k) {
   /* Rekor/Kalender = halaman khusus beranda — dari halaman artis pun kembali ke beranda dulu
@@ -1494,7 +1501,7 @@ function menuGo(k) {
     state.recOpen = false; state.calOpen = false; state.memOpen = false;
     state.troOpen = false; state.schOpen = false;
     state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false;
-    state.tmlOpen = false;
+    state.tmlOpen = false; state.heatOpen = false;
     if (k === "rec") { state.recOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
     else if (k === "cal") { state.calOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
     else if (k === "tro") { state.troOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
@@ -1505,6 +1512,7 @@ function menuGo(k) {
     else if (k === "dis") { state.disOpen = true; if (state.view !== "home") state.view = "home"; if (!state.sp.tracks && !state.sp.error) { renderAll(); loadSpData().then(renderAll); } else renderAll(); window.scrollTo(0, 0); }
     else if (k === "bru") { state.bruOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
     else if (k === "tml") { state.tmlOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
+    else if (k === "heat") { state.heatOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
   }
 }
 function bindMenu(root) {
@@ -1847,35 +1855,61 @@ function renderSchedulePage(sec) {
   startCountdownTick();
 }
 
-/* ---- porsi kontribusi 30 hari (donat) — halaman artis YT & Spotify (fitur no 4) ---- */
+/* ---- porsi kontribusi (donat) — berada DI DALAM kartu channel YT & Spotify (fitur no 4) ----
+ * Periode bisa diganti lewat chip: 7 hari / 30 hari / 3 bulan / 6 bulan / 1 tahun / Semua. */
 const CONTRIB_COLORS = ["#1ed760", "#38bdf8", "#f59e0b", "#f472b6", "#a78bfa", "#fb7185", "#34d399", "#94a3b8"];
-function contribSectionHTML(artistId, color, plat) {
+const CONTRIB_PERIODS = [[7, "7 hari"], [30, "30 hari"], [90, "3 bulan"], [180, "6 bulan"], [365, "1 tahun"], [0, "Semua"]];
+function contribDays(plat) { return (state.contribDays && state.contribDays[plat] != null) ? state.contribDays[plat] : 30; }
+function contribLbl(d) { return d ? (CONTRIB_PERIODS.find((x) => x[0] === d) || [null, d + " hari"])[1] : "sepanjang pantauan"; }
+function contribCardHTML(artistId, color, plat) {
   const label = plat === "sp" ? "stream" : "views";
-  return `<section style="margin-top:18px">
-    ${featSectHead(color, ICO_FIRE, "Porsi kontribusi 30 hari", `lagu mana penyumbang ${label} terbesar sebulan terakhir`)}
-    <div class="chartbox" style="max-width:540px"><canvas id="contrib_${plat}_${esc(artistId)}"></canvas></div>
-    <p class="note">Donat = tambahan ${label} 30 hari terakhir per lagu — 7 lagu teratas dipisah, sisanya digabung sebagai "Lainnya".</p>
-  </section>`;
+  const d = contribDays(plat);
+  const chips = CONTRIB_PERIODS.map((p) => `<button type="button" class="mtab${d === p[0] ? " active" : ""}" data-cdays="${p[0]}">${p[1]}</button>`).join("");
+  return `
+    <div class="chcontrib" data-contrib="${plat}">
+      <div class="cchead">
+        <div class="cct"><b>Porsi kontribusi</b><span>penyumbang ${label} terbesar · ${contribLbl(d)}</span></div>
+        <div class="stabs">${chips}</div>
+      </div>
+      <div class="chartbox" style="max-width:520px"><canvas id="contrib_${plat}_${esc(artistId)}"></canvas></div>
+      <p class="note">Donat = tambahan ${label} ${d ? contribLbl(d) : "sejak titik data pertama"} per lagu — 7 lagu teratas dipisah, sisanya digabung sebagai "Lainnya". Klik chip untuk ganti periode.</p>
+    </div>`;
+}
+function bindContribChips(sec, artistId, color, plat) {
+  const box = sec.querySelector(`.chcontrib[data-contrib="${plat}"]`);
+  if (!box) return;
+  /* klik di area donat/chip TIDAK boleh membuka halaman detail channel (kartu induk bisa diklik) */
+  box.addEventListener("click", (e) => e.stopPropagation());
+  box.querySelectorAll("[data-cdays]").forEach((b) => {
+    b.addEventListener("click", () => {
+      state.contribDays = state.contribDays || {};
+      state.contribDays[plat] = parseInt(b.dataset.cdays, 10) || 0;
+      if (plat === "sp") renderSpArtist(sec); else renderChannel();
+    });
+  });
 }
 function mountContribChart(artistId, color, plat) {
   const cv = document.getElementById("contrib_" + plat + "_" + artistId);
   if (!cv) return;
+  const days = contribDays(plat);
   const gains = new Map();
   const nowT = Date.now() / 1000;
   if (plat === "sp") {
     for (const t of Object.values(state.sp.tracks || {})) {
       if (t.artistId !== artistId || !(t.kworb && t.kworb.total > 0)) continue;
       const nm = t.name + (t.live ? " (Live)" : "");
-      const p30 = spTrackValueAt(t, nowT - 30 * 86400);
-      const g = p30 ? spTrackTotal(t) - p30.v : (spTrackDaily(t) || 0) * 30;
+      const h = t.history || [];
+      const base = days ? spTrackValueAt(t, nowT - days * 86400) : (h.length ? { v: h[0].v } : null);
+      const g = base ? spTrackTotal(t) - base.v : (spTrackDaily(t) || 0) * (days || 30);
       if (g > 0) gains.set(nm, (gains.get(nm) || 0) + g);
     }
   } else {
     for (const v of allVideosFlat()) {
       if (v.art.id !== artistId) continue;
       const nm = rowTitleOf(v, v.art);
-      const p30 = valAtYt(v.history, nowT - 30 * 86400);
-      const g = p30 ? lastV(v) - p30.v : ((deltaDays(v.history, 30) || {}).delta || 0);
+      const h = v.history || [];
+      const base = days ? valAtYt(h, nowT - days * 86400) : (h.find((p) => p.e !== 1) || h[0] || null);
+      const g = base ? lastV(v) - base.v : ((deltaDays(h, days || 30) || {}).delta || 0);
       if (g > 0) gains.set(nm, (gains.get(nm) || 0) + g);
     }
   }
@@ -1888,7 +1922,7 @@ function mountContribChart(artistId, color, plat) {
   const top = rows.slice(0, 7);
   const rest = rows.slice(7).reduce((s, x) => s + x[1], 0);
   if (rest > 0) top.push(["Lainnya (" + (rows.length - 7) + " lagu)", rest]);
-  destroyChartById("contrib_" + plat);
+  destroyChartById("contrib_" + plat + "_" + artistId);
   newChart(cv, {
     type: "doughnut",
     data: {
@@ -1902,7 +1936,7 @@ function mountContribChart(artistId, color, plat) {
         tooltip: { callbacks: { label: (c) => " " + c.label + ": +" + fmtCompact(c.parsed) } },
       },
     },
-  }, "contrib_" + plat);
+  }, "contrib_" + plat + "_" + artistId);
 }
 
 /* ===================== halaman Media Sosial · Peringkat Chart · Diskografi · Berita =====================
@@ -3400,12 +3434,12 @@ function renderTabs() {
 async function setPlatform(p) {
   const same = state.platform === p;
   /* halaman khusus terbuka? menekan tab platform = kembali ke beranda bersih */
-  const anyPage = state.spWrapOpen || state.recOpen || state.calOpen || state.memOpen || state.troOpen || state.schOpen || state.socOpen || state.chaOpen || state.disOpen || state.bruOpen || state.tmlOpen;
+  const anyPage = state.spWrapOpen || state.recOpen || state.calOpen || state.memOpen || state.troOpen || state.schOpen || state.socOpen || state.chaOpen || state.disOpen || state.bruOpen || state.tmlOpen || state.heatOpen;
   if (same && state.view === "home" && !anyPage) return;   // sudah di beranda platform ini
   state.view = "home";                          // menekan tab platform = masuk beranda
   state.spWrapOpen = false;                     // …sekaligus menutup halaman Wrapped bila terbuka
   state.recOpen = false; state.calOpen = false; state.memOpen = false; state.troOpen = false; state.schOpen = false; state.spAlbumOpen = false;
-  state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false; state.tmlOpen = false;
+  state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false; state.tmlOpen = false; state.heatOpen = false;
   if (!same) {
     state.platform = p;
     if (p === "spotify" && !state.sp.tracks && !state.sp.error) {
@@ -3641,11 +3675,12 @@ function renderChannel() {
         </div>
       </div>
       ${subGoalHTML(last.s, rateS7)}
+      ${contribCardHTML(state.artist, art.color, "yt")}
       <div class="chhint"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>Klik kartu ini untuk detail lengkap channel — grafik &amp; milestone video</div>
     </div>`;
-  /* porsi kontribusi 30 hari (fitur no 4) */
-  sec.insertAdjacentHTML("beforeend", contribSectionHTML(state.artist, art.color, "yt"));
+  /* porsi kontribusi — di dalam kartu channel (fitur no 4) */
   mountContribChart(state.artist, art.color, "yt");
+  bindContribChips(sec, state.artist, art.color, "yt");
   const card = $("#chcard");
   if (card) {
     const open = () => openChannel(state.artist);
@@ -3768,6 +3803,7 @@ function allVideosFlat() {
   const out = [];
   for (const [id, v] of Object.entries(state.videos || {})) {
     if (!v || typeof v !== "object" || !watched.has(id)) continue;
+    if (/performance\s*clip/i.test(v.title || "")) continue; // video terblokir pengguna (mis. 'SHOCK' M/V Performance Clip)
     const art = artistOf(v.channel);
     if (!art) continue;
     out.push({ id, ...v, art });
@@ -3926,16 +3962,17 @@ function hmBodyHTML(plat, weeks) {
   </div></div>
   <div class="hm-legend"><span>Kurang</span>${legend}<span>Banyak</span><div class="hm-c nd"></div><span>tanpa data</span></div>`;
 }
-function heatSectionHTML(plat) {
-  const sub = plat === "spotify" ? "stream baru tiap hari, semua lagu digabung" : "view baru tiap hari, semua video digabung";
-  return `
-  <section style="margin-top:26px">
-    ${featSectHead(hmAccent(plat), HM_ICO, "Peta panas harian", sub)}
-    <div class="hm-card">
+/* halaman khusus Peta panas harian — dibuka lewat kartu menu (dulu seksi inline di beranda) */
+function renderHeatmapPage(sec) {
+  const plat = state.platform === "spotify" ? "spotify" : "yt";
+  sec.innerHTML = `
+    ${pageCloseBar("Peta panas harian", `${hmUnit(plat)} baru tiap hari, semua ${plat === "spotify" ? "lagu" : "video"} digabung`, HM_ICO, hmAccent(plat))}
+    <div class="hm-card" style="margin-top:14px">
       <div data-hm-host></div>
       <p class="note">Setiap kotak = 1 hari kalender WIB · makin terah = ${hmUnit(plat)} baru makin banyak (selisih total antar hari, gabungan semua ${plat === "spotify" ? "lagu" : "video"}; jika jarak pengukuran lebar, selisih dibagi rata ke harinya) · kotak berbingkai = hari tanpa pengukuran · disertakan juga titik estimasi situs ini untuk hari sebelum pantauan berjalan.</p>
-    </div>
-  </section>`;
+    </div>`;
+  bindPageClose(sec);
+  mountHeatmap(sec, plat);
 }
 function mountHeatmap(sec, plat) {
   const host = sec.querySelector("[data-hm-host]");
@@ -4067,7 +4104,6 @@ function renderHome() {
     ${hero}
     ${menuRowHTML("yt")}
     ${watchSummaryHTML("yt")}
-    ${heatSectionHTML("yt")}
     <div class="hgrid">
       <div>
         ${homeSectHead("#ffb02e", ICO_TROPHY, "Video paling banyak ditonton", "tiap versi dihitung terpisah")}
@@ -4088,7 +4124,6 @@ function renderHome() {
   bindCards(sec);
   bindMenu(sec);
   bindWatch(sec);
-  mountHeatmap(sec, "yt");
   sec.querySelectorAll("[data-art]").forEach((c) => {
     const go = () => setView(c.dataset.art);
     c.addEventListener("click", go);
@@ -5374,6 +5409,7 @@ function renderSpAll() {
     else if (state.disOpen) renderDiscoPage(sec);
     else if (state.bruOpen) renderNewsPage(sec);
     else if (state.tmlOpen) renderTimelinePage(sec);
+    else if (state.heatOpen) renderHeatmapPage(sec); // halaman Peta panas harian
     else renderSpHome(sec);
   }
   else renderSpArtist(sec);
@@ -5921,7 +5957,6 @@ function renderSpHome(sec) {
     ${menuRowHTML("spotify")}
     ${wrapHTML}
     ${watchSummaryHTML("spotify")}
-    ${heatSectionHTML("spotify")}
     <div class="hgrid">
       <div>
         ${spSectHead("#1ed760", ICO_SP_TROPHY, "Lagu paling banyak di-stream", "tiap versi dihitung terpisah")}
@@ -5966,7 +6001,6 @@ function renderSpHome(sec) {
   });
   bindMenu(sec);
   bindWatch(sec);
-  mountHeatmap(sec, "spotify");
 }
 
 function spNews() {
@@ -6284,6 +6318,7 @@ function renderSpArtist(sec) {
         </div>
         <canvas id="spCardChart"></canvas>
       </div>` : ""}
+      ${contribCardHTML(a.id, a.color || SP_GREEN, "sp")}
       <div class="chhint"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg>Klik kartu ini untuk grafik lengkap + pilihan rentang waktu &amp; milestone — seperti kartu channel YouTube</div>
     </div>
     <div class="hgrid3">
@@ -6331,9 +6366,9 @@ function renderSpArtist(sec) {
   destroyChartById("spCard");
   const cardCv = $("#spCardChart");
   if (cardCv && ser.length >= 2) makeTimeLineChart(cardCv, ser, a.color || SP_GREEN, "spCard", "stream", { dimEst: true, paddingTop: 56 });
-  /* porsi kontribusi 30 hari (fitur no 4) */
-  sec.insertAdjacentHTML("beforeend", contribSectionHTML(a.id, a.color || SP_GREEN, "sp"));
+  /* porsi kontribusi — di dalam kartu channel Spotify (fitur no 4) */
   mountContribChart(a.id, a.color || SP_GREEN, "sp");
+  bindContribChips(sec, a.id, a.color || SP_GREEN, "sp");
   sec.querySelectorAll("[data-spsort]").forEach((b) => {
     b.addEventListener("click", () => { state.spSort = b.dataset.spsort; renderSpArtist(sec); });
   });
@@ -6754,6 +6789,7 @@ function renderAll() {
     else if (state.disOpen) renderDiscoPage($("#homeSection"));   // halaman Diskografi
     else if (state.bruOpen) renderNewsPage($("#homeSection"));    // halaman Berita K-pop
     else if (state.tmlOpen) renderTimelinePage($("#homeSection")); // halaman Timeline Grup
+    else if (state.heatOpen) renderHeatmapPage($("#homeSection")); // halaman Peta panas harian
     else renderHome();
   }
   else {

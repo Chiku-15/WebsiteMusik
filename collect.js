@@ -631,11 +631,11 @@ function isoDurationToSeconds(iso) {
 // ---------- klasifikasi judul ----------
 /* Konten non-MV / non-dance TIDAK dipantau (permintaan pengguna): focus cut, solo
  * practice/performance, cover lagu orang lain, stage practice, live/concert performance,
- * versi JP/anime/RAW, highlight/teaser/behind/making, clip promosi, dsb.
+ * versi JP/anime/RAW, highlight/teaser/behind/making, clip promosi, PERFORMANCE CLIP, dsb.
  * DIPANTAU: M/V, DANCE PERFORMANCE VIDEO, PERFORMANCE VIDEO, EXCLUSIVE/SPECIAL
  * PERFORMANCE VIDEO (lagu sendiri, bukan solo) — kategori dance_performance. */
 const RE_EXCLUDE =
-  /focus\s*cut|solo\s*dance|solo\s*performance|solo\s*ver\.?|choreography|dance\s*cover|stage\s*practice|stage\s*cam|fancam|live\s*performance|performance\s*film|japanese\s*ver\.?|-?jp\s*ver\.?|japan\s*ver\.?|\bjapan\b|raw\s*version|raw\s*ver\.?|anime|concert|making|behind|teaser|trailer|visual\s*film|jacket|mashup|reaction|highlight|reply\b|countdown|spoiler|preview\b|episode\b|commentary|shorts\b|out now|watch now|part\s*switch|eye\s*contact|drake|a\$ap|lil pump|timtim|jenny from the block|vocal\s*clip|close[-\s]?up|d[-\s]?day\b|hits\s*\d+|teumecam|\bof\s+treasure\b|응원법|비하인드|매거진|촬영|포커스|回应|リリース/i;
+  /focus\s*cut|solo\s*dance|solo\s*performance|solo\s*ver\.?|choreography|dance\s*cover|stage\s*practice|stage\s*cam|fancam|live\s*performance|performance\s*film|performance\s*clip|japanese\s*ver\.?|-?jp\s*ver\.?|japan\s*ver\.?|\bjapan\b|raw\s*version|raw\s*ver\.?|anime|concert|making|behind|teaser|trailer|visual\s*film|jacket|mashup|reaction|highlight|reply\b|countdown|spoiler|preview\b|episode\b|commentary|shorts\b|out now|watch now|part\s*switch|eye\s*contact|drake|a\$ap|lil pump|timtim|jenny from the block|vocal\s*clip|close[-\s]?up|d[-\s]?day\b|hits\s*\d+|teumecam|\bof\s+treasure\b|응원법|비하인드|매거진|촬영|포커스|回应|リリース/i;
 const RE_MV = /\bm\s*\/\s*v\b|music\s*video/i;
 const RE_PRACTICE = /dance\s*practice|practice\s*video/i;
 const RE_DANCE_PERF = /dance\s*performance|performance\s*video/i;
@@ -646,6 +646,32 @@ function classifyTitle(title) {
   if (RE_MV.test(title)) return "mv";
   if (RE_PRACTICE.test(title)) return "dance_practice";
   return null;
+}
+
+/* ---------- pembersihan video terlarang (permintaan pengguna, 14 Nov 2026) ----------
+ * "Performance Clip" (mis. TREASURE 'SHOCK' M/V Performance Clip 1-3) tidak boleh dipantau:
+ * hapus dari videos.json + config.json, tambahkan ke exclude_ids, supaya video itu
+ * tidak pernah muncul lagi walau sudah pernah terdeteksi di run sebelumnya. */
+const RE_PURGE = /performance\s*clip/i;
+function purgeBlockedVideos(videos) {
+  const bad = [];
+  for (const [id, rec] of Object.entries(videos)) {
+    if (rec && RE_PURGE.test(rec.title || "")) bad.push({ id, owner: rec.channel });
+  }
+  if (!bad.length) return 0;
+  for (const { id, owner } of bad) {
+    delete videos[id];
+    for (const a of CONFIG.artists) {
+      const i = a.videos.findIndex((v) => v.id === id);
+      if (i >= 0) a.videos.splice(i, 1);
+      if (owner === a.id) {
+        a.exclude_ids = a.exclude_ids || [];
+        if (!a.exclude_ids.includes(id)) a.exclude_ids.push(id);
+      }
+    }
+    log(`- diblokir & dihapus dari pantauan: ${id} (judul cocok "Performance Clip")`);
+  }
+  return bad.length;
 }
 
 // ---------- deteksi video baru (RSS + API) & notifikasi Telegram ----------
@@ -810,6 +836,7 @@ async function collectAPI() {
   const videos = readJSON("videos.json", {});
   const channels = readJSON("channels.json", {});
   const now = Math.floor(Date.now() / 1000);
+  const purged = purgeBlockedVideos(videos); // hapus video terlarang (Performance Clip) sebelum apa pun
 
   // 1) channel stats
   const chanIds = CONFIG.artists.map((a) => a.channel_id);
@@ -848,7 +875,7 @@ async function collectAPI() {
 
   // 2) deteksi video baru (playlist uploads via API + RSS channel) & notifikasi Telegram
   const disc = await discoverNewVideos(videos);
-  const configChanged = disc.configChanged;
+  const configChanged = disc.configChanged || purged > 0;
 
   // 3) statistik semua video terpantau
   const allIds = [];
@@ -1107,6 +1134,7 @@ async function collectScrape() {
   const videos = readJSON("videos.json", {});
   const channels = readJSON("channels.json", {});
   const now = Math.floor(Date.now() / 1000);
+  const purged = purgeBlockedVideos(videos); // hapus video terlarang (Performance Clip) sebelum apa pun
 
   for (const artist of CONFIG.artists) {
     let info = {};
@@ -1131,7 +1159,7 @@ async function collectScrape() {
 
   // deteksi video baru via RSS (mode scraping tidak punya akses playlist API) — ikut discrape di run ini
   const disc = await discoverNewVideos(videos);
-  if (disc.configChanged) { fs.writeFileSync(path.join(ROOT, "config.json"), JSON.stringify(CONFIG, null, 2)); log("config.json diperbarui (video baru)"); }
+  if (disc.configChanged || purged > 0) { fs.writeFileSync(path.join(ROOT, "config.json"), JSON.stringify(CONFIG, null, 2)); log("config.json diperbarui (video baru / pembersihan)"); }
 
   const total = CONFIG.artists.reduce((n, a) => n + a.videos.length, 0);
   let i = 0;
