@@ -238,8 +238,10 @@
   .memgo{margin-top:9px;font-size:10px;font-weight:800;letter-spacing:.6px;color:var(--muted);text-transform:uppercase;position:relative}
   .memcard:hover .memgo{color:var(--mc,#6a78ff)}
   .memava .bdtag{position:absolute;bottom:-4px;right:-4px;background:#f59e0b;color:#fff;border-radius:999px;font-size:9px;font-weight:800;padding:2px 6px;box-shadow:0 2px 8px rgba(0,0,0,.35);z-index:3}
-  /* foto solo anggota (img/members/<slug>.jpg) — di atas inisial; gagal muat → inisial tetap tampil */
-  .memava img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;z-index:2}
+  /* foto anggota (bingkai M/V DESERVE / SHOCK) di lingkaran avatar — dibungkus .avclip supaya
+     bingkai 4:3 YouTube terpotong rapi tanpa pita hitam; gagal muat → inisial tetap tampil */
+  .avclip{position:absolute;inset:0;border-radius:50%;overflow:hidden;z-index:2}
+  .avclip img{position:absolute;left:0;top:-17%;width:100%;height:134%;object-fit:cover;display:block}
   /* foto comeback terakhir di detail profil anggota */
   .memcomeback{margin:16px 0 4px;border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;background:var(--card);transition:border-color .16s}
   .memcomeback:hover{border-color:color-mix(in srgb,var(--artist-color,#6a78ff) 55%,var(--border))}
@@ -248,11 +250,11 @@
   .memcomeback .mcbtx .k{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:1px}
   .memcomeback .mcbtx b{font-size:14.5px;line-height:1.35}
   .memcomeback .mcbtx span{font-size:12px;color:var(--muted)}
-  /* foto solo besar di detail profil anggota */
-  .memphoto{margin:14px 0 4px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card)}
+  /* foto artis di detail profil — ukuran sedang (tidak full lebar), di tengah kartu */
+  .memphoto{width:min(430px,100%);margin:14px auto 4px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card)}
   .memphoto[data-click]{cursor:pointer;transition:border-color .16s}
   .memphoto[data-click]:hover{border-color:color-mix(in srgb,var(--artist-color,#6a78ff) 55%,var(--border))}
-  .memphoto img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:center 25%;display:block}
+  .memphoto img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
   .memphoto .mptx{padding:10px 15px;display:flex;flex-direction:column;gap:2px}
   .memphoto .mptx .k{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:1px}
   .memphoto .mptx b{font-size:13.5px;line-height:1.4}
@@ -302,6 +304,13 @@
   .hm-tip{position:absolute;z-index:20;background:var(--overlay);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:10px;padding:7px 11px;font-size:12px;pointer-events:none;display:none;box-shadow:var(--shadow);white-space:nowrap}
   .hm-tip b{display:block;font-weight:800}
   .hm-tip .t2{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+  /* penanda bulan saat kursor menyentuh kotak: pita warna di belakang kolom bulan tsb + label bulan menyala */
+  .hm-months,.hm-grid{position:relative;z-index:2}
+  .hm-months span{transition:color .12s}
+  .hm-months span.hl{color:var(--band,#ff4d6d)}
+  .hm-band{position:absolute;z-index:1;display:none;pointer-events:none;border-radius:9px;
+    background:color-mix(in srgb,var(--band,#ff4d6d) 12%,transparent);
+    border:1px solid color-mix(in srgb,var(--band,#ff4d6d) 32%,transparent)}
   /* filter artis peta panas + ringkasan bulanan */
   .hm-art{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:2px 0 10px}
   .hm-art button{border:1px solid var(--border);background:var(--chip);color:var(--muted);font:inherit;font-weight:700;font-size:12px;padding:5px 12px;border-radius:999px;cursor:pointer;transition:.15s}
@@ -649,6 +658,20 @@
   .wprow .del{text-align:right;flex:none}
   .wprow .del .d1{color:#1ed760;font-weight:800;font-size:13px;font-variant-numeric:tabular-nums}
   .wprow .del .d2{color:var(--muted);font-size:10px;font-weight:700;margin-top:1px}
+  /* ---------- alat filter & kartu rekor di halaman Peringkat Chart ---------- */
+  .chtools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0 2px}
+  .chtools input[type=search]{background:var(--chip);border:1px solid var(--border);border-radius:999px;color:var(--text);font:inherit;font-size:12.5px;padding:7px 14px;min-width:200px;outline:none}
+  .chtools input[type=search]:focus{border-color:#f97316}
+  .chtools select{background:var(--chip);border:1px solid var(--border);border-radius:999px;color:var(--text);font:inherit;font-size:12.5px;font-weight:700;padding:7px 10px;outline:none;cursor:pointer}
+  .chtools .mtab{padding:7px 14px}
+  .chsong{display:inline-flex;align-items:center;gap:7px;background:color-mix(in srgb,#f97316 16%,transparent);border:1px solid color-mix(in srgb,#f97316 45%,transparent);color:#fdba74;border-radius:999px;font-size:12px;font-weight:800;padding:6px 13px;cursor:pointer}
+  .chcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:9px;margin-top:12px}
+  .chcard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;cursor:pointer;transition:border-color .15s,transform .15s}
+  .chcard:hover{transform:translateY(-2px)}
+  .chcard.on{border-color:var(--mc,#f97316);background:color-mix(in srgb,var(--mc,#f97316) 10%,transparent)}
+  .chcard .nm2{font-weight:900;font-size:14px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .chcard .st{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}
+  .chcard .st b{color:var(--text)}
   /* ---------- HALAMAN WRAPPED PENUH (masuk lewat kartu teaser di beranda) ---------- */
   .wphero{margin-top:2px}
   .wphero .wpstats{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -1778,8 +1801,8 @@ function renderMembersPage(sec) {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   let html = `<section style="margin-top:26px">
-    ${pageCloseBar("Profil anggota", "17 anggota BABYMONSTER &amp; TREASURE · klik kartu untuk profil lengkap + foto solo artis", ICO_PEOPLE, "#f472b6")}
-    <p class="note">Umur &amp; hitung mundur ulang tahun dihitung waktu Jakarta · sumber profil: kprofiles.com &amp; fandom wiki resmi tiap grup · <b>klik kartu anggota</b> untuk membuka profil detail dengan foto solo artis (bukan thumbnail M/V).</p>`;
+    ${pageCloseBar("Profil anggota", "17 anggota BABYMONSTER &amp; TREASURE · klik kartu untuk profil lengkap + foto artis", ICO_PEOPLE, "#f472b6")}
+    <p class="note">Umur &amp; hitung mundur ulang tahun dihitung waktu Jakarta · sumber profil: kprofiles.com &amp; fandom wiki resmi tiap grup · <b>klik kartu anggota</b> untuk membuka profil detail dengan foto artis dari M/V terbaru grup ('DESERVE' / 'SHOCK').</p>`;
   for (const gid of ["babymonster", "treasure"]) {
     const g = G[gid];
     if (!g) continue;
@@ -1787,16 +1810,15 @@ function renderMembersPage(sec) {
     const color = art.color || g.color || "#6a78ff";
     html += `<div class="calyear" style="margin-top:22px"><span class="ln"></span><span class="yr" style="color:${color}">${esc(g.name)}</span><span class="ln"></span></div>
     <p class="note" style="margin-top:4px">Debut ${fmtDate(g.debut)} · ${g.members.length} anggota</p>
-    <div class="memgrid">` + g.members.map((m) => {
+    <div class="memgrid">` + g.members.map((m, i) => {
       const nb = nextYearly(m.bd);
       const dd = nb ? Math.round((new Date(nb.date + "T00:00:00") - today) / 86400000) : null;
       const age = Math.floor((today - new Date(m.bd + "T00:00:00")) / (365.25 * 86400000));
       const ini = m.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
-      const slug = memSlug(m.name);
       const isBd = dd === 0;
       const soon = dd != null && dd > 0 && dd <= 30;
       return `<div class="memcard" style="--mc:${color}" data-mem="${esc(gid)}:${esc(m.name)}" tabindex="0" role="button" aria-label="Detail profil ${esc(m.name)}">
-        <div class="memava">${ini}<img src="img/members/${slug}.jpg" alt="Foto ${esc(m.name)}" loading="lazy" onerror="this.remove()">${isBd ? '<span class="bdtag">ULTAH</span>' : ""}</div>
+        <div class="memava">${ini}<span class="avclip"><img src="${mvFrameURL(gid, i)}" alt="Foto ${esc(m.name)}" loading="lazy"${mvImgAttrs(gid)}></span>${isBd ? '<span class="bdtag">ULTAH</span>' : ""}</div>
         <div class="nm">${esc(m.name)}</div>
         <div class="rl">${esc(m.real || "")}</div>
         <div class="rl" style="margin-top:1px">${esc(m.nat || "")}</div>
@@ -1817,9 +1839,27 @@ function renderMembersPage(sec) {
   });
   startCountdownTick();
 }
-/* ---- detail profil anggota (overlay) + foto solo artis ---- */
-/* nama file foto anggota: lowercase tanpa spasi/tanda, mis. "Pharita" → img/members/pharita.jpg */
-function memSlug(n) { return String(n || "").toLowerCase().replace(/[^a-z0-9]/g, ""); }
+/* ---- detail profil anggota (overlay) + foto artis dari M/V terbaru ---- */
+/* Foto artis di kartu profil = bingkai dari M/V terbaru resmi tiap grup:
+ * BABYMONSTER → 'DESERVE' (oC6brLXQe4I) · TREASURE → 'SHOCK' (u_hpZueWI9g) — bukan foto comeback lama.
+ * hq1/hq2/hq3 = bingkai YouTube di 25%/50%/75% durasi video, jadi tiap anggota mendapat bingkai berbeda. */
+const MEMBER_MV = {
+  babymonster: { id: "oC6brLXQe4I", title: "'DESERVE' M/V" },
+  treasure: { id: "u_hpZueWI9g", title: "'SHOCK' M/V" },
+};
+function mvFrameURL(gid, i) {
+  const mv = MEMBER_MV[gid];
+  return mv ? `https://i.ytimg.com/vi/${mv.id}/hq${(Math.abs(i || 0) % 3) + 1}.jpg` : "";
+}
+function mvFallbackURL(gid) {
+  const mv = MEMBER_MV[gid];
+  return mv ? `https://i.ytimg.com/vi/${mv.id}/hqdefault.jpg` : "";
+}
+/* onerror dua tahap: bingkai varian gagal → hqdefault → sembunyikan (inisial tetap tampil) */
+function mvImgAttrs(gid) {
+  const fb = mvFallbackURL(gid);
+  return fb ? ` onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='${fb}'}else{this.remove()}"` : ' onerror="this.remove()"';
+}
 function openMemberDetail(key) {
   const [gid, name] = key.split(":");
   const g = state.members && state.members.groups[gid];
@@ -1834,25 +1874,27 @@ function openMemberDetail(key) {
   const debutAge = Math.max(0, Math.floor((new Date(g.debut + "T00:00:00") - bd) / (365.25 * 86400000)));
   const nb = nextYearly(m.bd);
   const dd = nb ? Math.round((new Date(nb.date + "T00:00:00") - today) / 86400000) : null;
-  /* foto solo artis: img/members/<slug>.jpg (inisial sebagai fallback bila file tidak ada) */
-  const slug = memSlug(m.name);
-  /* comeback terakhir grup = M/V terbaru yang terekam di data pantauan (keterangan di bawah foto) */
-  const mv = allVideosFlat().filter((v) => v.art.id === gid && /m\/v\s*$/i.test(v.title.trim()))
-    .sort((x, y) => (y.published || "").localeCompare(x.published || ""))[0];
+  const midx = Math.max(0, (g.members || []).findIndex((x) => x.name === name));
+  /* foto artis = bingkai M/V DESERVE (BM) / SHOCK (TRS), ukuran sedang di tengah kartu */
+  const photoSrc = MEMBER_MV[gid] ? `https://i.ytimg.com/vi/${MEMBER_MV[gid].id}/maxresdefault.jpg` : "";
+  /* M/V sumber foto (DESERVE / SHOCK) untuk keterangan + grafik saat foto diklik */
+  const mv = allVideosFlat().filter((v) => v.art.id === gid && MEMBER_MV[gid] && v.id === MEMBER_MV[gid].id)[0]
+    || allVideosFlat().filter((v) => v.art.id === gid && /m\/v\s*$/i.test(v.title.trim()))
+      .sort((x, y) => (y.published || "").localeCompare(x.published || ""))[0];
   const stat = (k, v) => `<div class="dstat"><div class="k">${k}</div><div class="v">${v}</div></div>`;
   $("#sheet").innerHTML = `
     <button class="close" id="closeBtn" aria-label="Tutup">✕</button>
     <div class="dhead" style="--artist-color:${color}">
-      <div class="memava" style="--mc:${color};width:86px;height:86px;font-size:27px;margin:0">${m.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase()}<img src="img/members/${slug}.jpg" alt="Foto ${esc(m.name)}" onerror="this.remove()"></div>
+      <div class="memava" style="--mc:${color};width:86px;height:86px;font-size:27px;margin:0">${m.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase()}<span class="avclip"><img src="${mvFrameURL(gid, midx)}" alt="Foto ${esc(m.name)}"${mvImgAttrs(gid)}></span></div>
       <div style="min-width:0">
         <div class="dtitle">${esc(m.name)} <span class="apill" style="background:${color}">${esc(art.name || g.name)}</span></div>
         <div class="dsub">${m.real ? esc(m.real) : ""}${m.nat ? " · " + esc(m.nat) : ""}</div>
         <div class="dbadges" style="margin-top:8px">${(m.pos || []).map((p) => `<span class="dbadge"><b>${esc(p)}</b></span>`).join("")}</div>
       </div>
     </div>
-    <div class="memphoto" style="--artist-color:${color}"${mv ? ' data-click="1" id="memCv" tabindex="0" role="button" aria-label="Buka grafik video comeback terakhir"' : ""}>
-      <img src="img/members/${slug}.jpg" alt="Foto solo ${esc(m.name)}" onerror="this.closest('.memphoto').style.display='none'">
-      <div class="mptx"><div class="k">Foto solo ${esc(m.name)} · ${esc(art.name || g.name)}</div><b>${mv ? esc(mv.title) : "Foto comeback terakhir"}</b><span>${mv ? `M/V terbaru grup · dirilis ${fmtDate(mv.published)} · ${fmtCompact((mv.history && mv.history.length ? mv.history[mv.history.length - 1].v : 0))} views · klik foto untuk buka grafik video` : "foto solo artis — arsip foto comeback/press"}</span></div>
+    <div class="memphoto" style="--artist-color:${color}"${mv ? ' data-click="1" id="memCv" tabindex="0" role="button" aria-label="Buka grafik video M/V sumber foto"' : ""}>
+      ${photoSrc ? `<img src="${photoSrc}" alt="Foto ${esc(m.name)}" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='${mvFallbackURL(gid)}'}else{this.closest('.memphoto').style.display='none'}">` : ""}
+      <div class="mptx"><div class="k">Foto ${esc(m.name)} · ${esc(art.name || g.name)}</div><b>${mv ? esc(mv.title) : "M/V terbaru grup"}</b><span>${mv ? `bingkai dari M/V resmi grup · dirilis ${fmtDate(mv.published)} · ${fmtCompact((mv.history && mv.history.length ? mv.history[mv.history.length - 1].v : 0))} views · klik foto untuk buka grafik video` : "foto artis dari M/V terbaru grup"}</span></div>
     </div>
     <div class="dhero">
       ${stat("Lahir", fmtDate(m.bd))}
@@ -1862,7 +1904,7 @@ function openMemberDetail(key) {
       ${stat("Ultah berikutnya", dd === 0 ? "HARI INI" : dd != null ? NF.format(dd) + " hari lagi" : "–")}
       ${stat("Debut grup", fmtDate(g.debut))}
     </div>
-    <p class="note">Profil dari kprofiles.com &amp; fandom wiki resmi. Foto = foto solo artis (arsip foto comeback/press — tersimpan di img/members/, bukan thumbnail M/V). Umur, umur saat debut &amp; hitung mundur ulang tahun dihitung waktu Jakarta.</p>`;
+    <p class="note">Profil dari kprofiles.com &amp; fandom wiki resmi. Foto = bingkai dari M/V terbaru resmi grup — 'DESERVE' untuk BABYMONSTER, 'SHOCK' untuk TREASURE (bukan foto comeback lama). Umur, umur saat debut &amp; hitung mundur ulang tahun dihitung waktu Jakarta.</p>`;
   $("#overlay").classList.add("open");
   document.body.style.overflow = "hidden";
   state.detailMode = { type: "member", id: key };
@@ -2285,6 +2327,33 @@ function makeRankLineChart(canvas, cid, ch, artists) {
     },
   }, cid);
 }
+/* ---------- helper riwayat pencapaian chart (dipakai renderChartsPage) ----------
+ * rankNum: ambil angka posisi dari teks nilai ("#33", "#1 (14 jam)", "masuk chart" → null).
+ * chaFilteredRows: terapkan filter artis/lagu/Top 10/pencarian + urutan terpilih.
+ * chaRowHTML: satu baris daftar (kotak peringkat, lagu + pill artis, nilai + tanggal). */
+function chaRankNum(r) { const m = /#\s*(\d+)/.exec(r.value || ""); return m ? parseInt(m[1], 10) : null; }
+function chaFilteredRows(all) {
+  const q = (state.chaQ || "").trim().toLowerCase();
+  const rows = all.filter((r) =>
+    ((!state.chaArt || state.chaArt === "all") || r.art.id === state.chaArt) &&
+    (!state.chaSong || r.song === state.chaSong) &&
+    (!state.chaTop || (chaRankNum(r) != null && chaRankNum(r) <= 10)) &&
+    (!q || `${r.song} ${r.chart} ${r.metric || ""} ${r.value} ${r.art.name}`.toLowerCase().includes(q)));
+  const cmp = {
+    new: (a, b) => (b.date || "").localeCompare(a.date || "") || ((chaRankNum(a) ?? 999) - (chaRankNum(b) ?? 999)),
+    best: (a, b) => (chaRankNum(a) ?? 999) - (chaRankNum(b) ?? 999) || (b.date || "").localeCompare(a.date || ""),
+    song: (a, b) => a.song.localeCompare(b.song) || (b.date || "").localeCompare(a.date || ""),
+  }[state.chaSort || "new"];
+  return rows.sort(cmp || (() => 0));
+}
+function chaRowHTML(r) {
+  const n = chaRankNum(r);
+  return `<div class="wprow" style="cursor:default">
+      <div class="rk">${n === 1 ? "1" : n != null && n <= 10 ? String(n) : "•"}</div>
+      <div class="nm"><b>${esc(r.song)}</b> <span class="apill" style="background:${r.art.color}">${esc(r.art.name)}</span><span class="wbsub">${esc(r.chart)} · ${esc(r.metric || "posisi")}${r.src ? " · " + esc(r.src) : ""}</span></div>
+      <div class="del"><div class="d1" style="color:${r.art.color}">${esc(r.value)}</div><div class="d2">${fmtDateLoose(r.date)}${r.note ? " · " + esc(r.note) : ""}</div></div>
+    </div>`;
+}
 function renderChartsPage(sec) {
   const head = pageCloseBar("Peringkat Chart", "posisi lagu di Billboard Global 200 &amp; Global Excl. US, Melon, Genie &amp; Bugs — plus riwayat pencapaian dari debut", ICO_RANK, "#f97316");
   if (!state.charts || !state.charts.charts) {
@@ -2292,26 +2361,90 @@ function renderChartsPage(sec) {
     bindPageClose(sec);
     return;
   }
-  /* ---------- riwayat pencapaian dari debut (kurasi manual, data/chart-history.json) ---------- */
+  /* ---------- riwayat pencapaian dari debut (kurasi manual, data/chart-history.json) ----------
+   * Fitur: ringkasan angka, kartu rekor per lagu (klik → filter), batang pencapaian per tahun,
+   * pencarian, filter artis & Top 10, 3 pilihan urutan, dan ekspor CSV. */
   const histSec = (() => {
     const H = state.chartHist && state.chartHist.artists;
     if (!H) return "";
-    let out = `<div style="margin-top:18px">${featSectHead("#f97316", ICO_RANK, "Riwayat &amp; rekor pencapaian", "dari debut sampai sekarang — kurasi manual (Wikipedia/Billboard/media), bukan rekam live")}</div>`;
-    let any = false;
-    for (const a of state.config.artists) {
-      const list = (H[a.id] || []).slice().sort((x, y) => (y.date || "").localeCompare(x.date || ""));
-      if (!list.length) continue;
-      any = true;
-      out += `<div class="calyear" style="margin-top:16px"><span class="ln"></span><span class="yr" style="color:${a.color};font-size:17px;letter-spacing:1px">${esc(a.name)} · ${list.length} pencapaian tercatat</span><span class="ln"></span></div>
-      <div style="display:flex;flex-direction:column;gap:7px">` + list.map((r) => `
-        <div class="wprow" style="cursor:default">
-          <div class="rk">${/^#1$|puncak.*#1\b/.test(r.value || "") && r.value.includes("#1 ") ? "1" : "•"}</div>
-          <div class="nm"><b>${esc(r.song)}</b><span class="wbsub">${esc(r.chart)} · ${esc(r.metric || "posisi")}${r.src ? " · " + esc(r.src) : ""}</span></div>
-          <div class="del"><div class="d1" style="color:${a.color}">${esc(r.value)}</div><div class="d2">${fmtDateLoose(r.date)}${r.note ? " · " + esc(r.note) : ""}</div></div>
-        </div>`).join("") + `</div>`;
+    const all = [];
+    for (const a of state.config.artists) for (const r of (H[a.id] || [])) all.push({ ...r, art: a });
+    if (!all.length) return "";
+    /* preferensi filter disimpan di state supaya tidak hilang saat halaman dirender ulang */
+    state.chaArt = state.chaArt || "all";
+    state.chaQ = state.chaQ || "";
+    state.chaSort = state.chaSort || "new";
+    state.chaTop = !!state.chaTop;
+    state.chaSong = state.chaSong || null;
+    /* ---- ringkasan angka (dari seluruh data, bukan hanya yang lolos filter) ---- */
+    const n1 = all.filter((r) => chaRankNum(r) === 1).length;
+    const n10 = all.filter((r) => { const n = chaRankNum(r); return n != null && n <= 10; }).length;
+    const songsAll = [...new Set(all.map((r) => r.song))];
+    const chartsAll = [...new Set(all.map((r) => r.chart))];
+    const yearsAll = [...new Set(all.map((r) => String(r.date || "").slice(0, 4)).filter((y) => /^\d{4}$/.test(y)))].sort();
+    const stat = (k, v, d) => `<div class="chipstat"><div class="k">${k}</div><div class="v">${v}</div>${d ? `<div class="d">${d}</div>` : ""}</div>`;
+    const statsHTML = `<div class="chiprow" style="margin-top:12px">` +
+      stat("Pencapaian tercatat", NF.format(all.length), "semua artis gabungan") +
+      stat("Posisi #1", NF.format(n1), n1 ? "juara chart" : "belum ada") +
+      stat("Top 10", NF.format(n10), "posisi puncak 1–10") +
+      stat("Lagu berbeda", NF.format(songsAll.length), esc(songsAll.slice(0, 3).join(", "))) +
+      stat("Chart berbeda", NF.format(chartsAll.length), "Billboard, Circle, Genie, dll") +
+      stat("Rentang tahun", yearsAll.length ? `${yearsAll[0]}–${yearsAll[yearsAll.length - 1]}` : "–", "tahun pencapaian") +
+      `</div>`;
+    /* ---- kartu rekor per lagu — klik kartu → daftar di bawah difilter ke lagu itu ---- */
+    const bySong = new Map();
+    for (const r of all) {
+      const k = r.art.id + "|" + r.song;
+      if (!bySong.has(k)) bySong.set(k, { art: r.art, song: r.song, rows: [] });
+      bySong.get(k).rows.push(r);
     }
-    out += `<p class="note">Bagian ini menjawab “lagu lama dari awal debut” — posisi historis (puncak/debut/entri) yang terverifikasi dari sumber publik. Rekam live di bawah hanya berlaku dari saat situs mulai memantau chart; kolektor menambah titik baru otomatis begitu ${esc(state.config.artists.map((x) => x.name).join(" / "))} masuk chart mana pun.</p>`;
-    return `<section class="socartist">${out}</section>`;
+    const songCards = [...bySong.values()].map((s) => {
+      let best = null;
+      for (const r of s.rows) { const n = chaRankNum(r); if (n != null && (!best || n < best.n)) best = { n, r }; }
+      return { ...s, best, chartsN: [...new Set(s.rows.map((r) => r.chart))].length };
+    }).sort((x, y) => (x.best ? x.best.n : 999) - (y.best ? y.best.n : 999) || y.rows.length - x.rows.length);
+    const cardsHTML = `<div class="chcards">` + songCards.map((s) =>
+      `<div class="chcard${state.chaSong === s.song ? " on" : ""}" style="--mc:${s.art.color}" data-chasong="${esc(s.song)}" tabindex="0" role="button" aria-label="Filter riwayat ke lagu ${esc(s.song)}">
+        <div class="nm2">${esc(s.song)} <span class="apill" style="background:${s.art.color}">${esc(s.art.name)}</span></div>
+        <div class="st">${s.best ? `terbaik <b>#${s.best.n}</b> — ${esc(s.best.r.chart)}` : "entri non-posisi"}<br>${NF.format(s.rows.length)} pencapaian · ${NF.format(s.chartsN)} chart</div>
+      </div>`).join("") + `</div>`;
+    /* ---- batang jumlah pencapaian per tahun ---- */
+    const yrCnt = new Map();
+    for (const r of all) { const y = String(r.date || "").slice(0, 4); if (/^\d{4}$/.test(y)) yrCnt.set(y, (yrCnt.get(y) || 0) + 1); }
+    const yrMax = Math.max(1, ...yrCnt.values());
+    const yrHTML = yrCnt.size ? `<div class="hm-months2" style="--acc:#f97316">` + [...yrCnt.entries()].sort().map(([y, n]) =>
+      `<div class="hmm" title="${y}: ${n} pencapaian"><i style="height:${Math.max(6, Math.round((n / yrMax) * 58))}px"></i><b>${n}</b><span>${y}</span></div>`).join("") + `</div>` : "";
+    /* ---- toolbar filter + daftar lengkap ---- */
+    const rows = chaFilteredRows(all);
+    const cnt = (f) => NF.format(all.filter(f).length);
+    const chipHTML = (k, lbl, n) => `<button class="mtab${state.chaArt === k ? " active" : ""}" data-chaa="${k}">${lbl} <span class="cnt">${n}</span></button>`;
+    const toolsHTML = `<div class="mtabs" style="margin:14px 2px 0">` +
+      chipHTML("all", "Semua", all.length) +
+      state.config.artists.map((a) => chipHTML(a.id, esc(a.name), (H[a.id] || []).length)).join("") +
+      `</div>
+    <div class="chtools">
+      <input type="search" id="chaQ" placeholder="Cari lagu / chart…" value="${esc(state.chaQ)}" aria-label="Cari riwayat pencapaian">
+      <select id="chaSort" aria-label="Urutan daftar">
+        <option value="new"${state.chaSort === "new" ? " selected" : ""}>Terbaru dulu</option>
+        <option value="best"${state.chaSort === "best" ? " selected" : ""}>Peringkat terbaik</option>
+        <option value="song"${state.chaSort === "song" ? " selected" : ""}>Judul lagu A–Z</option>
+      </select>
+      <button class="mtab${state.chaTop ? " active" : ""}" id="chaTop" title="Tampilkan hanya posisi 1–10">Top 10 saja</button>
+      <button class="mtab" id="chaCsv" title="Unduh daftar yang tampil sebagai berkas CSV">⬇ Ekspor CSV</button>
+      ${state.chaSong ? `<button class="chsong" id="chaSongClr" title="Hapus filter lagu">Lagu: ${esc(state.chaSong)} ✕</button>` : ""}
+    </div>`;
+    const listHTML = () => rows.length ? rows.map(chaRowHTML).join("") : `<div class="banner">Tidak ada pencapaian yang cocok dengan filter ini — coba longgarkan pencarian / filter.</div>`;
+    return `<section class="socartist">
+      ${featSectHead("#f97316", ICO_RANK, "Riwayat &amp; rekor pencapaian", "dari debut sampai sekarang — kurasi manual (Wikipedia/Billboard/media), bukan rekam live")}
+      ${statsHTML}
+      <div class="calyear" style="margin-top:18px"><span class="ln"></span><span class="yr" style="font-size:15px;letter-spacing:1px;color:#f97316">Rekor per lagu — klik kartu untuk memfilter daftar</span><span class="ln"></span></div>
+      ${cardsHTML}
+      ${yrHTML ? `<div class="calyear" style="margin-top:18px"><span class="ln"></span><span class="yr" style="font-size:15px;letter-spacing:1px;color:#f97316">Jumlah pencapaian per tahun</span><span class="ln"></span></div>${yrHTML}` : ""}
+      <div class="calyear" style="margin-top:18px"><span class="ln"></span><span class="yr" style="font-size:15px;letter-spacing:1px;color:#f97316">Daftar lengkap <span style="color:var(--muted);font-weight:700">(<span id="chaListCount">${NF.format(rows.length)}</span> tampil)</span></span><span class="ln"></span></div>
+      ${toolsHTML}
+      <div id="chaHistList" style="display:flex;flex-direction:column;gap:7px">${listHTML()}</div>
+      <p class="note">Bagian ini menjawab “lagu lama dari awal debut” — posisi historis (puncak/debut/entri) terverifikasi dari sumber publik. Rekam live di bawah hanya berlaku dari saat situs mulai memantau chart; kolektor menambah titik baru otomatis begitu ${esc(state.config.artists.map((x) => x.name).join(" / "))} masuk chart mana pun.</p>
+    </section>`;
   })();
   const order = [["billboard_global_200", "mingguan", 10], ["billboard_global_excl_us", "mingguan", 10], ["melon_top100", "harian", 2], ["genie_top200", "harian", 2], ["bugs_day100", "harian", 2]];
   const sections = order.map(([key, freq, maxStale]) => {
@@ -2328,7 +2461,7 @@ function renderChartsPage(sec) {
       ${hasPts ? `<div class="rankbox"><canvas id="rk_${key}"></canvas></div><p class="note">Poros vertikal dibalik — makin tinggi titik, makin bagus peringkatnya. Grafik muncul setelah artis pertama kali terekam masuk chart.</p>` : `<div class="banner">Belum ada rekaman masuk chart untuk chart ini — situs merekam otomatis begitu lagu ${esc(state.config.artists.map((x) => x.name).join(" / "))} masuk. Pencapaian historis dari debut ada di bagian “Riwayat &amp; rekor pencapaian” di atas.</div>`}
     </section>`;
   }).join("");
-  sec.innerHTML = head + histSec + sections + `<p class="note">Sumber live: billboard.com (mingguan), melon.com, genie.co.kr &amp; music.bugs.co.kr (harian) — dibaca langsung dari halaman chart publik tanpa API key. Melon kerap menolak IP server, Genie/Bugs dipakai sebagai pembanding. Riwayat pencapaian: data/chart-history.json (kurasi manual, bisa diedit langsung).</p>`;
+  sec.innerHTML = head + histSec + sections + `<p class="note">Sumber live: billboard.com (mingguan), melon.com, genie.co.kr &amp; music.bugs.co.kr (harian) — dibaca langsung dari halaman chart publik tanpa API key. Melon kerap menolak IP server, Genie/Bugs dipakai sebagai pembanding. Riwayat pencapaian: data/chart-history.json (kurasi manual, bisa diedit langsung) — bisa dicari, difilter per artis/lagu/Top 10, diurutkan, dan diekspor CSV.</p>`;
   bindPageClose(sec);
   for (const [key] of order) {
     const ch = state.charts.charts[key];
@@ -2336,6 +2469,59 @@ function renderChartsPage(sec) {
     const cv = document.getElementById("rk_" + key);
     if (cv) makeRankLineChart(cv, "rk_" + key, ch, state.config.artists);
   }
+  /* ---------- binding alat filter riwayat pencapaian ---------- */
+  const rerenderCha = () => renderChartsPage(sec);
+  sec.querySelectorAll("[data-chaa]").forEach((b) => b.addEventListener("click", () => {
+    state.chaArt = b.dataset.chaa;
+    state.chaSong = null; /* filter lagu direset saat ganti artis supaya daftar tidak kosong */
+    rerenderCha();
+  }));
+  sec.querySelectorAll("[data-chasong]").forEach((c) => {
+    const go = () => {
+      state.chaSong = state.chaSong === c.dataset.chasong ? null : c.dataset.chasong;
+      rerenderCha();
+      const el = sec.querySelector("#chaHistList");
+      if (el && state.chaSong) el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    };
+    c.addEventListener("click", go);
+    c.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+  });
+  const qEl = sec.querySelector("#chaQ");
+  if (qEl) qEl.addEventListener("input", () => {
+    state.chaQ = qEl.value;
+    /* hanya daftar yang dirender ulang supaya kursor ketik tidak lompat */
+    const listEl = sec.querySelector("#chaHistList");
+    if (!listEl) return;
+    const allRows = [];
+    const H = state.chartHist && state.chartHist.artists;
+    if (H) for (const a of state.config.artists) for (const r of (H[a.id] || [])) allRows.push({ ...r, art: a });
+    const rows2 = chaFilteredRows(allRows);
+    listEl.innerHTML = rows2.length ? rows2.map(chaRowHTML).join("") : `<div class="banner">Tidak ada pencapaian yang cocok dengan filter ini — coba longgarkan pencarian / filter.</div>`;
+    const cntEl = sec.querySelector("#chaListCount");
+    if (cntEl) cntEl.textContent = NF.format(rows2.length);
+  });
+  const sortSel = sec.querySelector("#chaSort");
+  if (sortSel) sortSel.addEventListener("change", () => { state.chaSort = sortSel.value; rerenderCha(); });
+  const topBtn = sec.querySelector("#chaTop");
+  if (topBtn) topBtn.addEventListener("click", () => { state.chaTop = !state.chaTop; rerenderCha(); });
+  const songClr = sec.querySelector("#chaSongClr");
+  if (songClr) songClr.addEventListener("click", () => { state.chaSong = null; rerenderCha(); });
+  const csvBtn = sec.querySelector("#chaCsv");
+  if (csvBtn) csvBtn.addEventListener("click", () => {
+    const H = state.chartHist && state.chartHist.artists;
+    const allRows = [];
+    if (H) for (const a of state.config.artists) for (const r of (H[a.id] || [])) allRows.push({ ...r, art: a });
+    const rows2 = chaFilteredRows(allRows);
+    const head2 = "artis;lagu;chart;metrik;nilai;tanggal;sumber";
+    const lines = rows2.map((r) => [r.art.name, r.song, r.chart, r.metric || "posisi", r.value, r.date || "", r.src || ""]
+      .map((x) => '"' + String(x).replace(/"/g, '""') + '"').join(";"));
+    const blob = new Blob(["\ufeff" + head2 + "\n" + lines.join("\n")], { type: "text/csv;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "riwayat-chart-kpop.csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  });
 }
 
 /* ---------- halaman Diskografi ---------- */
@@ -4232,7 +4418,7 @@ function hmBodyHTML(plat, year) {
   for (let m = 0; m < 12; m++) mCols.push(Math.floor((dayIndexOf(Date.UTC(year, m, 1) / 1000) - gridStart) / 7));
   const months = mCols.map((col, m) => {
     const span = Math.max(1, Math.min((m < 11 ? mCols[m + 1] : nCols) - col, nCols - col));
-    return `<span style="grid-column:${col + 1} / span ${span}">${HM_MONTH.format(new Date(Date.UTC(year, m, 1)))}</span>`;
+    return `<span data-m="${m}" style="grid-column:${col + 1} / span ${span}">${HM_MONTH.format(new Date(Date.UTC(year, m, 1)))}</span>`;
   }).join("");
   /* ringkasan tahun terpilih */
   let tot = 0, busy = null;
@@ -4264,6 +4450,7 @@ function hmBodyHTML(plat, year) {
   <div class="hm-scroll"><div class="hm-inner">
     <div class="hm-months">${months}</div>
     <div class="hm-grid">${cells.join("")}</div>
+    <div class="hm-band" style="--band:${acc}"></div>
     <div class="hm-tip"></div>
   </div></div>
   ${monthlyHTML}
@@ -4276,7 +4463,7 @@ function renderHeatmapPage(sec) {
     ${pageCloseBar("Peta panas harian", `${hmUnit(plat)} baru tiap hari, semua ${plat === "spotify" ? "lagu" : "video"} digabung — bisa difilter per artis`, HM_ICO, hmAccent(plat))}
     <div class="hm-card" style="margin-top:14px">
       <div data-hm-host></div>
-      <p class="note">Setiap kotak = 1 hari kalender WIB · satu peta = tepat satu tahun kalender (Januari–Desember) — pilih tahun lewat tab <b>Tahun</b>; daftar tahun dimulai dari tahun debut grup (TREASURE 2020 · BABYMONSTER 2023) · <b>bingkai tipis</b> pada kotak = tanggal 1, jadi posisi awal setiap bulan terbaca jelas · makin terah = ${hmUnit(plat)} baru makin banyak (selisih total antar hari; jika jarak pengukuran lebar, selisih dibagi rata ke harinya) · kotak abu = hari tanpa pengukuran · gunakan pilihan <b>Artis</b> untuk melihat peta panas BABYMONSTER / TREASURE saja · batang di bawah = total pertumbuhan tiap bulan Jan–Des tahun terpilih.</p>
+      <p class="note">Setiap kotak = 1 hari kalender WIB · satu peta = tepat satu tahun kalender (Januari–Desember) — pilih tahun lewat tab <b>Tahun</b>; daftar tahun dimulai dari tahun debut grup (TREASURE 2020 · BABYMONSTER 2023) · <b>bingkai tipis</b> pada kotak = tanggal 1, jadi posisi awal setiap bulan terbaca jelas · <b>gerakkan kursor</b> di atas kotak: label bulan ikut menyala dan <b>pita warna</b> menutupi kolom milik bulan kotak itu, jadi langsung terbaca kotak ada di bulan apa (nama bulan + tanggal juga muncul di kotak info) · makin terah = ${hmUnit(plat)} baru makin banyak (selisih total antar hari; jika jarak pengukuran lebar, selisih dibagi rata ke harinya) · kotak abu = hari tanpa pengukuran · gunakan pilihan <b>Artis</b> untuk melihat peta panas BABYMONSTER / TREASURE saja · batang di bawah = total pertumbuhan tiap bulan Jan–Des tahun terpilih.</p>
     </div>`;
   bindPageClose(sec);
   mountHeatmap(sec, plat);
@@ -4295,8 +4482,26 @@ function mountHeatmap(sec, plat) {
     const g = cell.dataset.g === "" ? null : parseInt(cell.dataset.g, 10);
     const c = cell.dataset.c === "" ? null : parseInt(cell.dataset.c, 10);
     tip.innerHTML = `<b>${HM_WDAY.format(dt)}, ${HM_DATE_LONG.format(dt)}</b>` +
-      `<span class="t2">${g != null ? "+" + fmtCompact(g) + " " + unit + " baru" : "tanpa data"}</span>` +
-      (c != null ? `<span class="t2">total gabungan ${fmtCompact(c)} ${hmUnitPl(plat)}</span>` : "");
+      `<span class="t2">bulan ${HM_MONTH.format(dt)}${c != null ? ` · total ${fmtCompact(c)} ${hmUnitPl(plat)}` : ""}</span>` +
+      `<span class="t2">${g != null ? "+" + fmtCompact(g) + " " + unit + " baru di hari ini" : "tanpa data"}</span>`;
+    /* penanda bulan: label bulan di atas peta menyala + pita warna menutupi seluruh kolom milik bulan itu,
+       jadi posisi kotak di bulan mana langsung terbaca saat kursor menyentuhnya */
+    const mo = dt.getUTCMonth();
+    host.querySelectorAll(".hm-months span").forEach((s) => s.classList.toggle("hl", parseInt(s.dataset.m, 10) === mo));
+    const lbl = host.querySelector(`.hm-months span[data-m="${mo}"]`);
+    const band = host.querySelector(".hm-band");
+    if (lbl && band) {
+      const gcm = /^\s*(\d+)/.exec(lbl.style.gridColumn || "");
+      const gsp = /span\s+(\d+)/.exec(lbl.style.gridColumn || "");
+      const c0 = gcm ? parseInt(gcm[1], 10) - 1 : 0;
+      const cn = gsp ? parseInt(gsp[1], 10) : 1;
+      const CELL = 20; /* 16px lebar kolom + 4px gap (sama dengan .hm-grid) */
+      band.style.left = c0 * CELL + "px";
+      band.style.width = cn * CELL - 4 + "px";
+      band.style.top = "0";
+      band.style.height = inner.offsetHeight + "px";
+      band.style.display = "block";
+    }
     tip.style.visibility = "hidden";
     tip.style.display = "block";
     let left = cell.offsetLeft + cell.offsetWidth / 2 - tip.offsetWidth / 2;
@@ -4307,7 +4512,12 @@ function mountHeatmap(sec, plat) {
     tip.style.top = top + "px";
     tip.style.visibility = "visible";
   };
-  const hide = () => { tip.style.display = "none"; lastCell = null; };
+  const hide = () => {
+    tip.style.display = "none"; lastCell = null;
+    host.querySelectorAll(".hm-months span.hl").forEach((s) => s.classList.remove("hl"));
+    const band = host.querySelector(".hm-band");
+    if (band) band.style.display = "none";
+  };
   host.addEventListener("mouseover", (e) => {
     const c = e.target.closest(".hm-c[data-i]");
     if (c) { lastCell = c; show(c); } else hide();
