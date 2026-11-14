@@ -10,12 +10,26 @@
    "twitter": {
     "handle": "YGBABYMONSTER_",
     "url": "https://x.com/YGBABYMONSTER_",
-    "history": []
+    "history": [
+     {
+      "t": 1794645551,
+      "f": 1000000,
+      "approx": true,
+      "src": "jina"
+     }
+    ]
    },
    "tiktok": {
     "handle": "babymonster_yg_tiktok",
     "url": "https://www.tiktok.com/@babymonster_yg_tiktok",
-    "history": []
+    "history": [
+     {
+      "t": 1794645553,
+      "f": 14600000,
+      "approx": false,
+      "src": "html"
+     }
+    ]
    },
    "weverse": {
     "handle": "babymonster",
@@ -32,12 +46,26 @@
    "twitter": {
     "handle": "ygtreasuremaker",
     "url": "https://x.com/ygtreasuremaker",
-    "history": []
+    "history": [
+     {
+      "t": 1794645558,
+      "f": 2400000,
+      "approx": true,
+      "src": "jina"
+     }
+    ]
    },
    "tiktok": {
     "handle": "yg_treasure_tiktok",
     "url": "https://www.tiktok.com/@yg_treasure_tiktok",
-    "history": []
+    "history": [
+     {
+      "t": 1794645559,
+      "f": 8600000,
+      "approx": false,
+      "src": "html"
+     }
+    ]
    },
    "weverse": {
     "handle": "treasure",
@@ -46,5 +74,5 @@
    }
   }
  },
- "updated": 1794623159
+ "updated": 1794645560
 }

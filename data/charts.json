@@ -32,16 +32,16 @@
     }
    },
    "chartDate": "2026-11-14",
-   "updated": 1794623163,
+   "updated": 1794645566,
    "lastError": null
   },
   "melon_top100": {
    "label": "Melon Top 100",
    "url": "https://www.melon.com/chart/index.htm",
    "artists": {},
-   "lastError": "fetch failed",
-   "updated": 1794623175
+   "lastError": "baris Melon terbaca 0",
+   "updated": 1794645569
   }
  },
- "updated": 1794642632
+ "updated": 1794645569
 }
