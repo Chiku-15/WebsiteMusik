@@ -1,0 +1,28 @@
+{
+  "_info": "Riwayat pencapaian chart dari debut sampai sekarang — kurasi manual dari Wikipedia (tabel chart resmi lagu/album), Billboard, Soompi & media. Dipisah dari charts.json (yang hanya merekam posisi LIVE tiap putaran kolektor). Semua angka di bawah terverifikasi per 2026-11-14; tambah entri baru secara manual bila ada pencapaian baru.",
+  "updated": "2026-11-14",
+  "artists": {
+    "babymonster": [
+      { "song": "SHEESH", "chart": "Billboard Global 200", "metric": "puncak", "value": "#33", "date": "2024-05", "src": "Wikipedia / Billboard" },
+      { "song": "SHEESH", "chart": "Circle Digital Chart (pekanan)", "metric": "puncak", "value": "#10", "date": "2024", "src": "Wikipedia" },
+      { "song": "SHEESH", "chart": "Billboard Japan Heatseekers", "metric": "puncak", "value": "#1", "date": "2024", "src": "Wikipedia" },
+      { "song": "SHEESH", "chart": "Billboard Indonesia Songs", "metric": "puncak", "value": "#4", "date": "2024", "src": "Wikipedia" },
+      { "song": "SHEESH", "chart": "Billboard Taiwan Songs", "metric": "puncak", "value": "#3", "date": "2024", "src": "Wikipedia" },
+      { "song": "SHEESH", "chart": "Billboard Malaysia Songs", "metric": "puncak", "value": "#4", "date": "2024", "src": "Wikipedia" },
+      { "song": "SHEESH", "chart": "Billboard Singapore Songs", "metric": "puncak", "value": "#6", "date": "2024", "src": "Wikipedia" },
+      { "song": "SHEESH", "chart": "Billboard Hong Kong Songs", "metric": "puncak", "value": "#10", "date": "2024", "src": "Wikipedia" },
+      { "song": "DRIP", "kind": "album", "chart": "Billboard 200 (album AS)", "metric": "debut", "value": "#149", "date": "2024-11-09", "src": "Soompi / Billboard", "note": "entri pertama BABYMONSTER di Billboard 200 — album studio pertama" },
+      { "song": "WE GO UP", "chart": "Spotify Top Songs Debut (Global)", "metric": "debut", "value": "#4", "date": "2025-10-15", "src": "Media/chart fan tracking" },
+      { "song": "SHEESH", "chart": "Billboard Global Excl. US", "metric": "entri", "value": "masuk chart pekanan 2024", "date": "2024-04", "src": "Billboard / media" }
+    ],
+    "treasure": [
+      { "song": "JIKJIN", "chart": "Billboard Global 200", "metric": "entri pertama grup", "value": "masuk chart (Feb 2022)", "date": "2022-02", "src": "Media / tracking" },
+      { "song": "JIKJIN", "chart": "Genie (harian)", "metric": "puncak", "value": "#143", "date": "2022-02", "src": "Chart tracking", "note": "tertinggi di antara lagu boy group generasi-4 pada 2022 di Genie Daily" },
+      { "song": "JIKJIN", "chart": "Bugs (realtime)", "metric": "puncak", "value": "#1", "date": "2022-02", "src": "Chart tracking" },
+      { "song": "DARARI", "chart": "Billboard Global 200", "metric": "entri pertama", "value": "#169", "date": "2022-03-16", "src": "Media / Billboard" },
+      { "song": "DARARI", "chart": "Billboard Global Excl. US", "metric": "beruntun masuk", "value": "#166 (minggu 30 Apr 2022)", "date": "2022-04", "src": "Billboard (twitter chart)" },
+      { "song": "DARARI", "chart": "Billboard Hot Trending Songs", "metric": "puncak", "value": "#18", "date": "2022-08", "src": "Billboard / media" },
+      { "song": "IF I", "chart": "Bugs (realtime)", "metric": "puncak", "value": "#1 (14 jam)", "date": "2026-06", "src": "Chart tracking" }
+    ]
+  }
+}

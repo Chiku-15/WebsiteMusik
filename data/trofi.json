@@ -1,42 +1,75 @@
 {
- "_info": "Trofi acara musik & penghargaan besar, hasil kurasi sumber publik: YG (yg-life), Soompi, Forbes, Mnet (mama.mnetplus.world/history), kprofiles, fandom wiki. 'win' = menang, 'nom' = nominasi. Tanggal parsial (tahun/bulan) berarti hanya itu yang bisa dipastikan. Perbarui manual bila ada trofi baru.",
- "groups": {
-  "babymonster": {
-   "wins": [
-    {"song": "SHEESH", "show": "M Countdown", "date": "2024-05-02", "note": "kemenangan pertama grup (8.802 poin)", "src": "Soompi / YG resmi"},
-    {"song": "WE GO UP", "show": "M Countdown", "date": "2025-10-16", "note": "9.773 poin · trofi ke-2 grup", "src": "kprofiles"},
-    {"song": "WE GO UP", "show": "Music Bank", "date": "2025-10-17", "note": "menang siaran langsung pertama", "src": "YG (yg-life)"}
-   ],
-   "awards": [
-    {"name": "MAMA 2024", "cat": "Fans' Choice — Female Top 10", "result": "win", "date": "2024-11-23", "src": "Mnet"},
-    {"name": "MAMA 2024", "cat": "Best New Female Artist", "result": "nom", "date": "2024-11", "src": "Mnet / fandom"},
-    {"name": "MAMA 2025", "cat": "Best Dance Performance — Female Group (DRIP)", "result": "nom", "date": "2025-11-28", "src": "Forbes"},
-    {"name": "MAMA 2025", "cat": "Song of the Year (DRIP)", "result": "nom", "date": "2025-11-28", "src": "fandom wiki"},
-    {"name": "MAMA 2025", "cat": "Album of the Year (DRIP)", "result": "nom", "date": "2025-11-28", "src": "fandom wiki"},
-    {"name": "MAMA 2025", "cat": "Artist of the Year", "result": "nom", "date": "2025-11-28", "src": "fandom wiki"}
-   ]
-  },
-  "treasure": {
-   "wins": [
-    {"song": "JIKJIN", "show": "Show Champion", "date": "2022-02-23", "note": "kemenangan pertama grup", "src": "Reddit / komunitas"},
-    {"song": "JIKJIN", "show": "Music Bank", "date": "2022-02-25", "note": "menang pertama di stasiun besar KBS", "src": "KBS / media"},
-    {"song": "HELLO", "show": "Inkigayo", "date": "2022-10-16", "note": "", "src": "komunitas"},
-    {"song": "MOVE", "show": "Inkigayo", "date": "2023-07-09", "note": "", "src": "komunitas"},
-    {"song": "KING KONG", "show": "Inkigayo", "date": "2024-06-23", "note": "", "src": "komunitas"},
-    {"song": "LAST NIGHT", "show": "Inkigayo — Hot Stage", "date": "2025-01-05", "note": "Hot Stage bulan Desember", "src": "komunitas"},
-    {"song": "YELLOW", "show": "Inkigayo — Hot Stage", "date": "2025-03-23", "note": "", "src": "komunitas"},
-    {"song": "IF I", "show": "M Countdown", "date": "2026-06", "note": "era NEW WAV", "src": "X (treasurecharts_)"}
-   ],
-   "awards": [
-    {"name": "MAMA 2020", "cat": "Best New Male Artist", "result": "win", "date": "2020-12-06", "src": "Mnet"},
-    {"name": "MAMA 2020", "cat": "Worldwide Fans' Choice Top 10", "result": "win", "date": "2020-12-06", "src": "Mnet"},
-    {"name": "Seoul Music Awards ke-30", "cat": "Best New Artist (Male)", "result": "win", "date": "2021-01", "src": "SMA / fandom"},
-    {"name": "MAMA 2021", "cat": "Worldwide Fans' Choice Top 10", "result": "win", "date": "2021-12-11", "src": "Mnet"},
-    {"name": "MAMA 2021", "cat": "Best Dance Performance — Male Group", "result": "win", "date": "2021-12-11", "src": "Mnet (riwayat resmi)"},
-    {"name": "Golden Disc Awards ke-37", "cat": "Best Group", "result": "win", "date": "2023-01-07", "src": "GDA"},
-    {"name": "MAMA 2025", "cat": "Fans' Choice — Male", "result": "nom", "date": "2025-11-29", "src": "Mnet / Soompi"},
-    {"name": "Korea Grand Music Awards 2026", "cat": "Grand Song (Daesang)", "result": "win", "date": "2026-11-07", "note": "Daesang PERTAMA grup · total 4 trofi di KGMA 2026", "src": "Forbes / KGMA"}
-   ]
+  "_info": "Trofi acara musik & penghargaan besar, hasil kurasi sumber publik: Wikipedia (List of awards received by Treasure/Babymonster), Mnet (mama.mnetplus.world/history), YG (yg-life.com), Soompi, Forbes, Koreaboo, kprofiles. 'win' = menang, 'nom' = hanya nominasi. Tanggal parsial (bulan/tahun saja) berarti hanya itu yang bisa dipastikan. INKIGAYO HOT STAGE = trofi khusus hasil voting fans tiap minggu (BUKAN no.1 mingguan), dipisah ke array 'hotstage'. Perbarui manual bila ada trofi baru.",
+  "groups": {
+    "babymonster": {
+      "wins": [
+        { "song": "SHEESH", "show": "M Countdown", "date": "2024-05-02", "note": "kemenangan pertama grup (8.802 poin)", "src": "Soompi / YG resmi" },
+        { "song": "WE GO UP", "show": "M Countdown", "date": "2025-10-16", "note": "9.773 poin · trofi ke-2 grup", "src": "kprofiles" },
+        { "song": "WE GO UP", "show": "Music Bank", "date": "2025-10-17", "note": "menang siaran langsung pertama di KBS", "src": "YG (yg-life)" }
+      ],
+      "hotstage": [],
+      "awards": [
+        { "name": "MAMA 2024", "cat": "Fans' Choice Top 10 — Female", "result": "win", "date": "2024-11-23", "src": "Mnet (riwayat resmi)" },
+        { "name": "MAMA 2025", "cat": "Fans' Choice Top 10 — Female", "result": "win", "date": "2025-11-28", "src": "Mnet / media (Day 1)" },
+        { "name": "Golden Disc Awards ke-39", "cat": "Rookie Artist of the Year", "result": "win", "date": "2025-01", "src": "Wikipedia / YG" },
+        { "name": "Seoul Music Awards 2025", "cat": "K-pop World Choice — Group", "result": "win", "date": "2025", "src": "Wikipedia" },
+        { "name": "Circle Chart Music Awards 2024", "cat": "Rookie of the Year — Global Streaming (BATTER UP)", "result": "win", "date": "2024", "src": "Wikipedia" },
+        { "name": "Asian Pop Music Awards 2024", "cat": "Best New Artist — Overseas", "result": "win", "date": "2024", "src": "Wikipedia" },
+        { "name": "Asian Pop Music Awards 2025", "cat": "Top 20 Songs of the Year (WE GO UP)", "result": "win", "date": "2025", "src": "Wikipedia" },
+        { "name": "D Awards 2025", "cat": "Dreams Silver Label", "result": "win", "date": "2025", "src": "Wikipedia" },
+        { "name": "D Awards 2026", "cat": "Dreams Silver Label", "result": "win", "date": "2026", "src": "Wikipedia" },
+        { "name": "Brand of the Year Awards 2024", "cat": "Best Female Rookie (Vietnam)", "result": "win", "date": "2024", "src": "Wikipedia" },
+        { "name": "Korea First Brand Awards 2025", "cat": "Female Rookie Idol (Vietnam)", "result": "win", "date": "2025", "src": "Wikipedia" },
+        { "name": "Korea First Brand Awards 2026", "cat": "Female Idol — Hot Trend", "result": "win", "date": "2026", "src": "Wikipedia" },
+        { "name": "MAMA 2024", "cat": "Best New Female Artist", "result": "nom", "date": "2024-11", "src": "Mnet / fandom" },
+        { "name": "MAMA 2025", "cat": "Best Dance Performance — Female Group (DRIP)", "result": "nom", "date": "2025-11", "src": "Mnet" },
+        { "name": "MAMA 2025", "cat": "Song of the Year (DRIP)", "result": "nom", "date": "2025-11", "src": "Mnet" },
+        { "name": "MAMA 2025", "cat": "Album of the Year (DRIP)", "result": "nom", "date": "2025-11", "src": "Mnet" },
+        { "name": "MAMA 2025", "cat": "Artist of the Year", "result": "nom", "date": "2025-11", "src": "Mnet" }
+      ]
+    },
+    "treasure": {
+      "wins": [
+        { "song": "JIKJIN", "show": "Show Champion", "date": "2022-02-23", "note": "kemenangan acara musik pertama grup", "src": "Soompi / Reddit" },
+        { "song": "JIKJIN", "show": "Music Bank", "date": "2022-02-25", "note": "menang pertama di stasiun besar KBS", "src": "KBS / media" },
+        { "song": "YELLOW", "show": "Show Champion", "date": "2025-03-19", "note": "trofi ke-3 grup — pertama sejak 2022", "src": "Soompi / MBC M" },
+        { "song": "IF I", "show": "M Countdown", "date": "2026-06-11", "note": "M Countdown pertama grup (unggul aespa 'LEMONADE')", "src": "Mnet / Soompi" }
+      ],
+      "hotstage": [
+        { "song": "HELLO", "date": "2022-10-16", "src": "SBS Inkigayo" },
+        { "song": "MOVE (T5)", "date": "2023-07-09", "src": "SBS Inkigayo" },
+        { "song": "KING KONG", "date": "2024-06-23", "src": "SBS Inkigayo" },
+        { "song": "LAST NIGHT", "date": "2025-01-05", "src": "SBS Inkigayo" },
+        { "song": "YELLOW", "date": "2025-03-23", "src": "SBS Inkigayo" }
+      ],
+      "awards": [
+        { "name": "Korea Grand Music Awards 2026", "cat": "Grand Song — Daesang", "result": "win", "date": "2026-11-07", "src": "Forbes / KGMA", "note": "daesang PERTAMA grup" },
+        { "name": "Korea Grand Music Awards 2026", "cat": "Best Artist (Bonsang)", "result": "win", "date": "2026-11", "src": "Forbes / Wikipedia" },
+        { "name": "Korea Grand Music Awards 2026", "cat": "Best Hip-Hop", "result": "win", "date": "2026-11", "src": "Forbes" },
+        { "name": "Korea Grand Music Awards 2026", "cat": "Trend of the Year (Group)", "result": "win", "date": "2026-11", "src": "Wikipedia" },
+        { "name": "The Fact Music Awards 2026", "cat": "Artist of the Year (Bonsang)", "result": "win", "date": "2026", "src": "Wikipedia" },
+        { "name": "The Fact Music Awards 2026", "cat": "World Best Performer", "result": "win", "date": "2026", "src": "Wikipedia" },
+        { "name": "MAMA 2024", "cat": "Favorite Male Group", "result": "win", "date": "2024-11-23", "src": "Mnet / Wikipedia" },
+        { "name": "MAMA 2023", "cat": "Favorite Dance Performance — Male Group", "result": "win", "date": "2023-11-28", "src": "Wikipedia" },
+        { "name": "MAMA 2023", "cat": "Galaxy Neo Flip Artist", "result": "win", "date": "2023-11-28", "src": "Wikipedia", "note": "kategori khusus sponsor" },
+        { "name": "MAMA 2022", "cat": "Worldwide Fans' Choice Top 10", "result": "win", "date": "2022-11-29", "src": "Mnet / Wikipedia" },
+        { "name": "MAMA 2021", "cat": "Worldwide Fans' Choice Top 10", "result": "win", "date": "2021-12-11", "src": "Mnet / Soompi" },
+        { "name": "MAMA 2020", "cat": "Worldwide Fans' Choice Top 10", "result": "win", "date": "2020-12-06", "src": "Mnet" },
+        { "name": "MAMA 2020", "cat": "Best New Male Artist", "result": "win", "date": "2020-12-06", "src": "Mnet" },
+        { "name": "Golden Disc Awards ke-37", "cat": "Best Group", "result": "win", "date": "2023-01-07", "src": "Koreaboo / GDA" },
+        { "name": "Golden Disc Awards ke-35", "cat": "Rookie Artist of the Year", "result": "win", "date": "2021-01-10", "src": "YG (yg-life)" },
+        { "name": "Seoul Music Awards ke-30", "cat": "Rookie of the Year", "result": "win", "date": "2021-01-31", "src": "Soompi" },
+        { "name": "The Fact Music Awards 2022", "cat": "Artist of the Year (Bonsang)", "result": "win", "date": "2022-10-08", "src": "TFA / media" },
+        { "name": "The Fact Music Awards 2023", "cat": "Artist of the Year (Bonsang)", "result": "win", "date": "2023", "src": "Wikipedia" },
+        { "name": "Asia Artist Awards 2024", "cat": "Best Touring", "result": "win", "date": "2024-12", "src": "Wikipedia" },
+        { "name": "Asia Artist Awards 2024", "cat": "Best Hip-Hop", "result": "win", "date": "2024-12", "src": "Wikipedia" },
+        { "name": "Asia Artist Awards 2024", "cat": "Platinum Worldwide Star", "result": "win", "date": "2024-12", "src": "Wikipedia" },
+        { "name": "Asia Artist Awards 2022", "cat": "Best Musician Award", "result": "win", "date": "2022-12", "src": "Wikipedia" },
+        { "name": "Asia Artist Awards 2020", "cat": "Rookie of the Year — Male Singer", "result": "win", "date": "2020-11", "src": "Wikipedia" },
+        { "name": "Korea Grand Music Awards 2024", "cat": "Best 10 Songs", "result": "win", "date": "2024-11", "src": "Wikipedia" },
+        { "name": "Korea Grand Music Awards 2024", "cat": "Best Stage Award", "result": "win", "date": "2024-11", "src": "Wikipedia" },
+        { "name": "MAMA 2025", "cat": "Fans' Choice — Male", "result": "nom", "date": "2025-11-29", "src": "Mnet" }
+      ]
+    }
   }
- }
 }

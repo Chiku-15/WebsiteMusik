@@ -232,9 +232,9 @@ const ALIAS = {
   babymonster: /babymonster|베이비몬스터/i,
   treasure: /\btreasure\b|트레저/i,
 };
-async function fetchBillboard() {
-  const html = await fetchText("https://www.billboard.com/charts/billboard-global-200/", {}, 2, 60000);
-  const mD = /charts\/billboard-global-200\/(\d{4}-\d{2}-\d{2})/.exec(html);
+async function fetchBillboard(url = "https://www.billboard.com/charts/billboard-global-200/", chartKey = "billboard-global-200") {
+  const html = await fetchText(url, {}, 2, 60000);
+  const mD = new RegExp(`charts/${chartKey}/(\\d{4}-\\d{2}-\\d{2})`).exec(html);
   const chartDate = mD ? mD[1] : wibDayKey(now());
   const parts = html.split("a-chart-result-item-container");
   if (parts.length < 100) throw new Error(`struktur Billboard berubah (container=${parts.length - 1})`);
@@ -255,8 +255,24 @@ async function fetchBillboard() {
     rows.push({ rank: +rM[1], title: strip(tM[1]), artist });
   }
   if (rows.length < 50) throw new Error(`baris Billboard terbaca ${rows.length} — parser perlu diperbarui`);
-  log(`Billboard Global 200 (${chartDate}): ${rows.length} baris terbaca`);
+  log(`Billboard (${chartKey}) ${chartDate}: ${rows.length} baris terbaca`);
   return { chartDate, rows };
+}
+/* Bugs Top 100 harian — musik.bugs.co.kr, HTML tabel polos (umumnya tak menolak IP datacenter) */
+async function fetchBugs() {
+  const html = await fetchText("https://music.bugs.co.kr/chart/track/day/total", {}, 2, 30000);
+  const rows = [];
+  const chunks = html.split(/<tr[ >]/).slice(1);
+  for (const c of chunks) {
+    const rM = /<td class="ranking">[\s\S]{0,160}?>(\d+)</.exec(c) || /pRealChart[^"]*"[^>]*>\s*(\d+)\s*</.exec(c);
+    const tM = /<p class="title"><a[^>]*>([^<]+)<\/a>/.exec(c);
+    const aM = /<p class="artist"><a[^>]*>([^<]+)<\/a>/.exec(c);
+    if (!rM || !tM) continue;
+    rows.push({ rank: +rM[1], title: decodeEntities(tM[1]).trim(), artist: aM ? decodeEntities(aM[1]).trim() : "" });
+  }
+  if (rows.length < 50) throw new Error(`baris Bugs terbaca ${rows.length}`);
+  log(`Bugs Top 100: ${rows.length} baris terbaca`);
+  return { chartDate: wibDayKey(now()), rows };
 }
 async function fetchGenie() {
   // 2 halaman = Top 100 (cukup utk mendeteksi lagu artis yang masuk)
@@ -343,24 +359,35 @@ function markChartError(charts, key, meta, err) {
 }
 const CHART_META = {
   billboard_global_200: { label: "Billboard Global 200", url: "https://www.billboard.com/charts/billboard-global-200/" },
+  billboard_global_excl_us: { label: "Billboard Global Excl. US", url: "https://www.billboard.com/charts/billboard-global-excl-us/" },
   melon_top100: { label: "Melon Top 100", url: "https://www.melon.com/chart/index.htm" },
   genie_top200: { label: "Genie Top 200", url: "https://www.genie.co.kr/chart/top200" },
+  bugs_day100: { label: "Bugs Top 100 (harian)", url: "https://music.bugs.co.kr/chart/track/day/total" },
 };
 async function collectCharts() {
   const charts = readJSON("charts.json", null) || { _info: CHARTS_INFO, charts: {} };
   charts._info = CHARTS_INFO;
-  // Billboard (mingguan)
-  const bb = charts.charts.billboard_global_200;
-  if (now() - (bb && bb.updated || 0) >= BILLBOARD_MIN_H * 3600) {
-    try { applyChart(charts, "billboard_global_200", CHART_META.billboard_global_200, await fetchBillboard()); }
-    catch (e) { markChartError(charts, "billboard_global_200", CHART_META.billboard_global_200, e); }
-    await sleep(1500);
+  // Billboard Global 200 + Global Excl. US (mingguan)
+  for (const key of ["billboard_global_200", "billboard_global_excl_us"]) {
+    const bb = charts.charts[key];
+    if (now() - (bb && bb.updated || 0) >= BILLBOARD_MIN_H * 3600) {
+      try { applyChart(charts, key, CHART_META[key], await fetchBillboard(CHART_META[key].url, key.replace("billboard_", "billboard-"))); }
+      catch (e) { markChartError(charts, key, CHART_META[key], e); }
+      await sleep(1500);
+    }
   }
   // Genie (harian)
   const ge = charts.charts.genie_top200;
   if (now() - (ge && ge.updated || 0) >= KOREA_MIN_H * 3600) {
     try { applyChart(charts, "genie_top200", CHART_META.genie_top200, await fetchGenie()); }
     catch (e) { markChartError(charts, "genie_top200", CHART_META.genie_top200, e); }
+    await sleep(1500);
+  }
+  // Bugs (harian)
+  const bu = charts.charts.bugs_day100;
+  if (now() - (bu && bu.updated || 0) >= KOREA_MIN_H * 3600) {
+    try { applyChart(charts, "bugs_day100", CHART_META.bugs_day100, await fetchBugs()); }
+    catch (e) { markChartError(charts, "bugs_day100", CHART_META.bugs_day100, e); }
     await sleep(1500);
   }
   // Melon (harian, sering diblokir)
@@ -494,7 +521,7 @@ function collectAnomalies() {
 
 /* ---------------- info schema ---------------- */
 const SOCIAL_INFO = "Follower sosial media per grup. Sumber: Instagram (web_profile_info/og:meta — angka meta dibulatkan, ditandai aprox), X via mirror Nitter, TikTok via halaman profil. Bisa diisi manual lewat data/social-override.json (src=manual). Weverse tidak mempublikasikan follower via web. Semua sumber best-effort: kalau gagal, angka terakhir tetap dipakai.";
-const CHARTS_INFO = "Posisi lagu artis di chart. Billboard Global 200 (mingguan) dari baris halaman chart billboard.com; Melon Top 100 & Genie Top 200 (harian) dari halaman chart masing-masing. Titik hanya direkam saat lagu artis masuk chart. Melon sering menolak IP datacenter — bila lastError terisi, sumber sedang tidak tersedia.";
+const CHARTS_INFO = "Posisi lagu artis di chart. Billboard Global 200 & Global Excl. US (mingguan) dari halaman chart billboard.com; Melon Top 100, Genie Top 200 & Bugs Top 100 (harian) dari halaman chart masing-masing. Titik hanya direkam saat lagu artis masuk chart. Riwayat pencapaian dari debut ada di data/chart-history.json (kurasi manual). Melon sering menolak IP datacenter — bila lastError terisi, sumber sedang tidak tersedia.";
 const NEWS_INFO = "Berita terbaru yang menyebut BABYMONSTER/TREASURE, dari RSS Soompi, Koreaboo, dan tag Kbizoom per artis. Dedupe per tautan, maksimum 60 entri.";
 const ANOM_INFO = `Log lonjakan views tak biasa: tambahan views per hari >= ${ANOM_RATIO}x median harian 30 titik sebelumnya (semantik sama dengan fitur 'lonjakan tidak biasa' di halaman Rekor). Satu entri per video per hari.`;
 
@@ -509,4 +536,4 @@ async function main() {
   log(`=== selesai dalam ${Math.round((Date.now() - started) / 1000)}s ===`);
 }
 if (require.main === module) main();
-module.exports = { main, parseShort, appendDaily, computeAnomalies, fetchBillboard, fetchGenie, fetchMelon, parseRss, collectNews, collectSocial, collectCharts, collectAnomalies };
+module.exports = { main, parseShort, appendDaily, computeAnomalies, fetchBillboard, fetchBugs, fetchGenie, fetchMelon, parseRss, collectNews, collectSocial, collectCharts, collectAnomalies };

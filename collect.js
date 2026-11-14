@@ -889,6 +889,8 @@ async function collectAPI() {
   for (const it of items) {
     const meta = metaById.get(it.id);
     if (!meta) continue;
+    /* blokir video "Performance Clip" (klip tambahan di luar M/V resmi) — tidak ikut dipantau/ditampilkan */
+    if (/performance\s*clip/i.test(it.snippet?.title || "")) continue;
     const st = it.statistics || {};
     const rec = videos[it.id] || {
       title: it.snippet?.title,

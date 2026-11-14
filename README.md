@@ -78,7 +78,11 @@ GitHub Pages menayangkan index.html — tombol YouTube/Spotify di header bergant
 | `data/backfill/` | Penanda video yang sudah dibackfill dari arsip |
 | `data/meta.json` | Info pembaruan terakhir bagian YouTube |
 | `data/social.json` | Riwayat follower Instagram/X/TikTok per grup (+ kartu Weverse) |
-| `data/charts.json` | Riwayat posisi Billboard Global 200, Melon Top 100 & Genie Top 100 |
+| `data/charts.json` | Riwayat posisi live: Billboard Global 200 & Global Excl. US, Melon, Genie & Bugs Top 100 |
+| `data/chart-history.json` | Riwayat & rekor pencapaian chart dari debut (kurasi manual — puncak/debut/entri terverifikasi) |
+| `data/trofi.json` | Trofi acara musik, penghargaan besar, Inkigayo Hot Stage & nominasi (kurasi manual) |
+| `data/jadwal.json` | Jadwal tur/event manual untuk halaman Jadwal & Countdown |
+| `data/members.json` | Profil 17 anggota (klik kartu = detail profil + foto comeback terakhir) |
 | `data/news.json` | Berita terbaru yang menyebut artis (RSS, maks. 60 entri) |
 | `data/anomalies.json` | Log lonjakan views tak biasa (≥ 2,5× median harian) |
 | `data/social-override.json` | *(Opsional, buat sendiri)* angka follower manual bila scraper macet |

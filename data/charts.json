@@ -1,47 +1,79 @@
 {
- "_info": "Posisi lagu artis di chart. Billboard Global 200 (mingguan) dari baris halaman chart billboard.com; Melon Top 100 & Genie Top 200 (harian) dari halaman chart masing-masing. Titik hanya direkam saat lagu artis masuk chart. Melon sering menolak IP datacenter — bila lastError terisi, sumber sedang tidak tersedia.",
- "charts": {
-  "billboard_global_200": {
-   "label": "Billboard Global 200",
-   "url": "https://www.billboard.com/charts/billboard-global-200/",
-   "artists": {
-    "babymonster": {
-     "history": [],
-     "best": null
+  "_info": "Posisi lagu artis di chart. Billboard Global 200 & Global Excl. US (mingguan) dari halaman chart billboard.com; Melon Top 100, Genie Top 200 & Bugs Top 100 (harian) dari halaman chart masing-masing. Titik hanya direkam saat lagu artis masuk chart. Riwayat pencapaian dari debut ada di data/chart-history.json (kurasi manual). Melon sering menolak IP datacenter — bila lastError terisi, sumber sedang tidak tersedia.",
+  "charts": {
+    "billboard_global_200": {
+      "label": "Billboard Global 200",
+      "url": "https://www.billboard.com/charts/billboard-global-200/",
+      "artists": {
+        "babymonster": {
+          "history": [],
+          "best": null
+        },
+        "treasure": {
+          "history": [],
+          "best": null
+        }
+      },
+      "chartDate": "2026-10-31",
+      "updated": 1794623159,
+      "lastError": null
     },
-    "treasure": {
-     "history": [],
-     "best": null
-    }
-   },
-   "chartDate": "2026-10-31",
-   "updated": 1794623159,
-   "lastError": null
-  },
-  "genie_top200": {
-   "label": "Genie Top 200",
-   "url": "https://www.genie.co.kr/chart/top200",
-   "artists": {
-    "babymonster": {
-     "history": [],
-     "best": null
+    "genie_top200": {
+      "label": "Genie Top 200",
+      "url": "https://www.genie.co.kr/chart/top200",
+      "artists": {
+        "babymonster": {
+          "history": [],
+          "best": null
+        },
+        "treasure": {
+          "history": [],
+          "best": null
+        }
+      },
+      "chartDate": "2026-11-14",
+      "updated": 1794623163,
+      "lastError": null
     },
-    "treasure": {
-     "history": [],
-     "best": null
+    "melon_top100": {
+      "label": "Melon Top 100",
+      "url": "https://www.melon.com/chart/index.htm",
+      "artists": {},
+      "lastError": "fetch failed",
+      "updated": 1794623175
+    },
+    "billboard_global_excl_us": {
+      "label": "Billboard Global Excl. US",
+      "url": "https://www.billboard.com/charts/billboard-global-excl-us/",
+      "artists": {
+        "babymonster": {
+          "history": [],
+          "best": null
+        },
+        "treasure": {
+          "history": [],
+          "best": null
+        }
+      },
+      "updated": 1794644257,
+      "lastError": null
+    },
+    "bugs_day100": {
+      "label": "Bugs Top 100 (harian)",
+      "url": "https://music.bugs.co.kr/chart/track/day/total",
+      "artists": {
+        "babymonster": {
+          "history": [],
+          "best": null
+        },
+        "treasure": {
+          "history": [],
+          "best": null
+        }
+      },
+      "updated": 1794644257,
+      "lastError": null
     }
-   },
-   "chartDate": "2026-11-14",
-   "updated": 1794645566,
-   "lastError": null
   },
-  "melon_top100": {
-   "label": "Melon Top 100",
-   "url": "https://www.melon.com/chart/index.htm",
-   "artists": {},
-   "lastError": "baris Melon terbaca 0",
-   "updated": 1794645569
-  }
- },
- "updated": 1794663738
+  "updated": 1794623175
 }
