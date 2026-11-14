@@ -4,7 +4,7 @@
  * Mengumpulkan statistik channel & video lalu menyimpannya ke data/.
  *
  * Mode:
- *  1) API (disarankan)  : set GitHub Secret YT_API_KEY → pakai YouTube Data API v3 (hemat kuota).
+ *  1) API (disarankan)  : set GitHub Secret YOUTUBE_API_KEY → pakai YouTube Data API v3 (hemat kuota).
  *  2) Scraping (cadangan): tanpa API key → baca halaman publik YouTube.
  *
  * Jalankan: node collect.js
@@ -17,15 +17,22 @@ const path = require("path");
 const ROOT = __dirname;
 const DATA_DIR = path.join(ROOT, "data");
 const CONFIG = JSON.parse(fs.readFileSync(path.join(ROOT, "config.json"), "utf-8"));
-const API_KEY = process.env.YT_API_KEY || "";
+const API_KEY = process.env.YOUTUBE_API_KEY || process.env.YT_API_KEY || ""; // nama baru + fallback nama lama
+const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN || ""; // opsional: token bot utk notifikasi Telegram
+const TG_CHAT = process.env.TELEGRAM_CHAT_ID || "";    // opsional: id chat/@channel tujuan
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 
 const HISTORY_CAP = 4000; // maksimum titik data per video/channel
 const DISCOVERY_PAGES = 4; // halaman playlist uploads yang discan utk video baru (50/hal)
 const WAYBACK_MAX_VIDEOS = parseInt(process.env.WAYBACK_MAX || "25", 10) || 25; // budget backfill Wayback per putaran
-const WAYBACK_PER_VIDEO = 6; // maksimum snapshot arsip yang diambil per video
+const WAYBACK_PER_VIDEO = 6; // maksimum snapshot arsip yang diambil per video (mode normal)
+const WAYBACK_MASS_PER_VIDEO = parseInt(process.env.WAYBACK_MASS_PER || "40", 10) || 40; // mode massal: snapshot per video
 const WAYBACK_SLEEP_MS = 1100; // jeda sopan antar permintaan ke web.archive.org
+/* versi logika backfill — dinaikkan saat kriteria/parser berubah supaya video yang dulu
+ * dicoba (marker lama) diulang dgn kriteria baru TANPA perlu bump schema (migrasi schema
+ * menurunkan riwayat milestone lama channel, jadi tidak dipakai utk ini). */
+const BACKFILL_VER = 2;
 const SCHEMA_VERSION = 3; // penanda format data; beda versi -> migrasi otomatis
 const EST_CAP = 380; // batas titik estimasi per video (hemat ukuran file)
 const EST_KEEP_DAILY = 100; // estimasi 100 hari terakhir selalu harian
@@ -94,15 +101,14 @@ function appendHistory(history, point) {
   const last = history[history.length - 1];
   if (last) {
     if (last.e !== 1 && point.e === 1) return false; // estimasi tidak pernah menimpa data terukur
-    if (sameWIBDay(last.t, point.t)) {
-      // granularitas harian: simpan satu titik terbaru per hari (timpa estimasi dgn data nyata)
-      if (point.t > last.t || (last.e === 1 && point.e !== 1)) {
-        history[history.length - 1] = point;
-        return true;
-      }
-      return false;
+    if (sameWIBDay(last.t, point.t) && last.e === 1 && point.e !== 1) {
+      // titik terukur selalu menggantikan estimasi di hari yang sama
+      history[history.length - 1] = point;
+      return true;
     }
-    if (point.t - last.t < 30 * 60) return false; // dedupe < 30 menit
+    // granularitas per jam: simpan titik baru bila jaraknya ≥ 45 menit
+    // (toleransi jadwal cron per jam yang kadang bergeser beberapa menit)
+    if (point.t - last.t < 45 * 60) return false;
   }
   history.push(point);
   if (history.length > HISTORY_CAP) history.splice(0, history.length - HISTORY_CAP);
@@ -319,30 +325,13 @@ function rateBetween(a, b) {
   return (b.v - a.v) / Math.max(1, (b.t - a.t) / 86400);
 }
 
+/* riwayat video: TANPA estimasi model — hanya titik data nyata dari berbagai sumber
+ * (YouTube API tiap jam, arsip Wayback Machine, pengumuman resmi YG/media).
+ * Sama seperti riwayat channel: titik estimasi lama (e:1, kurva model) dibuang setiap
+ * putaran supaya tidak pernah tampil lagi di grafik; antar titik sumber situs menyambung
+ * garis lurus. Urutan dijaga kronologis. */
 function rebuildVideoEstimates(rec, id) {
-  const reals = (rec.history || []).filter((p) => p.e !== 1).sort((a, b) => a.t - b.t);
-  if (!reals.length || !rec.published) return;
-  const last = reals[reals.length - 1];
-  if (!(last.v > 0)) return;
-  let est;
-  if (reals.length >= 2) {
-    // Jangkar >= 2 (milestone resmi / arsip Wayback / pengukuran lama + titik terbaru):
-    // segmen rilis->jangkar pertama mengikuti model, sisanya diinterpolasi PCHIP antar
-    // jangkar — TIDAK ada celah kosong lagi. Celah kosong dulu bikin grafik bulanan salah:
-    // seluruh delta antar jangkar dijatuhkan ke bulan titik terakhir (batang NOVEMBER
-    // raksasa) dan bulan-bulan di antaranya kosong (kasus 'IF I' cuma 2 batang).
-    // laju harian dipakai sbg bentuk sambung hanya bila jangkar pertama berdekatan;
-    // kalau jaraknya jauh, rata-rata antar jangkar menyesatkan -> biarkan model pilih sendiri
-    const gGap = reals[1] && reals[1].t - reals[0].t <= 60 * 86400 ? rateBetween(reals[0], reals[1]) : null;
-    const g = gGap || undefined;
-    const anchors = reals.slice(0, -1).map((p) => ({ t: p.t, v: p.v, w: p.w }));
-    est = thinSeries(buildAnchoredSeries(rec.published, anchors, last.v, last.t, { g, seed: id }));
-  } else {
-    const anchor = reals.find((p) => p.v > 0) || last;
-    const g = rateBetween(anchor, reals[reals.indexOf(anchor) + 1]) || undefined;
-    est = thinSeries(buildEstimatedSeries(rec.published, anchor.v, anchor.t, { g, seed: id }));
-  }
-  rec.history = mergeHistory(est, reals);
+  rec.history = (rec.history || []).filter((p) => p.e !== 1).sort((a, b) => a.t - b.t);
 }
 
 /*
@@ -381,21 +370,12 @@ function applyOfficialMilestones(rec, id) {
   return changed;
 }
 
-/* regenerasi estimasi channel (subs/views/video) dari tanggal channel dibuat */
+/* riwayat channel: TANPA estimasi model — hanya titik data nyata dari berbagai sumber
+ * (YouTube API tiap jam, Social Blade harian, pengumuman resmi YG/media, Wikipedia).
+ * Titik estimasi lama (e:1, model kurva) dibuang setiap putaran supaya tidak pernah
+ * tampil lagi di grafik; urutan dijaga kronologis. */
 function rebuildChannelEstimates(ch) {
-  const reals = (ch.history || []).filter((p) => p.e !== 1).sort((a, b) => a.t - b.t);
-  if (!reals.length || !ch.created) return;
-  const first = reals[0];
-  const pick = (k) => { for (const p of reals) if (p[k] > 0) return p[k]; return 0; };
-  const est = thinSeries(
-    buildChannelSeries(ch.created, first.t, {
-      s: { cur: pick("s"), p: 1.2 },
-      v: { cur: pick("v"), p: 1.0 },
-      c: { cur: pick("c"), p: 0.85 },
-    }, { seed: ch.channel_id || ch.name || "ch" }),
-    420, 110
-  );
-  ch.history = mergeHistory(est, reals);
+  ch.history = (ch.history || []).filter((p) => p.e !== 1).sort((a, b) => a.t - b.t);
 }
 
 /*
@@ -482,6 +462,25 @@ function parseViewCountFromPage(html) {
   return null;
 }
 
+/* likes dari halaman arsip — pola terstruktur yg sama seperti scrapeVideo.
+ * Pola "along with" penting: halaman YouTube modern menaruh jumlah like di label
+ * "like this video along with 1,234,567 other people" (bukan di awal label). */
+function parseLikeCountFromPage(html) {
+  let m = /"likeCount":"(\d+)"/.exec(html);
+  if (m) return parseInt(m[1], 10);
+  m = /like this video along with ([\d,.]+) other people/i.exec(html);
+  if (m) return parseShortCount(m[1]);
+  m = /"accessibilityText":"[^"]{0,100}?(?:bersama|along with)\s+([\d.,]+)\s*(?:orang lain|other people)/i.exec(html);
+  if (m) return parseShortCount(m[1]);
+  m = /"accessibilityText":"([\d,.]+\s*[KMB]?)\s*(?:likes|suka)"/i.exec(html);
+  if (m) return parseShortCount(m[1]);
+  m = /"expandedText":"([\d,.]+\s*[KMB]?)\s*(?:likes|suka)"/i.exec(html);
+  if (m) return parseShortCount(m[1]);
+  m = /"defaultText":\{"accessibility":\{"accessibilityData":\{"label":"([\d,.]+\s*[KMB]?)\s*(?:likes|suka)"/i.exec(html);
+  if (m) return parseShortCount(m[1]);
+  return null;
+}
+
 /*
  * Migrasi otomatis: jika schema lama, buang titik estimasi lama (dibangun ulang dgn model
  * baru), buang video yang tak lagi dipantau, dan bersihkan titik terukur lama yang
@@ -527,9 +526,10 @@ function cdxTsToEpoch(ts) {
 
 async function waybackAnchors(vid, publishedISO) {
   const from = (publishedISO || "").replace(/-/g, "");
+  const mass = !!process.env.WAYBACK_MASS;
   const cdx =
     `https://web.archive.org/cdx/search/cdx?url=youtube.com%2Fwatch%3Fv%3D${vid}` +
-    `&output=json&fl=timestamp,statuscode&filter=statuscode:200&collapse=timestamp:6&limit=-40` +
+    `&output=json&fl=timestamp,statuscode&filter=statuscode:200&collapse=timestamp:6&limit=-${mass ? 80 : 40}` +
     (from ? `&from=${from}` : "");
   let rows;
   try {
@@ -541,8 +541,9 @@ async function waybackAnchors(vid, publishedISO) {
   if (!Array.isArray(rows) || rows.length < 2) return [];
   const list = rows.slice(1).filter((r) => r[1] === "200").map((r) => r[0]);
   if (!list.length) return [];
+  const per = mass ? WAYBACK_MASS_PER_VIDEO : WAYBACK_PER_VIDEO;
   const picked = new Set();
-  const n = Math.min(WAYBACK_PER_VIDEO, list.length);
+  const n = Math.min(per, list.length);
   for (let i = 0; i < n; i++) {
     const idx = Math.round((i * (list.length - 1)) / Math.max(1, n - 1));
     picked.add(list[idx]);
@@ -552,7 +553,7 @@ async function waybackAnchors(vid, publishedISO) {
     try {
       const html = await fetchText(`https://web.archive.org/web/${ts}id_/https://www.youtube.com/watch?v=${vid}`);
       const v = parseViewCountFromPage(html);
-      if (v && v > 0) anchors.push({ t: cdxTsToEpoch(ts), v });
+      if (v && v > 0) anchors.push({ t: cdxTsToEpoch(ts), v, l: parseLikeCountFromPage(html) });
     } catch (e) {
       log(`  snapshot ${ts} gagal: ${String(e).slice(0, 70)}`);
     }
@@ -562,38 +563,62 @@ async function waybackAnchors(vid, publishedISO) {
 }
 
 async function backfillFromWayback(videos, now) {
-  let budget = WAYBACK_MAX_VIDEOS;
+  const mass = !!process.env.WAYBACK_MASS;
+  let budget = mass ? 999999 : WAYBACK_MAX_VIDEOS;
   let archiveAlive = true;
-  let done = 0;
+  let done = 0, totalAnchors = 0;
   for (const [id, rec] of Object.entries(videos)) {
     if (budget <= 0 || !archiveAlive) break;
     if (!rec.published || !rec.history || !rec.history.length) continue;
-    if (rec.history.filter((p) => p.e !== 1).length >= 3) continue; // sudah cukup data nyata
-    const marker = `backfill/${id}.json`;
-    if (readJSON(marker, null)) continue; // sudah pernah dicoba
+    /* kriteria perlu-backfill (mode normal): data nyata masih gersang, likes belum
+     * terpantau sejak dekat rilis, atau ada celah panjang antar titik.
+     * Dulu cukup >= 3 titik utk dilewati — akibatnya video dgn 2 milestone + 1 titik API
+     * (mis. DRIP: celah 21 bulan, likes kosong bertahun-tahun) tidak pernah di-backfill. */
+    if (!mass) {
+      const reals = rec.history.filter((p) => p.e !== 1).sort((a, b) => a.t - b.t);
+      const likePts = rec.history.filter((p) => p.l != null && p.l > 0).sort((a, b) => a.t - b.t);
+      const pubT = Date.parse((rec.published || "") + "T00:00:00Z") / 1000;
+      let need = reals.length < 3;
+      if (!need) for (let i = 1; i < reals.length; i++) {
+        if (reals[i].t - reals[i - 1].t > 30 * 86400) { need = true; break; }
+      }
+      if (!need && isFinite(pubT) && reals.length && reals[0].t - pubT > 30 * 86400) need = true;
+      if (!need && (!likePts.length || (isFinite(pubT) && likePts[0].t - pubT > 7 * 86400))) need = true;
+      if (!need) continue; // sudah rapat + likes terpantau sejak awal
+    }
+    const marker = `backfill/v${BACKFILL_VER}-${mass ? "mass-" : ""}${id}.json`;
+    if (readJSON(marker, null)) continue; // sudah pernah dicoba dgn logika versi ini
     budget--;
     try {
-      const last = rec.history[rec.history.length - 1];
       const anchors = await waybackAnchors(id, rec.published);
       if (anchors === null) { archiveAlive = false; break; }
       if (anchors.length) {
-        const series = buildAnchoredSeries(rec.published, anchors, last.v, last.t, { seed: id });
-        if (series.length > 3) {
-          const keptReal = rec.history.filter((p) => p.e !== 1);
-          rec.history = mergeHistory(series, keptReal);
-          // tandai titik jangkar arsip (w:1) agar bisa dibedakan dari titik API harian
-          const tsSet = new Set(anchors.map((a) => a.t));
-          rec.history = rec.history.map((p) => (p.e !== 1 && tsSet.has(p.t) ? { ...p, w: 1 } : p));
-          done++;
-          log(`backfill ${id}: ${anchors.length} jangkar arsip → ${rec.history.length} titik`);
+        /* sisipkan jangkar arsip sbg titik NYATA (e:0) — tanpa model estimasi.
+         * Jaga kemonotonan di kedua sisi supaya salah-baca arsip tidak merusak kurva. */
+        const reals = rec.history.filter((p) => p.e !== 1).sort((a, b) => a.t - b.t);
+        let added = 0;
+        for (const a of anchors) {
+          const prev = reals.filter((p) => p.t <= a.t).pop();
+          const next = reals.find((p) => p.t > a.t);
+          if (prev && prev.v >= a.v) continue;
+          if (next && next.v < a.v) continue;
+          if (reals.some((p) => Math.abs(p.t - a.t) < 20 * 3600)) continue; // sudah ada titik dekat
+          rec.history.push({ t: a.t, v: a.v, l: a.l != null ? a.l : null, e: 0, w: 1 });
+          reals.push({ t: a.t, v: a.v, e: 0 });
+          reals.sort((x, y) => x.t - y.t);
+          added++;
         }
+        rec.history.sort((a, b) => a.t - b.t);
+        done++;
+        totalAnchors += added;
+        log(`backfill ${id}: ${added}/${anchors.length} jangkar arsip masuk`);
       }
       writeJSON(marker, { done: true, at: now, anchors: anchors.length });
     } catch (e) {
       log(`! backfill ${id} gagal: ${String(e).slice(0, 90)}`);
     }
   }
-  if (done) log(`backfill Wayback selesai: ${done} video (budget ${WAYBACK_MAX_VIDEOS}/putaran)`);
+  if (done) log(`backfill Wayback selesai: ${done} video, ${totalAnchors} jangkar (mode ${mass ? "MASSAL" : "normal"})`);
 }
 
 function isoDurationToSeconds(iso) {
@@ -611,7 +636,7 @@ function isoDurationToSeconds(iso) {
  * PERFORMANCE VIDEO (lagu sendiri, bukan solo) — kategori dance_performance. */
 const RE_EXCLUDE =
   /focus\s*cut|solo\s*dance|solo\s*performance|solo\s*ver\.?|choreography|dance\s*cover|stage\s*practice|stage\s*cam|fancam|live\s*performance|performance\s*film|japanese\s*ver\.?|-?jp\s*ver\.?|japan\s*ver\.?|\bjapan\b|raw\s*version|raw\s*ver\.?|anime|concert|making|behind|teaser|trailer|visual\s*film|jacket|mashup|reaction|highlight|reply\b|countdown|spoiler|preview\b|episode\b|commentary|shorts\b|out now|watch now|part\s*switch|eye\s*contact|drake|a\$ap|lil pump|timtim|jenny from the block|vocal\s*clip|close[-\s]?up|d[-\s]?day\b|hits\s*\d+|teumecam|\bof\s+treasure\b|응원법|비하인드|매거진|촬영|포커스|回应|リリース/i;
-const RE_MV = /\bm\s*\/\s*v\b/i;
+const RE_MV = /\bm\s*\/\s*v\b|music\s*video/i;
 const RE_PRACTICE = /dance\s*practice|practice\s*video/i;
 const RE_DANCE_PERF = /dance\s*performance|performance\s*video/i;
 
@@ -621,6 +646,121 @@ function classifyTitle(title) {
   if (RE_MV.test(title)) return "mv";
   if (RE_PRACTICE.test(title)) return "dance_practice";
   return null;
+}
+
+// ---------- deteksi video baru (RSS + API) & notifikasi Telegram ----------
+function escTg(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+async function notifyTelegram(text) {
+  if (!TG_TOKEN || !TG_CHAT) { log("telegram: TELEGRAM_BOT_TOKEN/TELEGRAM_CHAT_ID belum diisi — notifikasi dilewati"); return false; }
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ chat_id: TG_CHAT, text, parse_mode: "HTML", disable_web_page_preview: false }),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text()).slice(0, 140)}`);
+    return true;
+  } catch (e) {
+    log(`! telegram gagal: ${e}`);
+    return false;
+  }
+}
+
+function xmlDecode(s) {
+  return String(s || "")
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1")
+    .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"').replace(/&#0?39;|&apos;/g, "'");
+}
+
+/* RSS channel YouTube (±15 unggahan terakhir) — TANPA kuota API, pendeteksi paling awal */
+async function rssEntries(channelId) {
+  return retry(async () => {
+    const xml = await fetchText(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`);
+    const out = [];
+    const re = /<entry>([\s\S]*?)<\/entry>/g;
+    let m;
+    while ((m = re.exec(xml))) {
+      const e = m[1];
+      const id = /<yt:videoId>([^<]+)<\/yt:videoId>/.exec(e);
+      const tt = /<title>([\s\S]*?)<\/title>/.exec(e);
+      const pb = /<published>([^<]+)<\/published>/.exec(e);
+      if (id) out.push({ id: id[1].trim(), title: xmlDecode(tt ? tt[1] : "").trim(), published: pb ? pb[1].slice(0, 10) : "" });
+    }
+    return out;
+  }, 3, 2000);
+}
+
+/* state anti-notifikasi-ganda: RSS selalu memuat ±15 unggahan terakhir, jadi id yang sudah
+ * dilaporkan dicatat ke data/notified.json (ikut ter-commit bersama data/). */
+function loadNotified() { return readJSON("notified.json", { seeded: false, ids: [] }); }
+function saveNotified(st) { st.ids = (st.ids || []).slice(-3000); st.seeded = true; writeJSON("notified.json", st); }
+
+/* deteksi video baru utk semua artis: playlist uploads via API (bila ada key) + RSS channel
+ * (selalu jalan, tahan banting, tanpa kuota). Judul yang dikenali klasifikasinya langsung
+ * masuk pantauan; yang tidak dikenali hanya dilaporkan ke Telegram supaya bisa ditambah
+ * manual di config.json bila perlu. */
+async function discoverNewVideos(videos) {
+  const notified = loadNotified();
+  const firstRun = !notified.seeded;
+  const seen = new Set(notified.ids || []);
+  const knownAll = new Set();
+  for (const a of CONFIG.artists) for (const v of a.videos) knownAll.add(v.id);
+  const newIds = [];
+  const added = [], skipped = [];
+  let configChanged = false;
+
+  for (const artist of CONFIG.artists) {
+    const exclude = new Set(artist.exclude_ids || []);
+    const cand = new Map(); // id -> {id,title,published,src}
+    if (API_KEY) {
+      try {
+        const uploadsId = "UU" + artist.channel_id.slice(2);
+        for (const r of await retry(() => apiPlaylistRecent(uploadsId, DISCOVERY_PAGES))) {
+          if (!cand.has(r.id)) cand.set(r.id, { id: r.id, title: r.title, published: "", src: "playlist-api" });
+        }
+      } catch (e) { log(`! Gagal baca playlist uploads ${artist.name}: ${e}`); }
+    }
+    try {
+      for (const r of await rssEntries(artist.channel_id)) {
+        if (!cand.has(r.id)) cand.set(r.id, { ...r, src: "rss" });
+      }
+    } catch (e) { log(`! Gagal baca RSS ${artist.name}: ${e}`); }
+
+    const known = new Set(artist.videos.map((v) => v.id));
+    for (const r of cand.values()) {
+      if (known.has(r.id) || knownAll.has(r.id) || exclude.has(r.id) || videos[r.id]) {
+        if (!seen.has(r.id)) { seen.add(r.id); newIds.push(r.id); }
+        continue;
+      }
+      const cat = classifyTitle(r.title);
+      if (!seen.has(r.id)) {
+        seen.add(r.id); newIds.push(r.id);
+        const url = `https://youtu.be/${r.id}`;
+        if (cat) added.push(`${artist.name} — <b>${escTg(r.title)}</b>\n${url}\nKategori: ${CONFIG.categories[cat] || cat} → masuk pantauan otomatis`);
+        else skipped.push(`${artist.name} — <b>${escTg(r.title)}</b>\n${url}\nKategori tidak dikenali → tidak masuk pantauan (tambah manual di config.json bila perlu)`);
+      }
+      if (cat && !known.has(r.id)) {
+        const entry = { id: r.id, category: cat, featured: false, discovered: true };
+        if (r.published) entry.published = r.published;
+        artist.videos.push(entry);
+        known.add(r.id); knownAll.add(r.id);
+        configChanged = true;
+        log(`+ video baru terdeteksi (${r.src}): ${artist.name} — ${r.title}`);
+      }
+    }
+  }
+  if (newIds.length) saveNotified({ seeded: true, ids: [...(notified.ids || []), ...newIds] });
+  if (firstRun) {
+    log("sinkronisasi awal RSS — unggahan yang sudah ada tidak dilaporkan ke Telegram");
+  } else if ((added.length || skipped.length) && (TG_TOKEN && TG_CHAT)) {
+    const parts = [];
+    if (added.length) parts.push(`<b>Video baru terdeteksi (${added.length}):</b>\n\n${added.join("\n\n")}`);
+    if (skipped.length) parts.push(`<b>Terdeteksi, tidak masuk pantauan (${skipped.length}):</b>\n\n${skipped.join("\n\n")}`);
+    await notifyTelegram(parts.join("\n\n──────────\n\n"));
+  }
+  return { configChanged };
 }
 
 // ---------- mode API ----------
@@ -685,7 +825,7 @@ async function collectAPI() {
     ch.channel_id = artist.channel_id;
     ch.name = artist.name;
     ch.handle = artist.handle;
-    // tanggal dibuatnya channel (snippet.publishedAt) -> jangkar estimasi sejak awal
+    // tanggal dibuatnya channel (snippet.publishedAt) — referensi titik awal riwayat
     const createdIso = (it.snippet?.publishedAt || "").slice(0, 10);
     if (createdIso) ch.created = createdIso;
     else if (!ch.created && artist.created) ch.created = artist.created;
@@ -706,30 +846,9 @@ async function collectAPI() {
     rebuildChannelEstimates(ch);
   }
 
-  // 2) discovery video baru dari playlist uploads terbaru
-  let configChanged = false;
-  const seenDiscovery = new Set(); // cegah video yang sama masuk 2 artis
-  for (const artist of CONFIG.artists) {
-    const uploadsId = "UU" + artist.channel_id.slice(2);
-    const known = new Set(artist.videos.map((v) => v.id));
-    let recent = [];
-    try {
-      recent = await retry(() => apiPlaylistRecent(uploadsId, DISCOVERY_PAGES));
-    } catch (e) {
-      log(`! Gagal baca playlist uploads ${artist.name}: ${e}`);
-    }
-    const exclude = new Set(artist.exclude_ids || []);
-    for (const r of recent) {
-      if (known.has(r.id) || exclude.has(r.id) || videos[r.id] || seenDiscovery.has(r.id)) continue;
-      const cat = classifyTitle(r.title);
-      if (!cat) continue;
-      seenDiscovery.add(r.id);
-      artist.videos.push({ id: r.id, category: cat, featured: false, discovered: true });
-      known.add(r.id);
-      configChanged = true;
-      log(`+ video baru terdeteksi: ${artist.name} — ${r.title}`);
-    }
-  }
+  // 2) deteksi video baru (playlist uploads via API + RSS channel) & notifikasi Telegram
+  const disc = await discoverNewVideos(videos);
+  const configChanged = disc.configChanged;
 
   // 3) statistik semua video terpantau
   const allIds = [];
@@ -761,6 +880,7 @@ async function collectAPI() {
       t: now,
       v: parseInt(st.viewCount || "0", 10) || 0,
       l: st.likeCount != null ? parseInt(st.likeCount, 10) || 0 : null,
+      c: st.commentCount != null ? parseInt(st.commentCount, 10) || 0 : null,
     })) updated++;
     videos[it.id] = rec;
   }
@@ -1009,6 +1129,10 @@ async function collectScrape() {
     await sleep(800);
   }
 
+  // deteksi video baru via RSS (mode scraping tidak punya akses playlist API) — ikut discrape di run ini
+  const disc = await discoverNewVideos(videos);
+  if (disc.configChanged) { fs.writeFileSync(path.join(ROOT, "config.json"), JSON.stringify(CONFIG, null, 2)); log("config.json diperbarui (video baru)"); }
+
   const total = CONFIG.artists.reduce((n, a) => n + a.videos.length, 0);
   let i = 0;
   for (const artist of CONFIG.artists) {
@@ -1071,6 +1195,10 @@ async function main() {
     console.error("GAGAL:", e);
     process.exitCode = 1;
     result = null;
+    // kesehatan data: kabari pemilik situs (kalau Telegram dikonfigurasi) supaya web tidak mati diam-diam
+    if (TG_TOKEN && TG_CHAT) {
+      await notifyTelegram(`<b>ALERT: koleksi data YouTube gagal</b>\n\n${escTg(String((e && e.message) || e)).slice(0, 400)}\n\nCek detail di tab Actions repo.`);
+    }
   }
   if (result) {
     writeJSON("meta.json", {
@@ -1079,7 +1207,7 @@ async function main() {
       mode: result.mode,
       duration_sec: Math.round((Date.now() - started) / 1000),
       quota_note: API_KEY ? "pakai YouTube Data API v3" : "scraping publik",
-      note: "Grafik menyertakan estimasi harian sejak tanggal rilis video / tanggal channel dibuat (ditandai est.). Titik terukur menimpanya.",
+      note: "Riwayat TANPA estimasi — semua titik adalah data nyata dari berbagai sumber: YouTube API (tiap jam), arsip Wayback Machine, dan pengumuman resmi YG/media.",
     });
     log(`selesai dalam ${Math.round((Date.now() - started) / 1000)}s — videos=${result.videos} channels=${result.channels}`);
   }
@@ -1092,5 +1220,6 @@ module.exports = {
   main, appendHistory, mergeHistory, buildEstimatedSeries, buildChannelSeries, buildAnchoredSeries,
   rebuildVideoEstimates, rebuildChannelEstimates, thinSeries, migrateIfNeeded, applyOfficialMilestones,
   backfillFromWayback, waybackAnchors, classifyTitle, parseShortCount, scrapePlaylistPage,
+  parseLikeCountFromPage, parseViewCountFromPage,
   CONFIG, API_KEY, DATA_DIR, SCHEMA_VERSION,
 };

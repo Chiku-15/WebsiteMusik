@@ -1,0 +1,47 @@
+{
+ "_info": "Posisi lagu artis di chart. Billboard Global 200 (mingguan) dari baris halaman chart billboard.com; Melon Top 100 & Genie Top 200 (harian) dari halaman chart masing-masing. Titik hanya direkam saat lagu artis masuk chart. Melon sering menolak IP datacenter — bila lastError terisi, sumber sedang tidak tersedia.",
+ "charts": {
+  "billboard_global_200": {
+   "label": "Billboard Global 200",
+   "url": "https://www.billboard.com/charts/billboard-global-200/",
+   "artists": {
+    "babymonster": {
+     "history": [],
+     "best": null
+    },
+    "treasure": {
+     "history": [],
+     "best": null
+    }
+   },
+   "chartDate": "2026-10-31",
+   "updated": 1794623159,
+   "lastError": null
+  },
+  "genie_top200": {
+   "label": "Genie Top 200",
+   "url": "https://www.genie.co.kr/chart/top200",
+   "artists": {
+    "babymonster": {
+     "history": [],
+     "best": null
+    },
+    "treasure": {
+     "history": [],
+     "best": null
+    }
+   },
+   "chartDate": "2026-11-14",
+   "updated": 1794623163,
+   "lastError": null
+  },
+  "melon_top100": {
+   "label": "Melon Top 100",
+   "url": "https://www.melon.com/chart/index.htm",
+   "artists": {},
+   "lastError": "fetch failed",
+   "updated": 1794623175
+  }
+ },
+ "updated": 1794623175
+}

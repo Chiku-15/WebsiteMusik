@@ -1,0 +1,50 @@
+{
+ "_info": "Follower sosial media per grup. Sumber: Instagram (web_profile_info/og:meta — angka meta dibulatkan, ditandai aprox), X via mirror Nitter, TikTok via halaman profil. Bisa diisi manual lewat data/social-override.json (src=manual). Weverse tidak mempublikasikan follower via web. Semua sumber best-effort: kalau gagal, angka terakhir tetap dipakai.",
+ "artists": {
+  "babymonster": {
+   "instagram": {
+    "handle": "babymonster_ygofficial",
+    "url": "https://www.instagram.com/babymonster_ygofficial/",
+    "history": []
+   },
+   "twitter": {
+    "handle": "YGBABYMONSTER_",
+    "url": "https://x.com/YGBABYMONSTER_",
+    "history": []
+   },
+   "tiktok": {
+    "handle": "babymonster_yg_tiktok",
+    "url": "https://www.tiktok.com/@babymonster_yg_tiktok",
+    "history": []
+   },
+   "weverse": {
+    "handle": "babymonster",
+    "url": "https://weverse.io/babymonster",
+    "note": "Jumlah follower Weverse tidak dipublikasikan lewat web publik — kartu ini hanya tautan."
+   }
+  },
+  "treasure": {
+   "instagram": {
+    "handle": "yg_treasure_official",
+    "url": "https://www.instagram.com/yg_treasure_official/",
+    "history": []
+   },
+   "twitter": {
+    "handle": "ygtreasuremaker",
+    "url": "https://x.com/ygtreasuremaker",
+    "history": []
+   },
+   "tiktok": {
+    "handle": "yg_treasure_tiktok",
+    "url": "https://www.tiktok.com/@yg_treasure_tiktok",
+    "history": []
+   },
+   "weverse": {
+    "handle": "treasure",
+    "url": "https://weverse.io/treasure",
+    "note": "Jumlah follower Weverse tidak dipublikasikan lewat web publik — kartu ini hanya tautan."
+   }
+  }
+ },
+ "updated": 1794623159
+}
