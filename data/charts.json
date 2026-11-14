@@ -55,8 +55,9 @@
      "best": null
     }
    },
-   "updated": 1794644257,
-   "lastError": null
+   "updated": 1794687968,
+   "lastError": null,
+   "chartDate": "2026-11-15"
   },
   "bugs_day100": {
    "label": "Bugs Top 100 (harian)",
@@ -75,5 +76,5 @@
    "lastError": "baris Bugs terbaca 0"
   }
  },
- "updated": 1794684702
+ "updated": 1794687970
 }
