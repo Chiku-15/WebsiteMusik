@@ -2,7 +2,7 @@
   "site": {
     "title": "K-POP PULSE",
     "subtitle": "Statistik YouTube & Spotify Artis K-pop",
-    "description": "Pantau views, likes, subscriber, grafik pertumbuhan harian & prediksi milestone artis K-pop favoritmu. Data direkam otomatis tiap jam oleh GitHub Actions.",
+    "description": "Pantau views, likes, subscriber, grafik pertumbuhan harian & prediksi milestone artis K-pop favoritmu. Data direkam otomatis 2x sehari oleh GitHub Actions.",
     "timezone": "Asia/Jakarta"
   },
   "schema_note": "published = tanggal rilis UTC; dikoreksi otomatis dari YouTube API pada setiap putaran collect.js.",
@@ -23,50 +23,17 @@
       "spotify_id": "1SIocsqdEefUTE6XKGUiVS",
       "kworb_songs_url": "https://kworb.net/spotify/artist/1SIocsqdEefUTE6XKGUiVS_songs.html",
       "spotify_albums": [
-        {
-          "id": "2CSQuvvt3XHLDX36O3nRv7",
-          "note": "BATTER UP (single, 2023)"
-        },
-        {
-          "id": "7H2OTxkgjHasQ0M4zo7lY8",
-          "note": "BATTER UP -JP Ver.- (single, 2024)"
-        },
-        {
-          "id": "0eSbsl3j8jz96LC2NCLPc4",
-          "note": "BABYMONS7ER (EP, 2024)"
-        },
-        {
-          "id": "0OY9cZ5lO1htGmLYC4eX4B",
-          "note": "FOREVER (single, 2024)"
-        },
-        {
-          "id": "6Lp82GTJXzgtIopT0g7N7k",
-          "note": "DRIP (album, 2024)"
-        },
-        {
-          "id": "2Accppyz0p8XZaSSCIAuDK",
-          "note": "WE GO UP (EP, 2025)"
-        },
-        {
-          "id": "5kTDyVVuvyPJZX1MlXiBvW",
-          "note": "HOT SAUCE (single, 2025)"
-        },
-        {
-          "id": "0aA475GObe8VCZvHRRloxK",
-          "note": "Ghost (single, 2025)"
-        },
-        {
-          "id": "1HpYnZeul7WTVb7nl20pET",
-          "note": "1st WORLD TOUR HELLO MONSTERS IN JAPAN (live album, 2025)"
-        },
-        {
-          "id": "2KiMyHuf4NDqnM7GhGysBC",
-          "note": "SUGAR HONEY ICE TEA (single, 2026)"
-        },
-        {
-          "id": "1VmMG3mtIWHWm618Cwiku7",
-          "note": "춤 (CHOOM) (EP, 2026)"
-        }
+        { "id": "2CSQuvvt3XHLDX36O3nRv7", "note": "BATTER UP (single, 2023)" },
+        { "id": "7H2OTxkgjHasQ0M4zo7lY8", "note": "BATTER UP -JP Ver.- (single, 2024)" },
+        { "id": "0eSbsl3j8jz96LC2NCLPc4", "note": "BABYMONS7ER (EP, 2024)" },
+        { "id": "0OY9cZ5lO1htGmLYC4eX4B", "note": "FOREVER (single, 2024)" },
+        { "id": "6Lp82GTJXzgtIopT0g7N7k", "note": "DRIP (album, 2024)" },
+        { "id": "2Accppyz0p8XZaSSCIAuDK", "note": "WE GO UP (EP, 2025)" },
+        { "id": "5kTDyVVuvyPJZX1MlXiBvW", "note": "HOT SAUCE (single, 2025)" },
+        { "id": "0aA475GObe8VCZvHRRloxK", "note": "Ghost (single, 2025)" },
+        { "id": "1HpYnZeul7WTVb7nl20pET", "note": "1st WORLD TOUR HELLO MONSTERS IN JAPAN (live album, 2025)" },
+        { "id": "2KiMyHuf4NDqnM7GhGysBC", "note": "SUGAR HONEY ICE TEA (single, 2026)" },
+        { "id": "1VmMG3mtIWHWm618Cwiku7", "note": "춤 (CHOOM) (EP, 2026)" }
       ],
       "exclude_ids": [
         "46GMs-4TayE",
@@ -316,54 +283,18 @@
       "spotify_id": "3KonOYiLsU53m4yT7gNotP",
       "kworb_songs_url": "https://kworb.net/spotify/artist/3KonOYiLsU53m4yT7gNotP_songs.html",
       "spotify_albums": [
-        {
-          "id": "1eRPLg2vSNaNUfPfSjdi0Z",
-          "note": "THE FIRST STEP : CHAPTER ONE (single, 2020)"
-        },
-        {
-          "id": "5tQDFmW8QrZdTsICpLQBTL",
-          "note": "THE FIRST STEP : TREASURE EFFECT (album, 2021)"
-        },
-        {
-          "id": "3xHLRJDP7M05Gnt4VE1TwT",
-          "note": "THE SECOND STEP : CHAPTER ONE (EP, 2022)"
-        },
-        {
-          "id": "4l5YvRcmno5RMKZCZp1j0g",
-          "note": "THE SECOND STEP : CHAPTER TWO (EP, 2022)"
-        },
-        {
-          "id": "1ITJ3AY63eEUnMxZTV735E",
-          "note": "THE SECOND STEP : CHAPTER TWO (JP EDITION) (EP, 2022)"
-        },
-        {
-          "id": "2Dk2Cj8BBnJngSoOfWjyL9",
-          "note": "2ND FULL ALBUM 'REBOOT' (2023)"
-        },
-        {
-          "id": "5mS5Pyn0QRGgYChDMPQGDG",
-          "note": "REBOOT (JP SPECIAL SELECTION) (EP, 2024)"
-        },
-        {
-          "id": "2vdCi7WRcjd2hRzwd4KeQ3",
-          "note": "3rd MINI ALBUM [LOVE PULSE] (2025)"
-        },
-        {
-          "id": "3HHB9GFSCEPXsp0RaaBzzl",
-          "note": "SPECIAL JP SELECTION [LOVE PULSE] (single, 2025)"
-        },
-        {
-          "id": "33q3b2UtHK0JW4RbzI86KJ",
-          "note": "SHOCK (single, 2026)"
-        },
-        {
-          "id": "5EqAWo5fdTpQ8pxNKBbMzO",
-          "note": "4th MINI ALBUM [NEW WAV] (2026)"
-        },
-        {
-          "id": "1ywMenH2z1oYNjAP6FUEdz",
-          "note": "TREASURE THE STAGE 2026 NEW WAV : LIVE IN JAPAN (live album, 2026)"
-        }
+        { "id": "1eRPLg2vSNaNUfPfSjdi0Z", "note": "THE FIRST STEP : CHAPTER ONE (single, 2020)" },
+        { "id": "5tQDFmW8QrZdTsICpLQBTL", "note": "THE FIRST STEP : TREASURE EFFECT (album, 2021)" },
+        { "id": "3xHLRJDP7M05Gnt4VE1TwT", "note": "THE SECOND STEP : CHAPTER ONE (EP, 2022)" },
+        { "id": "4l5YvRcmno5RMKZCZp1j0g", "note": "THE SECOND STEP : CHAPTER TWO (EP, 2022)" },
+        { "id": "1ITJ3AY63eEUnMxZTV735E", "note": "THE SECOND STEP : CHAPTER TWO (JP EDITION) (EP, 2022)" },
+        { "id": "2Dk2Cj8BBnJngSoOfWjyL9", "note": "2ND FULL ALBUM 'REBOOT' (2023)" },
+        { "id": "5mS5Pyn0QRGgYChDMPQGDG", "note": "REBOOT (JP SPECIAL SELECTION) (EP, 2024)" },
+        { "id": "2vdCi7WRcjd2hRzwd4KeQ3", "note": "3rd MINI ALBUM [LOVE PULSE] (2025)" },
+        { "id": "3HHB9GFSCEPXsp0RaaBzzl", "note": "SPECIAL JP SELECTION [LOVE PULSE] (single, 2025)" },
+        { "id": "33q3b2UtHK0JW4RbzI86KJ", "note": "SHOCK (single, 2026)" },
+        { "id": "5EqAWo5fdTpQ8pxNKBbMzO", "note": "4th MINI ALBUM [NEW WAV] (2026)" },
+        { "id": "1ywMenH2z1oYNjAP6FUEdz", "note": "TREASURE THE STAGE 2026 NEW WAV : LIVE IN JAPAN (live album, 2026)" }
       ],
       "exclude_ids": [
         "3E7rLh2Jd6Q",

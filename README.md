@@ -1,6 +1,6 @@
 # K-POP PULSE (versi GitHub) — Statistik YouTube & Spotify Artis K-pop
 
-Situs statistik **YouTube + Spotify** untuk artis K-pop — saat ini berisi **BABYMONSTER** dan **TREASURE** — direkam otomatis **tiap jam** oleh GitHub Actions, lalu ditampilkan sebagai situs grafik: jumlah views, likes, subscriber, stream Spotify, pertumbuhan harian, sampai perkiraan tanggal tembus milestone. Ada **dua tombol platform di header — YouTube dan Spotify** — cukup tekan untuk berganti (model seperti bm-tracker.com). Dibuka pertama kali, pengunjung disambut **halaman pembuka (landing page)** bergaya situs K-pop generik, lalu masuk ke **Beranda** berisi papan peringkat lagu paling banyak ditonton/di-stream, video/lagu yang sedang naik, rilisan terbaru, dan ringkasan channel — sebelum menjelajah halaman tiap artis.
+Situs statistik **YouTube + Spotify** untuk artis K-pop — saat ini berisi **BABYMONSTER** dan **TREASURE** — direkam otomatis **2× sehari** oleh GitHub Actions, lalu ditampilkan sebagai situs grafik: jumlah views, likes, subscriber, stream Spotify, pertumbuhan harian, sampai perkiraan tanggal tembus milestone. Ada **dua tombol platform di header — YouTube dan Spotify** — cukup tekan untuk berganti (model seperti bm-tracker.com). Dibuka pertama kali, pengunjung disambut **halaman pembuka (landing page)** bergaya situs K-pop generik, lalu masuk ke **Beranda** berisi papan peringkat lagu paling banyak ditonton/di-stream, video/lagu yang sedang naik, rilisan terbaru, dan ringkasan channel — sebelum menjelajah halaman tiap artis.
 
 **Tidak perlu server, tidak perlu VPS.** Semuanya berjalan gratis di GitHub: Actions merekam data, Pages menayangkannya.
 
@@ -42,7 +42,7 @@ Situs statistik **YouTube + Spotify** untuk artis K-pop — saat ini berisi **BA
 
 ```
 GitHub Actions (07:00 & 19:00 WIB)
-  │ node collect.js        → YouTube Data API v3 (Secret YOUTUBE_API_KEY)
+  │ node collect.js        → YouTube Data API v3 (Secret YT_API_KEY)
   │ node collect_spotify.js → Spotify Charts via kworb.net + embed Spotify (tanpa API key;
   │                           opsional Spotify Web API utk followers)
   ▼
@@ -67,7 +67,7 @@ GitHub Pages menayangkan index.html — tombol YouTube/Spotify di header bergant
 | `data/spotify-meta.json` | Info pembaruan terakhir bagian Spotify |
 | `data/backfill/` | Penanda video yang sudah dibackfill dari arsip |
 | `data/meta.json` | Info pembaruan terakhir bagian YouTube |
-| `.github/workflows/collect.yml` | Jadwal pengambilan data (tiap jam, YouTube + Spotify dalam satu run) |
+| `.github/workflows/collect.yml` | Jadwal pengambilan data (2× sehari, YouTube + Spotify dalam satu run) |
 
 ## Cara pasang di GitHub (dari nol)
 
@@ -77,7 +77,7 @@ GitHub Pages menayangkan index.html — tombol YouTube/Spotify di header bergant
 2. **Unggah semua file** proyek ini ke repo (tombol *Add file → Upload files*), atau lewat `git push`.
 3. **Simpan API key** sebagai Secret:
  - Buka *Settings → Secrets and variables → Actions → New repository secret*
- - Name: `YOUTUBE_API_KEY` — Secret: isi API key-mu → *Add secret*
+ - Name: `YT_API_KEY` — Secret: isi API key-mu → *Add secret*
  - (Direkomendasikan untuk **followers Spotify**) tambah `SPOTIFY_CLIENT_ID` & `SPOTIFY_CLIENT_SECRET` dari [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard) (buat app apa pun, dapatkan *Client ID* & *Client secret*). Tanpa ini collector mencoba token anonim Spotify; kalau itu pun gagal, kartu Followers tampil "–" — semua fitur lain tetap jalan penuh.
 4. **Aktifkan GitHub Pages**:
  - *Settings → Pages → Build and deployment → Source: **Deploy from a branch***
@@ -127,26 +127,6 @@ Edit `.github/workflows/collect.yml` bagian `cron` (zona UTC):
 - 1× sehari → hapus salah satu baris cron (sisakan `0 0 * * *` = 07:00 WIB)
 - 4× sehari → tambah `0 6 * * *` dan `0 18 * * *`
 
-## Notifikasi Telegram (opsional, disarankan)
-
-Supaya situs makin "hidup sendiri": collector mengirim pesan Telegram tiap ada video baru
-terdeteksi (yang langsung masuk pantauan, maupun yang butuh review) dan alert saat koleksi
-gagal — web tidak mati diam-diam. Cara aktifkan:
-
-1. Chat [@BotFather](https://t.me/BotFather) di Telegram → `/newbot` → salin token yang diberikan.
-2. Kirim satu pesan apa pun ke bot kamu, lalu buka `https://api.telegram.org/bot<TOKEN>/getUpdates` → salin `chat.id`.
-3. Simpan 2 Secret di repo (*Settings → Secrets and variables → Actions*):
-   - `TELEGRAM_BOT_TOKEN` — token dari BotFather
-   - `TELEGRAM_CHAT_ID` — id chat tujuan
-4. Selesai — tidak perlu konfigurasi lain. Tanpa 2 secret ini collector tetap jalan normal
-   (deteksi video baru tetap berfungsi, hanya tidak ada pesan Telegram).
-
-Cara kerja deteksi: playlist uploads (via API, ±200 unggahan terakhir) **dan** RSS channel
-YouTube (±15 unggahan terakhir, tanpa kuota API) dipindai setiap putaran. Judul yang dikenali
-(MV / dance practice / performance video) otomatis masuk pantauan pada putaran yang sama;
-sisanya hanya dilaporkan. Daftar id yang sudah dilaporkan disimpan di `data/notified.json`
-agar tidak ada pesan ganda, dan putaran pertama hanya sinkronisasi (tidak spam).
-
 ## Memperbarui repo yang sudah terpasang (versi lama → versi ini)
 
 1. Unduh ZIP terbaru, lalu **ganti semua file** di repo (termasuk seluruh isi `data/`). Cara termudah: hapus file lama di repo, unggah semua file baru. File baru di versi ini: `collect_spotify.js`, `data/spotify-*.json`, dan `config.json` yang menambah field Spotify per artis.
@@ -165,11 +145,11 @@ agar tidak ada pesan ganda, dan putaran pertama hanya sinkronisasi (tidak spam).
 
 YouTube **tidak menyediakan** riwayat views harian lewat API — hanya angka saat ini. Supaya grafik tetap terisi dari tanggal rilis:
 
-1. **Titik pengukuran nyata** (solid) — direkam tiap jam oleh Actions selama situs berjalan.
-2. **Jangkar arsip** — setiap putaran Actions, `collect.js` mencoba mengambil ±6 snapshot lama tiap video dari **Wayback Machine** (web.archive.org) sebagai titik nyata tambahan (views **+ likes**), maksimal 25 video per putaran (bertahap, dicache per versi logika di `data/backfill/v2-*.json`). Video di-backfill bila: titik nyata < 3, **ada celah > 30 hari** antar titik, titik pertama masih > 30 hari setelah rilis, atau **likes belum terekam sejak dekat tanggal rilis** — jadi MV lama ber-celah panjang (mis. DRIP) tidak lagi terlewat. Mode **“wayback-mass”** mengambil ±40 snapshot per video untuk semua video sekaligus.
-3. **Interpolasi antar titik** (putus-putus, legenda “Interpolasi”, tooltip “(interpolasi)”) — hari/pekan/bulan tanpa perekaman diisi dari kurva PCHIP monoton yang melewati SEMUA titik nyata, dihitung di frontend. **Tidak ada model estimasi** — jumlah seluruh nilai bucket selalu persis = total kenaikan views. Bucket terakhir (hari/pekan berjalan) diskalakan ke nilai setara periode penuh supaya ujung grafik tidak tampak “anjlok” palsu.
+1. **Titik pengukuran nyata** (solid) — direkam 2× sehari oleh Actions selama situs berjalan.
+2. **Titik estimasi** (putus-putus/transparan, diberi tanda "(est.)") — dihitung dari tanggal rilis + views terkini memakai model pertumbuhan MV (spike awal → mereda → ekor panjang).
+3. **Jangkar arsip** — setiap putaran Actions, `collect.js` mencoba mengambil ±6 snapshot lama tiap video dari **Wayback Machine** (web.archive.org) sebagai titik nyata tambahan, maksimal 25 video per putaran (bertahap, dicache di `data/backfill/`). Video yang sudah punya cukup data nyata dilewati otomatis.
 
-**Grafik channel kini 100% data nyata — tanpa estimasi model.** Titik-titiknya dikumpulkan dari berbagai sumber: **YouTube Data API** (direkam GitHub Actions tiap jam), **Social Blade** (rekaman harian), **Wikipedia** + arsip media, dan **pengumuman resmi YG Entertainment** (tanggal milestone subscriber/total views, mis. 10 jt subscriber 9 Sep 2025, 10 miliar views 3 Sep 2026). Titik estimasi model lama dibuang otomatis setiap putaran Actions. Karena riwayat harian publik tidak tersedia, antar titik sumber dihubungkan garis lurus; tanggal milestone yang berada DI ANTARA dua titik data nyata ditandai **(±)** = perkiraan garis lurus, bukan tanggal resmi. Section **Milestone video** kini tampil di bagian paling bawah detail channel (buka lewat klik kartu channel di halaman artis).
+Hal yang sama berlaku untuk **grafik channel**: estimasi harian sejak channel dibuat, ditandai est., dan ditimpa pengukuran nyata.
 
 Setiap kali Actions merekam angka baru, estimasi pada hari itu **ditimpa data nyata** — makin lama situs berjalan, makin banyak titik solid dan prediksi makin akurat.
 
@@ -179,11 +159,11 @@ Setiap kali Actions merekam angka baru, estimasi pada hari itu **ditimpa data ny
 
 **Dari mana angka Spotify berasal? Apa akurat?** Angka stream per lagu diproses dari **data harian publik Spotify Charts** (via kworb.net — situs rujukan para pelacak streaming), metadata album/track & tanggal rilis dari **halaman embed resmi Spotify**. Total stream gabungan di situs ini sama persis dengan angka yang terlihat di aplikasi Spotify (contoh: SUGAR HONEY ICE TEA 49.025.510 per 7 Nov 2026). Pendengar per bulan: dari daftar global kworb (lengkap + delta harian) — kalau artis di luar 2.500 besar global (contoh: TREASURE), angka diambil dari halaman resmi artis Spotify (ditandai "±", dibulatkan). Riwayat sebelum situs berjalan diisi estimasi model (ditandai), sama seperti sisi YouTube.
 
-**Grafik video kini 100% data nyata + interpolasi — tanpa model estimasi.** Titik nyata dari YouTube API, arsip Wayback (views & likes), dan pengumuman resmi; grafik kumulatif memakai **poros waktu linier** (jarak antar titik proporsional tanggal — celah perekaman terlihat jujur, bukan melompat), dan mulai dari **0 views di tanggal rilis**. **Grafik channel juga hanya data nyata** dari YouTube API, Social Blade, dan pengumuman resmi YG/media. Tanggal milestone yang berada DI ANTARA dua titik data nyata ditandai **(±)** = perkiraan garis lurus, bukan tanggal resmi. Section **Milestone video** tampil di bagian paling bawah detail channel (buka lewat klik kartu channel di halaman artis).
+**Grafik sekarang langsung penuh.** Sejak versi ini riwayat diisi dari tanggal rilis (video) dan tanggal channel dibuat (channel) memakai estimasi (lihat "Tentang data historis"). Tanda **(est.)** pada kartu/tooltip berarti angka itu masih berbasis estimasi.
 
-**Kenapa likes kadang masih "–"?** Likes diambil dari `statistics.likeCount` (YouTube Data API — secret `YOUTUBE_API_KEY`) atau dari endpoint publik YouTube saat mode scraping. Likes tampil otomatis pada putaran pertama setelah versi ini dipasang — kartu, modal, dan rasio likes/1.000 views langsung terisi untuk BM maupun TREASURE.
+**Kenapa likes kadang masih "–"?** Likes diambil dari `statistics.likeCount` (YouTube Data API — secret `YT_API_KEY`) atau dari endpoint publik YouTube saat mode scraping. Likes tampil otomatis pada putaran pertama setelah versi ini dipasang — kartu, modal, dan rasio likes/1.000 views langsung terisi untuk BM maupun TREASURE.
 
-**Kenapa ada segmen putus-putus? Bisa lihat yang real?** YouTube **tidak menyediakan** riwayat views harian untuk publik, jadi hari/pekan/bulan tanpa perekaman diisi **interpolasi** dari kurva yang melewati semua titik nyata (legenda “Interpolasi”, tooltip “(interpolasi)”) — bukan tebakan model. Titik likes yang baru mulai terekam tampil pendek di ujung kanan grafik kumulatif dan diberi catatan tanggalnya; mode **“wayback-mass”** mempercepat pengisian arsip lama. Makin lama Actions berjalan, makin panjang segmen data nyata.
+**Kenapa ada angka estimasi? Bisa lihat yang real?** YouTube **tidak menyediakan** riwayat views harian untuk publik (hanya pemilik channel bisa melihatnya di YouTube Studio), jadi rincian per-hari masa lalu memang diestimasi — ditandai batang transparan/garis putus-putus + legenda "Estimasi". Yang **selalu nyata**: total views, likes, subscriber saat ini, dan semua titik solid (pengukuran langsung dari YouTube API 2× sehari sejak situs berjalan). Makin lama situs dipasang, makin panjang bagian nyatanya.
 
 **Kenapa ada lagu yang tadinya 0 stream (contoh: SHOCK)?** Parser tabel kworb dulu gagal membaca baris yang sel *stream harian*-nya kosong (biasa terjadi pada lagu baru yang belum masuk chart harian 200 besar) — lagunya dianggap tidak ada sehingga tampil 0. Sudah diperbaiki: sel kosong sekarang sah (daily = 0) dan total stream tetap terbaca. Setelah di-deploy, jalankan sekali workflow *Kumpulkan data* dan angka SHOCK (dan semua lagu berstatus sama) langsung terisi.
 

@@ -1,6 +1,6 @@
 {
   "_info": "Milestone RESMI hasil kurasi dari pengumuman YG Entertainment (ygfamily.com / yg-life.com) dan media (Yonhap, Korea Herald, Chosun, OSEN, allkpop). 'm' = views, 'd' = tanggal pencapaian (zona WIB), 'dd' = durasi resmi yang diumumkan (dihitung dari rilis KST), 'src' = sumber. Dipakai situs sebagai data otoritatif tabel milestone dan oleh collect.js sebagai jangkar data nyata (e:0) untuk melengkapi kurva sebelum pemantauan dimulai.",
-  "updated": "2026-11-11",
+  "updated": "2026-11-06",
   "videos": {
     "olDWm2veCrM": {
       "title": "BATTER UP",
@@ -87,31 +87,6 @@
         { "m": 100000000, "d": "2025-04-02", "dd": "±148 hari", "src": "YG Entertainment · media" }
       ]
     },
-    "o0oW3lPoOXM": {
-      "title": "CLIK CLAK",
-      "ms": [
-        { "m": 100000000, "d": "2024-12-09", "dd": "41 hari", "src": "YG Entertainment (yg-life.com/archives/191716)" }
-      ]
-    },
-    "XShaIZs7J7M": {
-      "title": "Really Like You",
-      "ms": [
-        { "m": 100000000, "d": "2025-11-17", "dd": "305 hari", "src": "YG Entertainment (yg-life.com/archives/195641)" }
-      ]
-    },
-    "kOanBE5Wg24": {
-      "title": "SHEESH PERFORMANCE VIDEO",
-      "ms": [
-        { "m": 100000000, "d": "2024-05-18", "dd": "24 hari (rilis KST 24 Apr)", "src": "YG Entertainment (ygfamily.com news report/6068)" }
-      ]
-    },
-    "M8r3x4Re8-I": {
-      "title": "LIKE THAT EXCLUSIVE PERFORMANCE VIDEO",
-      "ms": [
-        { "m": 100000000, "d": "2024-07-06", "dd": "32 hari (rilis KST 4 Jun)", "src": "YG Entertainment (yg-life.com/archives/189668)" },
-        { "m": 200000000, "d": "2025-07-30", "dd": "421 hari", "src": "YG Entertainment (ygfamily.com news report/7030)" }
-      ]
-    },
     "JSAfPh1A25E": {
       "title": "BOY",
       "ms": [
@@ -135,7 +110,6 @@
     "QERKD90hG98": {
       "title": "IF I",
       "ms": [
-        { "m": 50000000, "d": "2026-06-08", "dd": "7 hari", "src": "YG Entertainment (ygfamily.com news report/7474)" },
         { "m": 100000000, "d": "2026-06-13", "dd": "11 hari 22 jam", "src": "YG Entertainment" }
       ]
     }

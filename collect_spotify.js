@@ -279,7 +279,6 @@ async function main() {
   /* Urutan: 1) secret SPOTIFY_CLIENT_ID & SPOTIFY_CLIENT_SECRET (paling andal),
      2) token anonim pemutar embed Spotify (tanpa key, bisa berubah kapan saja). */
   let followersMap = {};
-  let apiToken = null;
   let anonToken = null;
   const cid = process.env.SPOTIFY_CLIENT_ID;
   const csec = process.env.SPOTIFY_CLIENT_SECRET;
@@ -333,7 +332,6 @@ async function main() {
         });
         if (res.ok) {
           const { access_token } = await res.json();
-          apiToken = access_token;
           await fetchFollowers(access_token);
         } else {
           log("  ! token secret gagal: HTTP " + res.status);
@@ -345,7 +343,7 @@ async function main() {
       log("↳ secret SPOTIFY_CLIENT_ID/SECRET belum diisi → coba token anonim Spotify");
       try {
         const tok = await getAnonToken();
-        if (tok) { apiToken = tok; await fetchFollowers(tok); }
+        if (tok) await fetchFollowers(tok);
       } catch (e) {
         log("  ! followers (anonim) gagal:", String(e).slice(0, 120));
       }
@@ -706,43 +704,6 @@ async function main() {
     };
   }
 
-  /* --- 12b. popularity per lagu via Spotify Web API (riwayat file terpisah) --- */
-  /* Popularity = angka resmi Spotify 0-100 per lagu. Direkam bertahap ke
-   * spotify-popularity.json keyed by track ID; situs memakainya untuk grafik
-   * popularitas di modal lagu & daftar "Popularity tertinggi" di Rekor. */
-  try {
-    const tok = apiToken || (await getAnonToken());
-    if (tok) {
-      const popHist = loadJson("spotify-popularity.json", {});
-      const allTids = [];
-      for (const aid of Object.keys(newTracksRaw)) for (const tid of Object.keys(newTracksRaw[aid])) allTids.push(tid);
-      let nPop = 0;
-      for (let i = 0; i < allTids.length; i += 50) {
-        const batch = allTids.slice(i, i + 50);
-        const r = await fetch("https://api.spotify.com/v1/tracks?ids=" + batch.join(","), {
-          headers: { Authorization: "Bearer " + tok },
-          signal: AbortSignal.timeout ? AbortSignal.timeout(20000) : undefined,
-        });
-        if (!r.ok) throw new Error("HTTP " + r.status);
-        for (const trj of (await r.json()).tracks || []) {
-          if (!trj || !trj.id || trj.popularity == null) continue;
-          const arr = popHist[trj.id] || (popHist[trj.id] = []);
-          const lastP = arr.length ? arr[arr.length - 1] : null;
-          if (lastP && lastP.p === trj.popularity && now() - lastP.t < 20 * 3600) continue;
-          arr.push({ t: now(), p: trj.popularity });
-          if (arr.length > 500) arr.splice(0, arr.length - 500);
-          nPop++;
-        }
-      }
-      fs.writeFileSync(path.join(DATA, "spotify-popularity.json"), JSON.stringify(popHist));
-      log(`✓ popularity: ${Object.keys(popHist).length} lagu tersimpan (${nPop} titik baru)`);
-    } else {
-      log("! popularity dilewati — tidak ada token Spotify");
-    }
-  } catch (e) {
-    log("! popularity gagal:", String(e).slice(0, 140));
-  }
-
   /* --- 13. simpan --- */
   fs.writeFileSync(path.join(DATA, "spotify-tracks.json"), JSON.stringify(newTracks));
   fs.writeFileSync(path.join(DATA, "spotify-albums.json"), JSON.stringify(newAlbums, null, 1));
@@ -755,7 +716,6 @@ async function main() {
     duration_sec: now() - t0,
     note: CONFIG.site.schema_note_spotify || "",
     has_followers: Object.keys(followersMap).length > 0,
-    has_popularity: (() => { try { return Object.keys(JSON.parse(fs.readFileSync(path.join(DATA, "spotify-popularity.json"), "utf8") || "{}")).length > 0; } catch { return false; } })(),
   };
   fs.writeFileSync(path.join(DATA, "spotify-meta.json"), JSON.stringify(meta, null, 1));
   fs.writeFileSync(path.join(DATA, "spotify-release-dates.json"), JSON.stringify(releaseDates));
