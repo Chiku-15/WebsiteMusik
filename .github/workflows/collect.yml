@@ -2,13 +2,23 @@ name: Kumpulkan data (YouTube + Spotify)
 
 on:
   schedule:
-    # 00:00 UTC = 07:00 WIB  |  12:00 UTC = 19:00 WIB
-    - cron: "0 0 * * *"
-    - cron: "0 12 * * *"
-  workflow_dispatch: # tombol jalankan manual di tab Actions
+    # Setiap jam (WIB = UTC+7) — supaya grafik "1 hari" di situs bisa menampilkan
+    # batang per jam (~24 batang). Kwantitas API YouTube tetap aman: ± 5 unit/run.
+    - cron: "0 * * * *"
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Mode koleksi — 'wayback-mass' = tarik riwayat nyata semua video dari arsip Wayback Machine (jalankan 1–2 jam, aman diulang bila terputus)"
+        required: false
+        default: normal
+        type: choice
+        options:
+          - normal
+          - wayback-mass
 
 permissions:
   contents: write
+  pages: write
 
 concurrency:
   group: collect-data
@@ -17,7 +27,10 @@ concurrency:
 jobs:
   collect:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    # mode wayback-mass menarik ±40 snapshot × 81 video dari web.archive.org (~2 jam);
+    # jeda sopan antar permintaan membuatnya lambat, jadi batas waktunya dilonggar.
+    # Putaran normal biasanya selesai < 10 menit — batas ini hanya pagarnya.
+    timeout-minutes: 300
     steps:
       - name: Ambil kode
         uses: actions/checkout@v4
@@ -28,11 +41,20 @@ jobs:
           node-version: "20"
 
       - name: Kumpulkan data YouTube
+        id: yt
         env:
-          YT_API_KEY: ${{ secrets.YT_API_KEY }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          # Opsional - isi 2 secret ini untuk notifikasi Telegram (video baru & alert koleksi gagal):
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          WAYBACK_MASS: ${{ github.event.inputs.mode == 'wayback-mass' && '1' || '' }}
         run: node collect.js
+        # Kalau YouTube gagal (API key hilang / jaringan), Spotify tetap jalan dan
+        # data apa pun yang berhasil dikumpulkan tetap disimpan — situs tidak macet.
+        continue-on-error: true
 
       - name: Kumpulkan data Spotify (kworb + embed)
+        id: sp
         env:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
@@ -41,8 +63,25 @@ jobs:
         # update data YouTube tetap jalan (data Spotify menunggu putaran berikutnya).
         continue-on-error: true
 
+      - name: Kumpulkan data sosial media, chart, berita & anomali
+        id: soc
+        run: node collect_social.js
+        # Semua sumber di sini best-effort tanpa API key (Instagram/X/TikTok sering
+        # membatasi IP — angka terakhir tetap dipakai; Billboard/Genie/berita biasanya aman).
+        # Rate-limit internal: sosial 6 jam, Billboard 12 jam, chart Korea 6 jam, berita 1 jam.
+        continue-on-error: true
+
       - name: Simpan data ke repo
+        id: simpan
+        if: always()
         run: |
+          echo "Hasil putaran ini: YouTube=${{ steps.yt.outcome }} Spotify=${{ steps.sp.outcome }} Sosial=${{ steps.soc.outcome }}"
+          if [ "${{ steps.yt.outcome }}" = "failure" ] && [ "${{ steps.sp.outcome }}" = "failure" ]; then
+            echo "::error::Kedua kolektor gagal — tidak ada data baru untuk disimpan."
+          fi
+          if [ "${{ steps.yt.outcome }}" = "failure" ]; then
+            echo "::warning::Langkah YouTube gagal. Penyebab paling sering: secret YOUTUBE_API_KEY kosong/hilang (cek Settings → Secrets and variables → Actions) atau YouTube menolak permintaan."
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/ config.json
@@ -50,6 +89,7 @@ jobs:
             echo "Tidak ada perubahan data."
           else
             git commit -m "data: update $(TZ=Asia/Jakarta date +'%d %b %Y %H:%M WIB')"
+            echo "changed=1" >> "$GITHUB_OUTPUT"
           fi
           # Repo bisa saja berubah saat run berjalan (mis. file situs diunggah bersamaan).
           # Tarik + rebase dulu supaya push tidak ditolak "(fetch first)", lalu dorong.
@@ -68,3 +108,25 @@ jobs:
             echo "::error::Push tetap gagal setelah 3 percobaan."
             exit 1
           fi
+
+      # Kadang ada dua push ke main beruntun (mis. data bot + upload manual)
+      # dan build "pages build and deployment" saling membatalkan
+      # ("Canceling since a higher priority waiting request ... exists") sampai
+      # tidak ada yang men-deploy — situs pun tetap memuat data lama.
+      # Solusi: setelah jeda, minta satu build Pages secara eksplisit lewat API
+      # supaya data terbaru pasti tayang.
+      - name: Pastikan GitHub Pages ikut ter-deploy
+        if: ${{ steps.simpan.outputs.changed == '1' }}
+        run: |
+          sleep 75
+          for i in 1 2 3; do
+            if gh api -X POST "repos/${{ github.repository }}/pages/builds" >/dev/null 2>&1; then
+              echo "Build GitHub Pages diminta ulang — data terbaru akan segera tayang."
+              exit 0
+            fi
+            echo "Gagal meminta build Pages (percobaan $i/3), coba lagi dalam 10 detik..."
+            sleep 10
+          done
+          echo "::warning::Tidak bisa meminta build Pages lewat API. Kalau situs belum memuat data terbaru, buka run “pages build and deployment” terakhir di tab Actions lalu klik Re-run jobs (atau push satu commit kecil ke main)."
+        env:
+          GH_TOKEN: ${{ github.token }}
