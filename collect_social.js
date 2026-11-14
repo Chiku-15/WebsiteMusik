@@ -419,12 +419,22 @@ function parseRss(xml) {
     const dM = /<pubDate>([\s\S]*?)<\/pubDate>/.exec(b) || /<updated>([\s\S]*?)<\/updated>/.exec(b);
     const descM = /<description>(?:<!\[CDATA\[)?([\s\S]{0,400}?)(?:\]\]>)?<\/description>/.exec(b)
       || /<content:encoded>(?:<!\[CDATA\[)?([\s\S]{0,400}?)(?:\]\]>)?<\/content:encoded>/.exec(b);
+    /* thumbnail berita: enclosure gambar → media:content/thumbnail → <img> di content/description */
+    const cFull = /<content:encoded>(?:<!\[CDATA\[)?([\s\S]*?)(?:\]\]>)?<\/content:encoded>/.exec(b);
+    const iM = /<enclosure[^>]*url="([^"]+)"[^>]*type="image\/[^"]*"/.exec(b)
+      || /<enclosure[^>]*type="image\/[^"]*"[^>]*url="([^"]+)"/.exec(b)
+      || /<media:content[^>]*url="([^"]+)"[^>]*medium="image"/.exec(b)
+      || /<media:content[^>]*medium="image"[^>]*url="([^"]+)"/.exec(b)
+      || /<media:thumbnail[^>]*url="([^"]+)"/.exec(b)
+      || (cFull && /<img[^>]*\bsrc=["']([^"']*\.(?:jpe?g|png|webp)[^"']*)["']/.exec(cFull[1]))
+      || /<img[^>]*\bsrc=["']([^"']*\.(?:jpe?g|png|webp)[^"']*)["']/.exec(b);
     if (!tM || !lM) continue;
     out.push({
       title: decodeEntities(tM[1].replace(/<[^>]+>/g, "")).trim(),
       link: lM[1].trim(),
       t: dM ? Math.floor(new Date(dM[1].trim()).getTime() / 1000) || null : null,
       desc: descM ? decodeEntities(descM[1].replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim().slice(0, 220) : "",
+      img: iM ? decodeEntities(iM[1]).trim() : "",
     });
   }
   return out;
@@ -445,9 +455,20 @@ async function collectNews() {
         if (feed.filter && !RE_TARGET.test(hay)) continue;
         const key = it.link.replace(/[?#].*$/, "");
         const prev = byLink.get(key);
-        if (!prev || (it.t && prev.t && it.t > prev.t)) {
-          byLink.set(key, { t: it.t || (prev && prev.t) || now(), title: it.title, link: it.link, desc: it.desc, source: feed.source });
+        if (!prev) {
+          byLink.set(key, { t: it.t || now(), title: it.title, link: it.link, desc: it.desc, img: it.img || "", source: feed.source });
           n++;
+        } else {
+          /* gabungkan: img/desc selalu ikut versi feed terbaru (feed = sumber resmi),
+           * naikkan t bila feed lebih baru */
+          const upd = { ...prev };
+          if (it.img) upd.img = it.img;
+          if (it.desc && !upd.desc) upd.desc = it.desc;
+          if (it.t && prev.t && it.t > prev.t) {
+            upd.t = it.t; upd.title = it.title;
+            upd.desc = it.desc || prev.desc; upd.img = it.img || prev.img;
+          }
+          byLink.set(key, upd);
         }
       }
       log(`berita ${feed.source}: ${items.length} entri, ${n} diterima`);
@@ -457,6 +478,22 @@ async function collectNews() {
     await sleep(1200);
   }
   news.items = [...byLink.values()].sort((a, b) => (b.t || 0) - (a.t || 0)).slice(0, 60);
+  /* og:image untuk entri tanpa thumbnail (feed Soompi tidak menyertakan gambar apa pun).
+   * Maks 10 halaman per putaran; hasil tersimpan permanen di news.json sehingga
+   * putaran berikutnya tinggal melanjutkan sisanya. */
+  const ogNeed = news.items.filter((x) => !x.img).slice(0, 10);
+  let ogOk = 0;
+  for (const it of ogNeed) {
+    try {
+      const html = await fetchText(it.link, {}, 1, 15000);
+      const m = /<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/.exec(html)
+        || /<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/.exec(html)
+        || /<meta[^>]*name=["']twitter:image(?::src)?["'][^>]*content=["']([^"']+)["']/.exec(html);
+      if (m) { it.img = decodeEntities(m[1]).trim(); ogOk++; }
+    } catch {}
+    await sleep(700);
+  }
+  if (ogNeed.length) log(`og:image: ${ogOk}/${ogNeed.length} thumbnail diisi`);
   news.updated = now();
   writeJSON("news.json", news);
   return news;
@@ -522,7 +559,7 @@ function collectAnomalies() {
 /* ---------------- info schema ---------------- */
 const SOCIAL_INFO = "Follower sosial media per grup. Sumber: Instagram (web_profile_info/og:meta — angka meta dibulatkan, ditandai aprox), X via mirror Nitter, TikTok via halaman profil. Bisa diisi manual lewat data/social-override.json (src=manual). Weverse tidak mempublikasikan follower via web. Semua sumber best-effort: kalau gagal, angka terakhir tetap dipakai.";
 const CHARTS_INFO = "Posisi lagu artis di chart. Billboard Global 200 & Global Excl. US (mingguan) dari halaman chart billboard.com; Melon Top 100, Genie Top 200 & Bugs Top 100 (harian) dari halaman chart masing-masing. Titik hanya direkam saat lagu artis masuk chart. Riwayat pencapaian dari debut ada di data/chart-history.json (kurasi manual). Melon sering menolak IP datacenter — bila lastError terisi, sumber sedang tidak tersedia.";
-const NEWS_INFO = "Berita terbaru yang menyebut BABYMONSTER/TREASURE, dari RSS Soompi, Koreaboo, dan tag Kbizoom per artis. Dedupe per tautan, maksimum 60 entri.";
+const NEWS_INFO = "Berita terbaru yang menyebut BABYMONSTER/TREASURE, dari RSS Soompi, Koreaboo, dan tag Kbizoom per artis. Dedupe per tautan, maksimum 60 entri. Setiap entri menyertakan thumbnail gambar bila tersedia di feed (enclosure/media:content/img artikel).";
 const ANOM_INFO = `Log lonjakan views tak biasa: tambahan views per hari >= ${ANOM_RATIO}x median harian 30 titik sebelumnya (semantik sama dengan fitur 'lonjakan tidak biasa' di halaman Rekor). Satu entri per video per hari.`;
 
 /* ---------------- main ---------------- */

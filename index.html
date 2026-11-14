@@ -237,7 +237,9 @@
   .bdcnt{margin-top:4px;font-size:10.5px;font-weight:800;color:var(--mc,#6a78ff);position:relative}
   .memgo{margin-top:9px;font-size:10px;font-weight:800;letter-spacing:.6px;color:var(--muted);text-transform:uppercase;position:relative}
   .memcard:hover .memgo{color:var(--mc,#6a78ff)}
-  .memava .bdtag{position:absolute;bottom:-4px;right:-4px;background:#f59e0b;color:#fff;border-radius:999px;font-size:9px;font-weight:800;padding:2px 6px;box-shadow:0 2px 8px rgba(0,0,0,.35)}
+  .memava .bdtag{position:absolute;bottom:-4px;right:-4px;background:#f59e0b;color:#fff;border-radius:999px;font-size:9px;font-weight:800;padding:2px 6px;box-shadow:0 2px 8px rgba(0,0,0,.35);z-index:3}
+  /* foto solo anggota (img/members/<slug>.jpg) — di atas inisial; gagal muat → inisial tetap tampil */
+  .memava img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;z-index:2}
   /* foto comeback terakhir di detail profil anggota */
   .memcomeback{margin:16px 0 4px;border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;background:var(--card);transition:border-color .16s}
   .memcomeback:hover{border-color:color-mix(in srgb,var(--artist-color,#6a78ff) 55%,var(--border))}
@@ -246,6 +248,15 @@
   .memcomeback .mcbtx .k{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:1px}
   .memcomeback .mcbtx b{font-size:14.5px;line-height:1.35}
   .memcomeback .mcbtx span{font-size:12px;color:var(--muted)}
+  /* foto solo besar di detail profil anggota */
+  .memphoto{margin:14px 0 4px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card)}
+  .memphoto[data-click]{cursor:pointer;transition:border-color .16s}
+  .memphoto[data-click]:hover{border-color:color-mix(in srgb,var(--artist-color,#6a78ff) 55%,var(--border))}
+  .memphoto img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:center 25%;display:block}
+  .memphoto .mptx{padding:10px 15px;display:flex;flex-direction:column;gap:2px}
+  .memphoto .mptx .k{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:1px}
+  .memphoto .mptx b{font-size:13.5px;line-height:1.4}
+  .memphoto .mptx span{font-size:11.5px;color:var(--muted)}
   .cdlive{font-variant-numeric:tabular-nums}
   .trobadg{display:inline-block;padding:2px 9px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.4px}
   .trobadg.win{background:color-mix(in srgb,#22c55e 16%,transparent);color:#22c55e}
@@ -275,10 +286,12 @@
   .hmseg button.on{background:var(--card2);color:var(--text);box-shadow:var(--shadow)}
   .hm-scroll{overflow-x:auto;padding-bottom:4px}
   .hm-inner{position:relative;display:inline-block;min-width:100%;padding-bottom:2px}
-  .hm-months{display:grid;grid-auto-columns:15px;grid-template-rows:14px;gap:4px;margin-bottom:5px;font-size:10.5px;font-weight:700;color:var(--muted)}
+  .hm-months{display:grid;grid-auto-columns:16px;grid-template-rows:14px;gap:4px;margin-bottom:5px;font-size:10.5px;font-weight:700;color:var(--muted)}
   .hm-months span{white-space:nowrap;align-self:end}
-  .hm-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,15px);grid-auto-columns:15px;gap:4px}
-  .hm-c{width:15px;height:15px;border-radius:4px;cursor:pointer}
+  .hm-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,16px);grid-auto-columns:16px;gap:4px}
+  .hm-c{width:16px;height:16px;border-radius:4px;cursor:pointer}
+  /* penanda tanggal 1 (awal bulan): bingkai tipis di dalam kotak */
+  .hm-c.dom1{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--text) 62%,transparent)}
   .hm-c:hover{outline:1.5px solid var(--text);outline-offset:0}
   .hm-c.blank{visibility:hidden;cursor:default}
   .hm-c.blank:hover{outline:none}
@@ -794,7 +807,9 @@
   .dcard:hover{transform:translateY(-1px);border-color:#a78bfa}
   .dcvr{width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0}
   .dinfo{min-width:0;flex:1}
-  .dnm{font-size:13.5px;font-weight:800;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .dnm{font-size:13.5px;font-weight:800;line-height:1.4;word-break:break-word}
+  /* info venue/tanggal untuk album live/tur — judul panjang dipisah biar rapi */
+  .dvenue{font-size:10.5px;font-weight:700;color:var(--muted);margin-top:2px;letter-spacing:.3px}
   .dsub{font-size:11.5px;color:var(--muted);margin-top:2px}
   .dstr{font-size:12px;margin-top:4px}
   .dstr b{font-variant-numeric:tabular-nums}
@@ -807,10 +822,14 @@
   .newscard .ncsrc i{width:8px;height:8px;border-radius:999px;background:var(--sc,#6a78ff);flex:none}
   .newscard .ncdate{font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
   .newscard .ncdate b{display:block;color:var(--text);font-size:12px;font-weight:800}
-  .newscard .nctitle{font-size:13.5px;font-weight:700;line-height:1.42}
+  .newscard .nctitle{font-size:13.5px;font-weight:700;line-height:1.42;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .newscard .ncdesc{font-size:12px;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .newscard .ncfoot{margin-top:auto;display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding-top:4px}
   .newscard .ncago{font-size:10.5px;color:var(--muted);margin-left:auto;white-space:nowrap}
+  /* thumbnail berita: gambar artikel di atas kartu, fallback inisial sumber */
+  .ncthumbwrap{position:relative;width:100%;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:linear-gradient(135deg,var(--sc,#6a78ff),color-mix(in srgb,var(--sc,#6a78ff) 45%,#0b0f19));flex:none}
+  .ncthumbwrap .ncph{position:absolute;inset:0;display:grid;place-items:center;font-weight:900;font-size:24px;color:#fff;opacity:.92}
+  .ncthumbwrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;z-index:1}
   .anomrow{display:flex;gap:11px;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-left:3px solid #a78bfa;border-radius:12px;padding:10px 13px}
   .anomclick{cursor:pointer;transition:border-color .15s}
   .anomclick:hover{border-color:#a78bfa}
@@ -833,6 +852,10 @@
   .tldate{font:700 11px var(--font);color:var(--muted);margin-left:auto;white-space:nowrap}
   .tlcard>b{font-size:14.5px;line-height:1.35}
   .tldesc{font-size:12.5px;color:var(--muted);line-height:1.55}
+  /* legenda posisi kiri/kanan per grup pada timeline */
+  .tllegend{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:10px;font-size:12px;font-weight:800}
+  .tllegend span{display:inline-flex;align-items:center;gap:6px}
+  .tllegend i{display:inline-block;width:10px;height:10px;border-radius:999px}
   @media (max-width:760px){
     .tlline{left:9px}
     .tlrow,.tlrow.r{width:100%;margin-left:0;padding:8px 0 8px 30px}
@@ -1755,8 +1778,8 @@ function renderMembersPage(sec) {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   let html = `<section style="margin-top:26px">
-    ${pageCloseBar("Profil anggota", "17 anggota BABYMONSTER &amp; TREASURE · klik kartu untuk profil lengkap + foto comeback terakhir", ICO_PEOPLE, "#f472b6")}
-    <p class="note">Umur &amp; hitung mundur ulang tahun dihitung waktu Jakarta · sumber profil: kprofiles.com &amp; fandom wiki resmi tiap grup · <b>klik kartu anggota</b> untuk membuka profil detail dengan foto M/V comeback terakhir grupnya.</p>`;
+    ${pageCloseBar("Profil anggota", "17 anggota BABYMONSTER &amp; TREASURE · klik kartu untuk profil lengkap + foto solo artis", ICO_PEOPLE, "#f472b6")}
+    <p class="note">Umur &amp; hitung mundur ulang tahun dihitung waktu Jakarta · sumber profil: kprofiles.com &amp; fandom wiki resmi tiap grup · <b>klik kartu anggota</b> untuk membuka profil detail dengan foto solo artis (bukan thumbnail M/V).</p>`;
   for (const gid of ["babymonster", "treasure"]) {
     const g = G[gid];
     if (!g) continue;
@@ -1769,10 +1792,11 @@ function renderMembersPage(sec) {
       const dd = nb ? Math.round((new Date(nb.date + "T00:00:00") - today) / 86400000) : null;
       const age = Math.floor((today - new Date(m.bd + "T00:00:00")) / (365.25 * 86400000));
       const ini = m.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+      const slug = memSlug(m.name);
       const isBd = dd === 0;
       const soon = dd != null && dd > 0 && dd <= 30;
       return `<div class="memcard" style="--mc:${color}" data-mem="${esc(gid)}:${esc(m.name)}" tabindex="0" role="button" aria-label="Detail profil ${esc(m.name)}">
-        <div class="memava">${ini}${isBd ? '<span class="bdtag">ULTAH</span>' : ""}</div>
+        <div class="memava">${ini}<img src="img/members/${slug}.jpg" alt="Foto ${esc(m.name)}" loading="lazy" onerror="this.remove()">${isBd ? '<span class="bdtag">ULTAH</span>' : ""}</div>
         <div class="nm">${esc(m.name)}</div>
         <div class="rl">${esc(m.real || "")}</div>
         <div class="rl" style="margin-top:1px">${esc(m.nat || "")}</div>
@@ -1793,7 +1817,9 @@ function renderMembersPage(sec) {
   });
   startCountdownTick();
 }
-/* ---- detail profil anggota (overlay) + foto comeback terakhir grupnya ---- */
+/* ---- detail profil anggota (overlay) + foto solo artis ---- */
+/* nama file foto anggota: lowercase tanpa spasi/tanda, mis. "Pharita" → img/members/pharita.jpg */
+function memSlug(n) { return String(n || "").toLowerCase().replace(/[^a-z0-9]/g, ""); }
 function openMemberDetail(key) {
   const [gid, name] = key.split(":");
   const g = state.members && state.members.groups[gid];
@@ -1808,24 +1834,26 @@ function openMemberDetail(key) {
   const debutAge = Math.max(0, Math.floor((new Date(g.debut + "T00:00:00") - bd) / (365.25 * 86400000)));
   const nb = nextYearly(m.bd);
   const dd = nb ? Math.round((new Date(nb.date + "T00:00:00") - today) / 86400000) : null;
-  /* foto comeback terakhir = M/V terbaru grup yang terekam di data pantauan */
+  /* foto solo artis: img/members/<slug>.jpg (inisial sebagai fallback bila file tidak ada) */
+  const slug = memSlug(m.name);
+  /* comeback terakhir grup = M/V terbaru yang terekam di data pantauan (keterangan di bawah foto) */
   const mv = allVideosFlat().filter((v) => v.art.id === gid && /m\/v\s*$/i.test(v.title.trim()))
     .sort((x, y) => (y.published || "").localeCompare(x.published || ""))[0];
   const stat = (k, v) => `<div class="dstat"><div class="k">${k}</div><div class="v">${v}</div></div>`;
   $("#sheet").innerHTML = `
     <button class="close" id="closeBtn" aria-label="Tutup">✕</button>
     <div class="dhead" style="--artist-color:${color}">
-      <div class="memava" style="--mc:${color};width:86px;height:86px;font-size:27px;margin:0">${m.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase()}</div>
+      <div class="memava" style="--mc:${color};width:86px;height:86px;font-size:27px;margin:0">${m.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase()}<img src="img/members/${slug}.jpg" alt="Foto ${esc(m.name)}" onerror="this.remove()"></div>
       <div style="min-width:0">
         <div class="dtitle">${esc(m.name)} <span class="apill" style="background:${color}">${esc(art.name || g.name)}</span></div>
         <div class="dsub">${m.real ? esc(m.real) : ""}${m.nat ? " · " + esc(m.nat) : ""}</div>
         <div class="dbadges" style="margin-top:8px">${(m.pos || []).map((p) => `<span class="dbadge"><b>${esc(p)}</b></span>`).join("")}</div>
       </div>
     </div>
-    ${mv ? `<div class="memcomeback" style="--artist-color:${color}" id="memCv" tabindex="0" role="button" aria-label="Buka grafik ${esc(mv.title)}">
-      <img src="https://i.ytimg.com/vi/${mv.id}/maxresdefault.jpg" alt="Foto comeback terakhir ${esc(art.name || g.name)}" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/${mv.id}/hqdefault.jpg'">
-      <div class="mcbtx"><div class="k">Foto comeback terakhir ${esc(art.name || g.name)}</div><b>${esc(mv.title)}</b><span>M/V dirilis ${fmtDate(mv.published)} · ${fmtCompact((mv.history && mv.history.length ? mv.history[mv.history.length - 1].v : 0))} views · klik untuk buka grafik video</span></div>
-    </div>` : ""}
+    <div class="memphoto" style="--artist-color:${color}"${mv ? ' data-click="1" id="memCv" tabindex="0" role="button" aria-label="Buka grafik video comeback terakhir"' : ""}>
+      <img src="img/members/${slug}.jpg" alt="Foto solo ${esc(m.name)}" onerror="this.closest('.memphoto').style.display='none'">
+      <div class="mptx"><div class="k">Foto solo ${esc(m.name)} · ${esc(art.name || g.name)}</div><b>${mv ? esc(mv.title) : "Foto comeback terakhir"}</b><span>${mv ? `M/V terbaru grup · dirilis ${fmtDate(mv.published)} · ${fmtCompact((mv.history && mv.history.length ? mv.history[mv.history.length - 1].v : 0))} views · klik foto untuk buka grafik video` : "foto solo artis — arsip foto comeback/press"}</span></div>
+    </div>
     <div class="dhero">
       ${stat("Lahir", fmtDate(m.bd))}
       ${stat("Umur", age + " tahun")}
@@ -1834,7 +1862,7 @@ function openMemberDetail(key) {
       ${stat("Ultah berikutnya", dd === 0 ? "HARI INI" : dd != null ? NF.format(dd) + " hari lagi" : "–")}
       ${stat("Debut grup", fmtDate(g.debut))}
     </div>
-    <p class="note">Profil dari kprofiles.com &amp; fandom wiki resmi. Foto = thumbnail M/V terbaru grup di YouTube menurut data pantauan situs ini. Umur, umur saat debut &amp; hitung mundur ulang tahun dihitung waktu Jakarta.</p>`;
+    <p class="note">Profil dari kprofiles.com &amp; fandom wiki resmi. Foto = foto solo artis (arsip foto comeback/press — tersimpan di img/members/, bukan thumbnail M/V). Umur, umur saat debut &amp; hitung mundur ulang tahun dihitung waktu Jakarta.</p>`;
   $("#overlay").classList.add("open");
   document.body.style.overflow = "hidden";
   state.detailMode = { type: "member", id: key };
@@ -2311,6 +2339,22 @@ function renderChartsPage(sec) {
 }
 
 /* ---------- halaman Diskografi ---------- */
+/* rapikan judul panjang (album live/tur): pisah judul pendek + baris info venue/tanggal */
+function diskoSplit(al) {
+  let nm = (al.name || "").trim();
+  let venue = "";
+  if (al.type === "live") {
+    const tM = /～([^～]+)～/.exec(nm);
+    if (tM) { venue = tM[1].trim(); nm = nm.replace(/～[^～]+～/g, " ").trim(); }
+    else { const cM = /^(.*?)\s*[:：]\s*(LIVE\s*.+)$/i.exec(nm); if (cM) { nm = cM[1].trim(); venue = cM[2].trim(); } }
+    nm = nm.replace(/^\d{4}\s+/, "").replace(/^(BABYMONSTER|TREASURE)\s+/i, "").trim();
+    venue = venue.replace(/(\d{4})\.(\d{2})\.(\d{2})\s*/, (s, y, mo, d) => {
+      const MO = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+      return `${parseInt(d, 10)} ${MO[parseInt(mo, 10) - 1] || mo} ${y} · `;
+    });
+  }
+  return { nm: nm || al.name, venue };
+}
 function gotoAlbum(id) {
   const open = () => openSpAlbum(id);
   if (state.platform !== "spotify") { setPlatform("spotify").then(open); return; }
@@ -2342,10 +2386,12 @@ function renderDiscoPage(sec) {
       const dly = rows.reduce((s, tr) => s + spTrackDaily(tr), 0);
       const age = al.releaseDate ? Math.floor((nowT - new Date(al.releaseDate + "T00:00:00").getTime() / 1000) / 86400) : null;
       const typ = SP_TYPE[al.type] || (al.type || "");
+      const { nm: alNm, venue: alVenue } = diskoSplit(al);
       return `<div class="dcard" data-alb="${esc(al.id)}" tabindex="0" role="button" aria-label="${esc(al.name)}">
         ${al.cover ? `<img class="dcvr" src="${esc(al.cover)}" alt="" onerror="this.style.visibility='hidden'">` : `<div class="dcvr" style="display:grid;place-items:center;font-size:22px;color:var(--muted)">♪</div>`}
         <div class="dinfo">
-          <div class="dnm">${esc(al.name)}${typ ? `<span class="typetag${al.type === "live" ? " live" : ""}">${typ}</span>` : ""}</div>
+          <div class="dnm">${esc(alNm)}${typ ? `<span class="typetag${al.type === "live" ? " live" : ""}">${typ}</span>` : ""}</div>
+          ${alVenue ? `<div class="dvenue">${esc(alVenue)}</div>` : ""}
           <div class="dsub">${al.releaseDate ? fmtDate(al.releaseDate) : "tanggal tidak diketahui"}${age != null && age >= 0 ? ` · ${NF.format(age)} hari lalu` : ""} · ${(al.tracks || []).length} lagu</div>
           <div class="dstr"><b>${tot > 0 ? fmtCompact(tot) : "–"}</b> stream${dly > 0 ? ` · +${fmtCompact(dly)}/hari` : ""}</div>
         </div>
@@ -2391,8 +2437,12 @@ function renderNewsPage(sec) {
     const pills = [RE_BM.test(`${it.title} ${it.desc}`) ? ["BABYMONSTER", "#ff4d6d"] : null, RE_TR.test(`${it.title} ${it.desc}`) ? ["TREASURE", "#38bdf8"] : null].filter(Boolean)
       .map(([nm, cc]) => `<span class="apill" style="background:${cc}">${nm}</span>`).join("");
     const desc = it.desc && it.desc.length > 4 ? `<div class="ncdesc">${esc(it.desc)}</div>` : "";
+    /* thumbnail berita: gambar dari feed/og:image (tersimpan di news.json); gagal muat → inisial sumber di bawahnya.
+     * referrerpolicy=no-referrer penting: sebagian CDN (mis. kbizoom) menolak gambar bila Referer dari situs lain (403). */
+    const thumb = `<div class="ncthumbwrap">${it.img ? `<img src="${esc(it.img)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}<span class="ncph">${esc((it.source || "RSS")[0].toUpperCase())}</span></div>`;
     return `<a class="newscard" href="${esc(it.link)}" target="_blank" rel="noopener" style="--sc:${sc}">
       <div class="nctop"><span class="ncsrc"><i></i>${esc(it.source || "RSS")}</span><span class="ncdate">${it.t ? `<b>${fmtDate(isoDate(it.t))}</b>${agoTxt(it.t)}` : "–"}</span></div>
+      ${thumb}
       <div class="nctitle">${esc(it.title)}</div>
       ${desc}
       <div class="ncfoot">${pills}<span class="ncago">buka berita ↗</span></div>
@@ -2401,7 +2451,7 @@ function renderNewsPage(sec) {
   sec.innerHTML = head + `
     <div class="mtabs" style="margin:2px 2px 12px">${chip("all", "Semua", state.news.items.length)}${chip("bm", "BABYMONSTER", nBM)}${chip("trs", "TREASURE", nTR)}</div>
     ${cards ? `<div class="newsgrid">${cards}</div>` : `<div class="banner">Tidak ada berita pada filter ini.</div>`}
-    <p class="note">Sumber: RSS publik Soompi, Koreaboo &amp; tag Kbizoom per artis — difilter otomatis, dedupe per tautan, maksimum 60 entri terakhir. Tanggal di pojok kanan atas kartu = tanggal publikasi berita (WIB); klik kartu untuk membuka berita di tab baru.</p>`;
+    <p class="note">Sumber: RSS publik Soompi, Koreaboo &amp; tag Kbizoom per artis — difilter otomatis, dedupe per tautan, maksimum 60 entri terakhir. Thumbnail = gambar dari feed (enclosure/media:content) atau og:image artikel; huruf besar = inisial sumber bila gambar tidak tersedia. Tanggal di pojok kanan atas kartu = tanggal publikasi berita (WIB); klik kartu untuk membuka berita di tab baru.</p>`;
   bindPageClose(sec);
   sec.querySelectorAll("[data-nf]").forEach((b) => {
     b.addEventListener("click", () => { state.newsFilter = b.dataset.nf; renderNewsPage(sec); });
@@ -2498,8 +2548,11 @@ function renderTimelinePage(sec) {
   const rows = items.map((it, i) => {
     const tp = TL_TYPES[it.t] || TL_TYPES.event;
     const art = it.a === "bm" ? { n: "BABYMONSTER", c: "#ff4d6d" } : { n: "TREASURE", c: "#38bdf8" };
+    /* arah kartu: filter "kedua grup" → TREASURE selalu di KIRI & BABYMONSTER selalu di KANAN garis
+     * tengah supaya posisi tiap grup terbaca jelas; filter satu grup → kartu bergantian kiri-kanan */
+    const side = f === "all" ? (it.a === "bm" ? "r" : "l") : (i % 2 ? "r" : "l");
     return `
-    <div class="tlrow ${i % 2 ? "r" : "l"}">
+    <div class="tlrow ${side}">
       <div class="tldot" style="--c:${tp.c}"></div>
       <div class="tlcard" style="--ac:${art.c}">
         <div class="tltop"><span class="tltype" style="background:${tp.c}">${tp.label}</span><span class="tlart" style="background:${art.c}">${art.n}</span><span class="tldate">${tlDateTxt(it.d)}</span></div>
@@ -2510,8 +2563,9 @@ function renderTimelinePage(sec) {
   }).join("");
   sec.innerHTML = head + `
     <div class="mtabs">${chip("all", "Kedua grup", ALLTL.length)}${chip("bm", "BABYMONSTER", nBM)}${chip("trs", "TREASURE", nTR)}</div>
+    ${f === "all" ? `<div class="tllegend"><span style="color:#38bdf8"><i style="background:#38bdf8"></i>TREASURE — kartu di KIRI</span><span style="color:#ff4d6d"><i style="background:#ff4d6d"></i>BABYMONSTER — kartu di KANAN</span></div>` : ""}
     <div class="tlwrap"><div class="tlline"></div>${rows}</div>
-    <p class="note">Tanggal rilis &amp; peristiwa dikurasi manual dari Wikipedia resmi tiap grup (en.wikipedia.org/wiki/Babymonster · /wiki/Treasure_(band)) + sumber publik (Soompi, Forbes, KGMA/MAMA). Tanggal bertanda bulan saja berarti tanggal pastinya tidak pernah diumumkan resmi. M/V baru yang muncul di pantauan tapi belum ada di daftar statis <b>ditambahkan otomatis</b> saat halaman dibuka; rilisan penting selanjutnya tinggal ditambahkan ke konstanta TIMELINE di index.html.</p>`;
+    <p class="note">Tanggal rilis &amp; peristiwa dikurasi manual dari Wikipedia resmi tiap grup (en.wikipedia.org/wiki/Babymonster · /wiki/Treasure_(band)) + sumber publik (Soompi, Forbes, KGMA/MAMA). Tanggal bertanda bulan saja berarti tanggal pastinya tidak pernah diumumkan resmi. Pada filter <b>Kedua grup</b>, kartu TREASURE selalu berada di kiri garis &amp; BABYMONSTER di kanan garis. M/V baru yang muncul di pantauan tapi belum ada di daftar statis <b>ditambahkan otomatis</b> saat halaman dibuka; rilisan penting selanjutnya tinggal ditambahkan ke konstanta TIMELINE di index.html.</p>`;
   bindPageClose(sec);
   sec.querySelectorAll("[data-tf]").forEach((b) => {
     b.addEventListener("click", () => { state.tlFilter = b.dataset.tf; renderTimelinePage(sec); });
@@ -4069,7 +4123,24 @@ const HM_WDAY = new Intl.DateTimeFormat("id-ID", { weekday: "short", timeZone: "
 const HM_DATE_LONG = new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 const HM_DATE_SHORT = new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", timeZone: "UTC" });
 const HM_ICO = "M3 3h4v4H3V3zm7 0h4v4h-4V3zm7 0h4v4h-4V3zM3 10h4v4H3v-4zm7 0h4v4h-4v-4zm7 0h4v4h-4v-4zM3 17h4v4H3v-4zm7 0h4v4h-4v-4zm7 0h4v4h-4v-4z";
-let HM_RANGE = (() => { try { return JSON.parse(localStorage.getItem("py.hmrange") || "{}") || {}; } catch { return {}; } })();
+let HM_RANGE = (() => {
+  let v = {};
+  try { v = JSON.parse(localStorage.getItem("py.hmrange") || "{}") || {}; } catch {}
+  /* migrasi: nilai lama berupa jumlah minggu (26/52) → dibuang, sekarang pakai tahun kalender */
+  if (v) { for (const k of ["yt", "spotify"]) if (v[k] != null && (v[k] < 2000 || v[k] > 2100)) delete v[k]; }
+  return v || {};
+})();
+/* tahun debut grup — daftar tab tahun mulai dari sini (TREASURE 2020, BABYMONSTER 2023) */
+const HM_DEBUT = { babymonster: 2023, treasure: 2020 };
+function hmYear(plat) {
+  const y = HM_RANGE.year && HM_RANGE.year[plat];
+  /* clamp ke rentang tab artis terpilih supaya tahun tampilan selalu punya tab aktif */
+  const artSel = (HM_RANGE.art && HM_RANGE.art[plat]) || "";
+  const debY = artSel && HM_DEBUT[artSel] ? HM_DEBUT[artSel] : Math.min(HM_DEBUT.babymonster, HM_DEBUT.treasure);
+  const curY = new Date().getFullYear();
+  if (y >= 2000 && y <= 2100) return Math.min(Math.max(y, debY), curY);
+  return curY;
+}
 function hmUnit(plat) { return plat === "spotify" ? "stream" : "view"; }
 function hmUnitPl(plat) { return plat === "spotify" ? "stream" : "views"; }
 function hmAccent(plat) { return plat === "spotify" ? "#1ed760" : "#ff4d6d"; }
@@ -4078,32 +4149,32 @@ function hmHexA(hex, a) {
   return "rgba(" + ((n >> 16) & 255) + "," + ((n >> 8) & 255) + "," + (n & 255) + "," + a + ")";
 }
 function hmLvA(lv) { return lv <= 0 ? 0.16 : 0.18 + lv * 0.19; }
-/* delta harian gabungan semua lagu/video = selisih nilai akhir hari vs hari sebelumnya.
+/* delta harian gabungan semua lagu/video untuk rentang hari [startIdx..endIdx] (satu tahun kalender).
  * - Hari pertama tiap lagu tidak dihitung (delta belum diketahui) supaya video/lagu baru
  *   tidak membuat lonjakan palsu berupa seluruh angka totalnya.
  * - Jika jarak antar pengukuran lebar (mis. jangkar milestone resmi berjarak ratusan hari),
- *   selisihnya dibagi rata ke semua hari di jarak itu agar tidak ada lonjakan palsu di satu hari. */
-function hmSeries(plat, weeks, artId) {
+ *   selisihnya dibagi rata ke semua hari di jarak itu agar tidak ada lonjakan palsu di satu hari.
+ * - earliest = hari pengukuran paling tua di data (di luar rentang pun dihitung) untuk keterangan
+ *   "pencatatan dimulai ..." pada tahun sebelum data ada. */
+function hmSeries(plat, startIdx, endIdx, artId) {
   const items = plat === "spotify"
     ? Object.values(state.sp.tracks || {}).filter((t) => t.history && t.history.length && (!artId || t.artistId === artId))
     : allVideosFlat().filter((v) => !artId || v.art.id === artId).map((v) => ({ history: v.history }));
-  const nowIdx = dayIndexOf(Date.now() / 1000);
-  /* weekday dari TANGGAL WIB-nya (bukan instan tsOfDayIndex yang bergeser -7 jam) */
-  const dowNow = (new Date(dateKeyOfDayIndex(nowIdx) + "T00:00:00Z").getUTCDay() + 6) % 7; // 0=Senin
-  const startIdx = nowIdx - dowNow - (weeks - 1) * 7;
   const gain = new Map(), cum = new Map();
+  let earliest = null;
   for (const it of items) {
     const days = daysFromHistory(it.history, "v");
     for (let i = 0; i < days.length; i++) {
       const idx = dayIndexOf(days[i].t);
-      if (idx < startIdx || idx > nowIdx) continue;
+      if (earliest == null || idx < earliest) earliest = idx;
+      if (idx < startIdx || idx > endIdx) continue;
       cum.set(idx, (cum.get(idx) || 0) + (days[i].v || 0));
       if (i === 0) continue;
       const g = Math.max(0, (days[i].v || 0) - (days[i - 1].v || 0));
       const pIdx = dayIndexOf(days[i - 1].t);
       const span = Math.max(1, idx - pIdx);
       const diWin = [];
-      for (let j = 1; j <= span; j++) { const di = pIdx + j; if (di >= startIdx && di <= nowIdx) diWin.push(di); }
+      for (let j = 1; j <= span; j++) { const di = pIdx + j; if (di >= startIdx && di <= endIdx) diWin.push(di); }
       if (!diWin.length) continue;
       const per = Math.floor(g / diWin.length);
       let rem = g - per * diWin.length;
@@ -4114,77 +4185,89 @@ function hmSeries(plat, weeks, artId) {
       }
     }
   }
-  const days = [];
-  for (let i = startIdx; i <= nowIdx; i++) {
-    days.push({ idx: i, g: gain.has(i) ? gain.get(i) : null, c: cum.has(i) ? cum.get(i) : null });
-  }
-  const pos = days.map((d) => d.g).filter((v) => v > 0).sort((a, b) => a - b);
+  const pos = [...gain.values()].filter((v) => v > 0).sort((a, b) => a - b);
   const q = (p) => (pos.length ? pos[Math.min(pos.length - 1, Math.floor(p * pos.length))] : 0);
-  const th = [q(0.25), q(0.5), q(0.75), q(0.92)];
-  for (const d of days) d.lv = d.g == null ? -1 : d.g <= 0 ? 0 : d.g >= th[3] ? 4 : d.g >= th[2] ? 3 : d.g >= th[1] ? 2 : 1;
-  return { days, weeks, startIdx, nowIdx };
+  return { gain, cum, th: [q(0.25), q(0.5), q(0.75), q(0.92)], earliest, startIdx, endIdx };
 }
-function hmBodyHTML(plat, weeks) {
+function hmBodyHTML(plat, year) {
   const acc = hmAccent(plat);
   const unitPl = hmUnitPl(plat);
   const artSel = (HM_RANGE.art && HM_RANGE.art[plat]) || "";
   const artObj = state.config.artists.find((a) => a.id === artSel);
-  const S = hmSeries(plat, weeks, artSel || null);
+  const nowIdx = dayIndexOf(Date.now() / 1000);
+  /* satu peta = tepat satu tahun kalender: 1 Januari s/d 31 Desember (dipotong di hari ini) */
+  const yStart = dayIndexOf(Date.UTC(year, 0, 1) / 1000);
+  const endIdx = Math.min(dayIndexOf(Date.UTC(year, 11, 31) / 1000), nowIdx);
+  const mondayPad = (new Date(Date.UTC(year, 0, 1)).getUTCDay() + 6) % 7; /* 0 = Senin */
+  const gridStart = yStart - mondayPad;
+  const yearLen = Math.round((Date.UTC(year + 1, 0, 1) - Date.UTC(year, 0, 1)) / 86400000);
+  const nCols = Math.ceil((mondayPad + yearLen) / 7);
+  const S = hmSeries(plat, yStart, endIdx, artSel || null);
   /* pilih artis: gabungan / per grup */
   const artChips = `<div class="hm-art"><span style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px">Artis:</span>` +
     `<button type="button" data-hm-a=""${!artSel ? ' class="on"' : ""}>Gabungan</button>` +
     state.config.artists.map((a) => `<button type="button" data-hm-a="${esc(a.id)}"${artSel === a.id ? ` class="on" style="color:${a.color}"` : ""}>${esc(a.name)}</button>`).join("") + `</div>`;
+  /* tab tahun: mulai dari tahun debut grup terpilih (TREASURE 2020 · BABYMONSTER 2023) sampai tahun ini */
+  const debY = artSel === "babymonster" ? HM_DEBUT.babymonster : artSel === "treasure" ? HM_DEBUT.treasure : Math.min(HM_DEBUT.babymonster, HM_DEBUT.treasure);
+  const curY = new Date().getFullYear();
+  const yearBtns = [];
+  for (let y = debY; y <= curY; y++) yearBtns.push(`<button type="button" data-hm-y="${y}"${y === year ? ' class="on"' : ""}>${y}</button>`);
+  const yearSeg = `<div class="hm-art"><span style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px">Tahun:</span>${yearBtns.join("")}</div>`;
   const cells = [];
-  for (let w = 0; w < weeks; w++) {
+  for (let c = 0; c < nCols; c++) {
     for (let r = 0; r < 7; r++) {
-      const idx = S.startIdx + w * 7 + r;
-      if (idx > S.nowIdx) { cells.push('<div class="hm-c blank"></div>'); continue; }
-      const d = S.days[idx - S.startIdx];
-      const st = d.lv < 0 ? "" : ` style="background:${hmHexA(acc, hmLvA(d.lv))}"`;
-      cells.push(`<div class="hm-c${d.lv < 0 ? " nd" : ""}" data-i="${d.idx}" data-g="${d.g == null ? "" : d.g}" data-c="${d.c == null ? "" : d.c}"${st}></div>`);
+      const idx = gridStart + c * 7 + r;
+      if (idx < yStart || idx > endIdx) { cells.push('<div class="hm-c blank"></div>'); continue; }
+      const g = S.gain.has(idx) ? S.gain.get(idx) : null;
+      const cv = S.cum.has(idx) ? S.cum.get(idx) : null;
+      const lv = g == null ? -1 : g <= 0 ? 0 : g >= S.th[3] ? 4 : g >= S.th[2] ? 3 : g >= S.th[1] ? 2 : 1;
+      const st = lv < 0 ? "" : ` style="background:${hmHexA(acc, hmLvA(lv))}"`;
+      /* penanda awal bulan: kotak tanggal 1 diberi bingkai tipis */
+      const dom1 = /-01$/.test(dateKeyOfDayIndex(idx)) ? " dom1" : "";
+      cells.push(`<div class="hm-c${lv < 0 ? " nd" : ""}${dom1}" data-i="${idx}" data-g="${g == null ? "" : g}" data-c="${cv == null ? "" : cv}"${st}></div>`);
     }
   }
-  const months = [];
-  let ms = 0;
-  for (let w = 0; w < weeks; w++) {
-    const mk = monthKeyOfDayIndex(S.startIdx + w * 7);
-    const nxt = w + 1 < weeks ? monthKeyOfDayIndex(S.startIdx + (w + 1) * 7) : null;
-    if (nxt === mk) continue;
-    const span = w - ms + 1;
-    if (span >= 2) months.push(`<span style="grid-column:${ms + 1} / span ${span}">${HM_MONTH.format(new Date(tsOfDayIndex(Math.min(S.startIdx + ms * 7 + 3, S.nowIdx)) * 1000))}</span>`);
-    ms = w + 1;
-  }
+  /* label bulan: setiap label berangkat tepat di kolom (minggu) tempat tanggal 1 bulan itu jatuh */
+  const mCols = [];
+  for (let m = 0; m < 12; m++) mCols.push(Math.floor((dayIndexOf(Date.UTC(year, m, 1) / 1000) - gridStart) / 7));
+  const months = mCols.map((col, m) => {
+    const span = Math.max(1, Math.min((m < 11 ? mCols[m + 1] : nCols) - col, nCols - col));
+    return `<span style="grid-column:${col + 1} / span ${span}">${HM_MONTH.format(new Date(Date.UTC(year, m, 1)))}</span>`;
+  }).join("");
+  /* ringkasan tahun terpilih */
   let tot = 0, busy = null;
-  for (const d of S.days) { if (d.g > 0) { tot += d.g; if (!busy || d.g > busy.g) busy = d; } }
+  for (const [idx, g] of S.gain) { if (g > 0) { tot += g; if (!busy || g > busy.g) busy = { idx, g }; } }
+  const yLbl = artObj ? ` — ${esc(artObj.name)}` : "";
+  const startedTxt = S.earliest != null ? HM_DATE_SHORT.format(new Date(tsOfDayIndex(S.earliest) * 1000)) : null;
   const sumHTML = busy
-    ? `Total ${weeks === 52 ? "1 tahun" : "6 bulan"} terakhir${artObj ? " " + esc(artObj.name) : ""}: <b>+${fmtCompact(tot)}</b> ${unitPl} baru · Hari tersibuk: <b>${HM_DATE_SHORT.format(new Date(tsOfDayIndex(busy.idx) * 1000))}</b> (+${fmtCompact(busy.g)})`
-    : `Belum ada pertumbuhan terekam dalam rentang ini.`;
-  /* ringkasan total per bulan (batang) */
+    ? `Total tahun ${year}${yLbl}: <b>+${fmtCompact(tot)}</b> ${unitPl} baru · Hari tersibuk: <b>${HM_DATE_SHORT.format(new Date(tsOfDayIndex(busy.idx) * 1000))}</b> (+${fmtCompact(busy.g)})`
+    : (startedTxt && S.earliest > endIdx
+      ? `Belum ada data untuk tahun ${year}${yLbl} — pencatatan situs dimulai ${startedTxt}.`
+      : `Belum ada pertumbuhan terekam pada tahun ${year}${yLbl}.`);
+  /* batang total per bulan — selalu 12 kolom Januari–Desember tahun terpilih */
   const mb = new Map();
-  for (const d of S.days) { if (d.g > 0) { const k = monthKeyOfDayIndex(d.idx); mb.set(k, (mb.get(k) || 0) + d.g); } }
-  const mbArr = [...mb.entries()];
+  for (const [idx, g] of S.gain) { if (g > 0) { const k = dateKeyOfDayIndex(idx).slice(0, 7); mb.set(k, (mb.get(k) || 0) + g); } }
+  const mbArr = Array.from({ length: 12 }, (_, m) => {
+    const k = year + "-" + String(m + 1).padStart(2, "0");
+    return [k, mb.get(k) || 0];
+  });
   const mbMax = Math.max(1, ...mbArr.map((x) => x[1]));
-  const monthlyHTML = mbArr.length
-    ? `<div class="hm-months2" style="--acc:${acc}">` + mbArr.map(([k, v]) =>
-      `<div class="hmm" title="${esc(MFULL.format(new Date(k + "-01T00:00:00")))}: +${fmtCompact(v)} ${unitPl}"><i style="height:${Math.max(6, Math.round((v / mbMax) * 58))}px"></i><b>+${fmtCompact(v)}</b><span>${HM_MONTH.format(new Date(k + "-01T00:00:00Z"))}</span></div>`).join("") + `</div>`
-    : "";
+  const monthlyHTML = `<div class="hm-months2" style="--acc:${acc}">` + mbArr.map(([k, v]) =>
+    `<div class="hmm" title="${esc(MFULL.format(new Date(k + "-01T00:00:00")))}: ${v > 0 ? "+" + fmtCompact(v) + " " + unitPl : "tidak ada data"}"><i${v > 0 ? ` style="height:${Math.max(6, Math.round((v / mbMax) * 58))}px"` : ' class="zero"'}></i><b>${v > 0 ? "+" + fmtCompact(v) : "–"}</b><span>${HM_MONTH.format(new Date(k + "-01T00:00:00Z"))}</span></div>`).join("") + `</div>`;
   const legend = [0, 1, 2, 3, 4].map((l) => `<div class="hm-c" style="background:${hmHexA(acc, hmLvA(l))}"></div>`).join("");
   return `
   ${artChips}
+  ${yearSeg}
   <div class="hm-bar">
     <div class="hm-sum">${sumHTML}</div>
-    <div class="hmseg">
-      <button type="button" data-hm-r="26"${weeks === 26 ? ' class="on"' : ""}>6 bulan</button>
-      <button type="button" data-hm-r="52"${weeks === 52 ? ' class="on"' : ""}>1 tahun</button>
-    </div>
   </div>
   <div class="hm-scroll"><div class="hm-inner">
-    <div class="hm-months">${months.join("")}</div>
+    <div class="hm-months">${months}</div>
     <div class="hm-grid">${cells.join("")}</div>
     <div class="hm-tip"></div>
   </div></div>
   ${monthlyHTML}
-  <div class="hm-legend"><span>Kurang</span>${legend}<span>Banyak</span><div class="hm-c nd"></div><span>tanpa data</span></div>`;
+  <div class="hm-legend"><span>Kurang</span>${legend}<span>Banyak</span><div class="hm-c nd"></div><span>tanpa data</span><div class="hm-c dom1"></div><span>tanggal 1</span></div>`;
 }
 /* halaman khusus Peta panas harian — dibuka lewat kartu menu (dulu seksi inline di beranda) */
 function renderHeatmapPage(sec) {
@@ -4193,7 +4276,7 @@ function renderHeatmapPage(sec) {
     ${pageCloseBar("Peta panas harian", `${hmUnit(plat)} baru tiap hari, semua ${plat === "spotify" ? "lagu" : "video"} digabung — bisa difilter per artis`, HM_ICO, hmAccent(plat))}
     <div class="hm-card" style="margin-top:14px">
       <div data-hm-host></div>
-      <p class="note">Setiap kotak = 1 hari kalender WIB · makin terah = ${hmUnit(plat)} baru makin banyak (selisih total antar hari; jika jarak pengukuran lebar, selisih dibagi rata ke harinya) · kotak berbingkai = hari tanpa pengukuran · gunakan pilihan <b>Artis</b> di atas untuk melihat peta panas BABYMONSTER / TREASURE saja · batang di bawah = total pertumbuhan per bulan.</p>
+      <p class="note">Setiap kotak = 1 hari kalender WIB · satu peta = tepat satu tahun kalender (Januari–Desember) — pilih tahun lewat tab <b>Tahun</b>; daftar tahun dimulai dari tahun debut grup (TREASURE 2020 · BABYMONSTER 2023) · <b>bingkai tipis</b> pada kotak = tanggal 1, jadi posisi awal setiap bulan terbaca jelas · makin terah = ${hmUnit(plat)} baru makin banyak (selisih total antar hari; jika jarak pengukuran lebar, selisih dibagi rata ke harinya) · kotak abu = hari tanpa pengukuran · gunakan pilihan <b>Artis</b> untuk melihat peta panas BABYMONSTER / TREASURE saja · batang di bawah = total pertumbuhan tiap bulan Jan–Des tahun terpilih.</p>
     </div>`;
   bindPageClose(sec);
   mountHeatmap(sec, plat);
@@ -4201,8 +4284,8 @@ function renderHeatmapPage(sec) {
 function mountHeatmap(sec, plat) {
   const host = sec.querySelector("[data-hm-host]");
   if (!host) return;
-  const weeks = HM_RANGE[plat] || 26;
-  host.innerHTML = hmBodyHTML(plat, weeks);
+  const year = hmYear(plat);
+  host.innerHTML = hmBodyHTML(plat, year);
   const tip = host.querySelector(".hm-tip");
   const inner = host.querySelector(".hm-inner");
   const unit = hmUnit(plat);
@@ -4235,9 +4318,10 @@ function mountHeatmap(sec, plat) {
     if (c && c !== lastCell) { lastCell = c; show(c); }
     else if (!c || c === lastCell) hide();
   });
-  host.querySelectorAll("[data-hm-r]").forEach((b) => {
+  host.querySelectorAll("[data-hm-y]").forEach((b) => {
     b.addEventListener("click", () => {
-      HM_RANGE[plat] = parseInt(b.dataset.hmR, 10) || 26;
+      HM_RANGE.year = HM_RANGE.year || {};
+      HM_RANGE.year[plat] = parseInt(b.dataset.hmY, 10) || new Date().getFullYear();
       try { localStorage.setItem("py.hmrange", JSON.stringify(HM_RANGE)); } catch {}
       mountHeatmap(sec, plat);
     });

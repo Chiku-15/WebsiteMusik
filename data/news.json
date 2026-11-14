@@ -1,139 +1,158 @@
 {
- "_info": "Berita terbaru yang menyebut BABYMONSTER/TREASURE, dari RSS Soompi, Koreaboo, dan tag Kbizoom per artis. Dedupe per tautan, maksimum 60 entri.",
+ "_info": "Berita terbaru yang menyebut BABYMONSTER/TREASURE, dari RSS Soompi, Koreaboo, dan tag Kbizoom per artis. Dedupe per tautan, maksimum 60 entri. Setiap entri menyertakan thumbnail gambar bila tersedia di feed (enclosure/media:content/img artikel).",
  "items": [
   {
    "t": 1794380375,
    "title": "BLACKPINK’s Jisoo, NCT, And BABYMONSTER Announced For Coachella 2027 Lineup",
    "link": "https://www.soompi.com/article/1885928wpp/blackpinks-jisoo-nct-and-babymonster-announced-for-coachella-2027-lineup",
    "desc": "",
-   "source": "Soompi"
+   "source": "Soompi",
+   "img": "https://0.soompi.io/wp-content/uploads/2026/11/11155827/coachella-1.png"
   },
   {
    "t": 1788771577,
    "title": "YG Entertainment Removes BABYMONSTER’s Rami Symbol From Fan Project, Sparking Heated Reactions",
    "link": "https://kbizoom.com/babymonster-rami-symbol-removed-yg-entertainment-fan-project/",
    "desc": "",
-   "source": "Kbizoom · BABYMONSTER"
+   "source": "Kbizoom · BABYMONSTER",
+   "img": "https://cdn.kbizoom.com/media/2026/02/09023314/4uvqfx71i3ddxptnbvbunpuldmdznjir0otcvymldue-babymonster-rami-future.jpg"
   },
   {
    "t": 1787540934,
    "title": "TREASURE – DANGER Lyrics, Meaning and Song Credits",
    "link": "https://kbizoom.com/treasure-danger-lyrics-meaning-and-song-credits/",
    "desc": "",
-   "source": "Kbizoom · TREASURE"
+   "source": "Kbizoom · TREASURE",
+   "img": "https://cdn.kbizoom.com/media/2026/08/24030744/treasure-danger-lyrics-1-1.webp"
   },
   {
    "t": 1786525854,
    "title": "BABYMONSTER – SUPA DUPA LUV Lyrics, Meaning and Song Credits",
    "link": "https://kbizoom.com/babymonster-supa-dupa-luv-lyrics-meaning-and-song-credits/",
    "desc": "",
-   "source": "Kbizoom · BABYMONSTER"
+   "source": "Kbizoom · BABYMONSTER",
+   "img": "https://cdn.kbizoom.com/media/2026/08/12091028/babymonster-supa-dupa-luv-lyrics.jpg"
   },
   {
    "t": 1785989439,
    "title": "YG Performance Videos Reach 7 Billion Views Worldwide",
    "link": "https://kbizoom.com/yg-performance-videos-7-billion-views/",
    "desc": "",
-   "source": "Kbizoom · BABYMONSTER"
+   "source": "Kbizoom · BABYMONSTER",
+   "img": "https://cdn.kbizoom.com/media/2026/08/06041048/vdducvcrckg.jpg"
   },
   {
    "t": 1785223611,
    "title": "BABYMONSTER’s Ahyeon Sparks Outfit Controversy as Fans Blame Stylist for Wardrobe Mishap",
    "link": "https://kbizoom.com/babymonster-ahyeon-outfit-controversy-seoul-concert-stylist-fans/",
    "desc": "",
-   "source": "Kbizoom · BABYMONSTER"
+   "source": "Kbizoom · BABYMONSTER",
+   "img": "https://cdn.kbizoom.com/media/2026/07/28072159/lontk5ymhwopjyj7-5rk-gi7k3-j4u68pxjhstkdxk4-babymonster-ahyeon-outfit-controversy.jpg"
   },
   {
    "t": 1783394666,
    "title": "YG Entertainment Marks 30th Anniversary: How PSY, BIGBANG, 2NE1, and BLACKPINK Shaped K-Pop",
    "link": "https://kbizoom.com/yg-entertainment-30th-anniversary-kpop-history/",
    "desc": "",
-   "source": "Kbizoom · BABYMONSTER"
+   "source": "Kbizoom · BABYMONSTER",
+   "img": "https://cdn.kbizoom.com/media/2024/01/10071214/yang-hyun-suk-yg-entertainment-thumbnail-012324.jpg"
   },
   {
    "t": 1783070602,
    "title": "BABYMONSTER Members Spark Debate Over Sexy Stage Outfits and Performances",
    "link": "https://kbizoom.com/babymonster-sexy-stage-controversy-ahyeon-chiquita-concert-outfits/",
    "desc": "",
-   "source": "Kbizoom · BABYMONSTER"
+   "source": "Kbizoom · BABYMONSTER",
+   "img": "https://cdn.kbizoom.com/media/2026/07/03091905/xftapxyvpuzj-k2ctw0tpszpydn8c2dpsemuuxz9vw8-babymonster-sexy-stage-controversy.jpg"
   },
   {
    "t": 1783066085,
    "title": "BABYMONSTER – LOCKED IN Lyrics, Meaning and Song Credits",
    "link": "https://kbizoom.com/babymonster-locked-in-lyrics-meaning-and-song-credits/",
    "desc": "",
-   "source": "Kbizoom · BABYMONSTER"
+   "source": "Kbizoom · BABYMONSTER",
+   "img": "https://cdn.kbizoom.com/media/2026/07/03074715/babymonster-locked-in-lyrics-1.jpg"
   },
   {
    "t": 1782790227,
    "title": "TREASURE – 다라리 (DARARI) Lyrics, Meaning and Song Credits",
    "link": "https://kbizoom.com/treasure-darari-lyrics-meaning-and-song-credits/",
    "desc": "",
-   "source": "Kbizoom · TREASURE"
+   "source": "Kbizoom · TREASURE",
+   "img": "https://cdn.kbizoom.com/media/2026/06/30031002/treasure-darari-lyrics-1.webp"
   },
   {
    "t": 1782788296,
    "title": "TREASURE – YELLOW Lyrics, Meaning and Song Credits",
    "link": "https://kbizoom.com/treasure-yellow-lyrics-meaning-and-song-credits/",
    "desc": "",
-   "source": "Kbizoom · TREASURE"
+   "source": "Kbizoom · TREASURE",
+   "img": "https://cdn.kbizoom.com/media/2026/06/30025715/treasure-yellow-lyrics-1.webp"
   },
   {
    "t": 1782786068,
    "title": "TREASURE – 난리나 (NALLY-NA) (HYUNHAYO) Lyrics, Meaning and Song Credits",
    "link": "https://kbizoom.com/treasure-nally-na-hyunhayo-lyrics-meaning-and-song-credits/",
    "desc": "",
-   "source": "Kbizoom · TREASURE"
+   "source": "Kbizoom · TREASURE",
+   "img": "https://cdn.kbizoom.com/media/2026/06/30022055/treasure-nally-na-lyrics-1.jpg"
   },
   {
    "t": 1782700778,
    "title": "BABYMONSTER’s Chiquita Faces Online Debate After Mature Concert Performance Goes Viral",
    "link": "https://kbizoom.com/chiquita-concert-performance-controversy-babymonster-seoul-stage-debate/",
    "desc": "",
-   "source": "Kbizoom · BABYMONSTER"
+   "source": "Kbizoom · BABYMONSTER",
+   "img": "https://cdn.kbizoom.com/media/2026/06/29023736/chiquita-concert-performance-controversy-2026-06-29t01-05-20-000z.jpg"
   },
   {
    "t": 1781660687,
    "title": "TREASURE – ZOOM ZOOM Lyrics, Meaning and Song Credits",
    "link": "https://kbizoom.com/treasure-zoom-zoom-lyrics-meaning-and-song-credits/",
    "desc": "",
-   "source": "Kbizoom · TREASURE"
+   "source": "Kbizoom · TREASURE",
+   "img": "https://cdn.kbizoom.com/media/2026/06/01095948/treasure-if-i-lyrics1.jpg"
   },
   {
    "t": 1780902271,
    "title": "BABYMONSTER – SUGAR HONEY ICE TEA Lyrics, Meaning and Song Credits",
    "link": "https://kbizoom.com/babymonster-sugar-honey-ice-tea-lyrics-meaning-and-song-credits/",
    "desc": "",
-   "source": "Kbizoom · BABYMONSTER"
+   "source": "Kbizoom · BABYMONSTER",
+   "img": "https://cdn.kbizoom.com/media/2026/06/08063551/babymonster-sugar-honey-ice-tea-lyrics-1-1.jpg"
   },
   {
    "t": 1780627460,
    "title": "BABYMONSTER – Like That Lyrics, Meaning and Song Credits",
    "link": "https://kbizoom.com/babymonster-like-that-lyrics-meaning-and-song-credits-2/",
    "desc": "",
-   "source": "Kbizoom · BABYMONSTER"
+   "source": "Kbizoom · BABYMONSTER",
+   "img": "https://cdn.kbizoom.com/media/2026/06/05024358/babymonster-like-that-lyrics-thumbnail.jpeg"
   },
   {
    "t": 1780307996,
    "title": "TREASURE – IF I Lyrics, Meaning and Song Credits",
    "link": "https://kbizoom.com/treasure-if-i-lyrics-meaning-and-song-credits/",
    "desc": "",
-   "source": "Kbizoom · TREASURE"
+   "source": "Kbizoom · TREASURE",
+   "img": "https://cdn.kbizoom.com/media/2026/06/01095822/treasure-if-i-lyrics.jpg"
   },
   {
    "t": 1779244939,
    "title": "YG Entertainment Celebrates 30th Anniversary With Massive Comeback Lineup From BABYMONSTER to BIGBANG",
    "link": "https://kbizoom.com/yg-entertainment-30th-anniversary-bigbang-babymonster/",
    "desc": "",
-   "source": "Kbizoom · TREASURE"
+   "source": "Kbizoom · TREASURE",
+   "img": "https://cdn.kbizoom.com/media/2026/05/20023032/bukgovtz4t-8l1jojkcbzbeni3ihzaqvxpgn5cjjdoo-yg-entertainment-30th-anniversary.jpg"
   },
   {
    "t": 1776995940,
    "title": "TREASURE 트레저 – PARADISE Lyrics, Meaning and Song Credits",
    "link": "https://kbizoom.com/treasure-paradise-lyrics-meaning-and-song-credits/",
    "desc": "",
-   "source": "Kbizoom · TREASURE"
+   "source": "Kbizoom · TREASURE",
+   "img": "https://cdn.kbizoom.com/media/2026/04/24015831/treasure-paradise-lyrics.webp"
   }
  ],
- "updated": 1794670047
+ "updated": 1794670234
 }
