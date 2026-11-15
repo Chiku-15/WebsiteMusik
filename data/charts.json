@@ -32,7 +32,7 @@
     }
    },
    "chartDate": "2026-11-15",
-   "updated": 1794721366,
+   "updated": 1794745987,
    "lastError": null
   },
   "melon_top100": {
@@ -40,7 +40,7 @@
    "url": "https://www.melon.com/chart/index.htm",
    "artists": {},
    "lastError": "baris Melon terbaca 0",
-   "updated": 1794721371
+   "updated": 1794745993
   },
   "billboard_global_excl_us": {
    "label": "Billboard Global Excl. US",
@@ -72,9 +72,9 @@
      "best": null
     }
    },
-   "updated": 1794721368,
+   "updated": 1794745990,
    "lastError": "baris Bugs terbaca 0"
   }
  },
- "updated": 1794742073
+ "updated": 1794745993
 }
