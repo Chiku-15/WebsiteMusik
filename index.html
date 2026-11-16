@@ -339,6 +339,9 @@
   .bulrow .bt{font-size:12.5px;color:var(--muted);font-weight:600}
   .bulrow:not(.bulhead):nth-child(even){background:color-mix(in srgb,var(--card2,var(--card)) 55%,transparent)}
   @media (max-width:640px){.bulrow{grid-template-columns:86px 1fr 1fr;font-size:11.5px}.bulrow .bt2{display:none}}
+  .bulgrid .bulrow.bultot{background:color-mix(in srgb,var(--acc,#06b6d4) 13%,transparent);border-top:2px solid color-mix(in srgb,var(--acc,#06b6d4) 55%,transparent)}
+  .bulgrid .bulrow.bultot .bm{color:var(--acc,#06b6d4);text-transform:uppercase;letter-spacing:.7px;font-size:11px}
+  .bulgrid .bulrow.bultot .bg{font-size:13.5px}
   .hm-legend .hm-c{cursor:default}
   .hm-legend .hm-c:hover{outline:none}
   .hm-tip{position:absolute;z-index:20;background:var(--overlay);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:10px;padding:7px 11px;font-size:12px;pointer-events:none;display:none;box-shadow:var(--shadow);white-space:nowrap}
@@ -4855,15 +4858,23 @@ function bulBodyHTML(plat, year) {
       <div class="bt">${plat === "yt" ? "Total views akhir bulan (±)" : "Total stream akhir bulan (±)"}</div>
       ${plat === "spotify" ? `<div class="bt bt2">Pendengar bulanan (±)</div>` : ""}
     </div>`;
-  const tableHTML = `<div class="bulgrid" style="--acc:${acc}">${headRow}${rowsHTML}</div>`;
+  /* baris TOTAL Jan–Des — jumlah seluruh tambahan view/stream sepanjang tahun;
+   * kolom "akhir bulan" & "pendengar" sengaja tidak dijumlahkan (nilai titik waktu, bukan akumulasi) */
+  const totRow = `<div class="bulrow bultot">
+      <div class="bm">Total Jan–Des</div>
+      <div class="bg${totYear > 0 ? " up" : ""}" title="${totYear > 0 ? "+" + fmtExact(totYear) + " " + unitPl + " baru sepanjang " + year : "belum ada pertumbuhan terekam pada tahun " + year}">${totYear > 0 ? "+" + fmtExact(totYear) : "–"}</div>
+      <div class="bt">–</div>
+      ${plat === "spotify" ? `<div class="bt bt2">–</div>` : ""}
+    </div>`;
+  const tableHTML = `<div class="bulgrid" style="--acc:${acc}">${headRow}${rowsHTML}${totRow}</div>`;
   return `
   ${platTabs}
   ${artChips}
   ${yearSeg}
   <div class="hm-bar"><div class="hm-sum">${sumHTML}</div></div>
-  <div class="chartbox" style="height:230px"><canvas id="bulChart"></canvas></div>
+  <div class="chartbox"><canvas id="bulChart"></canvas></div>
   ${tableHTML}
-  <p class="note">Kolom <b>${hmUnit(plat)} baru</b> = selisih total antar pengumuman yang direkam situs (dipadatkan per bulan; jika jarak antar pengumuman lebar, selisihnya dibagi rata ke harinya — semantik sama dengan peta panas harian). Kolom <b>akhir bulan (±)</b> = nilai dari titik rekam terdekat di akhir bulan itu dari riwayat ${plat === "yt" ? "channel YouTube (views gabungan)" : "artis Spotify (total stream gabungan)"}, tanda ± berarti titik terdekatnya beberapa hari di luar tanggal terakhir bulan — bukan angka persis hari itu. <b>Pendengar bulanan</b> (Spotify) baru mulai direkam saat fitur ini berjalan, jadi bulan-bulan sebelum itu tampil “–”. Ganti tab <b>Platform</b>, <b>Artis</b> dan <b>Tahun</b> untuk melihat kombinasi lain.</p>`;
+  <p class="note">Kolom <b>${hmUnit(plat)} baru</b> = selisih total antar pengumuman yang direkam situs (dipadatkan per bulan; jika jarak antar pengumuman lebar, selisihnya dibagi rata ke harinya — semantik sama dengan peta panas harian). Kolom <b>akhir bulan (±)</b> = nilai dari titik rekam terdekat di akhir bulan itu dari riwayat ${plat === "yt" ? "channel YouTube (views gabungan)" : "artis Spotify (total stream gabungan)"}, tanda ± berarti titik terdekatnya beberapa hari di luar tanggal terakhir bulan — bukan angka persis hari itu. <b>Pendengar bulanan</b> (Spotify) baru mulai direkam saat fitur ini berjalan, jadi bulan-bulan sebelum itu tampil “–”. Baris <b>Total Jan–Des</b> di ujung tabel = jumlah seluruh ${hmUnit(plat)} baru dari Januari sampai Desember tahun itu. Ganti tab <b>Platform</b>, <b>Artis</b> dan <b>Tahun</b> untuk melihat kombinasi lain.</p>`;
 }
 function renderBulanPage(sec) {
   const plat = bulPlat();
@@ -7626,7 +7637,7 @@ function openSpTrack(key) {
         <div class="chipstat" style="flex:0 0 auto;min-width:130px"><div class="k">SAAT INI</div><div class="v">${NF.format(popCur)}</div><div class="d">${popDelta != null ? (popDelta >= 0 ? "+" : "") + popDelta + " vs 30 hari lalu" : "baru mulai direkam"}</div></div>
         <div class="chipstat" style="flex:1;min-width:180px"><div class="k">SKALA</div><div class="popbar" style="margin-top:12px"><i style="width:${Math.max(2, popCur)}%"></i></div><div class="d">angka resmi Spotify Web API · direkam tiap koleksi</div></div>
       </div>
-      <div class="chartbox" style="height:170px"><canvas id="spPopChart"></canvas></div>
+      <div class="chartbox"><canvas id="spPopChart"></canvas></div>
       <p class="note">Popularity = seberapa besar lagu ini diperhitungkan algoritma Spotify saat ini (0-100) — naik-turunnya sering mendahului perubahan jumlah stream.</p>
     </div>` : ""}
 
