@@ -5,7 +5,8 @@
  *
  * Output:
  *   data/social.json    — follower Instagram / X (Twitter) / TikTok per grup
- *   data/charts.json    — posisi Billboard Global 200, Melon Top 100, Genie Top 200
+ *   data/charts.json    — posisi Billboard Global 200, Melon Top 100, Genie Top 200,
+ *                         Bugs Top 100 & Spotify Global Top 200 (via kworb)
  *   data/news.json      — berita terbaru yang menyebut BABYMONSTER / TREASURE
  *   data/anomalies.json — log lonjakan views tak biasa (>= 2,5x median harian)
  *
@@ -17,6 +18,8 @@
  *   - Billboard : halaman chart (baris server-rendered)
  *   - Melon     : halaman chart (sering menolak datacenter IP — boleh gagal, dilewati halus)
  *   - Genie     : halaman chart Top 200 (parsing tabel)
+ *   - Spotify Global Top 200 harian via kworb.net (data resmi Spotify Charts yang diproses)
+ *   - Bugs      : halaman chart (3 percobaan + Referer; kadang lambat merespons)
  *   - Berita    : RSS Soompi, Koreaboo, Kbizoom (tag per artis)
  *
  * Prinsip: SEMUA pengambilan dibungkus try — kalau satu sumber gagal, sumber lain
@@ -258,9 +261,10 @@ async function fetchBillboard(url = "https://www.billboard.com/charts/billboard-
   log(`Billboard (${chartKey}) ${chartDate}: ${rows.length} baris terbaca`);
   return { chartDate, rows };
 }
-/* Bugs Top 100 harian — musik.bugs.co.kr, HTML tabel polos (umumnya tak menolak IP datacenter) */
+/* Bugs Top 100 harian — musik.bugs.co.kr, HTML tabel polos (umumnya tak menolak IP datacenter).
+ * Server Bugs kadang lambat/menolak: 3 percobaan + Referer supaya lebih tahan gagal. */
 async function fetchBugs() {
-  const html = await fetchText("https://music.bugs.co.kr/chart/track/day/total", {}, 2, 30000);
+  const html = await fetchText("https://music.bugs.co.kr/chart/track/day/total", { headers: { Referer: "https://music.bugs.co.kr/" } }, 3, 35000);
   const rows = [];
   const chunks = html.split(/<tr[ >]/).slice(1);
   for (const c of chunks) {
@@ -278,7 +282,7 @@ async function fetchGenie() {
   // 2 halaman = Top 100 (cukup utk mendeteksi lagu artis yang masuk)
   const rows = [];
   for (const pg of [1, 2]) {
-    const html = await fetchText(`https://www.genie.co.kr/chart/top200?ditc=D&pg=${pg}`, {}, 2, 30000);
+    const html = await fetchText(`https://www.genie.co.kr/chart/top200?ditc=D&pg=${pg}`, {}, 3, 35000);
     const chunks = html.split('<tr class="list"');
     for (let i = 1; i < chunks.length; i++) {
       const c = chunks[i];
@@ -329,6 +333,8 @@ function applyChart(charts, key, meta, data) {
       const pt = {
         t: now(), rank: hit.rank, title: hit.title,
         lw: meta.lw ? hit.lw : undefined, peak: hit.peak,
+        // jumlah stream/hari hanya ada pada chart Spotify (kworb) — undefined utk Billboard/Korea
+        streams: hit.streams,
       };
       // satu titik per periode chart (mingguan/harian) — pakai chartDate sbg kunci hari
       const lastPt = rec.history[rec.history.length - 1];
@@ -363,7 +369,36 @@ const CHART_META = {
   melon_top100: { label: "Melon Top 100", url: "https://www.melon.com/chart/index.htm" },
   genie_top200: { label: "Genie Top 200", url: "https://www.genie.co.kr/chart/top200" },
   bugs_day100: { label: "Bugs Top 100 (harian)", url: "https://music.bugs.co.kr/chart/track/day/total" },
+  spotify_global_200: { label: "Spotify Global Top 200 (harian)", url: "https://kworb.net/spotify/country/global_daily.html" },
 };
+
+/* Spotify Global Daily Top 200 — via kworb.net (memproses data resmi Spotify Charts).
+ * Tabel 11 kolom per baris: pos, P+, "ARTIST - TITLE", hari, puncak, (xN), stream, delta,
+ * 7 hari, delta 7 hari, total. Artis & judul terpisah dalam <a href="../artist/…"> dan
+ * <a href="../track/…"> — jadi artis bisa diambil bersih tanpa menebak pemisah " - ". */
+async function fetchSpotifyGlobal() {
+  const html = await fetchText(CHART_META.spotify_global_200.url, {}, 3, 35000);
+  const dM = /<span class="pagetitle">[^<]*?(\d{4})\/(\d{2})\/(\d{2})/.exec(html);
+  const chartDate = dM ? `${dM[1]}-${dM[2]}-${dM[3]}` : wibDayKey(now());
+  const rows = [];
+  const chunks = html.split(/<tr[^>]*>/).slice(1);
+  for (const c of chunks) {
+    const cells = c.split(/<td[^>]*>/).slice(1).map((x) => x.replace(/<\/td>[\s\S]*$/, ""));
+    if (cells.length < 7) continue;
+    const rM = /^\s*(\d+)\s*$/.exec(cells[0].replace(/<[^>]+>/g, ""));
+    if (!rM) continue;
+    const artCell = cells[2] || "";
+    const arts = [...artCell.matchAll(/<a href="[^"]*\/artist\/[^"]*"[^>]*>([^<]+)<\/a>/g)].map((m) => decodeEntities(m[1]).trim());
+    const tM = /<a href="[^"]*\/track\/[^"]*"[^>]*>([^<]+)<\/a>/.exec(artCell);
+    const title = tM ? decodeEntities(tM[1]).trim() : decodeEntities(artCell.replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
+    const sM = /([\d.,]+)\s*$/.exec((cells[6] || "").replace(/<[^>]+>/g, "").trim());
+    const streams = sM ? parseInt(sM[1].replace(/[.,]/g, ""), 10) : null;
+    rows.push({ rank: +rM[1], title, artist: arts.join(" / "), streams });
+  }
+  if (rows.length < 100) throw new Error(`baris Spotify Global terbaca ${rows.length}`);
+  log(`Spotify Global Top 200 ${chartDate}: ${rows.length} baris terbaca`);
+  return { chartDate, rows };
+}
 async function collectCharts() {
   const charts = readJSON("charts.json", null) || { _info: CHARTS_INFO, charts: {} };
   charts._info = CHARTS_INFO;
@@ -395,6 +430,12 @@ async function collectCharts() {
   if (now() - (me && me.updated || 0) >= KOREA_MIN_H * 3600) {
     try { applyChart(charts, "melon_top100", CHART_META.melon_top100, await fetchMelon()); }
     catch (e) { markChartError(charts, "melon_top100", CHART_META.melon_top100, e); }
+  }
+  // Spotify Global Top 200 (harian, via kworb — sumber paling tahan blokir)
+  const sg = charts.charts.spotify_global_200;
+  if (now() - (sg && sg.updated || 0) >= KOREA_MIN_H * 3600) {
+    try { applyChart(charts, "spotify_global_200", CHART_META.spotify_global_200, await fetchSpotifyGlobal()); }
+    catch (e) { markChartError(charts, "spotify_global_200", CHART_META.spotify_global_200, e); }
   }
   charts.updated = now();
   writeJSON("charts.json", charts);
@@ -573,4 +614,4 @@ async function main() {
   log(`=== selesai dalam ${Math.round((Date.now() - started) / 1000)}s ===`);
 }
 if (require.main === module) main();
-module.exports = { main, parseShort, appendDaily, computeAnomalies, fetchBillboard, fetchBugs, fetchGenie, fetchMelon, parseRss, collectNews, collectSocial, collectCharts, collectAnomalies };
+module.exports = { main, parseShort, appendDaily, computeAnomalies, fetchBillboard, fetchBugs, fetchGenie, fetchMelon, fetchSpotifyGlobal, parseRss, collectNews, collectSocial, collectCharts, collectAnomalies, applyChart };

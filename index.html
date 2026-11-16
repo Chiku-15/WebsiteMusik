@@ -238,10 +238,11 @@
   .memgo{margin-top:9px;font-size:10px;font-weight:800;letter-spacing:.6px;color:var(--muted);text-transform:uppercase;position:relative}
   .memcard:hover .memgo{color:var(--mc,#6a78ff)}
   .memava .bdtag{position:absolute;bottom:-4px;right:-4px;background:#f59e0b;color:#fff;border-radius:999px;font-size:9px;font-weight:800;padding:2px 6px;box-shadow:0 2px 8px rgba(0,0,0,.35);z-index:3}
-  /* foto anggota (bingkai M/V DESERVE / SHOCK) di lingkaran avatar — dibungkus .avclip supaya
-     bingkai 4:3 YouTube terpotong rapi tanpa pita hitam; gagal muat → inisial tetap tampil */
+  /* foto anggota: berkas foto solo per anggota (img/members/<nama>.jpg) di lingkaran avatar —
+     dibungkus .avclip; foto potret 3:4 dipotong rapi, fokus sedikit ke atas (wajah);
+     gagal muat → inisial tetap tampil */
   .avclip{position:absolute;inset:0;border-radius:50%;overflow:hidden;z-index:2}
-  .avclip img{position:absolute;left:0;top:-17%;width:100%;height:134%;object-fit:cover;display:block}
+  .avclip img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 24%;display:block}
   /* foto comeback terakhir di detail profil anggota */
   .memcomeback{margin:16px 0 4px;border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;background:var(--card);transition:border-color .16s}
   .memcomeback:hover{border-color:color-mix(in srgb,var(--artist-color,#6a78ff) 55%,var(--border))}
@@ -250,15 +251,37 @@
   .memcomeback .mcbtx .k{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:1px}
   .memcomeback .mcbtx b{font-size:14.5px;line-height:1.35}
   .memcomeback .mcbtx span{font-size:12px;color:var(--muted)}
-  /* foto artis di detail profil — ukuran sedang (tidak full lebar), di tengah kartu */
-  .memphoto{width:min(430px,100%);margin:14px auto 4px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card)}
+  /* foto anggota di detail profil — potret solo per anggota, ukuran sedang (TIDAK full lebar) */
+  .memphoto{width:min(330px,100%);margin:14px auto 4px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--card)}
   .memphoto[data-click]{cursor:pointer;transition:border-color .16s}
   .memphoto[data-click]:hover{border-color:color-mix(in srgb,var(--artist-color,#6a78ff) 55%,var(--border))}
-  .memphoto img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+  .memphoto img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:center 22%;display:block}
   .memphoto .mptx{padding:10px 15px;display:flex;flex-direction:column;gap:2px}
   .memphoto .mptx .k{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:1px}
   .memphoto .mptx b{font-size:13.5px;line-height:1.4}
   .memphoto .mptx span{font-size:11.5px;color:var(--muted)}
+  /* ---------- kartu statistik harian per lagu (halaman album) ---------- */
+  .spdcard{background:var(--card);border:1px solid color-mix(in srgb,var(--ac,#1ed760) 38%,var(--border));border-radius:14px;padding:14px 16px}
+  .spdhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .spdhead .spdl b{font-size:14.5px}
+  .spdhead .spdl span{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+  .spdsum{text-align:right}
+  .spdsum b{font-size:20px;color:var(--ac,#1ed760);font-variant-numeric:tabular-nums}
+  .spdsum span{display:block;font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+  .spdrow{display:grid;grid-template-columns:26px minmax(0,1fr) 90px 84px 96px 84px;gap:10px;align-items:center;padding:8px 2px;border-bottom:1px solid var(--border)}
+  .spdrow:last-of-type{border-bottom:none}
+  .spdrank{font-weight:800;color:var(--muted);font-size:12px}
+  .spdmain{min-width:0}
+  .spdmain b{font-size:13px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .spdbar{height:5px;border-radius:999px;background:var(--border);overflow:hidden;margin-top:4px}
+  .spdbar i{display:block;height:100%}
+  .spdnum{text-align:right;font-variant-numeric:tabular-nums}
+  .spdnum .k{display:block;font-size:9px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+  .spdnum b{font-size:12.5px}
+  .spdnum b.up{color:#22c55e}
+  .spdnum b.down{color:#fb7185}
+  .spdfoot{margin-top:9px;font-size:11px;color:var(--muted);line-height:1.5}
+  @media (max-width:720px){.spdrow{grid-template-columns:22px minmax(0,1fr) 72px 66px}.spdrow .spdnum:nth-child(5),.spdrow .spdnum:nth-child(6){display:none}}
   .cdlive{font-variant-numeric:tabular-nums}
   .trobadg{display:inline-block;padding:2px 9px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.4px}
   .trobadg.win{background:color-mix(in srgb,#22c55e 16%,transparent);color:#22c55e}
@@ -288,12 +311,15 @@
   .hmseg button.on{background:var(--card2);color:var(--text);box-shadow:var(--shadow)}
   .hm-scroll{overflow-x:auto;padding-bottom:4px}
   .hm-inner{position:relative;display:inline-block;min-width:100%;padding-bottom:2px}
-  .hm-months{display:grid;grid-auto-columns:16px;grid-template-rows:14px;gap:4px;margin-bottom:5px;font-size:10.5px;font-weight:700;color:var(--muted)}
-  .hm-months span{white-space:nowrap;align-self:end}
-  .hm-grid{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,16px);grid-auto-columns:16px;gap:4px}
+  /* tata letak per bulan: 1 baris = 1 bulan (Januari paling atas), kolom = tanggal 1–31.
+     Tanggal 1 selalu di kolom paling kiri; setelah tanggal terakhir bulan itu kolom kosong. */
+  .hm-ruler{display:grid;grid-template-columns:44px repeat(31,16px);gap:4px;margin-bottom:4px}
+  .hm-ruler span{font-size:8.5px;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums;line-height:1}
+  .hm-row{display:grid;grid-template-columns:44px repeat(31,16px);gap:4px;align-items:center;border-radius:8px;padding:1px 0}
+  .hm-row.hl{background:color-mix(in srgb,var(--band,#ff4d6d) 13%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--band,#ff4d6d) 30%,transparent)}
+  .hm-mlbl{font-size:10.5px;font-weight:700;color:var(--muted);text-align:right;padding-right:4px;white-space:nowrap;transition:color .12s}
+  .hm-mlbl.hl{color:var(--band,#ff4d6d)}
   .hm-c{width:16px;height:16px;border-radius:4px;cursor:pointer}
-  /* penanda tanggal 1 (awal bulan): bingkai tipis di dalam kotak */
-  .hm-c.dom1{box-shadow:inset 0 0 0 1.5px color-mix(in srgb,var(--text) 62%,transparent)}
   .hm-c:hover{outline:1.5px solid var(--text);outline-offset:0}
   .hm-c.blank{visibility:hidden;cursor:default}
   .hm-c.blank:hover{outline:none}
@@ -304,13 +330,6 @@
   .hm-tip{position:absolute;z-index:20;background:var(--overlay);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:10px;padding:7px 11px;font-size:12px;pointer-events:none;display:none;box-shadow:var(--shadow);white-space:nowrap}
   .hm-tip b{display:block;font-weight:800}
   .hm-tip .t2{display:block;color:var(--muted);font-size:11px;margin-top:2px}
-  /* penanda bulan saat kursor menyentuh kotak: pita warna di belakang kolom bulan tsb + label bulan menyala */
-  .hm-months,.hm-grid{position:relative;z-index:2}
-  .hm-months span{transition:color .12s}
-  .hm-months span.hl{color:var(--band,#ff4d6d)}
-  .hm-band{position:absolute;z-index:1;display:none;pointer-events:none;border-radius:9px;
-    background:color-mix(in srgb,var(--band,#ff4d6d) 12%,transparent);
-    border:1px solid color-mix(in srgb,var(--band,#ff4d6d) 32%,transparent)}
   /* filter artis peta panas + ringkasan bulanan */
   .hm-art{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:2px 0 10px}
   .hm-art button{border:1px solid var(--border);background:var(--chip);color:var(--muted);font:inherit;font-weight:700;font-size:12px;padding:5px 12px;border-radius:999px;cursor:pointer;transition:.15s}
@@ -1681,6 +1700,41 @@ function renderSpAlbumPage(sec) {
       <div class="shr" style="margin-top:9px"><div class="shn"><span>Sisa ${Math.max(0, rows.length - 1)} lagu</span><b>${fmtCompact(tot - spTrackTotal(top.tr))} · ${(100 - topShare).toFixed(1).replace(".", ",")}%</b></div>
       <div class="shb"><i style="width:${Math.max(2, 100 - topShare)}%;background:linear-gradient(90deg,#8a93a8,#c8d2e4)"></i></div></div>` : `<div style="font-size:12px;color:var(--muted)">Belum ada data stream untuk album ini.</div>`}
     </div>
+    ${(function () {
+      /* kartu statistik harian per lagu — total stream, stream hari ini, selisih & persen
+       * vs hari sebelumnya (dari 2 titik riwayat nyata terakhir, jarak ≤ 3 hari). */
+      const sorted = rows.slice().sort((x, y) => spTrackDaily(y.tr) - spTrackDaily(x.tr));
+      if (!sorted.length) return "";
+      const rws = sorted.map((x, i) => {
+        const t = spTrackTotal(x.tr);
+        const d = spTrackDaily(x.tr);
+        const h = (x.tr.history || []).filter((p) => !p.e && p.v != null);
+        let prev = null;
+        if (h.length >= 2) {
+          const gap = (h[h.length - 1].t - h[h.length - 2].t) / 86400;
+          if (gap > 0 && gap <= 3) prev = Math.round((h[h.length - 1].v - h[h.length - 2].v) / gap);
+        }
+        const dd = prev != null ? d - prev : null;
+        const pct = dd != null && prev > 0 ? (dd / prev) * 100 : null;
+        const share = t > 0 && tot > 0 ? (t / tot) * 100 : 0;
+        return `<div class="spdrow">
+          <div class="spdrank">${i + 1}</div>
+          <div class="spdmain"><b>${esc(x.tr.name)}${x.tr.live ? " (Live)" : ""}</b><div class="spdbar"><i style="width:${Math.max(2, share).toFixed(1)}%;background:linear-gradient(90deg,${ar.color || SP_GREEN},#ffffff66)"></i></div></div>
+          <div class="spdnum"><span class="k">total</span><b>${fmtCompact(t)}</b></div>
+          <div class="spdnum"><span class="k">harian</span><b>+${fmtCompact(d)}</b></div>
+          <div class="spdnum"><span class="k">vs kemarin</span><b class="${dd > 0 ? "up" : dd < 0 ? "down" : ""}">${dd == null ? "–" : (dd >= 0 ? "+" : "-") + fmtCompact(Math.abs(dd))}</b></div>
+          <div class="spdnum"><span class="k">persen</span><b class="${pct != null && pct > 0 ? "up" : pct != null && pct < 0 ? "down" : ""}">${pct == null ? "–" : (pct >= 0 ? "+" : "-") + Math.abs(pct).toFixed(2).replace(".", ",") + "%"}</b></div>
+        </div>`;
+      }).join("");
+      return `<div class="spdcard" style="--ac:${ar.color || SP_GREEN};margin-top:14px">
+        <div class="spdhead">
+          <div class="spdl"><b>Statistik harian per lagu — ${esc(al.name)}</b><span>total stream kumulatif · stream hari ini · selisih &amp; persen vs hari sebelumnya (dari riwayat yang direkam situs)</span></div>
+          <div class="spdsum"><b>+${fmtCompact(dly)}</b><span>stream/hari gabungan</span></div>
+        </div>
+        ${rws}
+        <div class="spdfoot">Diurut menurut stream harian · total album <b>${fmtCompact(tot)}</b> stream · klik lagu di daftar di bawah untuk grafik &amp; milestone lengkap.</div>
+      </div>`;
+    })()}
     <div style="display:flex;flex-direction:column;gap:7px;margin-top:16px">${listRows || '<div class="banner">Belum ada lagu terdaftar.</div>'}</div>
     <p class="note">Semua angka dari riwayat stream yang direkam situs ini · klik lagu untuk grafik &amp; milestone · tandai ★ untuk memantau di beranda.</p>
   </section>`;
@@ -1802,7 +1856,7 @@ function renderMembersPage(sec) {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   let html = `<section style="margin-top:26px">
     ${pageCloseBar("Profil anggota", "17 anggota BABYMONSTER &amp; TREASURE · klik kartu untuk profil lengkap + foto artis", ICO_PEOPLE, "#f472b6")}
-    <p class="note">Umur &amp; hitung mundur ulang tahun dihitung waktu Jakarta · sumber profil: kprofiles.com &amp; fandom wiki resmi tiap grup · <b>klik kartu anggota</b> untuk membuka profil detail dengan foto artis dari M/V terbaru grup ('DESERVE' / 'SHOCK').</p>`;
+    <p class="note">Umur &amp; hitung mundur ulang tahun dihitung waktu Jakarta · sumber profil: kprofiles.com &amp; fandom wiki resmi tiap grup · <b>klik kartu anggota</b> untuk membuka profil detail dengan foto solo anggota (bukan bingkai M/V).</p>`;
   for (const gid of ["babymonster", "treasure"]) {
     const g = G[gid];
     if (!g) continue;
@@ -1818,7 +1872,7 @@ function renderMembersPage(sec) {
       const isBd = dd === 0;
       const soon = dd != null && dd > 0 && dd <= 30;
       return `<div class="memcard" style="--mc:${color}" data-mem="${esc(gid)}:${esc(m.name)}" tabindex="0" role="button" aria-label="Detail profil ${esc(m.name)}">
-        <div class="memava">${ini}<span class="avclip"><img src="${mvFrameURL(gid, i)}" alt="Foto ${esc(m.name)}" loading="lazy"${mvImgAttrs(gid)}></span>${isBd ? '<span class="bdtag">ULTAH</span>' : ""}</div>
+        <div class="memava">${ini}<span class="avclip"><img src="${memberPhotoURL(gid, m)}" alt="Foto ${esc(m.name)}" loading="lazy" onerror="this.remove()"></span>${isBd ? '<span class="bdtag">ULTAH</span>' : ""}</div>
         <div class="nm">${esc(m.name)}</div>
         <div class="rl">${esc(m.real || "")}</div>
         <div class="rl" style="margin-top:1px">${esc(m.nat || "")}</div>
@@ -1839,27 +1893,18 @@ function renderMembersPage(sec) {
   });
   startCountdownTick();
 }
-/* ---- detail profil anggota (overlay) + foto artis dari M/V terbaru ---- */
-/* Foto artis di kartu profil = bingkai dari M/V terbaru resmi tiap grup:
- * BABYMONSTER → 'DESERVE' (oC6brLXQe4I) · TREASURE → 'SHOCK' (u_hpZueWI9g) — bukan foto comeback lama.
- * hq1/hq2/hq3 = bingkai YouTube di 25%/50%/75% durasi video, jadi tiap anggota mendapat bingkai berbeda. */
+/* ---- detail profil anggota (overlay) + foto solo per anggota ---- */
+/* Foto anggota = berkas LOKAL per anggota di img/members/<nama>.jpg (teaser/potret resmi era
+ * comeback — untuk BABYMONSTER 3 foto teratas sudah era 'WE GO UP'/'CHOOM' 2025–2026).
+ * Bukan lagi bingkai M/V: bingkai video memotret orang yang salah (halaman Rora sempat
+ * menampilkan wajah Pharita). Nama file dari nama anggota: huruf kecil, tanpa spasi. */
+function memberSlug(name) { return String(name || "").toLowerCase().replace(/[^a-z]/g, ""); }
+function memberPhotoURL(gid, m) { return "img/members/" + memberSlug(m && m.name) + ".jpg"; }
+/* M/V terbaru grup (DESERVE / SHOCK) tetap dipakai sebagai TOMBOL grafik di halaman detail */
 const MEMBER_MV = {
   babymonster: { id: "oC6brLXQe4I", title: "'DESERVE' M/V" },
   treasure: { id: "u_hpZueWI9g", title: "'SHOCK' M/V" },
 };
-function mvFrameURL(gid, i) {
-  const mv = MEMBER_MV[gid];
-  return mv ? `https://i.ytimg.com/vi/${mv.id}/hq${(Math.abs(i || 0) % 3) + 1}.jpg` : "";
-}
-function mvFallbackURL(gid) {
-  const mv = MEMBER_MV[gid];
-  return mv ? `https://i.ytimg.com/vi/${mv.id}/hqdefault.jpg` : "";
-}
-/* onerror dua tahap: bingkai varian gagal → hqdefault → sembunyikan (inisial tetap tampil) */
-function mvImgAttrs(gid) {
-  const fb = mvFallbackURL(gid);
-  return fb ? ` onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='${fb}'}else{this.remove()}"` : ' onerror="this.remove()"';
-}
 function openMemberDetail(key) {
   const [gid, name] = key.split(":");
   const g = state.members && state.members.groups[gid];
@@ -1874,9 +1919,8 @@ function openMemberDetail(key) {
   const debutAge = Math.max(0, Math.floor((new Date(g.debut + "T00:00:00") - bd) / (365.25 * 86400000)));
   const nb = nextYearly(m.bd);
   const dd = nb ? Math.round((new Date(nb.date + "T00:00:00") - today) / 86400000) : null;
-  const midx = Math.max(0, (g.members || []).findIndex((x) => x.name === name));
-  /* foto artis = bingkai M/V DESERVE (BM) / SHOCK (TRS), ukuran sedang di tengah kartu */
-  const photoSrc = MEMBER_MV[gid] ? `https://i.ytimg.com/vi/${MEMBER_MV[gid].id}/maxresdefault.jpg` : "";
+  /* foto solo anggota (berkas lokal per anggota — orang di foto pasti anggota yang benar) */
+  const photoSrc = memberPhotoURL(gid, m);
   /* M/V sumber foto (DESERVE / SHOCK) untuk keterangan + grafik saat foto diklik */
   const mv = allVideosFlat().filter((v) => v.art.id === gid && MEMBER_MV[gid] && v.id === MEMBER_MV[gid].id)[0]
     || allVideosFlat().filter((v) => v.art.id === gid && /m\/v\s*$/i.test(v.title.trim()))
@@ -1885,17 +1929,18 @@ function openMemberDetail(key) {
   $("#sheet").innerHTML = `
     <button class="close" id="closeBtn" aria-label="Tutup">✕</button>
     <div class="dhead" style="--artist-color:${color}">
-      <div class="memava" style="--mc:${color};width:86px;height:86px;font-size:27px;margin:0">${m.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase()}<span class="avclip"><img src="${mvFrameURL(gid, midx)}" alt="Foto ${esc(m.name)}"${mvImgAttrs(gid)}></span></div>
+      <div class="memava" style="--mc:${color};width:86px;height:86px;font-size:27px;margin:0">${m.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase()}<span class="avclip"><img src="${photoSrc}" alt="Foto ${esc(m.name)}" onerror="this.remove()"></span></div>
       <div style="min-width:0">
         <div class="dtitle">${esc(m.name)} <span class="apill" style="background:${color}">${esc(art.name || g.name)}</span></div>
         <div class="dsub">${m.real ? esc(m.real) : ""}${m.nat ? " · " + esc(m.nat) : ""}</div>
         <div class="dbadges" style="margin-top:8px">${(m.pos || []).map((p) => `<span class="dbadge"><b>${esc(p)}</b></span>`).join("")}</div>
       </div>
     </div>
-    <div class="memphoto" style="--artist-color:${color}"${mv ? ' data-click="1" id="memCv" tabindex="0" role="button" aria-label="Buka grafik video M/V sumber foto"' : ""}>
-      ${photoSrc ? `<img src="${photoSrc}" alt="Foto ${esc(m.name)}" onerror="if(!this.dataset.fb){this.dataset.fb=1;this.src='${mvFallbackURL(gid)}'}else{this.closest('.memphoto').style.display='none'}">` : ""}
-      <div class="mptx"><div class="k">Foto ${esc(m.name)} · ${esc(art.name || g.name)}</div><b>${mv ? esc(mv.title) : "M/V terbaru grup"}</b><span>${mv ? `bingkai dari M/V resmi grup · dirilis ${fmtDate(mv.published)} · ${fmtCompact((mv.history && mv.history.length ? mv.history[mv.history.length - 1].v : 0))} views · klik foto untuk buka grafik video` : "foto artis dari M/V terbaru grup"}</span></div>
+    <div class="memphoto" style="--artist-color:${color}">
+      <img src="${photoSrc}" alt="Foto ${esc(m.name)}" onerror="this.closest('.memphoto').style.display='none'">
+      <div class="mptx"><div class="k">Foto solo anggota</div><b>${esc(m.name)} · ${esc(art.name || g.name)}</b><span>Foto potret resmi anggota ini — bukan bingkai M/V, jadi orangnya pasti benar · tersimpan langsung di situs (tidak full lebar)</span></div>
     </div>
+    ${mv ? `<div style="width:min(330px,100%);margin:10px auto 2px"><button class="mtab" id="memCv" style="width:100%" title="Buka grafik video M/V terbaru grup">▶ Grafik M/V terbaru grup: ${esc(mv.title)}</button></div>` : ""}
     <div class="dhero">
       ${stat("Lahir", fmtDate(m.bd))}
       ${stat("Umur", age + " tahun")}
@@ -1904,7 +1949,7 @@ function openMemberDetail(key) {
       ${stat("Ultah berikutnya", dd === 0 ? "HARI INI" : dd != null ? NF.format(dd) + " hari lagi" : "–")}
       ${stat("Debut grup", fmtDate(g.debut))}
     </div>
-    <p class="note">Profil dari kprofiles.com &amp; fandom wiki resmi. Foto = bingkai dari M/V terbaru resmi grup — 'DESERVE' untuk BABYMONSTER, 'SHOCK' untuk TREASURE (bukan foto comeback lama). Umur, umur saat debut &amp; hitung mundur ulang tahun dihitung waktu Jakarta.</p>`;
+    <p class="note">Profil dari kprofiles.com &amp; fandom wiki resmi. Foto = foto solo per anggota (teaser/potret resmi era comeback — BABYMONSTER 3 foto teratas sudah era 'WE GO UP'/'CHOOM' 2025–2026) yang tersimpan langsung di situs, bukan bingkai M/V. Umur, umur saat debut &amp; hitung mundur ulang tahun dihitung waktu Jakarta.</p>`;
   $("#overlay").classList.add("open");
   document.body.style.overflow = "hidden";
   state.detailMode = { type: "member", id: key };
@@ -2015,8 +2060,23 @@ function renderSchedulePage(sec) {
   for (const v of allVideosFlat()) {
     if (v.published && v.published > todayIso) evs.push({ date: v.published, title: rowTitleOf(v, v.art), group: v.channel, type: "release", auto: true, note: "video baru di data" });
   }
-  const upcoming = evs.filter((e) => e.date && e.date >= todayIso).sort((a, b) => a.date.localeCompare(b.date));
-  const past = evs.filter((e) => e.date && e.date < todayIso).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
+  /* filter dropdown: Semua / per grup / per jenis (tur, event, ultah, anniv) / lainnya.
+   * Pilihan tersimpan di state.schFilter supaya tetap saat halaman dirender ulang. */
+  const SCH_FILTERS = [
+    ["all", "Semua acara"], ["babymonster", "BABYMONSTER"], ["treasure", "TREASURE"],
+    ["tour", "Tur (tour)"], ["event", "Event / penghargaan"], ["birthday", "Ulang tahun (ultah)"],
+    ["anniversary", "Anniversary / debut"], ["other", "Lainnya (rilisan dll)"],
+  ];
+  state.schFilter = SCH_FILTERS.some((x) => x[0] === state.schFilter) ? state.schFilter : "all";
+  const sf = state.schFilter;
+  const matchSch = (e) => {
+    if (sf === "all") return true;
+    if (sf === "babymonster" || sf === "treasure") return e.group === sf;
+    if (sf === "other") return !["tour", "event", "birthday", "anniversary"].includes(e.type);
+    return e.type === sf;
+  };
+  const upcoming = evs.filter((e) => e.date && e.date >= todayIso && matchSch(e)).sort((a, b) => a.date.localeCompare(b.date));
+  const past = evs.filter((e) => e.date && e.date < todayIso && matchSch(e)).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 10);
   const TYPE = { tour: ["TUR", "#38bdf8"], release: ["RILIS", "#a78bfa"], anniversary: ["ANNIV", "#f59e0b"], birthday: ["ULTAH", "#f472b6"], event: ["EVENT", "#22c55e"] };
   const evRow = (e, live) => {
     const t = TYPE[e.type] || TYPE.event;
@@ -2054,15 +2114,22 @@ function renderSchedulePage(sec) {
     return `${yDiv}<div class="calmonth"><span>${esc(MFULL.format(new Date(k + "-01T00:00:00")))}</span><b>${list.length} acara</b></div>
     <div style="display:flex;flex-direction:column;gap:7px">${list.map((e) => evRow(e, true)).join("")}</div>`;
   }).join("");
+  const schOpts = SCH_FILTERS.map(([k, lbl]) => `<option value="${k}"${sf === k ? " selected" : ""}>${lbl}</option>`).join("");
   sec.innerHTML = `<section style="margin-top:26px">
     ${pageCloseBar("Jadwal &amp; Countdown", "tur, penghargaan, ulang tahun &amp; rilisan — hitung mundur hidup sampai jam-menit-detik", ICO_CAL, "#38bdf8")}
+    <div class="chtools" style="margin:2px 2px 4px">
+      <select id="schFilter" aria-label="Filter jadwal per grup atau jenis acara" title="Tampilkan hanya grup atau jenis acara tertentu">${schOpts}</select>
+      <span style="font-size:11.5px;color:var(--muted);font-weight:700">${NF.format(upcoming.length)} acara mendatang · ${NF.format(past.length)} riwayat ditampilkan</span>
+    </div>
     ${featSectHead("#38bdf8", ICO_CAL, "Akan datang", "diurut dari yang paling dekat · hitung mundur berjalan sendiri")}
     ${monthHTML || '<div class="banner">Belum ada acara mendatang.</div>'}
     <div style="margin-top:20px">${featSectHead("#8a93a8", ICO_CAL, "Sudah lewat", "10 acara terakhir")}</div>
     <div style="display:flex;flex-direction:column;gap:7px">${past.map((e) => evRow(e, false)).join("") || '<div class="banner">Belum ada riwayat.</div>'}</div>
-    <p class="note">Acara <b>otomatis</b> (ulang tahun anggota, ulang tahun debut, rilisan baru) dihitung situs sendiri dari data. Jadwal tur/event manual ada di <b>data/jadwal.json</b> — tambah/edit di file itu. Saat daftar melewati akhir tahun (mis. Desember 2026 → Januari 2027) ada pembatas <b>pergantian tahun</b> berisi hitung mundur Tahun Baru, sama seperti pembatas tahun di kalender rilisan. Sumber tur [CHOOM]: ygfamily.com &amp; Wikipedia.</p>
+    <p class="note">Gunakan <b>dropdown filter</b> di atas untuk menampilkan hanya BABYMONSTER / TREASURE / tur / event / ulang tahun / anniversary / lainnya. Acara <b>otomatis</b> (ulang tahun anggota, ulang tahun debut, rilisan baru) dihitung situs sendiri dari data. Jadwal tur/event manual ada di <b>data/jadwal.json</b> — tambah/edit di file itu. Saat daftar melewati akhir tahun (mis. Desember 2026 → Januari 2027) ada pembatas <b>pergantian tahun</b> berisi hitung mundur Tahun Baru, sama seperti pembatas tahun di kalender rilisan. Sumber tur [CHOOM]: ygfamily.com &amp; Wikipedia.</p>
   </section>`;
   bindPageClose(sec);
+  const sfSel = $("#schFilter");
+  if (sfSel) sfSel.addEventListener("change", (e) => { state.schFilter = e.target.value; renderSchedulePage(sec); });
   startCountdownTick();
 }
 
@@ -2270,7 +2337,7 @@ function rankStatusHTML(a, rec, ch, maxStaleDays) {
   const best = rec && rec.best;
   const stale = last ? (Date.now() / 1000 - last.t) / 86400 : null;
   const cur = last && stale != null && stale <= (maxStaleDays || 2)
-    ? `<div class="rkcur"><div class="r">#${last.rank}</div><div style="min-width:0;flex:1"><div class="t">${esc(last.title)}</div><div class="d">direkam ${agoTxt(last.t)}</div></div></div>`
+    ? `<div class="rkcur"><div class="r">#${last.rank}</div><div style="min-width:0;flex:1"><div class="t">${esc(last.title)}</div><div class="d">direkam ${agoTxt(last.t)}${last.streams ? " · " + fmtCompact(last.streams) + " stream/hari" : ""}</div></div></div>`
     : `<div class="rkcur off"><div class="r">–</div><div style="min-width:0;flex:1"><div class="t">Tidak masuk chart saat ini</div><div class="d">${last ? `terakhir masuk ${agoTxt(last.t)}` : "belum ada rekaman masuk"}</div></div></div>`;
   return `<div class="rkstat" style="--ac:${a.color}">
     <div class="rkh"><span class="apill" style="background:${a.color}">${esc(a.name)}</span></div>
@@ -2355,7 +2422,7 @@ function chaRowHTML(r) {
     </div>`;
 }
 function renderChartsPage(sec) {
-  const head = pageCloseBar("Peringkat Chart", "posisi lagu di Billboard Global 200 &amp; Global Excl. US, Melon, Genie &amp; Bugs — plus riwayat pencapaian dari debut", ICO_RANK, "#f97316");
+  const head = pageCloseBar("Peringkat Chart", "posisi lagu di Billboard Global 200 &amp; Global Excl. US, Spotify Global Top 200, Melon, Genie &amp; Bugs — plus riwayat pencapaian dari debut", ICO_RANK, "#f97316");
   if (!state.charts || !state.charts.charts) {
     sec.innerHTML = head + `<div class="banner">Data chart belum tersedia — jalankan sekali workflow “Kumpulan data” di tab Actions, lalu muat ulang halaman.</div>`;
     bindPageClose(sec);
@@ -2446,7 +2513,7 @@ function renderChartsPage(sec) {
       <p class="note">Bagian ini menjawab “lagu lama dari awal debut” — posisi historis (puncak/debut/entri) terverifikasi dari sumber publik. Rekam live di bawah hanya berlaku dari saat situs mulai memantau chart; kolektor menambah titik baru otomatis begitu ${esc(state.config.artists.map((x) => x.name).join(" / "))} masuk chart mana pun.</p>
     </section>`;
   })();
-  const order = [["billboard_global_200", "mingguan", 10], ["billboard_global_excl_us", "mingguan", 10], ["melon_top100", "harian", 2], ["genie_top200", "harian", 2], ["bugs_day100", "harian", 2]];
+  const order = [["billboard_global_200", "mingguan", 10], ["billboard_global_excl_us", "mingguan", 10], ["spotify_global_200", "harian", 2], ["melon_top100", "harian", 2], ["genie_top200", "harian", 2], ["bugs_day100", "harian", 2]];
   const sections = order.map(([key, freq, maxStale]) => {
     const ch = state.charts.charts[key];
     if (!ch) return "";
@@ -2458,10 +2525,10 @@ function renderChartsPage(sec) {
       ${featSectHead("#f97316", ICO_RANK, esc(ch.label || key), sub)}
       ${err}
       <div class="wpgrid">${stats}</div>
-      ${hasPts ? `<div class="rankbox"><canvas id="rk_${key}"></canvas></div><p class="note">Poros vertikal dibalik — makin tinggi titik, makin bagus peringkatnya. Grafik muncul setelah artis pertama kali terekam masuk chart.</p>` : `<div class="banner">Belum ada rekaman masuk chart untuk chart ini — situs merekam otomatis begitu lagu ${esc(state.config.artists.map((x) => x.name).join(" / "))} masuk. Pencapaian historis dari debut ada di bagian “Riwayat &amp; rekor pencapaian” di atas.</div>`}
+      ${hasPts ? `<div class="rankbox"><canvas id="rk_${key}"></canvas></div><p class="note">Poros vertikal dibalik — makin tinggi titik, makin bagus peringkatnya. Grafik muncul setelah artis pertama kali terekam masuk chart.</p>` : `<div class="banner">Belum ada rekaman masuk chart untuk chart ini — artis memang sedang tidak berada di chart ini, dan situs merekam otomatis begitu lagu ${esc(state.config.artists.map((x) => x.name).join(" / "))} masuk. Bila ada catatan “sumber tidak terjangkau” di atas, kolektor mencoba ulang 3× tiap putaran dan akan terekam begitu berhasil. Pencapaian historis dari debut ada di bagian “Riwayat &amp; rekor pencapaian” di atas.</div>`}
     </section>`;
   }).join("");
-  sec.innerHTML = head + histSec + sections + `<p class="note">Sumber live: billboard.com (mingguan), melon.com, genie.co.kr &amp; music.bugs.co.kr (harian) — dibaca langsung dari halaman chart publik tanpa API key. Melon kerap menolak IP server, Genie/Bugs dipakai sebagai pembanding. Riwayat pencapaian: data/chart-history.json (kurasi manual, bisa diedit langsung) — bisa dicari, difilter per artis/lagu/Top 10, diurutkan, dan diekspor CSV.</p>`;
+  sec.innerHTML = head + histSec + sections + `<p class="note">Sumber live: billboard.com (mingguan), kworb.net — Spotify Global Top 200 harian (memproses data resmi Spotify Charts), melon.com, genie.co.kr &amp; music.bugs.co.kr (harian) — dibaca langsung dari halaman chart publik tanpa API key. Melon kerap menolak IP server; Genie/Bugs kini dicoba 3× per putaran, dan Spotify Global via kworb jadi pembanding paling stabil. Riwayat pencapaian: data/chart-history.json (kurasi manual, bisa diedit langsung) — bisa dicari, difilter per artis/lagu/Top 10, diurutkan, dan diekspor CSV.</p>`;
   bindPageClose(sec);
   for (const [key] of order) {
     const ch = state.charts.charts[key];
@@ -4384,11 +4451,27 @@ function hmBodyHTML(plat, year) {
   /* satu peta = tepat satu tahun kalender: 1 Januari s/d 31 Desember (dipotong di hari ini) */
   const yStart = dayIndexOf(Date.UTC(year, 0, 1) / 1000);
   const endIdx = Math.min(dayIndexOf(Date.UTC(year, 11, 31) / 1000), nowIdx);
-  const mondayPad = (new Date(Date.UTC(year, 0, 1)).getUTCDay() + 6) % 7; /* 0 = Senin */
-  const gridStart = yStart - mondayPad;
-  const yearLen = Math.round((Date.UTC(year + 1, 0, 1) - Date.UTC(year, 0, 1)) / 86400000);
-  const nCols = Math.ceil((mondayPad + yearLen) / 7);
   const S = hmSeries(plat, yStart, endIdx, artSel || null);
+  /* peta per bulan: 12 baris (Januari paling atas) × kolom tanggal 1–31.
+   * Tanggal 1 selalu di kolom paling kiri; setelah tanggal terakhir bulan itu kolomnya
+   * dibiarkan kosong (kotak bulan lain tidak menempel di sebelahnya), jadi awal & akhir
+   * bulan langsung terbaca. Hari tahun berjalan yang belum lewat juga dibiarkan kosong. */
+  const rows = [];
+  for (let m = 0; m < 12; m++) {
+    const dim = new Date(Date.UTC(year, m + 1, 0)).getUTCDate();
+    let cells = "";
+    for (let d = 1; d <= 31; d++) {
+      if (d > dim) { cells += '<div class="hm-c blank"></div>'; continue; }
+      const idx = dayIndexOf(Date.UTC(year, m, d) / 1000);
+      if (idx > endIdx) { cells += '<div class="hm-c blank"></div>'; continue; }
+      const g = S.gain.has(idx) ? S.gain.get(idx) : null;
+      const cv = S.cum.has(idx) ? S.cum.get(idx) : null;
+      const lv = g == null ? -1 : g <= 0 ? 0 : g >= S.th[3] ? 4 : g >= S.th[2] ? 3 : g >= S.th[1] ? 2 : 1;
+      const st = lv < 0 ? "" : ` style="background:${hmHexA(acc, hmLvA(lv))}"`;
+      cells += `<div class="hm-c${lv < 0 ? " nd" : ""}" data-i="${idx}" data-m="${m}" data-g="${g == null ? "" : g}" data-c="${cv == null ? "" : cv}"${st}></div>`;
+    }
+    rows.push(`<div class="hm-row"><span class="hm-mlbl" data-m="${m}">${HM_MONTH.format(new Date(Date.UTC(year, m, 1)))}</span>${cells}</div>`);
+  }
   /* pilih artis: gabungan / per grup */
   const artChips = `<div class="hm-art"><span style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px">Artis:</span>` +
     `<button type="button" data-hm-a=""${!artSel ? ' class="on"' : ""}>Gabungan</button>` +
@@ -4399,27 +4482,6 @@ function hmBodyHTML(plat, year) {
   const yearBtns = [];
   for (let y = debY; y <= curY; y++) yearBtns.push(`<button type="button" data-hm-y="${y}"${y === year ? ' class="on"' : ""}>${y}</button>`);
   const yearSeg = `<div class="hm-art"><span style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px">Tahun:</span>${yearBtns.join("")}</div>`;
-  const cells = [];
-  for (let c = 0; c < nCols; c++) {
-    for (let r = 0; r < 7; r++) {
-      const idx = gridStart + c * 7 + r;
-      if (idx < yStart || idx > endIdx) { cells.push('<div class="hm-c blank"></div>'); continue; }
-      const g = S.gain.has(idx) ? S.gain.get(idx) : null;
-      const cv = S.cum.has(idx) ? S.cum.get(idx) : null;
-      const lv = g == null ? -1 : g <= 0 ? 0 : g >= S.th[3] ? 4 : g >= S.th[2] ? 3 : g >= S.th[1] ? 2 : 1;
-      const st = lv < 0 ? "" : ` style="background:${hmHexA(acc, hmLvA(lv))}"`;
-      /* penanda awal bulan: kotak tanggal 1 diberi bingkai tipis */
-      const dom1 = /-01$/.test(dateKeyOfDayIndex(idx)) ? " dom1" : "";
-      cells.push(`<div class="hm-c${lv < 0 ? " nd" : ""}${dom1}" data-i="${idx}" data-g="${g == null ? "" : g}" data-c="${cv == null ? "" : cv}"${st}></div>`);
-    }
-  }
-  /* label bulan: setiap label berangkat tepat di kolom (minggu) tempat tanggal 1 bulan itu jatuh */
-  const mCols = [];
-  for (let m = 0; m < 12; m++) mCols.push(Math.floor((dayIndexOf(Date.UTC(year, m, 1) / 1000) - gridStart) / 7));
-  const months = mCols.map((col, m) => {
-    const span = Math.max(1, Math.min((m < 11 ? mCols[m + 1] : nCols) - col, nCols - col));
-    return `<span data-m="${m}" style="grid-column:${col + 1} / span ${span}">${HM_MONTH.format(new Date(Date.UTC(year, m, 1)))}</span>`;
-  }).join("");
   /* ringkasan tahun terpilih */
   let tot = 0, busy = null;
   for (const [idx, g] of S.gain) { if (g > 0) { tot += g; if (!busy || g > busy.g) busy = { idx, g }; } }
@@ -4441,20 +4503,20 @@ function hmBodyHTML(plat, year) {
   const monthlyHTML = `<div class="hm-months2" style="--acc:${acc}">` + mbArr.map(([k, v]) =>
     `<div class="hmm" title="${esc(MFULL.format(new Date(k + "-01T00:00:00")))}: ${v > 0 ? "+" + fmtCompact(v) + " " + unitPl : "tidak ada data"}"><i${v > 0 ? ` style="height:${Math.max(6, Math.round((v / mbMax) * 58))}px"` : ' class="zero"'}></i><b>${v > 0 ? "+" + fmtCompact(v) : "–"}</b><span>${HM_MONTH.format(new Date(k + "-01T00:00:00Z"))}</span></div>`).join("") + `</div>`;
   const legend = [0, 1, 2, 3, 4].map((l) => `<div class="hm-c" style="background:${hmHexA(acc, hmLvA(l))}"></div>`).join("");
+  const ruler = `<div class="hm-ruler"><span></span>` + Array.from({ length: 31 }, (_, i) => `<span>${i + 1}</span>`).join("") + `</div>`;
   return `
   ${artChips}
   ${yearSeg}
   <div class="hm-bar">
     <div class="hm-sum">${sumHTML}</div>
   </div>
-  <div class="hm-scroll"><div class="hm-inner">
-    <div class="hm-months">${months}</div>
-    <div class="hm-grid">${cells.join("")}</div>
-    <div class="hm-band" style="--band:${acc}"></div>
+  <div class="hm-scroll"><div class="hm-inner" style="--band:${acc}">
+    ${ruler}
+    ${rows.join("")}
     <div class="hm-tip"></div>
   </div></div>
   ${monthlyHTML}
-  <div class="hm-legend"><span>Kurang</span>${legend}<span>Banyak</span><div class="hm-c nd"></div><span>tanpa data</span><div class="hm-c dom1"></div><span>tanggal 1</span></div>`;
+  <div class="hm-legend"><span>Kurang</span>${legend}<span>Banyak</span><div class="hm-c nd"></div><span>tanpa data · kotak kosong = tanggal tak ada / belum berjalan</span></div>`;
 }
 /* halaman khusus Peta panas harian — dibuka lewat kartu menu (dulu seksi inline di beranda) */
 function renderHeatmapPage(sec) {
@@ -4463,7 +4525,7 @@ function renderHeatmapPage(sec) {
     ${pageCloseBar("Peta panas harian", `${hmUnit(plat)} baru tiap hari, semua ${plat === "spotify" ? "lagu" : "video"} digabung — bisa difilter per artis`, HM_ICO, hmAccent(plat))}
     <div class="hm-card" style="margin-top:14px">
       <div data-hm-host></div>
-      <p class="note">Setiap kotak = 1 hari kalender WIB · satu peta = tepat satu tahun kalender (Januari–Desember) — pilih tahun lewat tab <b>Tahun</b>; daftar tahun dimulai dari tahun debut grup (TREASURE 2020 · BABYMONSTER 2023) · <b>bingkai tipis</b> pada kotak = tanggal 1, jadi posisi awal setiap bulan terbaca jelas · <b>gerakkan kursor</b> di atas kotak: label bulan ikut menyala dan <b>pita warna</b> menutupi kolom milik bulan kotak itu, jadi langsung terbaca kotak ada di bulan apa (nama bulan + tanggal juga muncul di kotak info) · makin terah = ${hmUnit(plat)} baru makin banyak (selisih total antar hari; jika jarak pengukuran lebar, selisih dibagi rata ke harinya) · kotak abu = hari tanpa pengukuran · gunakan pilihan <b>Artis</b> untuk melihat peta panas BABYMONSTER / TREASURE saja · batang di bawah = total pertumbuhan tiap bulan Jan–Des tahun terpilih.</p>
+      <p class="note">Setiap <b>baris = satu bulan</b> (Januari paling atas → Desember paling bawah) dan setiap <b>kolom = tanggal</b> mengikuti angka penanda di atas peta — tanggal 1 selalu di kolom paling kiri, dan setelah tanggal terakhir bulan itu kolomnya <b>dibiarkan kosong</b> (kotak bulan lain tidak menempel di sebelahnya), jadi posisi awal &amp; akhir bulan langsung terbaca · hari tahun berjalan yang belum berjalan juga dibiarkan kosong · <b>gerakkan kursor</b> di atas kotak: label bulan baris itu menyala, baris ikut diberi warna, dan kotak info menampilkan nama bulan + tanggal lengkap · makin terah = ${hmUnit(plat)} baru makin banyak (selisih total antar hari; jika jarak pengukuran lebar, selisih dibagi rata ke harinya) · kotak abu = hari tanpa pengukuran · gunakan pilihan <b>Artis</b> untuk melihat peta panas BABYMONSTER / TREASURE saja dan tab <b>Tahun</b> (mulai dari tahun debut: TREASURE 2020 · BABYMONSTER 2023) · batang di bawah = total pertumbuhan tiap bulan Jan–Des tahun terpilih.</p>
     </div>`;
   bindPageClose(sec);
   mountHeatmap(sec, plat);
@@ -4484,24 +4546,13 @@ function mountHeatmap(sec, plat) {
     tip.innerHTML = `<b>${HM_WDAY.format(dt)}, ${HM_DATE_LONG.format(dt)}</b>` +
       `<span class="t2">bulan ${HM_MONTH.format(dt)}${c != null ? ` · total ${fmtCompact(c)} ${hmUnitPl(plat)}` : ""}</span>` +
       `<span class="t2">${g != null ? "+" + fmtCompact(g) + " " + unit + " baru di hari ini" : "tanpa data"}</span>`;
-    /* penanda bulan: label bulan di atas peta menyala + pita warna menutupi seluruh kolom milik bulan itu,
-       jadi posisi kotak di bulan mana langsung terbaca saat kursor menyentuhnya */
-    const mo = dt.getUTCMonth();
-    host.querySelectorAll(".hm-months span").forEach((s) => s.classList.toggle("hl", parseInt(s.dataset.m, 10) === mo));
-    const lbl = host.querySelector(`.hm-months span[data-m="${mo}"]`);
-    const band = host.querySelector(".hm-band");
-    if (lbl && band) {
-      const gcm = /^\s*(\d+)/.exec(lbl.style.gridColumn || "");
-      const gsp = /span\s+(\d+)/.exec(lbl.style.gridColumn || "");
-      const c0 = gcm ? parseInt(gcm[1], 10) - 1 : 0;
-      const cn = gsp ? parseInt(gsp[1], 10) : 1;
-      const CELL = 20; /* 16px lebar kolom + 4px gap (sama dengan .hm-grid) */
-      band.style.left = c0 * CELL + "px";
-      band.style.width = cn * CELL - 4 + "px";
-      band.style.top = "0";
-      band.style.height = inner.offsetHeight + "px";
-      band.style.display = "block";
-    }
+    /* penanda bulan: label bulan pada baris itu menyala + seluruh baris diberi warna,
+       jadi kotak ada di bulan apa langsung terbaca saat kursor menyentuhnya */
+    host.querySelectorAll(".hm-mlbl.hl,.hm-row.hl").forEach((s) => s.classList.remove("hl"));
+    const lbl = host.querySelector(`.hm-mlbl[data-m="${cell.dataset.m}"]`);
+    const row = cell.closest(".hm-row");
+    if (lbl) lbl.classList.add("hl");
+    if (row) row.classList.add("hl");
     tip.style.visibility = "hidden";
     tip.style.display = "block";
     let left = cell.offsetLeft + cell.offsetWidth / 2 - tip.offsetWidth / 2;
@@ -4514,9 +4565,7 @@ function mountHeatmap(sec, plat) {
   };
   const hide = () => {
     tip.style.display = "none"; lastCell = null;
-    host.querySelectorAll(".hm-months span.hl").forEach((s) => s.classList.remove("hl"));
-    const band = host.querySelector(".hm-band");
-    if (band) band.style.display = "none";
+    host.querySelectorAll(".hm-mlbl.hl,.hm-row.hl").forEach((s) => s.classList.remove("hl"));
   };
   host.addEventListener("mouseover", (e) => {
     const c = e.target.closest(".hm-c[data-i]");

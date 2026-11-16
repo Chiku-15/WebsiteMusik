@@ -29,11 +29,11 @@ Situs statistik **YouTube + Spotify** untuk artis K-pop — saat ini berisi **BA
 - Seluruh antarmuka berbahasa Indonesia
 - **Deteksi rilis baru otomatis**: MV/dance practice/performance video baru yang diunggah ke channel langsung masuk daftar; video solo member & konten non-performa otomatis diabaikan
 - **Halaman Media Sosial** — follower Instagram, X (Twitter), TikTok & Weverse kedua grup (+ subscriber YouTube & followers Spotify), delta 7/30 hari, grafik mini, badge sumber (persis/aprox/mirror/manual). Angka bisa diisi manual lewat `data/social-override.json`. Kolektor `collect_social.js` mencoba 3 cara per platform (endpoint resmi → meta halaman → mirror) dan menyimpan angka terakhir walau sumber sesekali gagal
-- **Halaman Peringkat Chart** — posisi lagu di **Billboard Global 200** (mingguan), **Melon Top 100** & **Genie Top 100** (harian): status saat ini, rekor terbaik, dan grafik histori posisi (poros dibalik — makin tinggi makin bagus). Titik hanya direkam saat artis masuk chart; Melon kerap menolak IP datacenter (Genie jadi pembanding)
+- **Halaman Peringkat Chart** — posisi lagu di **Billboard Global 200 & Global Excl. US** (mingguan), **Spotify Global Top 200** (harian, via kworb.net), **Melon Top 100**, **Genie Top 200** & **Bugs Top 100** (harian): status saat ini, rekor terbaik, dan grafik histori posisi (poros dibalik — makin tinggi makin bagus). Titik hanya direkam saat artis masuk chart; Melon kerap menolak IP datacenter (Genie/Bugs jadi pembanding, Spotify Global via kworb paling stabil)
 - **Halaman Diskografi** — semua album/EP/singel resmi kedua grup dengan cover, tipe, tanggal rilis, jumlah lagu & total stream per album — klik album membuka halaman album lengkap dengan daftar lagu + grafik per lagu. Judul album live/tur yang panjang dirapikan otomatis: nama pendek + baris khusus info venue/tanggal (mis. "1st WORLD TOUR <HELLO MONSTERS> IN JAPAN" + "13 Apr 2025 · K-ARENA YOKOHAMA")
 - **Halaman Berita K-pop** — berita terbaru yang menyebut BABYMONSTER/TREASURE dari RSS **Soompi, Koreaboo & tag Kbizoom per artis**, dengan filter chip per grup, **thumbnail foto artikel** (dari feed/og:image; CDN anti-hotlink ditangani dengan `referrerpolicy=no-referrer`, fallback inisial sumber) dan tanggal publikasi yang jelas di tiap kartu
 - **Halaman Timeline Grup** — garis waktu perjalanan kedua grup dari pra-debut sampai sekarang: reveal anggota, debut, tiap EP/album/singel, tur dunia & peristiwa penting, lengkap badge tipe (Debut/Album/Singel/Tur/Acara), pill nama grup dan filter chip per grup. **Posisi kartu mengikuti grup**: pada filter "Kedua grup" kartu TREASURE selalu di KIRI garis & BABYMONSTER selalu di KANAN (ada legenda); filter satu grup bergantian kiri-kanan. Tanggal dikurasi manual dari Wikipedia resmi tiap grup — rilisan baru tinggal ditambahkan ke konstanta `TIMELINE` di index.html
-- **Halaman Peta Panas Harian** — heatmap ala GitHub: **satu peta = tepat satu tahun kalender (Januari–Desember)** dengan **tab tahun dari tahun debut grup** (TREASURE 2020, BABYMONSTER 2023), **penanda tanggal 1** (bingkai tipis) supaya posisi awal tiap bulan terbaca, label bulan di kolom tempat tanggal 1 jatuh, ringkasan total tahun terpilih + hari tersibuk, batang pertumbuhan Jan–Des, dan filter artis gabungan/per grup
+- **Halaman Peta Panas Harian** — heatmap: **satu peta = tepat satu tahun kalender** dengan **tab tahun dari tahun debut grup** (TREASURE 2020, BABYMONSTER 2023). **Tata letak per bulan yang mudah dibaca**: setiap baris = satu bulan (Januari di atas → Desember di bawah), kolom = tanggal 1–31 dengan ruler angka — tanggal 1 selalu di kolom paling kiri dan kolom setelah tanggal terakhir bulan itu dibiarkan kosong; hover menyorot baris/label bulan + tooltip nama bulan & tanggal lengkap; ringkasan total tahun + hari tersibuk, batang pertumbuhan Jan–Des, dan filter artis gabungan/per grup
 - **Seksi “Lonjakan tak biasa” di beranda** — log persisten video yang tambahan views/harinya ≥ 2,5× median 30 hari sebelumnya (indikasi viral, mis. TikTok); barisnya bisa diklik untuk membuka grafik video
 - **Perbaikan navigasi**: membuka halaman khusus lain dari halaman khusus yang sedang terbuka kini langsung berganti (sebelumnya harus klik “Kembali” dulu), dan tombol **“Kembali”** di semua halaman khusus kini pasti berfungsi (sebelumnya 5 halaman baru punya tombol yang tidak terikat event)
 
@@ -53,8 +53,8 @@ GitHub Actions (07:00 & 19:00 WIB)
   │ node collect.js        → YouTube Data API v3 (Secret YOUTUBE_API_KEY)
   │ node collect_spotify.js → Spotify Charts via kworb.net + embed Spotify (tanpa API key;
   │                           opsional Spotify Web API utk followers)
-  │ node collect_social.js  → sosmed (IG/X/TikTok), Billboard/Melon/Genie, RSS berita,
-  │                           log anomali views (semua tanpa API key, best-effort)
+  │ node collect_social.js  → sosmed (IG/X/TikTok), Billboard/Melon/Genie/Bugs/Spotify Global (kworb),
+  │                           RSS berita, log anomali views (semua tanpa API key, best-effort)
   ▼
 data/*.json + data/spotify-*.json (riwayat angka, di-commit oleh github-actions[bot])
   ▼
@@ -79,9 +79,9 @@ GitHub Pages menayangkan index.html — tombol YouTube/Spotify di header bergant
 | `data/backfill/` | Penanda video yang sudah dibackfill dari arsip |
 | `data/meta.json` | Info pembaruan terakhir bagian YouTube |
 | `data/social.json` | Riwayat follower Instagram/X/TikTok per grup (+ kartu Weverse) |
-| `data/charts.json` | Riwayat posisi live: Billboard Global 200 & Global Excl. US, Melon, Genie & Bugs Top 100 |
+| `data/charts.json` | Riwayat posisi live: Billboard Global 200 & Global Excl. US, Spotify Global Top 200 (kworb), Melon, Genie & Bugs Top 100 |
 | `data/chart-history.json` | Riwayat & rekor pencapaian chart dari debut (kurasi manual — puncak/debut/entri terverifikasi) |
-| `data/trofi.json` | Trofi acara musik, penghargaan besar, Inkigayo Hot Stage & nominasi (kurasi manual; koreksi 14 Nov 2026: BABYMONSTER = 2 trofi acara musik — SHEESH & WE GO UP M Countdown; entri "AAA 2024" dikoreksi jadi ASEA 2024) |
+| `data/trofi.json` | Trofi acara musik, penghargaan besar, Inkigayo Hot Stage & nominasi (kurasi manual; reviu penuh 16 Nov 2026 vs Wikipedia: BABYMONSTER = 2 trofi acara musik + 12 penghargaan besar, TREASURE = 4 trofi acara musik + 43 penghargaan besar + 1 daesang KGMA 2026) |
 | `data/jadwal.json` | Jadwal tur/event manual untuk halaman Jadwal & Countdown |
 | `data/members.json` | Profil 17 anggota (klik kartu = detail profil + **foto solo artis**) |
 | `img/members/` | Foto solo 17 anggota (dipakai di kartu profil & halaman detail; ganti file `<slug>.jpg` untuk mengganti foto) |
@@ -157,7 +157,7 @@ Langkah ketiga di workflow. Semua sumbernya publik & tanpa API key, dijalankan b
 - **X (Twitter)**: via mirror Nitter (xcancel/lightbrd/nitter.net) → `r.jina.ai` (aprox). Ketersediaan mirror berubah-ubah
 - **TikTok**: baca JSON `followerCount` dari halaman profil
 - **Weverse**: jumlah follower **tidak dipublikasikan lewat web publik** — kartunya berisi tautan saja
-- **Billboard Global 200**: dibaca dari baris chart di billboard.com (mingguan). **Melon**: sering menolak IP datacenter — bila gagal, kartu chart menampilkan pesan dan Genie jadi pembanding
+- **Billboard Global 200**: dibaca dari baris chart di billboard.com (mingguan). **Melon**: sering menolak IP datacenter — bila gagal, kartu chart menampilkan pesan dan Genie jadi pembanding. **Spotify Global Top 200**: dari kworb.net (`country/global_daily.html`) — tabel 200 baris, artis & judul diambil dari link artist/track sehingga tidak salah potong; jumlah stream/hari ikut disimpan di titik riwayat. **Bugs/Genie**: 3 percobaan per putaran + header Referer
 - **Berita**: RSS Soompi + Koreaboo (difilter kata BABYMONSTER/TREASURE) + tag Kbizoom per artis
 - **Anomali**: video yang tambahan views/harinya ≥ 2,5× median harian 30 titik sebelumnya dicatat ke `data/anomalies.json` (satu entri per video per hari, maks. 300)
 
