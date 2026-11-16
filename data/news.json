@@ -2,14 +2,6 @@
  "_info": "Berita terbaru yang menyebut BABYMONSTER/TREASURE, dari RSS Soompi, Koreaboo, dan tag Kbizoom per artis. Dedupe per tautan, maksimum 60 entri. Setiap entri menyertakan thumbnail gambar bila tersedia di feed (enclosure/media:content/img artikel).",
  "items": [
   {
-   "t": 1794709092,
-   "title": "TREASURE’s “SHOCK” Becomes Their Fastest MV To Hit 100 Million Views",
-   "link": "https://www.soompi.com/article/1887010wpp/treasures-shock-becomes-their-fastest-mv-to-hit-100-million-views",
-   "desc": "",
-   "img": "https://0.soompi.io/wp-content/uploads/2026/11/15111554/TREASURE.jpeg",
-   "source": "Soompi"
-  },
-  {
    "t": 1794380375,
    "title": "BLACKPINK’s Jisoo, NCT, And BABYMONSTER Announced For Coachella 2027 Lineup",
    "link": "https://www.soompi.com/article/1885928wpp/blackpinks-jisoo-nct-and-babymonster-announced-for-coachella-2027-lineup",
@@ -162,5 +154,5 @@
    "img": "https://cdn.kbizoom.com/media/2026/04/24015831/treasure-paradise-lyrics.webp"
   }
  ],
- "updated": 1794790139
+ "updated": 1794670234
 }
