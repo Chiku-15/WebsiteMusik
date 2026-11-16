@@ -14,8 +14,8 @@
      "best": null
     }
    },
-   "chartDate": "2026-11-16",
-   "updated": 1794825964,
+   "chartDate": "2026-11-17",
+   "updated": 1794871961,
    "lastError": null
   },
   "genie_top200": {
@@ -48,9 +48,9 @@
      "best": null
     }
    },
-   "updated": 1794825967,
+   "updated": 1794871962,
    "lastError": null,
-   "chartDate": "2026-11-16"
+   "chartDate": "2026-11-17"
   },
   "bugs_day100": {
    "label": "Bugs Top 100 (harian)",
@@ -87,5 +87,5 @@
    "lastError": null
   }
  },
- "updated": 1794868639
+ "updated": 1794871964
 }
