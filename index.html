@@ -269,6 +269,8 @@
   .spdsum b{font-size:20px;color:var(--ac,#1ed760);font-variant-numeric:tabular-nums}
   .spdsum span{display:block;font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.6px}
   .spdrow{display:grid;grid-template-columns:26px minmax(0,1fr) 90px 84px 96px 84px;gap:10px;align-items:center;padding:8px 2px;border-bottom:1px solid var(--border)}
+  .spdrow.haswl{grid-template-columns:26px minmax(0,1fr) 90px 84px 96px 84px 34px}
+  .spdrow.haswl .wlbtn{justify-self:end}
   .spdrow:last-of-type{border-bottom:none}
   .spdrank{font-weight:800;color:var(--muted);font-size:12px}
   .spdmain{min-width:0}
@@ -281,7 +283,8 @@
   .spdnum b.up{color:#22c55e}
   .spdnum b.down{color:#fb7185}
   .spdfoot{margin-top:9px;font-size:11px;color:var(--muted);line-height:1.5}
-  @media (max-width:720px){.spdrow{grid-template-columns:22px minmax(0,1fr) 72px 66px}.spdrow .spdnum:nth-child(5),.spdrow .spdnum:nth-child(6){display:none}}
+  @media (max-width:720px){.spdrow{grid-template-columns:22px minmax(0,1fr) 72px 66px}.spdrow .spdnum:nth-child(5),.spdrow .spdnum:nth-child(6){display:none}
+    .spdrow.haswl{grid-template-columns:22px minmax(0,1fr) 72px 66px 30px}.spdrow.haswl .spdnum:nth-child(5),.spdrow.haswl .spdnum:nth-child(6){display:none}}
   .cdlive{font-variant-numeric:tabular-nums}
   .trobadg{display:inline-block;padding:2px 9px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.4px}
   .trobadg.win{background:color-mix(in srgb,#22c55e 16%,transparent);color:#22c55e}
@@ -813,9 +816,10 @@
   .yearwrap .ywtx span{font-size:12px;color:var(--muted);display:block;margin-top:2px;line-height:1.5}
   .yearwrap .ywtx .schcnt{color:var(--ac,#38bdf8);font-variant-numeric:tabular-nums}
   .socartist{margin-top:26px}
-  .socgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}
+  .socgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px;align-items:stretch}
+  .socgrid .soccard{min-height:158px}
   @media (max-width:980px){.socgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-  @media (max-width:540px){.socgrid{grid-template-columns:1fr}}
+  @media (max-width:540px){.socgrid{grid-template-columns:1fr}.socgrid .soccard{min-height:0}}
   .soccard{background:var(--card);border:1px solid var(--border);border-top:3px solid var(--pc,#6a78ff);border-radius:16px;padding:14px 16px;min-width:0;display:flex;flex-direction:column;gap:8px;transition:border-color .15s,transform .15s}
   .soccard:hover{border-color:color-mix(in srgb,var(--pc,#6a78ff) 45%,var(--border));transform:translateY(-1px)}
   .sochead{display:flex;align-items:center;gap:8px;font-size:12.5px}
@@ -1025,14 +1029,16 @@ function fmtCompact(n) {
   if (n === null || n === undefined) return "–";
   if (Math.abs(n) >= 1e9) return (n / 1e9).toLocaleString("id-ID", { maximumFractionDigits: 2 }) + " mlr";
   if (Math.abs(n) >= 1e6) return (n / 1e6).toLocaleString("id-ID", { maximumFractionDigits: 2 }) + " jt";
-  if (Math.abs(n) >= 1e4) return (n / 1e3).toLocaleString("id-ID", { maximumFractionDigits: 1 }) + " rb";
+  /* ambang 1 rb (dulu 10 rb): tanpa ini, angka seperti 8304 tampil "8.304" — terbaca
+   * seperti desimal tanpa satuan. Kini konsisten: 8304 → "8,3 rb", 999 → "999". */
+  if (Math.abs(n) >= 1e3) return (n / 1e3).toLocaleString("id-ID", { maximumFractionDigits: 1 }) + " rb";
   return NF.format(n);
 }
 function fmtDelta(n) {
   if (n === null || n === undefined) return "–";
   const sign = n > 0 ? "+" : n < 0 ? "−" : "";
   const a = Math.abs(n);
-  if (a >= 1e6) return sign + fmtCompact(a);
+  if (a >= 1e3) return sign + fmtCompact(a); // selaras fmtCompact: tidak ada "8.304" ambigu
   return sign + NF.format(a);
 }
 function fmtDate(iso) {
@@ -1661,17 +1667,6 @@ function renderSpAlbumPage(sec) {
   const top = rows.slice().sort((x, y) => spTrackTotal(y.tr) - spTrackTotal(x.tr))[0] || null;
   const topShare = top && tot > 0 ? (spTrackTotal(top.tr) / tot) * 100 : null;
   const age = al.releaseDate ? ageDays(al.releaseDate) : null;
-  const listRows = rows.slice().sort((x, y) => spTrackTotal(y.tr) - spTrackTotal(x.tr)).map((x, i) => {
-    const t = spTrackTotal(x.tr);
-    const pct = tot > 0 ? (t / tot) * 100 : 0;
-    return `
-    <div class="wprow" data-spk="${esc(x.tr.key)}" tabindex="0" role="button" aria-label="${esc(x.tr.name)}">
-      <div class="rk">${i + 1}</div>
-      <div class="nm">${esc(x.tr.name)}${x.tr.live ? '<span class="typetag live">Live</span>' : ""}<span class="wbsub">${x.meta.duration ? fmtDurSp(x.meta.duration) + " · " : ""}bagian dari ${esc(al.name)}</span></div>
-      <div class="del"><div class="d1">${fmtCompact(t)}</div><div class="d2">+${fmtCompact(spTrackDaily(x.tr))}/hari · ${pct.toFixed(1).replace(".", ",")}% album</div></div>
-      <button class="wlbtn${wlOn("sp:" + x.tr.key) ? " on" : ""}" data-wl="sp:${esc(x.tr.key)}" title="Pantau lagu ini" aria-label="Pantau ${esc(x.tr.name)}">★</button>
-    </div>`;
-  }).join("");
   sec.innerHTML = `
   <section style="margin-top:26px">
     ${pageCloseBar("Halaman album", "satu album, satu halaman — semua lagunya diukur di sini")}
@@ -1693,18 +1688,13 @@ function renderSpAlbumPage(sec) {
       <div class="whl"><div class="k">Sisa lagu (B-side)</div><div class="em">＋</div><div class="v">${topShare != null ? (100 - topShare).toFixed(1).replace(".", ",") + "%" : "–"}</div><div class="d">porsi ${Math.max(0, rows.length - (top ? 1 : 0))} lagu lainnya</div></div>
       <div class="whl"><div class="k">Rata-rata per lagu</div><div class="em">÷</div><div class="v">${rows.length ? fmtCompact(Math.round(tot / rows.length)) : "–"}</div><div class="d">stream per lagu</div></div>
     </div>
-    <div class="sharecard" style="margin-top:14px">
-      ${topShare != null ? `
-      <div class="shr"><div class="shn"><span>${esc(top.tr.name)} — lagu teratas</span><b>${fmtCompact(spTrackTotal(top.tr))} · ${topShare.toFixed(1).replace(".", ",")}%</b></div>
-      <div class="shb"><i style="width:${Math.max(2, topShare)}%;background:linear-gradient(90deg,${ar.color || SP_GREEN},#b9ffce)"></i></div></div>
-      <div class="shr" style="margin-top:9px"><div class="shn"><span>Sisa ${Math.max(0, rows.length - 1)} lagu</span><b>${fmtCompact(tot - spTrackTotal(top.tr))} · ${(100 - topShare).toFixed(1).replace(".", ",")}%</b></div>
-      <div class="shb"><i style="width:${Math.max(2, 100 - topShare)}%;background:linear-gradient(90deg,#8a93a8,#c8d2e4)"></i></div></div>` : `<div style="font-size:12px;color:var(--muted)">Belum ada data stream untuk album ini.</div>`}
-    </div>
     ${(function () {
-      /* kartu statistik harian per lagu — total stream, stream hari ini, selisih & persen
-       * vs hari sebelumnya (dari 2 titik riwayat nyata terakhir, jarak ≤ 3 hari). */
-      const sorted = rows.slice().sort((x, y) => spTrackDaily(y.tr) - spTrackDaily(x.tr));
-      if (!sorted.length) return "";
+      /* SATU daftar lagu per album — dulu ada 2 tabel yang mirip (daftar "total stream" + kartu
+       * "statistik harian per lagu"), kini digabung jadi satu tampilan. Diurut menurut TOTAL stream;
+       * tiap baris memuat: peringkat, nama + durasi, bar porsi stream album, total (angka persis di
+       * tooltip), stream hari ini, selisih & persen vs hari sebelumnya, dan tombol pantau ★. */
+      const sorted = rows.slice().sort((x, y) => spTrackTotal(y.tr) - spTrackTotal(x.tr));
+      if (!sorted.length) return `<div class="banner" style="margin-top:14px">Belum ada lagu terdaftar.</div>`;
       const rws = sorted.map((x, i) => {
         const t = spTrackTotal(x.tr);
         const d = spTrackDaily(x.tr);
@@ -1717,25 +1707,25 @@ function renderSpAlbumPage(sec) {
         const dd = prev != null ? d - prev : null;
         const pct = dd != null && prev > 0 ? (dd / prev) * 100 : null;
         const share = t > 0 && tot > 0 ? (t / tot) * 100 : 0;
-        return `<div class="spdrow">
+        return `<div class="spdrow haswl" data-spk="${esc(x.tr.key)}" tabindex="0" role="button" aria-label="${esc(x.tr.name)}">
           <div class="spdrank">${i + 1}</div>
-          <div class="spdmain"><b>${esc(x.tr.name)}${x.tr.live ? " (Live)" : ""}</b><div class="spdbar"><i style="width:${Math.max(2, share).toFixed(1)}%;background:linear-gradient(90deg,${ar.color || SP_GREEN},#ffffff66)"></i></div></div>
-          <div class="spdnum"><span class="k">total</span><b>${fmtCompact(t)}</b></div>
+          <div class="spdmain"><b>${esc(x.tr.name)}${x.tr.live ? " (Live)" : ""}</b>${x.meta.duration ? `<span class="cellno"> · ${fmtDurSp(x.meta.duration)}</span>` : ""}<div class="spdbar"><i style="width:${Math.max(2, share).toFixed(1)}%;background:linear-gradient(90deg,${ar.color || SP_GREEN},#ffffff66)"></i></div></div>
+          <div class="spdnum"><span class="k">total</span><b title="${fmtExact(t)}">${fmtCompact(t)}</b></div>
           <div class="spdnum"><span class="k">harian</span><b>+${fmtCompact(d)}</b></div>
           <div class="spdnum"><span class="k">vs kemarin</span><b class="${dd > 0 ? "up" : dd < 0 ? "down" : ""}">${dd == null ? "–" : (dd >= 0 ? "+" : "-") + fmtCompact(Math.abs(dd))}</b></div>
           <div class="spdnum"><span class="k">persen</span><b class="${pct != null && pct > 0 ? "up" : pct != null && pct < 0 ? "down" : ""}">${pct == null ? "–" : (pct >= 0 ? "+" : "-") + Math.abs(pct).toFixed(2).replace(".", ",") + "%"}</b></div>
+          <button class="wlbtn${wlOn("sp:" + x.tr.key) ? " on" : ""}" data-wl="sp:${esc(x.tr.key)}" title="Pantau lagu ini" aria-label="Pantau ${esc(x.tr.name)}">★</button>
         </div>`;
       }).join("");
       return `<div class="spdcard" style="--ac:${ar.color || SP_GREEN};margin-top:14px">
         <div class="spdhead">
-          <div class="spdl"><b>Statistik harian per lagu — ${esc(al.name)}</b><span>total stream kumulatif · stream hari ini · selisih &amp; persen vs hari sebelumnya (dari riwayat yang direkam situs)</span></div>
+          <div class="spdl"><b>Semua lagu — ${esc(al.name)}</b><span>urut dari total stream terbanyak · total · stream hari ini · selisih &amp; persen vs hari sebelumnya</span></div>
           <div class="spdsum"><b>+${fmtCompact(dly)}</b><span>stream/hari gabungan</span></div>
         </div>
         ${rws}
-        <div class="spdfoot">Diurut menurut stream harian · total album <b>${fmtCompact(tot)}</b> stream · klik lagu di daftar di bawah untuk grafik &amp; milestone lengkap.</div>
+        <div class="spdfoot">Klik baris lagu untuk grafik &amp; milestone lengkap · bar di bawah nama = porsi stream dari total album <b>${fmtCompact(tot)}</b> · total lagu persisnya arahkan kursor ke angka.</div>
       </div>`;
     })()}
-    <div style="display:flex;flex-direction:column;gap:7px;margin-top:16px">${listRows || '<div class="banner">Belum ada lagu terdaftar.</div>'}</div>
     <p class="note">Semua angka dari riwayat stream yang direkam situs ini · klik lagu untuk grafik &amp; milestone · tandai ★ untuk memantau di beranda.</p>
   </section>`;
   bindAlbumClose(sec);
@@ -1845,6 +1835,16 @@ function catalogDaily(vids, daysBack) {
   return out;
 }
 /* ---- halaman PROFIL ANGGOTA (fitur no 15) ---- */
+/* zodiak dari tanggal lahir (batas masuk tiap bulan, standar astrologi barat) */
+const ZOD_START = [20, 19, 21, 20, 21, 21, 23, 23, 23, 23, 22, 22];
+const ZOD_NAME = ["Capricorn", "Akuarius", "Pisces", "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius"];
+function zodiacOf(iso) {
+  if (!iso) return "";
+  const p = String(iso).split("-").map(Number);
+  if (p.length < 3 || !p[1] || !p[2]) return "";
+  const m = p[1], d = p[2];
+  return d >= ZOD_START[m - 1] ? ZOD_NAME[m % 12] : ZOD_NAME[m - 1];
+}
 function renderMembersPage(sec) {
   const G = state.members && state.members.groups;
   if (!G) {
@@ -1856,14 +1856,14 @@ function renderMembersPage(sec) {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   let html = `<section style="margin-top:26px">
     ${pageCloseBar("Profil anggota", "17 anggota BABYMONSTER &amp; TREASURE · klik kartu untuk profil lengkap + foto artis", ICO_PEOPLE, "#f472b6")}
-    <p class="note">Umur &amp; hitung mundur ulang tahun dihitung waktu Jakarta · sumber profil: kprofiles.com &amp; fandom wiki resmi tiap grup · <b>klik kartu anggota</b> untuk membuka profil detail dengan foto solo anggota (bukan bingkai M/V).</p>`;
+    <p class="note">Umur, hitung mundur ulang tahun &amp; zodiak dihitung waktu Jakarta · sumber profil: <b>kprofiles.com</b> (MBTI, asal kota, golongan darah &amp; posisi terbaru — termasuk pergantian leader TREASURE ke Haruto &amp; Jaehyuk sejak 1 Juni 2026) &amp; fandom wiki resmi tiap grup · <b>klik kartu anggota</b> untuk membuka profil detail dengan foto solo anggota (bukan bingkai M/V).</p>`;
   for (const gid of ["babymonster", "treasure"]) {
     const g = G[gid];
     if (!g) continue;
     const art = artistOf(gid) || {};
     const color = art.color || g.color || "#6a78ff";
     html += `<div class="calyear" style="margin-top:22px"><span class="ln"></span><span class="yr" style="color:${color}">${esc(g.name)}</span><span class="ln"></span></div>
-    <p class="note" style="margin-top:4px">Debut ${fmtDate(g.debut)} · ${g.members.length} anggota</p>
+    <p class="note" style="margin-top:4px">Debut ${fmtDate(g.debut)} · ${g.members.length} anggota${g.debut_note ? ` — ${esc(g.debut_note)}` : ""}</p>
     <div class="memgrid">` + g.members.map((m, i) => {
       const nb = nextYearly(m.bd);
       const dd = nb ? Math.round((new Date(nb.date + "T00:00:00") - today) / 86400000) : null;
@@ -1876,8 +1876,8 @@ function renderMembersPage(sec) {
         <div class="nm">${esc(m.name)}</div>
         <div class="rl">${esc(m.real || "")}</div>
         <div class="rl" style="margin-top:1px">${esc(m.nat || "")}</div>
-        <div class="mempos">${(m.pos || []).map((p) => `<span>${esc(p)}</span>`).join("")}</div>
-        <div class="membday">ultah <b>${fmtDate(m.bd)}</b> · ${age} tahun${m.height ? " · " + NF.format(m.height) + " cm" : ""}</div>
+        <div class="mempos">${(m.pos || []).map((p) => `<span>${esc(p)}</span>`).join("")}${m.mbti ? `<span style="background:color-mix(in srgb,${color} 16%,transparent);color:${color}">MBTI ${esc(m.mbti)}</span>` : ""}</div>
+        <div class="membday">ultah <b>${fmtDate(m.bd)}</b> · ${age} tahun${m.height ? " · " + NF.format(m.height) + " cm" : ""}${m.bp ? " · " + esc(m.bp.split(",")[0]) : ""}</div>
         <div class="bdcnt">${isBd ? "SELAMAT ULANG TAHUN HARI INI" : soon ? `ultah berikutnya: ${NF.format(dd)} hari lagi` : `ultah berikutnya: ${fmtDate(nb.date)}`}</div>
         <div class="memgo">Lihat detail profil →</div>
       </div>`;
@@ -1932,8 +1932,8 @@ function openMemberDetail(key) {
       <div class="memava" style="--mc:${color};width:86px;height:86px;font-size:27px;margin:0">${m.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase()}<span class="avclip"><img src="${photoSrc}" alt="Foto ${esc(m.name)}" onerror="this.remove()"></span></div>
       <div style="min-width:0">
         <div class="dtitle">${esc(m.name)} <span class="apill" style="background:${color}">${esc(art.name || g.name)}</span></div>
-        <div class="dsub">${m.real ? esc(m.real) : ""}${m.nat ? " · " + esc(m.nat) : ""}</div>
-        <div class="dbadges" style="margin-top:8px">${(m.pos || []).map((p) => `<span class="dbadge"><b>${esc(p)}</b></span>`).join("")}</div>
+        <div class="dsub">${m.real ? esc(m.real) : ""}${m.nat ? " · " + esc(m.nat) : ""}${m.bp ? " · " + esc(m.bp) : ""}</div>
+        <div class="dbadges" style="margin-top:8px">${(m.pos || []).map((p) => `<span class="dbadge"><b>${esc(p)}</b></span>`).join("")}${m.mbti ? `<span class="dbadge" style="border-color:${color};color:${color}"><b>MBTI ${esc(m.mbti)}</b></span>` : ""}</div>
       </div>
     </div>
     <div class="memphoto" style="--artist-color:${color}">
@@ -1945,11 +1945,21 @@ function openMemberDetail(key) {
       ${stat("Lahir", fmtDate(m.bd))}
       ${stat("Umur", age + " tahun")}
       ${stat("Tinggi", m.height ? NF.format(m.height) + " cm" : "–")}
+      ${stat("Zodiak", zodiacOf(m.bd) || "–")}
       ${stat("Umur saat debut", debutAge + " tahun")}
-      ${stat("Ultah berikutnya", dd === 0 ? "HARI INI" : dd != null ? NF.format(dd) + " hari lagi" : "–")}
       ${stat("Debut grup", fmtDate(g.debut))}
+      ${stat("Ultah berikutnya", dd === 0 ? "HARI INI" : dd != null ? NF.format(dd) + " hari lagi" : "–")}
+      ${stat("Gol. darah", m.bt ? m.bt : "–")}
+      ${stat("Asal", m.bp ? esc(m.bp) : "–")}
+      ${stat("Kebangsaan", m.nat ? esc(m.nat) : "–")}
     </div>
-    <p class="note">Profil dari kprofiles.com &amp; fandom wiki resmi. Foto = foto solo per anggota (teaser/potret resmi era comeback — BABYMONSTER 3 foto teratas sudah era 'WE GO UP'/'CHOOM' 2025–2026) yang tersimpan langsung di situs, bukan bingkai M/V. Umur, umur saat debut &amp; hitung mundur ulang tahun dihitung waktu Jakarta.</p>`;
+    ${(m.note || m.bp || m.mbti) ? `<div class="sharecard" style="margin-top:12px">
+      <div class="shr" style="display:block">
+        <div class="shn"><span><b>Tentang ${esc(m.name)}</b></span></div>
+        <p class="note" style="margin:6px 0 2px">${esc(g.name)} · ${m.real ? "nama asli " + esc(m.real) + (m.nat ? " (" + esc(m.nat) + ")" : "") + " · " : ""}posisi ${(m.pos || []).join(" & ")}.${m.note ? " " + esc(m.note) : ""}</p>
+      </div>
+    </div>` : ""}
+    <p class="note">Profil dari kprofiles.com (MBTI, asal kota, golongan darah &amp; posisi terbaru) &amp; fandom wiki resmi. Foto = foto solo per anggota (teaser/potret resmi era comeback terbaru — BABYMONSTER sudah era 'WE GO UP'/'CHOOM' 2025–2026) yang tersimpan langsung di situs, bukan bingkai M/V. Umur, umur saat debut, zodiak &amp; hitung mundur ulang tahun dihitung waktu Jakarta · debut resmi BABYMONSTER = 1 April 2024 (EP 'BABYMONS7ER'); 'BATTER UP' 27 Nov 2023 adalah singel pra-debut.</p>`;
   $("#overlay").classList.add("open");
   document.body.style.overflow = "hidden";
   state.detailMode = { type: "member", id: key };
@@ -2038,13 +2048,20 @@ function renderSchedulePage(sec) {
   const evs = [];
   /* 1) event manual dari data/jadwal.json */
   for (const e of (state.jadwal && state.jadwal.events) || []) evs.push({ ...e, auto: false });
-  /* 2) ulang tahun debut (tahunan) */
-  const DEB = { babymonster: "2023-11-27", treasure: "2020-08-07" };
+  /* 2) ulang tahun debut (tahunan) — BABYMONSTER pakai tanggal debut RESMI 1 April 2024
+   * (EP 'BABYMONS7ER'). Singel pra-debut 'BATTER UP' (27 Nov 2023) dicatat terpisah
+   * di bawah sebagai anniversary RILISAN, bukan anniversary debut. */
+  const DEB = { babymonster: "2024-04-01", treasure: "2020-08-07" };
   for (const [gid, d] of Object.entries(DEB)) {
     const na = nextYearly(d);
     if (!na) continue;
     const art = artistOf(gid) || { name: gid };
-    evs.push({ date: na.date, title: `Ulang tahun debut ke-${NF.format(na.nth)} ${art.name}`, group: gid, type: "anniversary", auto: true, note: `debut ${fmtDate(d)}` });
+    evs.push({ date: na.date, title: `Ulang tahun debut ke-${NF.format(na.nth)} ${art.name}`, group: gid, type: "anniversary", auto: true, note: `debut resmi ${fmtDate(d)}` });
+  }
+  /* anniversary singel pra-debut BATTER UP — tetap dirayakan, tapi berlabel rilisan */
+  {
+    const na = nextYearly("2023-11-27");
+    if (na) evs.push({ date: na.date, title: `${NF.format(na.nth)} tahun singel 'BATTER UP' (pra-debut)`, group: "babymonster", type: "release", auto: true, note: "rilis 27 Nov 2023 — sebelum debut resmi 1 Apr 2024" });
   }
   /* 3) ulang tahun anggota (tahunan) */
   const G = (state.members && state.members.groups) || {};
@@ -2282,10 +2299,13 @@ function socCardHTML(key, acc, opts = {}) {
   }
   const last = acc && socLast(acc.history);
   if (!last || last.f == null) {
+    const why = key === "instagram"
+      ? "Instagram memblokir pembacaan angka dari IP server GitHub (halaman login), jadi kolektor tidak bisa menyentuhnya — angka diisi lewat <b>data/social-override.json</b> (manual). Bila sumbernya suatu saat terbuka, kolektor melanjutkan rekaman otomatis."
+      : "Belum ada angka terekam — kolektor mencoba lagi tiap putaran (sumber kadang menolak IP server GitHub). Angka bisa diisi manual lewat data/social-override.json.";
     return `<div class="soccard" style="--pc:${st.color}">
       <div class="sochead"><span class="plattag" style="--pc:${st.color}">${st.tag}</span><b>${st.label}</b>${url}</div>
       <div class="socval na">menunggu data</div>
-      <div class="socnone">Belum ada angka terekam — kolektor mencoba lagi tiap putaran (sumber kadang menolak IP server GitHub). Angka bisa diisi manual lewat data/social-override.json.</div>
+      <div class="socnone">${why}</div>
     </div>`;
   }
   const badge = last && last.src ? `<span class="srcbadge">${SRC_BADGE[last.src] || ""}</span>` : "";
@@ -2306,7 +2326,7 @@ function renderSocialPage(sec) {
     bindPageClose(sec);
     return;
   }
-  const upInfo = state.social.updated ? `<p class="note">Terakhir diperbarui ${agoTxt(state.social.updated)} · sumber best-effort: angka “aprox” dibulatkan oleh sumber, “persis” dari endpoint resmi, “mirror” via Nitter · angka bisa diisi manual lewat <b>data/social-override.json</b>.</p>` : "";
+  const upInfo = state.social.updated ? `<p class="note">Terakhir diperbarui ${agoTxt(state.social.updated)} · sumber best-effort: angka “aprox” dibulatkan oleh sumber, “persis” dari endpoint resmi, “mirror” via Nitter · akun yang sumbernya memblokir IP server (Instagram) diisi manual lewat <b>data/social-override.json</b> dan berlabel sumber manual.</p>` : "";
   const sections = state.config.artists.map((a) => {
     const rec = state.social.artists[a.id] || {};
     const ch = state.channels && state.channels[a.id];
@@ -2321,7 +2341,7 @@ function renderSocialPage(sec) {
     for (const key of ["instagram", "twitter", "tiktok", "weverse"]) {
       if (rec[key]) cards.push(socCardHTML(key, rec[key]));
     }
-    return `<section class="socartist">${featSectHead(a.color, ICO_PEOPLE, esc(a.name), "akun resmi · dikumpulkan 2x sehari")}
+    return `<section class="socartist">${featSectHead(a.color, ICO_PEOPLE, esc(a.name), "akun resmi · dikumpulkan otomatis tiap ±6 jam")}
       ${cards.length ? `<div class="socgrid">${cards.join("")}</div>
       <div class="socsum"><span>YouTube <b>${ytSub ? fmtCompact(ytSub) : "–"}</b> subscriber</span><span>Spotify <b>${spArt && spArt.followers ? fmtCompact(spArt.followers) : "–"}</b> followers</span><span>terekam <b>${NF.format(nRec)}/5</b> platform bernomor</span></div>` : `<div class="banner">Belum ada akun terekam untuk artis ini.</div>`}
     </section>`;
@@ -2727,9 +2747,9 @@ const TIMELINE = [
   /* ---- BABYMONSTER ---- */
   { d: "2022-12-30", a: "bm",  t: "event",  title: "YG umumkan proyek grup wanita baru", desc: "Nama BABYMONSTER diperkenalkan — grup wanita pertama YG Entertainment setelah 7 tahun." },
   { d: "2023-01-12", a: "bm",  t: "event",  title: "Reveal anggota dimulai", desc: "Profil anggota diperkenalkan satu per satu: Rami, Ahyeon, Chiquita, Asa, Rora, Pharita & Ruka — disusul seri 'Last Evaluation'." },
-  { d: "2023-11-27", a: "bm",  t: "debut",  title: "Debut — singel 'BATTER UP'", desc: "Singel digital pertama dirilis dengan 6 anggota (Ahyeon sempat absen). Dipantau sejak titik ini di situs." },
-  { d: "2024-02-01", a: "bm",  t: "single", title: "Singel 'Stuck In The Middle'", desc: "Balada pra-debut pertama sebelum EP penuh." },
-  { d: "2024-04-01", a: "bm",  t: "album",  title: "EP 1 'BABYMONS7ER' + 'SHEESH'", desc: "Debut lengkap formasi 7 anggota; SHEESH jadi lagu pertama mereka yang masuk Top 10 Circle Digital Chart." },
+  { d: "2023-11-27", a: "bm",  t: "single", title: "Singel pra-debut 'BATTER UP'", desc: "Singel digital pertama dirilis dengan 6 anggota (Ahyeon sempat absen) — titik mulai pemantauan situs, tetapi ini RILIS PRA-DEBUT, bukan tanggal debut resmi." },
+  { d: "2024-02-01", a: "bm",  t: "single", title: "Singel 'Stuck In The Middle'", desc: "Balada pra-debut kedua sebelum EP penuh." },
+  { d: "2024-04-01", a: "bm",  t: "debut",  title: "Debut resmi — EP 1 'BABYMONS7ER' + 'SHEESH'", desc: "Debut resmi BABYMONSTER tanggal 1 April 2024 dengan formasi lengkap 7 anggota; SHEESH jadi lagu pertama mereka yang masuk Top 10 Circle Digital Chart. ('BATTER UP' 27 Nov 2023 hanyalah singel pra-debut.)" },
   { d: "2024-05",    a: "bm",  t: "event",  title: "Tur fan meeting perdana", desc: "Pertemuan pertama dengan fans setelah debut penuh." },
   { d: "2024-07-01", a: "bm",  t: "single", title: "Singel 'FOREVER'" },
   { d: "2024-11-01", a: "bm",  t: "album",  title: "Album 1 'DRIP'", desc: "Album studio pertama — lampaui 1 juta kopi penjualan domestik dan jadi entri pertama BABYMONSTER di Billboard 200." },
@@ -4383,8 +4403,19 @@ let HM_RANGE = (() => {
   if (v) { for (const k of ["yt", "spotify"]) if (v[k] != null && (v[k] < 2000 || v[k] > 2100)) delete v[k]; }
   return v || {};
 })();
-/* tahun debut grup — daftar tab tahun mulai dari sini (TREASURE 2020, BABYMONSTER 2023) */
+/* tahun mulai dipantau grup — daftar tab tahun mulai dari sini (TREASURE 2020, BABYMONSTER 2023
+ * karena rekaman data mulai dari era rilis 'BATTER UP' 27 Nov 2023 — bukan tanggal debut resmi) */
 const HM_DEBUT = { babymonster: 2023, treasure: 2020 };
+/* platform peta panas: tab khusus DI DALAM halaman (YouTube = views / Spotify = stream).
+ * Terpisah dari toggle platform global di header — pilihannya diingat di localStorage. */
+function hmPlat() {
+  if (HM_RANGE.plat === "yt" || HM_RANGE.plat === "spotify") return HM_RANGE.plat;
+  return state.platform === "spotify" ? "spotify" : "yt";
+}
+function setHmPlat(p) {
+  HM_RANGE.plat = p === "spotify" ? "spotify" : "yt";
+  try { localStorage.setItem("py.hmrange", JSON.stringify(HM_RANGE)); } catch {}
+}
 function hmYear(plat) {
   const y = HM_RANGE.year && HM_RANGE.year[plat];
   /* clamp ke rentang tab artis terpilih supaya tahun tampilan selalu punya tab aktif */
@@ -4472,6 +4503,10 @@ function hmBodyHTML(plat, year) {
     }
     rows.push(`<div class="hm-row"><span class="hm-mlbl" data-m="${m}">${HM_MONTH.format(new Date(Date.UTC(year, m, 1)))}</span>${cells}</div>`);
   }
+  /* pilih platform: peta panas kini punya versi YouTube (views/hari) DAN Spotify (stream/hari) */
+  const platTabs = `<div class="hm-art" style="margin-top:2px"><span style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px">Platform:</span>` +
+    `<button type="button" data-hm-pl="yt"${plat === "yt" ? ' class="on"' : ""}>YouTube · views/hari</button>` +
+    `<button type="button" data-hm-pl="spotify"${plat === "spotify" ? ' class="on"' : ""}>Spotify · stream/hari</button>` + `</div>`;
   /* pilih artis: gabungan / per grup */
   const artChips = `<div class="hm-art"><span style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px">Artis:</span>` +
     `<button type="button" data-hm-a=""${!artSel ? ' class="on"' : ""}>Gabungan</button>` +
@@ -4505,6 +4540,7 @@ function hmBodyHTML(plat, year) {
   const legend = [0, 1, 2, 3, 4].map((l) => `<div class="hm-c" style="background:${hmHexA(acc, hmLvA(l))}"></div>`).join("");
   const ruler = `<div class="hm-ruler"><span></span>` + Array.from({ length: 31 }, (_, i) => `<span>${i + 1}</span>`).join("") + `</div>`;
   return `
+  ${platTabs}
   ${artChips}
   ${yearSeg}
   <div class="hm-bar">
@@ -4520,12 +4556,19 @@ function hmBodyHTML(plat, year) {
 }
 /* halaman khusus Peta panas harian — dibuka lewat kartu menu (dulu seksi inline di beranda) */
 function renderHeatmapPage(sec) {
-  const plat = state.platform === "spotify" ? "spotify" : "yt";
+  const plat = hmPlat();
+  /* peta panas Spotify butuh riwayat stream per lagu — muat dulu bila belum ada */
+  if (plat === "spotify" && !state.sp.tracks && !state.sp.error) {
+    sec.innerHTML = `<section style="margin-top:26px">${pageCloseBar("Peta panas harian", "stream baru tiap hari — memuat data Spotify…", HM_ICO, hmAccent(plat))}<div class="banner">Memuat data Spotify…</div></section>`;
+    bindPageClose(sec);
+    loadSpData().then(renderAll);
+    return;
+  }
   sec.innerHTML = `
     ${pageCloseBar("Peta panas harian", `${hmUnit(plat)} baru tiap hari, semua ${plat === "spotify" ? "lagu" : "video"} digabung — bisa difilter per artis`, HM_ICO, hmAccent(plat))}
     <div class="hm-card" style="margin-top:14px">
       <div data-hm-host></div>
-      <p class="note">Setiap <b>baris = satu bulan</b> (Januari paling atas → Desember paling bawah) dan setiap <b>kolom = tanggal</b> mengikuti angka penanda di atas peta — tanggal 1 selalu di kolom paling kiri, dan setelah tanggal terakhir bulan itu kolomnya <b>dibiarkan kosong</b> (kotak bulan lain tidak menempel di sebelahnya), jadi posisi awal &amp; akhir bulan langsung terbaca · hari tahun berjalan yang belum berjalan juga dibiarkan kosong · <b>gerakkan kursor</b> di atas kotak: label bulan baris itu menyala, baris ikut diberi warna, dan kotak info menampilkan nama bulan + tanggal lengkap · makin terah = ${hmUnit(plat)} baru makin banyak (selisih total antar hari; jika jarak pengukuran lebar, selisih dibagi rata ke harinya) · kotak abu = hari tanpa pengukuran · gunakan pilihan <b>Artis</b> untuk melihat peta panas BABYMONSTER / TREASURE saja dan tab <b>Tahun</b> (mulai dari tahun debut: TREASURE 2020 · BABYMONSTER 2023) · batang di bawah = total pertumbuhan tiap bulan Jan–Des tahun terpilih.</p>
+      <p class="note">Setiap <b>baris = satu bulan</b> (Januari paling atas → Desember paling bawah) dan setiap <b>kolom = tanggal</b> mengikuti angka penanda di atas peta — tanggal 1 selalu di kolom paling kiri, dan setelah tanggal terakhir bulan itu kolomnya <b>dibiarkan kosong</b> (kotak bulan lain tidak menempel di sebelahnya), jadi posisi awal &amp; akhir bulan langsung terbaca · hari tahun berjalan yang belum berjalan juga dibiarkan kosong · <b>gerakkan kursor</b> di atas kotak: label bulan baris itu menyala, baris ikut diberi warna, dan kotak info menampilkan nama bulan + tanggal lengkap · makin terah = ${hmUnit(plat)} baru makin banyak (selisih total antar hari; jika jarak pengukuran lebar, selisih dibagi rata ke harinya) · kotak abu = hari tanpa pengukuran · gunakan tab <b>Platform</b> untuk memilih peta <b>YouTube</b> (views/hari) atau <b>Spotify</b> (stream/hari dari riwayat seluruh lagu dipantau), pilihan <b>Artis</b> untuk melihat peta panas BABYMONSTER / TREASURE saja, dan tab <b>Tahun</b> (mulai dari tahun mulai dipantau: TREASURE 2020 · BABYMONSTER 2023, sejak rilis pra-debut 'BATTER UP') · batang di bawah = total pertumbuhan tiap bulan Jan–Des tahun terpilih.</p>
     </div>`;
   bindPageClose(sec);
   mountHeatmap(sec, plat);
@@ -4576,6 +4619,13 @@ function mountHeatmap(sec, plat) {
     const c = e.target.closest(".hm-c[data-i]");
     if (c && c !== lastCell) { lastCell = c; show(c); }
     else if (!c || c === lastCell) hide();
+  });
+  host.querySelectorAll("[data-hm-pl]").forEach((b) => {
+    b.addEventListener("click", () => {
+      if (hmPlat() === b.dataset.hmPl) return;
+      setHmPlat(b.dataset.hmPl);
+      renderHeatmapPage(sec); // render penuh supaya warna header/keterangan ikut berubah (merah ↔ hijau)
+    });
   });
   host.querySelectorAll("[data-hm-y]").forEach((b) => {
     b.addEventListener("click", () => {
@@ -5167,6 +5217,58 @@ function interpolatedBuckets(pts, gran, anchorT, clipFromIdx) {
   }
   return out;
 }
+/* ---------- bucket harian dari PASANGAN PENGUKURAN NYATA (rentang 7/30 hari) ----------
+ * Dulu rentang pendek memakai kurva PCHIP: bucket di segmen jarak renggang (>36 jam) ditandai
+ * "(interpolasi)" — walau kedua ujungnya pengukuran NYATA. Setelah situs berjalan lama, label
+ * itu justru membingungkan (data 1 minggu terakhir kok "masih interpolasi").
+ * Sekarang: delta tiap hari = selisih DUA TITIK UKUR NYATA (akhir hari i vs akhir hari sebelumnya).
+ * - Hari dengan rekaman di dua sisi → data nyata murni (tanpa label apa pun).
+ * - Hari di tengah celah perekaman (tidak ada rekaman sama sekali) → selisih total segmen
+ *   dibagi rata ke harinya, ditandai split = "(dibagi rata dari 2 pengukuran nyata)".
+ * - Hari terakhir (hari berjalan) ditandai partial "(periode berjalan)", tanpa faktor skala.
+ * Jumlahkan semua bucket = total kenaikan antara titik awal & akhir — persis seperti kurva PCHIP. */
+function realDailyBuckets(pts, clipFromIdx) {
+  const P = [];
+  for (const p of pts) {
+    if (p.v == null) continue;
+    if (P.length && p.t <= P[P.length - 1].t) continue;
+    if (P.length && p.v <= P[P.length - 1].v) continue; // jaga kemonotonan (mis-parse arsip)
+    P.push(p);
+  }
+  if (P.length < 2) return [];
+  const iZ = dayIndexOf(P[P.length - 1].t);
+  let i0 = dayIndexOf(P[0].t);
+  if (clipFromIdx != null) i0 = Math.max(i0, clipFromIdx);
+  const byDay = new Map();
+  for (let k = 1; k < P.length; k++) {
+    const a = P[k - 1], b = P[k];
+    const ia = dayIndexOf(a.t), ib = dayIndexOf(b.t);
+    const g = Math.max(0, b.v - a.v);
+    const est = !!a.e || !!b.e;
+    const span = Math.max(1, ib - ia);
+    if (span === 1) {
+      if (ib >= i0) byDay.set(ib, { v: g, est, split: false });
+    } else {
+      const per = Math.floor(g / span);
+      let rem = g - per * span;
+      for (let j = 1; j <= span; j++) {
+        const di = ia + j;
+        if (di < i0) continue;
+        byDay.set(di, { v: per + (rem > 0 ? 1 : 0), est, split: true });
+        if (rem > 0) rem--;
+      }
+    }
+  }
+  const out = [];
+  for (let i = i0; i <= iZ; i++) {
+    const b = byDay.get(i);
+    if (!b) continue;
+    out.push({ key: dateKeyOfDayIndex(i), v: b.v, est: b.est, ip: false, split: b.split, t: tsOfDayIndex(i) });
+  }
+  /* hari terakhir = periode berjalan bila rekaman terakhirnya masih "hari ini" */
+  if (out.length && Date.now() / 1000 - P[P.length - 1].t < 26 * 3600) out[out.length - 1].partial = true;
+  return out;
+}
 /* granularitas otomatis berdasar RENTANG WAKTU — data gersang tetap terbaca,
  * video baru (rentang pendek) tetap dapat rincian harian */
 function granForSpan(days, anchorT) {
@@ -5195,7 +5297,7 @@ const DAY_FULL = new Intl.DateTimeFormat("id-ID", { day: "2-digit", month: "shor
  * seperti kurva total views & likes: garis mulus + isian gradien.
  * Segmen putus-putus/transparan = estimasi lama (e) atau interpolasi antar titik (ip). */
 function makeAreaChart(canvas, deltas, color, cid, unit, gran) {
-  const flags = deltas.map((b) => (b.est ? "est" : b.ip ? "ip" : null));
+  const flags = deltas.map((b) => (b.est ? "est" : b.ip || b.split ? "ip" : null));
   const dimmed = (i) => flags[i] != null;
   const vals = deltas.map((b) => b.v);
   const datasets = [{
@@ -5222,7 +5324,7 @@ function makeAreaChart(canvas, deltas, color, cid, unit, gran) {
     options: chartOpts((c) => {
       const b = deltas[c.dataIndex] || {};
       return NF.format(Math.round(c.parsed.y)) + " " + unit
-        + (b.partial ? " (periode berjalan)" : b.est ? " (estimasi)" : b.ip ? " (interpolasi)" : "");
+        + (b.partial ? " (periode berjalan)" : b.est ? " (estimasi)" : b.split ? " (dibagi rata dari 2 pengukuran nyata)" : b.ip ? " (interpolasi)" : "");
     }),
   };
   return newChart(canvas, cfg, cid);
@@ -5383,7 +5485,19 @@ function makeTimeLineChart(canvas, pts, color, cid, unit, opts) {
       },
       scales: {
         x: timeScaleOpts(tA, tZ),
-        y: {
+        y: o.zoomY ? (() => {
+          /* sumbu Y di-zoom ke rentang data (untuk metrik yang sangat landai seperti pendengar
+           * bulanan ~8 jt: kalau poros mulai dari 0, garisnya tampak datar & bolak-balik
+           * kecil tidak terlihat). Padding 20% atas-bawah biar garis tidak menempel tepi. */
+          const vals = pts.map((p) => p.v).filter((v) => v != null);
+          const mn = Math.min(...vals), mx = Math.max(...vals);
+          const pad = (mx - mn) * 0.2 || Math.max(1, Math.abs(mx) * 0.02);
+          return {
+            beginAtZero: false, suggestedMin: mn - pad, suggestedMax: mx + pad,
+            grid: { color: cssVar("--chart-grid") },
+            ticks: { color: cssVar("--chart-text"), font: { size: 10.5 }, callback: (v) => fmtCompact(v) },
+          };
+        })() : {
           beginAtZero: true,
           grace: "5%",
           grid: { color: cssVar("--chart-grid") },
@@ -5474,7 +5588,10 @@ function buildDailyChart(h, color, anchorT) {
       const nd = state.dailyRange === "7" ? 7 : 30;
       const win = sliceWindow(days, nd);
       gran = "day";
-      series = interpolatedBuckets(win, gran, null, dayIndexOf(days[days.length - 1].t - nd * 86400));
+      /* bucket harian dari PASANGAN PENGUKURAN NYATA — hari dengan rekaman di dua sisi
+       * tampil sebagai Data nyata; hanya hari di tengah celah perekaman yang diberi label */
+      series = realDailyBuckets(win, dayIndexOf(days[days.length - 1].t - nd * 86400));
+      if (series.length < 2) series = interpolatedBuckets(win, gran, null, dayIndexOf(days[days.length - 1].t - nd * 86400));
     } else if (state.dailyRange === "365") {
       const win = sliceWindow(days, 365);
       gran = "week";
@@ -5493,10 +5610,12 @@ function buildDailyChart(h, color, anchorT) {
   }
   const t = $("#dailyTitle");
   if (t) t.textContent = gran === "month" ? "Views ditambahkan per bulan" : gran === "week" ? "Views ditambahkan per pekan" : gran === "hour" ? "Views ditambahkan per jam · 24 jam terakhir" : "Views ditambahkan per hari";
-  const anyIp = series.some((b) => b.ip), anyEst = series.some((b) => b.est);
-  updateLegendIp("dailyLegend", anyEst, anyIp, color);
+  const anyIp = series.some((b) => b.ip), anyEst = series.some((b) => b.est), anySplit = series.some((b) => b.split);
+  updateLegendIp("dailyLegend", anyEst, anyIp, color, anySplit);
   const hint = $("#dailyHint");
-  if (hint) hint.innerHTML = anyIp && gran !== "hour"
+  if (hint) hint.innerHTML = anySplit && gran === "day"
+    ? `Hari berlabel <b>“dibagi rata”</b> = hari tanpa perekaman sama sekali di tengah celah — selisih total antara dua pengukuran nyata di sekelilingnya dibagi rata ke hari-hari itu, jadi jumlah semuanya tetap akurat. Hari dengan perekaman tampil sebagai <b>Data nyata</b> murni.`
+    : anyIp && gran !== "hour"
     ? `Segmen putus-putus = <b>interpolasi</b> — hari/pekan/bulan tanpa perekaman diisi dari kurva mulus yang melewati semua titik data nyata (bukan estimasi model). Jumlahkan seluruh nilai = total kenaikan sejak titik awal. Makin rapat arsip (mode <b>“wayback-mass”</b>), makin panjang segmen data nyata.`
     : "";
   makeAreaChart($("#chartDaily"), series, color, "daily", "views", gran);
@@ -5574,13 +5693,14 @@ function buildCumChart(h, color, anchorT, likeRatioFb) {
         : ""));
 }
 
-/* legenda kecil di bawah/atas grafik: Data nyata + (Estimasi) + (Interpolasi) */
-function updateLegendIp(id, anyEst, anyIp, color) {
+/* legenda kecil di bawah/atas grafik: Data nyata + (Estimasi) + (Interpolasi / Dibagi rata) */
+function updateLegendIp(id, anyEst, anyIp, color, anySplit) {
   const el = $("#" + id);
   if (!el) return;
   el.innerHTML = `<span><i class="sw" style="background:${color}"></i>Data nyata</span>`
     + (anyEst ? `<span><i class="sw" style="background:${color}55"></i>Estimasi</span>` : "")
-    + (anyIp ? `<span><i class="sw" style="background:${color}55;border-top:2px dotted ${color}"></i>Interpolasi</span>` : "");
+    + (anyIp ? `<span><i class="sw" style="background:${color}55;border-top:2px dotted ${color}"></i>Interpolasi</span>` : "")
+    + (anySplit ? `<span><i class="sw" style="background:${color}55;border-top:2px dotted ${color}"></i>Dibagi rata</span>` : "");
 }
 
 /* ===================== modal detail CHANNEL ===================== */
@@ -5734,12 +5854,14 @@ function buildChanCharts(ch, color) {
   else if (state.chanRange === "7") lineDays = sliceWindow(days, 7);
   else if (state.chanRange === "30") lineDays = sliceWindow(days, 30);
   if (lineDays.length >= 2) makeTimeLineChart($("#chanLine"), lineDays, color, "chanLine", unit);
-  /* area delta: bucket kontinu + interpolasi (bulani/pekan/hari tanpa data tetap terisi) */
+  /* area delta: bucket kontinu — rentang 7/30 hari dari pasangan pengukuran nyata,
+   * rentang panjang (pekan/bulan) tetap memakai kurva PCHIP yang melewati semua titik */
   let gran, series;
   if (state.chanRange === "1" || state.chanRange === "7" || state.chanRange === "30") {
     const nd = state.chanRange === "1" ? 2 : state.chanRange === "7" ? 7 : 30;
     gran = "day";
-    series = interpolatedBuckets(sliceWindow(days, nd), gran, null, dayIndexOf(tZ - nd * 86400));
+    series = realDailyBuckets(sliceWindow(days, nd), dayIndexOf(tZ - nd * 86400));
+    if (series.length < 2) series = interpolatedBuckets(sliceWindow(days, nd), gran, null, dayIndexOf(tZ - nd * 86400));
   } else if (state.chanRange === "365") {
     gran = "week";
     const di = dayIndexOf(tZ - 365 * 86400);
@@ -5748,8 +5870,8 @@ function buildChanCharts(ch, color) {
     gran = granForSpan(days, null);
     series = interpolatedBuckets(days, gran, null, null);
   }
-  const anyIp = series.some((b) => b.ip), anyEst = series.some((b) => b.est);
-  updateLegendIp("chanLegend", anyEst, anyIp, color);
+  const anyIp = series.some((b) => b.ip), anyEst = series.some((b) => b.est), anySplit = series.some((b) => b.split);
+  updateLegendIp("chanLegend", anyEst, anyIp, color, anySplit);
   if (series.length >= 2) makeAreaChart($("#chanArea"), series, color, "chanArea", unit + "/hari", gran);
 }
 
@@ -6741,7 +6863,7 @@ function spTrackRowHTML(tr, i) {
     <button class="wlbtn${wlOn("sp:" + tr.key) ? " on" : ""}" data-wl="sp:${esc(tr.key)}" title="Pantau lagu ini" aria-label="Pantau ${esc(tr.name)}">★</button>
     <div class="nums">
       <div class="d1">+${fmtCompact(spTrackDaily(tr))}</div>
-      <div class="t">${tot ? fmtExact(tot) : "–"}</div>
+      <div class="t" title="${tot ? fmtExact(tot) + " stream" : ""}">${tot ? fmtCompact(tot) : "–"}</div>
     </div>
   </div>`;
 }
@@ -7015,6 +7137,12 @@ function openSpChannel(artId) {
   const mlPts = (a.history || []).filter((p) => p.ml != null);
   const hasML = mlPts.length >= 2;
   if (!hasML) state.spChanMetric = "total";
+  /* catatan khusus pendengar bulanan: perekamannya biasanya baru dimulai belakangan —
+   * jelaskan supaya kurva pendek/landai tidak terkesan seperti bug */
+  const mlAge = mlPts.length ? (Date.now() / 1000 - mlPts[0].t) / 86400 : null;
+  const mlNote = hasML && mlAge != null && mlAge < 21
+    ? ` Perekaman <b>pendengar bulanan</b> baru dimulai <b>${fmtTs(mlPts[0].t)}</b> (${NF.format(Math.max(1, Math.round(mlAge)))} hari lalu) — kurvanya pendek karena itu memang seluruh riwayatnya, dan poros Y otomatis di-zoom ke rentang data supaya gerak kecilnya terbaca.`
+    : "";
 
   $("#sheet").innerHTML = `
     <button class="close" id="closeBtn" aria-label="Tutup">✕</button>
@@ -7059,7 +7187,7 @@ function openSpChannel(artId) {
     <div class="legend" id="spChanLegend"><span><i class="sw" style="background:${color}"></i>Data nyata</span></div>
     <div class="chartbox" style="margin-bottom:12px"><canvas id="spChanLine"></canvas></div>
     <div class="chartbox"><canvas id="spChanArea"></canvas></div>
-    <p class="note">Kurva = <b>penjumlahan riwayat seluruh ${nSongs} lagu ${esc(a.name)} yang dipantau</b> (tiap versi/ID Spotify dihitung terpisah lalu dijumlahkan per hari kalender WIB) — titik terakhirnya persis total stream artis. Perekaman berjalan otomatis <b>tiap jam</b> dari Spotify Charts (via kworb.net) oleh GitHub Actions. Segmen putus-putus/transparan = bagian yang diisi kurva estimasi (sebelum titik rekaman nyata pertama tiap lagu) supaya kurva tetap terbaca sejak rilis. <a href="${esc(a.openUrl)}" target="_blank" rel="noopener">Buka di Spotify ↗</a></p>
+    <p class="note">Kurva = <b>penjumlahan riwayat seluruh ${nSongs} lagu ${esc(a.name)} yang dipantau</b> (tiap versi/ID Spotify dihitung terpisah lalu dijumlahkan per hari kalender WIB) — titik terakhirnya persis total stream artis. Perekaman berjalan otomatis <b>tiap jam</b> dari Spotify Charts (via kworb.net) oleh GitHub Actions. Segmen putus-putus/transparan = bagian yang diisi kurva estimasi (sebelum titik rekaman nyata pertama tiap lagu) supaya kurva tetap terbaca sejak rilis.${mlNote} <a href="${esc(a.openUrl)}" target="_blank" rel="noopener">Buka di Spotify ↗</a></p>
 
     <div class="sect">
       <h3>Milestone lagu ${esc(a.name)} — target terdekat</h3>
@@ -7116,7 +7244,7 @@ function buildSpChanCharts(a) {
   else if (state.spChanRange === "7") linePts = sliceWindow(pts, 7);
   else if (state.spChanRange === "30") linePts = sliceWindow(pts, 30);
   else if (state.spChanRange === "365") linePts = sliceWindow(pts, 365);
-  if (elL && linePts.length >= 2) makeTimeLineChart(elL, linePts, color, "spChanLine", unit, { dimEst: true });
+  if (elL && linePts.length >= 2) makeTimeLineChart(elL, linePts, color, "spChanLine", unit, { dimEst: true, zoomY: isML });
   /* area delta: bucket kontinu + interpolasi (hari/pekan/bulan tanpa data tetap terisi) */
   let gran, series;
   if (state.spChanRange === "1") {
@@ -7125,7 +7253,9 @@ function buildSpChanCharts(a) {
   } else if (state.spChanRange === "7" || state.spChanRange === "30") {
     const nd = state.spChanRange === "7" ? 7 : 30;
     gran = "day";
-    series = interpolatedBuckets(sliceWindow(pts, nd), gran, null, dayIndexOf(pts[pts.length - 1].t - nd * 86400));
+    /* bucket harian dari pasangan pengukuran nyata (lihat realDailyBuckets) */
+    series = realDailyBuckets(sliceWindow(pts, nd), dayIndexOf(pts[pts.length - 1].t - nd * 86400));
+    if (series.length < 2) series = interpolatedBuckets(sliceWindow(pts, nd), gran, null, dayIndexOf(pts[pts.length - 1].t - nd * 86400));
   } else if (state.spChanRange === "365") {
     gran = "week";
     const di = dayIndexOf(pts[pts.length - 1].t - 365 * 86400);
@@ -7134,8 +7264,8 @@ function buildSpChanCharts(a) {
     gran = granForSpan(pts, null);
     series = interpolatedBuckets(pts, gran, null, null);
   }
-  const anyIp = series.some((b) => b.ip), anyEst = series.some((b) => b.est);
-  updateLegendIp("spChanLegend", anyEst, anyIp, color);
+  const anyIp = series.some((b) => b.ip), anyEst = series.some((b) => b.est), anySplit = series.some((b) => b.split);
+  updateLegendIp("spChanLegend", anyEst, anyIp, color, anySplit);
   if (elA && series.length >= 2) makeAreaChart(elA, series, color, "spChanArea", unit + "/hari", gran);
 }
 
@@ -7200,8 +7330,9 @@ function openSpTrack(key) {
       <div class="secthead"><h3>Total stream (sejak rilis)</h3></div>
       <div class="legend"><span><i class="sw" style="background:${ar.color}"></i>Data terukur</span><span><i class="sw" style="background:${ar.color}55"></i>Estimasi</span></div>
       <div class="rangewrap" id="spRange">
+        <button class="rangebtn ${state.spRange === 7 ? "active" : ""}" data-r="7">7 hari</button>
         <button class="rangebtn ${state.spRange === 30 ? "active" : ""}" data-r="30">30 hari</button>
-        <button class="rangebtn ${state.spRange === 90 ? "active" : ""}" data-r="90">90 hari</button>
+        <button class="rangebtn ${state.spRange === 180 ? "active" : ""}" data-r="180">Setengah tahun</button>
         <button class="rangebtn ${state.spRange === 365 ? "active" : ""}" data-r="365">1 tahun</button>
         <button class="rangebtn ${state.spRange === "all" ? "active" : ""}" data-r="all">Sejak rilis</button>
       </div>

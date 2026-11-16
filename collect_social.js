@@ -262,17 +262,25 @@ async function fetchBillboard(url = "https://www.billboard.com/charts/billboard-
   return { chartDate, rows };
 }
 /* Bugs Top 100 harian — musik.bugs.co.kr, HTML tabel polos (umumnya tak menolak IP datacenter).
- * Server Bugs kadang lambat/menolak: 3 percobaan + Referer supaya lebih tahan gagal. */
+ * Server Bugs kadang lambat/menolak: 3 percobaan + Referer supaya lebih tahan gagal.
+ * 2026-11: markup berubah — posisi kini di <div class="ranking"><strong>N</strong> DI DALAM
+ * <td> tanpa class, dan <p class="title"> punya atribut tambahan (adult_yn dsb).
+ * Parser baru mencoba pola lama dulu, lalu pola baru, supaya tahan terhadap keduanya. */
 async function fetchBugs() {
   const html = await fetchText("https://music.bugs.co.kr/chart/track/day/total", { headers: { Referer: "https://music.bugs.co.kr/" } }, 3, 35000);
   const rows = [];
+  const strip = (s) => decodeEntities(String(s).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ")).trim();
   const chunks = html.split(/<tr[ >]/).slice(1);
   for (const c of chunks) {
-    const rM = /<td class="ranking">[\s\S]{0,160}?>(\d+)</.exec(c) || /pRealChart[^"]*"[^>]*>\s*(\d+)\s*</.exec(c);
-    const tM = /<p class="title"><a[^>]*>([^<]+)<\/a>/.exec(c);
-    const aM = /<p class="artist"><a[^>]*>([^<]+)<\/a>/.exec(c);
+    const rM = /<td class="ranking">[\s\S]{0,160}?>(\d+)</.exec(c)                        // pola lama
+      || /<div class="ranking">\s*<strong>(\d+)<\/strong>/.exec(c)                         // pola baru 2026
+      || /pRealChart[^"]*"[^>]*>\s*(\d+)\s*</.exec(c);
+    const tM = /<p class="title"[^>]*>\s*<a[^>]*>([\s\S]*?)<\/a>/.exec(c) || /<p class="title"><a[^>]*>([^<]+)<\/a>/.exec(c);
+    /* artis: ambil <a> PERTAMA di dalam <p class="artist"> (lewati komentar HTML) —
+     * baris multi-artis punya onclick panjang, jadi jangan strip seluruh <p> */
+    const aM = /<p class="artist"[^>]*>\s*(?:<!--[\s\S]*?-->\s*)?<a[^>]*>([\s\S]*?)<\/a>/.exec(c) || /<p class="artist"><a[^>]*>([^<]+)<\/a>/.exec(c);
     if (!rM || !tM) continue;
-    rows.push({ rank: +rM[1], title: decodeEntities(tM[1]).trim(), artist: aM ? decodeEntities(aM[1]).trim() : "" });
+    rows.push({ rank: +rM[1], title: strip(tM[1]), artist: aM ? strip(aM[1]) : "" });
   }
   if (rows.length < 50) throw new Error(`baris Bugs terbaca ${rows.length}`);
   log(`Bugs Top 100: ${rows.length} baris terbaca`);

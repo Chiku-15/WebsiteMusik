@@ -5,31 +5,24 @@
    "instagram": {
     "handle": "babymonster_ygofficial",
     "url": "https://www.instagram.com/babymonster_ygofficial/",
-    "history": []
+    "history": [
+     {
+      "t": 1794825964,
+      "f": 10519660,
+      "approx": false,
+      "src": "manual"
+     }
+    ]
    },
    "twitter": {
     "handle": "YGBABYMONSTER_",
     "url": "https://x.com/YGBABYMONSTER_",
-    "history": [
-     {
-      "t": 1794825067,
-      "f": 1000000,
-      "approx": true,
-      "src": "jina"
-     }
-    ]
+    "history": []
    },
    "tiktok": {
     "handle": "babymonster_yg_tiktok",
     "url": "https://www.tiktok.com/@babymonster_yg_tiktok",
-    "history": [
-     {
-      "t": 1794825069,
-      "f": 14600000,
-      "approx": false,
-      "src": "html"
-     }
-    ]
+    "history": []
    },
    "weverse": {
     "handle": "babymonster",
@@ -41,31 +34,24 @@
    "instagram": {
     "handle": "yg_treasure_official",
     "url": "https://www.instagram.com/yg_treasure_official/",
-    "history": []
+    "history": [
+     {
+      "t": 1794825964,
+      "f": 7056770,
+      "approx": false,
+      "src": "manual"
+     }
+    ]
    },
    "twitter": {
     "handle": "ygtreasuremaker",
     "url": "https://x.com/ygtreasuremaker",
-    "history": [
-     {
-      "t": 1794825073,
-      "f": 2400000,
-      "approx": true,
-      "src": "jina"
-     }
-    ]
+    "history": []
    },
    "tiktok": {
     "handle": "yg_treasure_tiktok",
     "url": "https://www.tiktok.com/@yg_treasure_tiktok",
-    "history": [
-     {
-      "t": 1794825075,
-      "f": 8600000,
-      "approx": false,
-      "src": "html"
-     }
-    ]
+    "history": []
    },
    "weverse": {
     "handle": "treasure",
@@ -74,5 +60,5 @@
    }
   }
  },
- "updated": 1794825076
+ "updated": 1794825964
 }
