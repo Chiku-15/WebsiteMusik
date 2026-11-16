@@ -1,9 +1,15 @@
 {
-  "_note": "Isi manual untuk akun yang sumbernya memblokir IP server GitHub (saat ini: Instagram). Format: { \"<id-artis>\": { \"instagram\": <angka> } } — nilai dipakai kolektor sebagai titik berlabel [manual] tiap putaran. Angka di bawah diambil dari tracker publik (instastatistics/hypeauditor) awal Nov 2026; perbarui manual bila sudah jauh berbeda.",
-  "babymonster": {
-    "instagram": 10519660
-  },
-  "treasure": {
-    "instagram": 7056770
-  }
+ "_note": "Isi manual untuk akun yang sumbernya memblokir IP server GitHub (saat ini: Instagram, X & TikTok) serta Weverse yang tidak mempublikasikan angkanya via web. Format: angka = angka persis (src manual), objek { \"f\": <angka>, \"approx\": true } = pembulatan dari sumber publik. Angka di bawah diambil dari halaman profil resmi & tracker publik per 16 Nov 2026 (X: label '1M'/'2.4M' di profil, TikTok: 14.6M/8.6M, Weverse: laporan komunitas '3 juta+'); perbarui manual bila sudah jauh berbeda.",
+ "babymonster": {
+  "instagram": 10519660,
+  "twitter": { "f": 1000000, "approx": true },
+  "tiktok": { "f": 14600000, "approx": true },
+  "weverse": { "f": 3000000, "approx": true }
+ },
+ "treasure": {
+  "instagram": 7056770,
+  "twitter": { "f": 2400000, "approx": true },
+  "tiktok": { "f": 8600000, "approx": true },
+  "weverse": { "f": 3000000, "approx": true }
+ }
 }

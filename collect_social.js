@@ -4,20 +4,23 @@
  * untuk situs Pemantau K-POP PULSE (dijalankan setelah collect.js).
  *
  * Output:
- *   data/social.json    — follower Instagram / X (Twitter) / TikTok per grup
- *   data/charts.json    — posisi Billboard Global 200, Melon Top 100, Genie Top 200,
+ *   data/social.json    — follower Instagram / X (Twitter) / TikTok / Weverse per grup
+ *   data/charts.json    — posisi Billboard Global 200, Genie Top 200,
  *                         Bugs Top 100 & Spotify Global Top 200 (via kworb)
  *   data/news.json      — berita terbaru yang menyebut BABYMONSTER / TREASURE
  *   data/anomalies.json — log lonjakan views tak biasa (>= 2,5x median harian)
  *
  * Sumber (semua publik, tanpa API key):
  *   - Instagram : web_profile_info (angka persis) → og:description (angka bulat, ditandai aprox)
- *   - X         : mirror Nitter (xcancel/lightbrd/nitter.net) → r.jina.ai (aprox)
- *   - TikTok    : halaman profil @user → JSON "followerCount"
- *   - Weverse   : jumlah follower TIDAK dipublikasikan via web publik — kartu link saja
+ *   - X         : mirror Nitter (xcancel/lightbrd/tiekoetter) → r.jina.ai (aprox)
+ *   - TikTok    : halaman profil @user → JSON "followerCount" / og:description
+ *   - Weverse   : jumlah follower TIDAK dipublikasikan via web publik — angka awal dari
+ *                 laporan komunitas bisa diisi lewat social-override.json (ditandai aprox)
  *   - Billboard : halaman chart (baris server-rendered)
- *   - Melon     : halaman chart (sering menolak datacenter IP — boleh gagal, dilewati halus)
  *   - Genie     : halaman chart Top 200 (parsing tabel)
+ *   (Melon DIHAPUS 2026-11: melon.com menolak SELURUH IP luar Korea di level koneksi
+ *    — tak terjangkau dari GitHub Actions maupun server lain, jadi chart live ini
+ *    tidak bisa diperbaiki; Genie + Bugs tetap merekam chart Korea harian.)
  *   - Spotify Global Top 200 harian via kworb.net (data resmi Spotify Charts yang diproses)
  *   - Bugs      : halaman chart (3 percobaan + Referer; kadang lambat merespons)
  *   - Berita    : RSS Soompi, Koreaboo, Kbizoom (tag per artis)
@@ -147,7 +150,7 @@ async function trackInstagram(user) {
   return null;
 }
 async function trackTwitter(user) {
-  const hosts = ["https://xcancel.com", "https://lightbrd.com", "https://nitter.net", "https://nitter.poast.org"];
+  const hosts = ["https://xcancel.com", "https://lightbrd.com", "https://nitter.tiekoetter.com", "https://nitter.net", "https://nitter.poast.org"];
   for (const h of hosts) {
     try {
       const html = await fetchText(`${h}/${encodeURIComponent(user)}`, {}, 1, 20000);
@@ -170,6 +173,13 @@ async function trackTikTok(user) {
       const html = await fetchText(`https://www.tiktok.com/@${encodeURIComponent(user)}`, extra, 1, 25000);
       const m = /"followerCount":(\d+)/.exec(html) || /"followersCount":(\d+)/.exec(html);
       if (m) return { f: +m[1], approx: false, src: "html" };
+      // fallback: og/description versi SEO — "14.6M Followers, 882.5M Likes" (dibulatkan)
+      const oM = /<meta[^>]*(?:property="og:description"|name="description")[^>]*content="([^"]+)"/.exec(html)
+        || /<meta[^>]*content="([^"]+)"[^>]*(?:property="og:description"|name="description")/.exec(html);
+      if (oM) {
+        const fM = /([\d.,]+\s*[KMBkmb]?)\s*(?:Followers|Pengikut|followers)/i.exec(decodeEntities(oM[1]));
+        if (fM) { const f = parseShort(fM[1]); if (f) return { f, approx: true, src: "meta" }; }
+      }
     } catch (e) { /* coba UA berikutnya */ }
   }
   return null;
@@ -188,7 +198,7 @@ async function collectSocial() {
     rec.instagram = rec.instagram || (so.instagram ? { handle: so.instagram, url: `https://www.instagram.com/${so.instagram}/`, history: [] } : null);
     rec.twitter = rec.twitter || (so.twitter ? { handle: so.twitter, url: `https://x.com/${so.twitter}`, history: [] } : null);
     rec.tiktok = rec.tiktok || (so.tiktok ? { handle: so.tiktok, url: `https://www.tiktok.com/@${so.tiktok}`, history: [] } : null);
-    rec.weverse = rec.weverse || (so.weverse ? { handle: so.weverse, url: `https://weverse.io/${so.weverse}`, note: "Jumlah follower Weverse tidak dipublikasikan lewat web publik — kartu ini hanya tautan." } : null);
+    rec.weverse = rec.weverse || (so.weverse ? { handle: so.weverse, url: `https://weverse.io/${so.weverse}`, history: [], note: "Jumlah follower Weverse tidak dipublikasikan lewat web publik — angka = laporan komunitas (aprox)." } : null);
     if (due) {
       for (const key of ["instagram", "twitter", "tiktok"]) {
         const acc = rec[key];
@@ -209,18 +219,25 @@ async function collectSocial() {
     social.artists[artist.id] = rec;
   }
   if (due) social.updated = now();
-  // override manual (opsional): data/social-override.json { "babymonster": { "instagram": 10500000, "twitter": null, "tiktok": null } }
+  // override manual (opsional): data/social-override.json
+  // { "<id-artis>": { "instagram": 10500000, "twitter": { "f": 1000000, "approx": true }, ... } }
+  // Nilai angka = angka persis (src manual); objek {f, approx} = pembulatan dari sumber publik.
+  // Berlaku untuk instagram, twitter, tiktok & weverse (weverse khusus titik aprox dari laporan komunitas).
   const ov = readJSON("social-override.json", null);
   if (ov && typeof ov === "object") {
     for (const [aid, vals] of Object.entries(ov)) {
       const rec = social.artists[aid];
       if (!rec || !vals || typeof vals !== "object") continue;
-      for (const key of ["instagram", "twitter", "tiktok"]) {
+      for (const key of ["instagram", "twitter", "tiktok", "weverse"]) {
         const acc = rec[key];
-        if (acc && Number.isFinite(vals[key]) && vals[key] > 0) {
+        if (!acc) continue;
+        const raw = vals[key];
+        const num = typeof raw === "number" ? raw : (raw && typeof raw === "object" && Number.isFinite(raw.f) ? raw.f : null);
+        const approx = !(typeof raw === "number") ? !!(raw && raw.approx) : false;
+        if (num != null && num > 0) {
           acc.history = acc.history || [];
-          if (appendDaily(acc.history, { t: now(), f: Math.round(vals[key]), approx: false, src: "manual" })) {
-            log(`${aid} ${PLATFORM_LABEL[key]}: ${Math.round(vals[key]).toLocaleString("id-ID")} [manual]`);
+          if (appendDaily(acc.history, { t: now(), f: Math.round(num), approx, src: "manual" })) {
+            log(`${aid} ${PLATFORM_LABEL[key] || key}: ${Math.round(num).toLocaleString("id-ID")}${approx ? " (aprox)" : ""} [manual]`);
           }
         }
       }
@@ -306,28 +323,6 @@ async function fetchGenie() {
   log(`Genie Top 100: ${rows.length} baris terbaca`);
   return { chartDate: wibDayKey(now()), rows };
 }
-/* Melon sering menolak IP datacenter — best effort, boleh gagal */
-async function fetchMelon() {
-  const html = await fetchText(
-    "https://www.melon.com/chart/index.htm",
-    { headers: { Referer: "https://www.melon.com/new/index.htm", Accept: "text/html,application/xhtml+xml" } },
-    1, 30000
-  );
-  const rows = [];
-  const chunks = html.split(/<tr/).slice(1);
-  for (const c of chunks) {
-    const rM = /<span class="rank">\s*(\d+)\s*<\/span>/.exec(c);
-    const tM = /<div class="wrap_song_info">[\s\S]*?<a[^>]*>([^<]+)<\/a>/.exec(c)
-      || /<a[^>]*class="ellipsis"[^>]*>([^<]+)<\/a>/.exec(c);
-    const aM = /class="ellipsis artist"[^>]*>[\s\S]*?<a[^>]*>([^<]+)<\/a>/.exec(c);
-    if (!rM || !tM) continue;
-    rows.push({ rank: +rM[1], title: decodeEntities(tM[1]), artist: aM ? decodeEntities(aM[1]) : "" });
-  }
-  if (rows.length < 50) throw new Error(`baris Melon terbaca ${rows.length}`);
-  log(`Melon Top 100: ${rows.length} baris terbaca`);
-  return { chartDate: wibDayKey(now()), rows };
-}
-
 function applyChart(charts, key, meta, data) {
   const ch = charts.charts[key] || { label: meta.label, url: meta.url, artists: {} };
   ch.label = meta.label; ch.url = meta.url;
@@ -374,7 +369,6 @@ function markChartError(charts, key, meta, err) {
 const CHART_META = {
   billboard_global_200: { label: "Billboard Global 200", url: "https://www.billboard.com/charts/billboard-global-200/" },
   billboard_global_excl_us: { label: "Billboard Global Excl. US", url: "https://www.billboard.com/charts/billboard-global-excl-us/" },
-  melon_top100: { label: "Melon Top 100", url: "https://www.melon.com/chart/index.htm" },
   genie_top200: { label: "Genie Top 200", url: "https://www.genie.co.kr/chart/top200" },
   bugs_day100: { label: "Bugs Top 100 (harian)", url: "https://music.bugs.co.kr/chart/track/day/total" },
   spotify_global_200: { label: "Spotify Global Top 200 (harian)", url: "https://kworb.net/spotify/country/global_daily.html" },
@@ -432,12 +426,6 @@ async function collectCharts() {
     try { applyChart(charts, "bugs_day100", CHART_META.bugs_day100, await fetchBugs()); }
     catch (e) { markChartError(charts, "bugs_day100", CHART_META.bugs_day100, e); }
     await sleep(1500);
-  }
-  // Melon (harian, sering diblokir)
-  const me = charts.charts.melon_top100;
-  if (now() - (me && me.updated || 0) >= KOREA_MIN_H * 3600) {
-    try { applyChart(charts, "melon_top100", CHART_META.melon_top100, await fetchMelon()); }
-    catch (e) { markChartError(charts, "melon_top100", CHART_META.melon_top100, e); }
   }
   // Spotify Global Top 200 (harian, via kworb — sumber paling tahan blokir)
   const sg = charts.charts.spotify_global_200;
@@ -606,8 +594,8 @@ function collectAnomalies() {
 }
 
 /* ---------------- info schema ---------------- */
-const SOCIAL_INFO = "Follower sosial media per grup. Sumber: Instagram (web_profile_info/og:meta — angka meta dibulatkan, ditandai aprox), X via mirror Nitter, TikTok via halaman profil. Bisa diisi manual lewat data/social-override.json (src=manual). Weverse tidak mempublikasikan follower via web. Semua sumber best-effort: kalau gagal, angka terakhir tetap dipakai.";
-const CHARTS_INFO = "Posisi lagu artis di chart. Billboard Global 200 & Global Excl. US (mingguan) dari halaman chart billboard.com; Melon Top 100, Genie Top 200 & Bugs Top 100 (harian) dari halaman chart masing-masing. Titik hanya direkam saat lagu artis masuk chart. Riwayat pencapaian dari debut ada di data/chart-history.json (kurasi manual). Melon sering menolak IP datacenter — bila lastError terisi, sumber sedang tidak tersedia.";
+const SOCIAL_INFO = "Follower sosial media per grup. Sumber: Instagram (web_profile_info/og:meta — angka meta dibulatkan, ditandai aprox), X via mirror Nitter, TikTok via halaman profil / og:description. Bisa diisi manual lewat data/social-override.json (src=manual; nilai boleh berupa angka = persis, atau objek {f, approx} = pembulatan). Weverse tidak mempublikasikan follower via web — angka awalnya batas bawah dari laporan komunitas (aprox). Semua sumber best-effort: kalau gagal, angka terakhir tetap dipakai.";
+const CHARTS_INFO = "Posisi lagu artis di chart. Billboard Global 200 & Global Excl. US (mingguan) dari halaman chart billboard.com; Genie Top 200 & Bugs Top 100 (harian) dari halaman chart masing-masing; Spotify Global Top 200 harian via kworb.net. Titik hanya direkam saat lagu artis masuk chart. Riwayat pencapaian dari debut ada di data/chart-history.json (kurasi manual). Catatan: chart Melon Top 100 dihapus Nov 2026 — melon.com menolak semua IP luar Korea di level koneksi, jadi tidak bisa dibaca dari server manapun.";
 const NEWS_INFO = "Berita terbaru yang menyebut BABYMONSTER/TREASURE, dari RSS Soompi, Koreaboo, dan tag Kbizoom per artis. Dedupe per tautan, maksimum 60 entri. Setiap entri menyertakan thumbnail gambar bila tersedia di feed (enclosure/media:content/img artikel).";
 const ANOM_INFO = `Log lonjakan views tak biasa: tambahan views per hari >= ${ANOM_RATIO}x median harian 30 titik sebelumnya (semantik sama dengan fitur 'lonjakan tidak biasa' di halaman Rekor). Satu entri per video per hari.`;
 
@@ -622,4 +610,4 @@ async function main() {
   log(`=== selesai dalam ${Math.round((Date.now() - started) / 1000)}s ===`);
 }
 if (require.main === module) main();
-module.exports = { main, parseShort, appendDaily, computeAnomalies, fetchBillboard, fetchBugs, fetchGenie, fetchMelon, fetchSpotifyGlobal, parseRss, collectNews, collectSocial, collectCharts, collectAnomalies, applyChart };
+module.exports = { main, parseShort, appendDaily, computeAnomalies, fetchBillboard, fetchBugs, fetchGenie, fetchSpotifyGlobal, parseRss, collectNews, collectSocial, collectCharts, collectAnomalies, applyChart };

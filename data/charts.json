@@ -1,5 +1,5 @@
 {
- "_info": "Posisi lagu artis di chart. Billboard Global 200 & Global Excl. US (mingguan) dari halaman chart billboard.com; Melon Top 100, Genie Top 200 & Bugs Top 100 (harian) dari halaman chart masing-masing. Titik hanya direkam saat lagu artis masuk chart. Riwayat pencapaian dari debut ada di data/chart-history.json (kurasi manual). Melon sering menolak IP datacenter — bila lastError terisi, sumber sedang tidak tersedia.",
+ "_info": "Posisi lagu artis di chart. Billboard Global 200 & Global Excl. US (mingguan) dari halaman chart billboard.com; Genie Top 200 & Bugs Top 100 (harian) dari halaman chart masing-masing; Spotify Global Top 200 harian via kworb.net. Titik hanya direkam saat lagu artis masuk chart. Riwayat pencapaian dari debut ada di data/chart-history.json (kurasi manual). Catatan: chart Melon Top 100 dihapus Nov 2026 — melon.com menolak semua IP luar Korea di level koneksi, jadi tidak bisa dibaca dari server manapun.",
  "charts": {
   "billboard_global_200": {
    "label": "Billboard Global 200",
@@ -34,13 +34,6 @@
    "chartDate": "2026-11-16",
    "updated": 1794825972,
    "lastError": null
-  },
-  "melon_top100": {
-   "label": "Melon Top 100",
-   "url": "https://www.melon.com/chart/index.htm",
-   "artists": {},
-   "lastError": "fetch failed",
-   "updated": 1794825989
   },
   "billboard_global_excl_us": {
    "label": "Billboard Global Excl. US",
@@ -93,5 +86,5 @@
    "lastError": null
   }
  },
- "updated": 1794832850
+ "updated": 1794825991
 }

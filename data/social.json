@@ -1,5 +1,5 @@
 {
- "_info": "Follower sosial media per grup. Sumber: Instagram (web_profile_info/og:meta — angka meta dibulatkan, ditandai aprox), X via mirror Nitter, TikTok via halaman profil. Bisa diisi manual lewat data/social-override.json (src=manual). Weverse tidak mempublikasikan follower via web. Semua sumber best-effort: kalau gagal, angka terakhir tetap dipakai.",
+ "_info": "Follower sosial media per grup. Sumber: Instagram (web_profile_info/og:meta — angka meta dibulatkan, ditandai aprox), X via mirror Nitter, TikTok via halaman profil / og:description. Bisa diisi manual lewat data/social-override.json (src=manual; nilai boleh berupa angka = persis, atau objek {f, approx} = pembulatan). Weverse tidak mempublikasikan follower via web — angka awalnya batas bawah dari laporan komunitas (aprox). Semua sumber best-effort: kalau gagal, angka terakhir tetap dipakai.",
  "artists": {
   "babymonster": {
    "instagram": {
@@ -7,7 +7,7 @@
     "url": "https://www.instagram.com/babymonster_ygofficial/",
     "history": [
      {
-      "t": 1794832850,
+      "t": 1794835246,
       "f": 10519660,
       "approx": false,
       "src": "manual"
@@ -17,17 +17,39 @@
    "twitter": {
     "handle": "YGBABYMONSTER_",
     "url": "https://x.com/YGBABYMONSTER_",
-    "history": []
+    "history": [
+     {
+      "t": 1794835246,
+      "f": 1000000,
+      "approx": true,
+      "src": "manual"
+     }
+    ]
    },
    "tiktok": {
     "handle": "babymonster_yg_tiktok",
     "url": "https://www.tiktok.com/@babymonster_yg_tiktok",
-    "history": []
+    "history": [
+     {
+      "t": 1794835246,
+      "f": 14600000,
+      "approx": true,
+      "src": "manual"
+     }
+    ]
    },
    "weverse": {
     "handle": "babymonster",
     "url": "https://weverse.io/babymonster",
-    "note": "Jumlah follower Weverse tidak dipublikasikan lewat web publik — kartu ini hanya tautan."
+    "note": "Jumlah follower Weverse tidak dipublikasikan lewat web publik — kartu ini hanya tautan.",
+    "history": [
+     {
+      "t": 1794835246,
+      "f": 3000000,
+      "approx": true,
+      "src": "manual"
+     }
+    ]
    }
   },
   "treasure": {
@@ -36,7 +58,7 @@
     "url": "https://www.instagram.com/yg_treasure_official/",
     "history": [
      {
-      "t": 1794832850,
+      "t": 1794835246,
       "f": 7056770,
       "approx": false,
       "src": "manual"
@@ -46,17 +68,39 @@
    "twitter": {
     "handle": "ygtreasuremaker",
     "url": "https://x.com/ygtreasuremaker",
-    "history": []
+    "history": [
+     {
+      "t": 1794835246,
+      "f": 2400000,
+      "approx": true,
+      "src": "manual"
+     }
+    ]
    },
    "tiktok": {
     "handle": "yg_treasure_tiktok",
     "url": "https://www.tiktok.com/@yg_treasure_tiktok",
-    "history": []
+    "history": [
+     {
+      "t": 1794835246,
+      "f": 8600000,
+      "approx": true,
+      "src": "manual"
+     }
+    ]
    },
    "weverse": {
     "handle": "treasure",
     "url": "https://weverse.io/treasure",
-    "note": "Jumlah follower Weverse tidak dipublikasikan lewat web publik — kartu ini hanya tautan."
+    "note": "Jumlah follower Weverse tidak dipublikasikan lewat web publik — kartu ini hanya tautan.",
+    "history": [
+     {
+      "t": 1794835246,
+      "f": 3000000,
+      "approx": true,
+      "src": "manual"
+     }
+    ]
    }
   }
  },
