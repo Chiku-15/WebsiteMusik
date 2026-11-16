@@ -14,8 +14,8 @@
      "best": null
     }
    },
-   "chartDate": "2026-10-31",
-   "updated": 1794623159,
+   "chartDate": "2026-11-16",
+   "updated": 1794791672,
    "lastError": null
   },
   "genie_top200": {
@@ -31,16 +31,16 @@
      "best": null
     }
    },
-   "chartDate": "2026-11-14",
-   "updated": 1794623163,
+   "chartDate": "2026-11-16",
+   "updated": 1794791680,
    "lastError": null
   },
   "melon_top100": {
    "label": "Melon Top 100",
    "url": "https://www.melon.com/chart/index.htm",
    "artists": {},
-   "lastError": "fetch failed",
-   "updated": 1794623175
+   "lastError": "baris Melon terbaca 0",
+   "updated": 1794791686
   },
   "billboard_global_excl_us": {
    "label": "Billboard Global Excl. US",
@@ -55,8 +55,9 @@
      "best": null
     }
    },
-   "updated": 1794644257,
-   "lastError": null
+   "updated": 1794791673,
+   "lastError": null,
+   "chartDate": "2026-11-16"
   },
   "bugs_day100": {
    "label": "Bugs Top 100 (harian)",
@@ -71,9 +72,9 @@
      "best": null
     }
    },
-   "updated": 1794644257,
-   "lastError": null
+   "updated": 1794791683,
+   "lastError": "baris Bugs terbaca 0"
   }
  },
- "updated": 1794670228
+ "updated": 1794791686
 }
