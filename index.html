@@ -4749,14 +4749,17 @@ function mountHeatmap(sec, plat) {
 }
 
 /* ===================== halaman Rekap 12 bulan (Jan–Des) =====================
- * Fitur baru: lihat jumlah view YouTube & pendengar Spotify dari awal tahun sampai
+ * Fitur: lihat jumlah view YouTube & stream/pendengar Spotify dari awal tahun sampai
  * akhir tahun — 12 bulan Januari–Desember per tahun, bisa ganti platform/artis/tahun.
  * Sumber angka:
- *  - tambahan view/stream per bulan = penjumlahan delta harian (semua video/lagu digabung,
- *    semantik sama dengan peta panas: selisih antar pengukuran dibagi rata ke harinya).
- *  - total views/stream & pendengar bulanan di AKHIR bulan = titik rekam terdekat dari
- *    riwayat channel YouTube (channels.json) / artis Spotify (spotify-artists.json),
- *    ditandai ± bila tanggalnya bukan tepat 1 hari terakhir bulan itu. */
+ *  - YouTube: tambahan views per bulan = penjumlahan delta harian video (semantik sama
+ *    dengan peta panas); total views akhir bulan = titik riwayat channel ≤10 hari,
+ *    selain itu interpolasi antar titik riwayat (≈).
+ *  - Spotify: level ARTIS — kurva penjumlahan riwayat lagu direkonsiliasi dengan jangkar
+ *    (titik rekam situs + tonggak publik: 1 miliar karier 1 Apr 2025, “1 miliar di 2026”,
+ *    rekap tahunan 2023) supaya distribusi bulanannya akurat; pendengar bulanan = titik
+ *    rekam nyata, bulan lain diestimasi dari ritme stream 30 hari. Nilai non-jangkar ≈. */
+let BUL_LAST = null;   // hasil rekap terakhir — dipakai grafik batang di mountBulan
 let BUL_RANGE = (() => {
   let v = {};
   try { v = JSON.parse(localStorage.getItem("py.bulrange") || "{}") || {}; } catch {}
@@ -4780,52 +4783,187 @@ function bulNearest(hist, ts, tolDays) {
   for (const p of hist || []) { const d = Math.abs(p.t - ts); if (d < bd) { bd = d; best = p; } }
   return best && bd <= (tolDays || 30) * 86400 ? { p: best, off: Math.round(bd / 86400) } : null;
 }
+/* ---------- jangkar sumber publik & rekonsiliasi level artis (Spotify) ----------
+ * Penjumlahan riwayat lagu (backfill/estimasi) benar di ujung — persis total karier —
+ * tetapi distribusi antar bulan hanya perkiraan model (contoh: model memberi 2026
+ * ±520 juta, padahal laju nyata terekam ±3,1 juta/hari ≈ 1 miliar setahun; tonggak
+ * publik pun menyebut 2026 = tahun pertama BABYMONSTER tembus 1 miliar stream).
+ * Karena itu kurva direkonsiliasi dengan jangkar berikut:
+ *  1. titik rekam situs (spotify-artists.json — direkam GitHub Actions);
+ *  2. tonggak 1 miliar total stream karier BABYMONSTER (1 Apr 2025, komunitas Monstiez);
+ *  3. tonggak “1 miliar stream di 2026 — tahun pertama” (postingan penggemar 14 Nov 2026)
+ *     → total akhir-2025 = total karier terekam ±14 Nov 2026 − 1 miliar;
+ *  4. rekap tahunan penggemar era BATTER UP (2023 = 34,2 juta).
+ * Di antara dua jangkar, pertumbuhan bulanan mengikuti BENTUK kurva lagu yang
+ * diskalakan supaya kurva melewati kedua jangkar; setelah jangkar terakhir, delta
+ * kurva lagu (sudah data nyata) dipakai apa adanya. Nilai non-jangkar ditandai ≈. */
+const BUL_FIRST_RELEASE = { babymonster: Date.UTC(2023, 10, 27) / 1000, treasure: Date.UTC(2020, 7, 7) / 1000 };
+const BUL_SRC_ANCHORS = {
+  babymonster: [
+    { t: Date.UTC(2023, 11, 31, 23, 59) / 1000, total: 34210368, src: "rekap tahunan penggemar @bmspotiify — total stream Spotify 2023 (era BATTER UP)" },
+    { t: Date.UTC(2025, 3, 1, 12) / 1000, total: 1000000000, src: "tonggak 1 miliar total stream Spotify (komunitas Monstiez, 1 Apr 2025)" },
+  ],
+  treasure: [],
+};
+function bulDerivedEnd2025(a) {
+  /* “2026 = tahun pertama tembus 1 miliar” (postingan 14 Nov 2026) →
+   * akhir-2025 = total karier PADA 14 Nov 2026 (interpolasi antar titik rekam) − 1 miliar */
+  const target = Date.UTC(2026, 10, 14, 12) / 1000;
+  const pts = (a.history || []).filter((p) => p.total != null).slice().sort((x, y) => x.t - y.t);
+  if (!pts.length) return { total: 1586500000, src: "perkiraan dari tonggak \u201C1 miliar stream di 2026 — tahun pertama\u201D (postingan 14 Nov 2026)" };
+  let lo = null, hi = null;
+  for (let i = 0; i < pts.length - 1; i++) if (pts[i].t <= target && pts[i + 1].t >= target) { lo = pts[i]; hi = pts[i + 1]; break; }
+  if (lo && hi.t > lo.t) {
+    const v = lo.total + (hi.total - lo.total) * ((target - lo.t) / (hi.t - lo.t));
+    return { total: Math.round(v) - 1e9, src: "turunan tonggak \u201C1 miliar stream di 2026 — tahun pertama\u201D (14 Nov 2026), diinterpolasi antar titik rekam situs" };
+  }
+  const near = [...pts].sort((x, y) => Math.abs(x.t - target) - Math.abs(y.t - target))[0];
+  return { total: Math.round(near.total) - 1e9, src: "turunan tonggak \u201C1 miliar stream di 2026 — tahun pertama\u201D (14 Nov 2026) dari titik rekam " + new Date(near.t * 1000).toISOString().slice(0, 10) };
+}
+function bulReconSp(artId) {
+  const a = (state.sp.artists || []).find((x) => x.id === artId) || {};
+  const C = spArtistDaily(artId) || [];
+  if (!C.length) return null;
+  const cAt = (t) => {
+    if (t <= C[0].t) return C[0].v;
+    if (t >= C[C.length - 1].t) return C[C.length - 1].v;
+    let lo = 0, hi = C.length - 1;
+    while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (C[mid].t <= t) lo = mid; else hi = mid; }
+    const x = C[lo], y = C[hi];
+    return y.t <= x.t ? y.v : x.v + (y.v - x.v) * ((t - x.t) / (y.t - x.t));
+  };
+  /* jangkar: semua titik rekam situs + tonggak sumber publik (+ turunan) */
+  let A = [];
+  for (const p of (a.history || [])) if (p.total != null) A.push({ t: p.t, v: p.total, how: "real", src: "titik rekam situs (riwayat artis)" });
+  for (const s of (BUL_SRC_ANCHORS[artId] || [])) A.push({ t: s.t, v: s.total, how: "src", src: s.src });
+  if (artId === "babymonster") { const d = bulDerivedEnd2025(a); A.push({ t: Date.UTC(2025, 11, 31, 23, 59) / 1000, v: d.total, how: "src", src: d.src }); }
+  A.sort((x, y) => x.t - y.t);
+  const rel = BUL_FIRST_RELEASE[artId] || C[0].t;
+  const segK = (aL, aR) => {
+    const dC = cAt(aR.t) - cAt(aL.t), dA = aR.v - aL.v;
+    if (dC < 1e5) return dA >= 0 ? 1 : 0;
+    return Math.min(Math.max(dA / dC, 0), 8);
+  };
+  const at = (t) => {
+    if (t < rel) return { v: null, how: null, src: null, off: null };
+    let bR = null, bdR = Infinity, bS = null, bdS = Infinity;
+    for (const an of A) {
+      const d = Math.abs(an.t - t);
+      if (an.how === "real") { if (d < bdR) { bdR = d; bR = an; } }
+      else if (an.how === "src") { if (d < bdS) { bdS = d; bS = an; } }
+    }
+    if (bR && bdR <= 10 * 86400) return { v: bR.v, how: "real", src: bR.src, off: Math.max(1, Math.round(bdR / 86400)) };
+    if (bS && bdS <= 2 * 86400) return { v: bS.v, how: "src", src: bS.src, off: null };
+    if (!A.length) return { v: Math.round(cAt(t)), how: "est", src: null, off: null };
+    const c0t = C[0].t, c0v = C[0].v;
+    if (t < A[0].t) {
+      if (t >= c0t && cAt(A[0].t) > c0v) {
+        const frac = (cAt(t) - c0v) / (cAt(A[0].t) - c0v);
+        return { v: Math.round(c0v + (A[0].v - c0v) * Math.min(Math.max(frac, 0), 1)), how: "est", src: null, off: null };
+      }
+      if (t >= c0t) return { v: Math.round(c0v), how: "est", src: null, off: null };
+      const span = Math.max(A[0].t - rel, 86400);
+      return { v: Math.round(A[0].v * Math.min(Math.max((t - rel) / span, 0), 1)), how: "est", src: null, off: null };
+    }
+    if (t < c0t) return { v: Math.round(A[0].v), how: "est", src: null, off: null };
+    let i = 0;
+    while (i < A.length - 1 && A[i + 1].t <= t) i++;
+    if (i >= A.length - 1) {
+      const aL = A[A.length - 1];
+      return { v: Math.round(aL.v + Math.max(0, cAt(t) - cAt(aL.t))), how: "est", src: null, off: null };
+    }
+    const aL = A[i], aR = A[i + 1];
+    return { v: Math.round(aL.v + segK(aL, aR) * (cAt(t) - cAt(aL.t))), how: "est", src: null, off: null };
+  };
+  /* pendengar bulanan: titik rekam nyata bila ≤10 hari; selain itu tebakan dari
+   * ritme 30 hari kurva rekonsiliasi (pangkat 0,5 — efek dedup pendengar), dibatasi
+   * maks 1,12× puncak terekam. Bukan angka resmi — ditandai ≈. */
+  const mlPts = (a.history || []).filter((p) => p.ml != null).map((p) => ({ t: p.t, ml: p.ml, approx: a.mlApprox === true }));
+  const maxMl = mlPts.length ? Math.max(...mlPts.map((p) => p.ml)) : null;
+  const paceOf = (tt) => { const r1 = at(tt), r0 = at(tt - 30 * 86400); return r1.v == null ? null : r1.v - (r0.v || 0); };
+  const mlAt = (t) => {
+    if (!mlPts.length) return { v: null, how: null, src: null, off: null };
+    let best = null, bd = Infinity;
+    for (const p of mlPts) { const d = Math.abs(p.t - t); if (d < bd) { bd = d; best = p; } }
+    if (bd <= 10 * 86400) return { v: best.ml, how: best.approx ? "est" : "real", src: "titik rekam situs" + (best.approx ? " (perkiraan)" : ""), off: Math.max(1, Math.round(bd / 86400)) };
+    if (at(t).v == null) return { v: null, how: null, src: null, off: null };
+    const pace = paceOf(t), paceRef = paceOf(best.t);
+    if (pace == null || paceRef == null || paceRef <= 0 || pace < 0) return { v: Math.round(best.ml), how: "est", src: null, off: null };
+    const ratio = Math.min(Math.max(Math.sqrt(pace / paceRef), 0.10), 1.12);
+    let v = best.ml * ratio;
+    if (maxMl != null) v = Math.min(v, maxMl * 1.12);
+    return { v: Math.round(v), how: "est", src: null, off: null };
+  };
+  return { at, mlAt };
+}
+/* YouTube: interpolasi linier antar dua titik riwayat channel yang mengapit t */
+function bulYtInterp(hist, t) {
+  const H = (hist || []).filter((p) => p.v != null).slice().sort((x, y) => x.t - y.t);
+  if (!H.length || t < H[0].t || t > H[H.length - 1].t) return null;
+  let lo = 0, hi = H.length - 1;
+  while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (H[mid].t <= t) lo = mid; else hi = mid; }
+  const x = H[lo], y = H[hi];
+  if (y.t <= x.t) return { v: y.v, how: "est" };
+  return { v: Math.round(x.v + (y.v - x.v) * ((t - x.t) / (y.t - x.t))), how: "est" };
+}
 function bulBodyHTML(plat, year) {
   const acc = hmAccent(plat);
   const unitPl = hmUnitPl(plat);
   const artSel = bulArt();
   const artObj = state.config.artists.find((a) => a.id === artSel);
-  const nowIdx = dayIndexOf(Date.now() / 1000);
-  const yStart = dayIndexOf(Date.UTC(year, 0, 1) / 1000);
-  const endIdx = Math.min(dayIndexOf(Date.UTC(year, 11, 31) / 1000), nowIdx);
-  const S = hmSeries(plat, yStart, endIdx, artSel || null);
-  /* tambahan per bulan dari delta harian */
-  const mb = new Map();
-  for (const [idx, g] of S.gain) { if (g > 0) { const k = dateKeyOfDayIndex(idx).slice(0, 7); mb.set(k, (mb.get(k) || 0) + g); } }
-  /* titik riwayat channel/artis untuk nilai akhir bulan */
-  const histFor = (aid) => {
-    if (plat === "yt") {
-      const ch = state.channels && state.channels[aid];
-      return ch && ch.history ? ch.history : [];
-    }
-    const sa = (state.sp.artists || []).find((x) => x.id === aid);
-    return sa && sa.history ? sa.history : [];
-  };
   const arts = artSel ? [artSel] : state.config.artists.map((a) => a.id);
   const monthEndTs = (m) => Math.min(Date.UTC(year, m + 1, 1) / 1000 - 60, Date.now() / 1000);
+  const prevEndTs = (m) => (m === 0 ? Math.min(Date.UTC(year - 1, 12, 1) / 1000 - 60, Date.now() / 1000) : monthEndTs(m - 1));
   const monthRows = [];
-  for (let m = 0; m < 12; m++) {
-    const k = year + "-" + String(m + 1).padStart(2, "0");
-    const gain = mb.get(k) || 0;
-    const eTs = monthEndTs(m);
-    let tot = null, ml = null, offTot = null, offMl = null;
-    if (eTs >= tsOfDayIndex(yStart) - 86400) {
-      let sTot = 0, sMl = 0, okTot = true, okMl = true;
-      for (const aid of arts) {
-        const near = bulNearest(histFor(aid), eTs, plat === "yt" ? 30 : 34);
-        const vv = near ? (plat === "yt" ? near.p.v : near.p.total) : null;
-        if (vv != null) sTot += vv; else okTot = false;
-        if (plat === "spotify") {
-          if (near && near.p.ml != null) sMl += near.p.ml; else okMl = false;
-          if (near && near.p.ml != null && (offMl == null || near.off < offMl)) offMl = near.off;
-        }
-        if (vv != null && (offTot == null || near.off < offTot)) offTot = near.off;
+  if (plat === "spotify") {
+    /* level artis: kurva lagu direkonsiliasi dgn jangkar rekam + sumber publik;
+     * tambahan bulanan = selisih total karier antar akhir bulan pada kurva hasil */
+    const recs = arts.map((aid) => bulReconSp(aid)).filter(Boolean);
+    const sumEval = (t, sel) => {
+      let v = 0, any = false, how = "est", srcs = [], off = null;
+      for (const rc of recs) {
+        const r = sel(rc, t);
+        if (!r || r.v == null) continue;
+        v += r.v; any = true;
+        if (r.how === "real") how = "real";
+        else if (r.how === "src" && how !== "real") how = "src";
+        if (r.src) srcs.push(r.src);
+        if (r.off != null && (off == null || r.off < off)) off = r.off;
       }
-      if (okTot) tot = sTot;
-      if (plat === "spotify" && okMl) ml = sMl;
+      return any ? { v: Math.round(v), how, src: [...new Set(srcs)].join(" · "), off } : { v: null, how: null, src: null, off: null };
+    };
+    for (let m = 0; m < 12; m++) {
+      const cur = sumEval(monthEndTs(m), (rc, t) => rc.at(t));
+      const prv = sumEval(prevEndTs(m), (rc, t) => rc.at(t));
+      const gain = cur.v != null && prv.v != null ? Math.max(0, cur.v - prv.v) : 0;
+      const ml = sumEval(monthEndTs(m), (rc, t) => rc.mlAt(t));
+      monthRows.push({ m, k: year + "-" + String(m + 1).padStart(2, "0"), gain, tot: cur.v, ml: ml.v, offTot: cur.off, offMl: ml.off, howTot: cur.how, srcTot: cur.src, howMl: ml.how, srcMl: ml.src });
     }
-    monthRows.push({ m, k, gain, tot, ml, offTot, offMl });
+  } else {
+    /* YouTube: tambahan views dr delta harian video (arsip + rekaman); total akhir
+     * bulan = titik riwayat channel ≤10 hari, selain itu interpolasi antar titik (≈) */
+    const nowIdx = dayIndexOf(Date.now() / 1000);
+    const yStart = dayIndexOf(Date.UTC(year, 0, 1) / 1000);
+    const endIdx = Math.min(dayIndexOf(Date.UTC(year, 11, 31) / 1000), nowIdx);
+    const S = hmSeries(plat, yStart, endIdx, artSel || null);
+    const mb = new Map();
+    for (const [idx, g] of S.gain) { if (g > 0) { const k = dateKeyOfDayIndex(idx).slice(0, 7); mb.set(k, (mb.get(k) || 0) + g); } }
+    const histFor = (aid) => { const ch = state.channels && state.channels[aid]; return ((ch && ch.history) || []).filter((p) => p.v != null); };
+    for (let m = 0; m < 12; m++) {
+      const k = year + "-" + String(m + 1).padStart(2, "0");
+      const gain = mb.get(k) || 0;
+      const eTs = monthEndTs(m);
+      let sTot = 0, any = false, howTot = "est", offTot = null;
+      for (const aid of arts) {
+        const near = bulNearest(histFor(aid), eTs, 10);
+        if (near) { sTot += near.p.v; any = true; howTot = "real"; if (offTot == null || near.off < offTot) offTot = near.off; continue; }
+        const ip = bulYtInterp(histFor(aid), eTs);
+        if (ip) { sTot += ip.v; any = true; }
+      }
+      monthRows.push({ m, k, gain, tot: any ? Math.round(sTot) : null, ml: null, offTot: any ? offTot : null, offMl: null, howTot: any ? howTot : null, srcTot: null, howMl: null, srcMl: null });
+    }
   }
+  BUL_LAST = { plat, year, gains: monthRows.map((r) => r.gain || 0) };
   /* ringkasan tahun */
   const totYear = monthRows.reduce((s, r) => s + r.gain, 0);
   const busy = monthRows.reduce((b, r) => (!b || r.gain > b.gain ? r : b), null);
@@ -4843,20 +4981,27 @@ function bulBodyHTML(plat, year) {
   const yearBtns = [];
   for (let y = 2020; y <= new Date().getFullYear(); y++) yearBtns.push(`<button type="button" data-bul-y="${y}"${y === year ? ' class="on"' : ""}>${y}</button>`);
   const yearSeg = `<div class="hm-art"><span style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.6px">Tahun:</span>${yearBtns.join("")}</div>`;
-  /* tabel 12 bulan */
-  const fOpt = (v, off) => v == null ? "–" : `${fmtExact(v)}${off != null && off > 1 ? ` <span class="cellno" title="titik rekam terdekat ${off} hari dari akhir bulan">±</span>` : ""}`;
+  /* tabel 12 bulan — badge: ± titik rekam terdekat · ⓘ jangkar sumber publik · ≈ estimasi */
+  const fOpt = (v, off, how, src) => {
+    if (v == null) return "–";
+    let b = "";
+    if (off != null && off > 1) b += ` <span class="cellno" title="titik rekam terdekat ${off} hari dari akhir bulan">±</span>`;
+    if (how === "src") b += ` <span class="cellno" title="jangkar sumber publik: ${esc(src || "sumber publik")}">ⓘ</span>`;
+    else if (how === "est") b += ` <span class="cellno" title="${esc(src ? "dari sumber publik: " + src : "estimasi situs — interpolasi/ekstrapolasi antar jangkar & titik rekam; bukan angka resmi")}">≈</span>`;
+    return `${fmtExact(v)}${b}`;
+  };
   const rowsHTML = monthRows.map((r) => `
     <div class="bulrow">
       <div class="bm">${MFULL.format(new Date(r.k + "-01T00:00:00"))}</div>
       <div class="bg${r.gain > 0 ? " up" : ""}" title="${r.gain > 0 ? "+" + fmtExact(r.gain) + " " + unitPl + " baru" : "tidak ada data pertumbuhan bulan ini"}">${r.gain > 0 ? "+" + fmtExact(r.gain) : "–"}</div>
-      <div class="bt">${fOpt(r.tot, r.offTot)}</div>
-      ${plat === "spotify" ? `<div class="bt bt2">${fOpt(r.ml, r.offMl)}</div>` : ""}
+      <div class="bt">${fOpt(r.tot, r.offTot, r.howTot, r.srcTot)}</div>
+      ${plat === "spotify" ? `<div class="bt bt2">${fOpt(r.ml, r.offMl, r.howMl, r.srcMl)}</div>` : ""}
     </div>`).join("");
   const headRow = `<div class="bulrow bulhead">
       <div class="bm">Bulan</div>
       <div class="bg">${hmUnit(plat)} baru</div>
-      <div class="bt">${plat === "yt" ? "Total views akhir bulan (±)" : "Total stream akhir bulan (±)"}</div>
-      ${plat === "spotify" ? `<div class="bt bt2">Pendengar bulanan (±)</div>` : ""}
+      <div class="bt">${plat === "yt" ? "Total views akhir bulan" : "Total stream akhir bulan"}</div>
+      ${plat === "spotify" ? `<div class="bt bt2">Pendengar bulanan</div>` : ""}
     </div>`;
   /* baris TOTAL Jan–Des — jumlah seluruh tambahan view/stream sepanjang tahun;
    * kolom "akhir bulan" & "pendengar" sengaja tidak dijumlahkan (nilai titik waktu, bukan akumulasi) */
@@ -4874,7 +5019,7 @@ function bulBodyHTML(plat, year) {
   <div class="hm-bar"><div class="hm-sum">${sumHTML}</div></div>
   <div class="chartbox"><canvas id="bulChart"></canvas></div>
   ${tableHTML}
-  <p class="note">Kolom <b>${hmUnit(plat)} baru</b> = selisih total antar pengumuman yang direkam situs (dipadatkan per bulan; jika jarak antar pengumuman lebar, selisihnya dibagi rata ke harinya — semantik sama dengan peta panas harian). Kolom <b>akhir bulan (±)</b> = nilai dari titik rekam terdekat di akhir bulan itu dari riwayat ${plat === "yt" ? "channel YouTube (views gabungan)" : "artis Spotify (total stream gabungan)"}, tanda ± berarti titik terdekatnya beberapa hari di luar tanggal terakhir bulan — bukan angka persis hari itu. <b>Pendengar bulanan</b> (Spotify) baru mulai direkam saat fitur ini berjalan, jadi bulan-bulan sebelum itu tampil “–”. Baris <b>Total Jan–Des</b> di ujung tabel = jumlah seluruh ${hmUnit(plat)} baru dari Januari sampai Desember tahun itu. Ganti tab <b>Platform</b>, <b>Artis</b> dan <b>Tahun</b> untuk melihat kombinasi lain.</p>`;
+  <p class="note">Kolom <b>${hmUnit(plat)} baru</b> = ${plat === "spotify" ? "selisih <b>total stream karier</b> antar akhir bulan pada kurva yang direkonsiliasi dengan jangkar — bukan lagi penjumlahan riwayat lagu yang distribusinya masih perkiraan model" : "selisih total antar pengumuman yang direkam situs, dipadatkan per bulan (semantik sama dengan peta panas harian)"}. Kolom <b>akhir bulan</b> &amp; <b>pendengar bulanan</b> kini diisi terus bila datanya ada: <b>±</b> = titik rekam terdekat (N hari dari akhir bulan), <b>ⓘ</b> = jangkar sumber publik (arahkan kursor untuk sumbernya), <b>≈</b> = estimasi situs (interpolasi/ekstrapolasi antar jangkar — bukan angka resmi). ${plat === "spotify" ? "Jangkar Spotify BABYMONSTER: tonggak 1 miliar total stream (1 Apr 2025 — komunitas Monstiez), tonggak \u201C1 miliar stream di 2026 — tahun pertama\u201D (postingan penggemar 14 Nov 2026 — dipakai menghitung mundur total akhir-2025), rekap tahunan penggemar era BATTER UP (2023), ditambah titik rekam situs (kworb.net). Pendengar bulanan di luar titik rekam = tebakan dari ritme stream 30 hari (pangkat 0,5)." : "Nilai akhir bulan di luar titik rekam = interpolasi antar titik riwayat channel."} Baris <b>Total Jan–Des</b> = jumlah seluruh ${hmUnit(plat)} baru Jan–Des tahun itu. Ganti tab <b>Platform</b>, <b>Artis</b> dan <b>Tahun</b> untuk melihat kombinasi lain.</p>`;
 }
 function renderBulanPage(sec) {
   const plat = bulPlat();
@@ -4902,12 +5047,16 @@ function mountBulan(sec, plat) {
   if (cv) {
     const acc = hmAccent(plat);
     const unitPl = hmUnitPl(plat);
-    const yStart = dayIndexOf(Date.UTC(year, 0, 1) / 1000);
-    const endIdx = Math.min(dayIndexOf(Date.UTC(year, 11, 31) / 1000), dayIndexOf(Date.now() / 1000));
-    const S = hmSeries(plat, yStart, endIdx, bulArt() || null);
-    const mb = new Map();
-    for (const [idx, g] of S.gain) { if (g > 0) { const k = dateKeyOfDayIndex(idx).slice(0, 7); mb.set(k, (mb.get(k) || 0) + g); } }
-    const vals = Array.from({ length: 12 }, (_, m) => mb.get(year + "-" + String(m + 1).padStart(2, "0")) || 0);
+    /* angka grafik = kurva yang sama dengan tabel (level artis utk Spotify) */
+    let vals = (BUL_LAST && BUL_LAST.plat === plat && BUL_LAST.year === year) ? BUL_LAST.gains.slice() : null;
+    if (!vals) {
+      const yStart = dayIndexOf(Date.UTC(year, 0, 1) / 1000);
+      const endIdx = Math.min(dayIndexOf(Date.UTC(year, 11, 31) / 1000), dayIndexOf(Date.now() / 1000));
+      const S = hmSeries(plat, yStart, endIdx, bulArt() || null);
+      const mb = new Map();
+      for (const [idx, g] of S.gain) { if (g > 0) { const k = dateKeyOfDayIndex(idx).slice(0, 7); mb.set(k, (mb.get(k) || 0) + g); } }
+      vals = Array.from({ length: 12 }, (_, m) => mb.get(year + "-" + String(m + 1).padStart(2, "0")) || 0);
+    }
     destroyChartById("bulChart");
     newChart(cv, {
       type: "bar",
