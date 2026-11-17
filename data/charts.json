@@ -15,7 +15,7 @@
     }
    },
    "chartDate": "2026-11-17",
-   "updated": 1794871961,
+   "updated": 1794915598,
    "lastError": null
   },
   "genie_top200": {
@@ -48,7 +48,7 @@
      "best": null
     }
    },
-   "updated": 1794871962,
+   "updated": 1794915600,
    "lastError": null,
    "chartDate": "2026-11-17"
   },
@@ -87,5 +87,5 @@
    "lastError": null
   }
  },
- "updated": 1794912649
+ "updated": 1794915601
 }
