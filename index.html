@@ -4538,15 +4538,22 @@ function hmHexA(hex, a) {
 function hmLvA(lv) { return lv <= 0 ? 0.16 : 0.18 + lv * 0.19; }
 /* delta harian gabungan semua lagu/video untuk rentang hari [startIdx..endIdx] (satu tahun kalender).
  * - Hari pertama tiap lagu tidak dihitung (delta belum diketahui) supaya video/lagu baru
- *   tidak membuat lonjakan palsu berupa seluruh angka totalnya.
- * - Jika jarak antar pengukuran lebar (mis. jangkar milestone resmi berjarak ratusan hari),
- *   selisihnya dibagi rata ke semua hari di jarak itu agar tidak ada lonjakan palsu di satu hari.
+ *   tidak membuat lonjakan palsu berupa seluruh angka totalnya. Untuk video YouTube,
+ *   jangkar rilis (0 views) ditambahkan otomatis sehingga kenaikan sejak hari rilis tetap terhitung.
+ * - Selisih antar pengumuman dibagi rata ke SELURUH hari di jarak itu (bukan hanya hari
+ *   yang terlihat di jendela tahun) — jadi segmen yang melewati batas tahun tidak pernah
+ *   dihitung dobel antar tahun, dan segmen yang ujungnya di luar jendela tetap menyumbang.
  * - earliest = hari pengukuran paling tua di data (di luar rentang pun dihitung) untuk keterangan
  *   "pencatatan dimulai ..." pada tahun sebelum data ada. */
 function hmSeries(plat, startIdx, endIdx, artId) {
   const items = plat === "spotify"
     ? Object.values(state.sp.tracks || {}).filter((t) => t.history && t.history.length && (!artId || t.artistId === artId))
-    : allVideosFlat().filter((v) => !artId || v.art.id === artId).map((v) => ({ history: v.history }));
+    : allVideosFlat().filter((v) => !artId || v.art.id === artId).map((v) => {
+        const h = (v.history || []).slice().sort((a, b) => a.t - b.t);
+        const pub = wibDayStartIso(v.published);
+        if (pub != null && h.length && h[0].t - pub > 36 * 3600) return { history: [{ t: pub, v: 0, e: 1 }, ...h] };
+        return { history: h };
+      });
   const gain = new Map(), cum = new Map();
   let earliest = null;
   for (const it of items) {
@@ -4554,21 +4561,18 @@ function hmSeries(plat, startIdx, endIdx, artId) {
     for (let i = 0; i < days.length; i++) {
       const idx = dayIndexOf(days[i].t);
       if (earliest == null || idx < earliest) earliest = idx;
-      if (idx < startIdx || idx > endIdx) continue;
-      cum.set(idx, (cum.get(idx) || 0) + (days[i].v || 0));
+      if (idx >= startIdx && idx <= endIdx) cum.set(idx, (cum.get(idx) || 0) + (days[i].v || 0));
       if (i === 0) continue;
       const g = Math.max(0, (days[i].v || 0) - (days[i - 1].v || 0));
+      if (g <= 0) continue;
       const pIdx = dayIndexOf(days[i - 1].t);
       const span = Math.max(1, idx - pIdx);
-      const diWin = [];
-      for (let j = 1; j <= span; j++) { const di = pIdx + j; if (di >= startIdx && di <= endIdx) diWin.push(di); }
-      if (!diWin.length) continue;
-      const per = Math.floor(g / diWin.length);
-      let rem = g - per * diWin.length;
-      for (const di of diWin) {
-        const val = per + (rem > 0 ? 1 : 0);
-        if (rem > 0) rem--;
-        gain.set(di, (gain.get(di) || 0) + val);
+      const per = Math.floor(g / span); // dibagi rata ke seluruh hari di jarak itu
+      if (per <= 0) continue;
+      for (let j = 1; j <= span; j++) {
+        const di = pIdx + j;
+        if (di < startIdx || di > endIdx) continue;
+        gain.set(di, (gain.get(di) || 0) + per);
       }
     }
   }
@@ -4785,41 +4789,40 @@ function bulNearest(hist, ts, tolDays) {
 }
 /* ---------- jangkar sumber publik & rekonsiliasi level artis (Spotify) ----------
  * Penjumlahan riwayat lagu (backfill/estimasi) benar di ujung — persis total karier —
- * tetapi distribusi antar bulan hanya perkiraan model (contoh: model memberi 2026
- * ±520 juta, padahal laju nyata terekam ±3,1 juta/hari ≈ 1 miliar setahun; tonggak
- * publik pun menyebut 2026 = tahun pertama BABYMONSTER tembus 1 miliar stream).
- * Karena itu kurva direkonsiliasi dengan jangkar berikut:
- *  1. titik rekam situs (spotify-artists.json — direkam GitHub Actions);
- *  2. tonggak 1 miliar total stream karier BABYMONSTER (1 Apr 2025, komunitas Monstiez);
- *  3. tonggak “1 miliar stream di 2026 — tahun pertama” (postingan penggemar 14 Nov 2026)
- *     → total akhir-2025 = total karier terekam ±14 Nov 2026 − 1 miliar;
- *  4. rekap tahunan penggemar era BATTER UP (2023 = 34,2 juta).
- * Di antara dua jangkar, pertumbuhan bulanan mengikuti BENTUK kurva lagu yang
- * diskalakan supaya kurva melewati kedua jangkar; setelah jangkar terakhir, delta
- * kurva lagu (sudah data nyata) dipakai apa adanya. Nilai non-jangkar ditandai ≈. */
+ * tetapi distribusi antar bulan hanya perkiraan model. Karena itu kurva direkonsiliasi
+ * dengan jangkar berikut (semua SUMBER PUBLIK yang bisa diverifikasi):
+ *  1. titik rekam situs (spotify-artists.json — GitHub Actions, basis kworb);
+ *  2. BABYMONSTER — rekap tahunan akun statistik @bmspotiify (X, 15 Nov 2026):
+ *     2023 = 34.210.368 · 2024 = 898.284.139 · 2025 = 936.495.716 →
+ *     total karier akhir-2023 = 34,21 jt · akhir-2024 = 932,49 jt · akhir-2025 = 1.868,99 jt;
+ *     total 2026 (masih berjalan) = 1.001.562.568 → 2026 adalah tahun pertama
+ *     BABYMONSTER tembus 1 miliar stream (angkanya identik dgn tonggak
+ *     "1 miliar di 2026" yang diposting komunitas 14-15 Nov 2026);
+ *  3. BABYMONSTER — tonggak 1 miliar total stream karier pada 1 Apr 2025
+ *     (r/BABYMONSTER, Reddit 250401);
+ *  4. TREASURE — 23 Nov 2023 total 998.149.602 (rekap @TEUMEonSpotify, X).
+ * BASIS "karier": kworb hanya menampung lagu yang masih terdaftar — single asli
+ * BATTER UP (era 2023) sudah diganti versi EP dan tidak lagi tercantum, sehingga
+ * total karier = total kworb + 278.759.596 (selisih persis antara rekap @bmspotiify
+ * 2.870.552.791 dan kworb 2.591.793.195 per 17 Nov 2026). Di antara dua jangkar,
+ * pertumbuhan bulanan mengikuti BENTUK kurva lagu yang diskalakan supaya kurva
+ * melewati kedua jangkar; setelah jangkar terakhir, delta kurva lagu (sudah data
+ * nyata) dipakai apa adanya. Nilai non-jangkar ditandai ≈. */
 const BUL_FIRST_RELEASE = { babymonster: Date.UTC(2023, 10, 27) / 1000, treasure: Date.UTC(2020, 7, 7) / 1000 };
+/* offset basis karier per artis: total karier = kworb + offset (era single asli yang
+ * sudah tidak terdaftar di kworb). 0 = tidak ada lagu yang dicabut dari katalog. */
+const BUL_CAREER_OFFSET = { babymonster: 278759596, treasure: 0 };
 const BUL_SRC_ANCHORS = {
   babymonster: [
-    { t: Date.UTC(2023, 11, 31, 23, 59) / 1000, total: 34210368, src: "rekap tahunan penggemar @bmspotiify — total stream Spotify 2023 (era BATTER UP)" },
-    { t: Date.UTC(2025, 3, 1, 12) / 1000, total: 1000000000, src: "tonggak 1 miliar total stream Spotify (komunitas Monstiez, 1 Apr 2025)" },
+    { t: Date.UTC(2023, 11, 31, 23, 59) / 1000, total: 34210368, src: "rekap tahunan @bmspotiify (X, 15 Nov 2026) — stream Spotify 2023 (era BATTER UP) = 34.210.368" },
+    { t: Date.UTC(2024, 11, 31, 23, 59) / 1000, total: 932494507, src: "rekap tahunan @bmspotiify (X, 15 Nov 2026) — stream 2024 = 898.284.139 → total karier akhir-2024" },
+    { t: Date.UTC(2025, 3, 1, 12) / 1000, total: 1000000000, src: "tonggak 1 miliar total stream karier 1 Apr 2025 (r/BABYMONSTER — Reddit 250401)" },
+    { t: Date.UTC(2025, 11, 31, 23, 59) / 1000, total: 1868990223, src: "rekap tahunan @bmspotiify (X, 15 Nov 2026) — stream 2025 = 936.495.716 → total karier akhir-2025" },
   ],
-  treasure: [],
+  treasure: [
+    { t: Date.UTC(2023, 10, 23, 12) / 1000, total: 998149602, src: "rekap @TEUMEonSpotify (X, 23 Nov 2023) — total 998.149.602 mendekati 1 miliar" },
+  ],
 };
-function bulDerivedEnd2025(a) {
-  /* “2026 = tahun pertama tembus 1 miliar” (postingan 14 Nov 2026) →
-   * akhir-2025 = total karier PADA 14 Nov 2026 (interpolasi antar titik rekam) − 1 miliar */
-  const target = Date.UTC(2026, 10, 14, 12) / 1000;
-  const pts = (a.history || []).filter((p) => p.total != null).slice().sort((x, y) => x.t - y.t);
-  if (!pts.length) return { total: 1586500000, src: "perkiraan dari tonggak \u201C1 miliar stream di 2026 — tahun pertama\u201D (postingan 14 Nov 2026)" };
-  let lo = null, hi = null;
-  for (let i = 0; i < pts.length - 1; i++) if (pts[i].t <= target && pts[i + 1].t >= target) { lo = pts[i]; hi = pts[i + 1]; break; }
-  if (lo && hi.t > lo.t) {
-    const v = lo.total + (hi.total - lo.total) * ((target - lo.t) / (hi.t - lo.t));
-    return { total: Math.round(v) - 1e9, src: "turunan tonggak \u201C1 miliar stream di 2026 — tahun pertama\u201D (14 Nov 2026), diinterpolasi antar titik rekam situs" };
-  }
-  const near = [...pts].sort((x, y) => Math.abs(x.t - target) - Math.abs(y.t - target))[0];
-  return { total: Math.round(near.total) - 1e9, src: "turunan tonggak \u201C1 miliar stream di 2026 — tahun pertama\u201D (14 Nov 2026) dari titik rekam " + new Date(near.t * 1000).toISOString().slice(0, 10) };
-}
 function bulReconSp(artId) {
   const a = (state.sp.artists || []).find((x) => x.id === artId) || {};
   const C = spArtistDaily(artId) || [];
@@ -4832,11 +4835,12 @@ function bulReconSp(artId) {
     const x = C[lo], y = C[hi];
     return y.t <= x.t ? y.v : x.v + (y.v - x.v) * ((t - x.t) / (y.t - x.t));
   };
-  /* jangkar: semua titik rekam situs + tonggak sumber publik (+ turunan) */
+  /* jangkar: semua titik rekam situs (basis karier = kworb + offset era single asli)
+   * + tonggak sumber publik */
+  const KONST = BUL_CAREER_OFFSET[artId] || 0;
   let A = [];
-  for (const p of (a.history || [])) if (p.total != null) A.push({ t: p.t, v: p.total, how: "real", src: "titik rekam situs (riwayat artis)" });
+  for (const p of (a.history || [])) if (p.total != null) A.push({ t: p.t, v: p.total + KONST, how: "real", src: "titik rekam situs (kworb.net)" + (KONST ? " + era BATTER UP asli" : "") });
   for (const s of (BUL_SRC_ANCHORS[artId] || [])) A.push({ t: s.t, v: s.total, how: "src", src: s.src });
-  if (artId === "babymonster") { const d = bulDerivedEnd2025(a); A.push({ t: Date.UTC(2025, 11, 31, 23, 59) / 1000, v: d.total, how: "src", src: d.src }); }
   A.sort((x, y) => x.t - y.t);
   const rel = BUL_FIRST_RELEASE[artId] || C[0].t;
   const segK = (aL, aR) => {
@@ -4935,7 +4939,8 @@ function bulBodyHTML(plat, year) {
     for (let m = 0; m < 12; m++) {
       const cur = sumEval(monthEndTs(m), (rc, t) => rc.at(t));
       const prv = sumEval(prevEndTs(m), (rc, t) => rc.at(t));
-      const gain = cur.v != null && prv.v != null ? Math.max(0, cur.v - prv.v) : 0;
+      /* prv null + cur ada = bulan pertama setelah rilis: total karier sebelumnya 0 */
+      const gain = cur.v != null ? Math.max(0, cur.v - (prv.v || 0)) : 0;
       const ml = sumEval(monthEndTs(m), (rc, t) => rc.mlAt(t));
       monthRows.push({ m, k: year + "-" + String(m + 1).padStart(2, "0"), gain, tot: cur.v, ml: ml.v, offTot: cur.off, offMl: ml.off, howTot: cur.how, srcTot: cur.src, howMl: ml.how, srcMl: ml.src });
     }
@@ -5019,7 +5024,7 @@ function bulBodyHTML(plat, year) {
   <div class="hm-bar"><div class="hm-sum">${sumHTML}</div></div>
   <div class="chartbox"><canvas id="bulChart"></canvas></div>
   ${tableHTML}
-  <p class="note">Kolom <b>${hmUnit(plat)} baru</b> = ${plat === "spotify" ? "selisih <b>total stream karier</b> antar akhir bulan pada kurva yang direkonsiliasi dengan jangkar — bukan lagi penjumlahan riwayat lagu yang distribusinya masih perkiraan model" : "selisih total antar pengumuman yang direkam situs, dipadatkan per bulan (semantik sama dengan peta panas harian)"}. Kolom <b>akhir bulan</b> &amp; <b>pendengar bulanan</b> kini diisi terus bila datanya ada: <b>±</b> = titik rekam terdekat (N hari dari akhir bulan), <b>ⓘ</b> = jangkar sumber publik (arahkan kursor untuk sumbernya), <b>≈</b> = estimasi situs (interpolasi/ekstrapolasi antar jangkar — bukan angka resmi). ${plat === "spotify" ? "Jangkar Spotify BABYMONSTER: tonggak 1 miliar total stream (1 Apr 2025 — komunitas Monstiez), tonggak \u201C1 miliar stream di 2026 — tahun pertama\u201D (postingan penggemar 14 Nov 2026 — dipakai menghitung mundur total akhir-2025), rekap tahunan penggemar era BATTER UP (2023), ditambah titik rekam situs (kworb.net). Pendengar bulanan di luar titik rekam = tebakan dari ritme stream 30 hari (pangkat 0,5)." : "Nilai akhir bulan di luar titik rekam = interpolasi antar titik riwayat channel."} Baris <b>Total Jan–Des</b> = jumlah seluruh ${hmUnit(plat)} baru Jan–Des tahun itu. Ganti tab <b>Platform</b>, <b>Artis</b> dan <b>Tahun</b> untuk melihat kombinasi lain.</p>`;
+  <p class="note">Kolom <b>${hmUnit(plat)} baru</b> = ${plat === "spotify" ? "selisih <b>total stream karier</b> antar akhir bulan pada kurva yang direkonsiliasi dengan jangkar — bukan lagi penjumlahan riwayat lagu yang distribusinya masih perkiraan model" : "selisih total antar pengumuman yang direkam situs, dipadatkan per bulan (semantik sama dengan peta panas harian)"}. Kolom <b>akhir bulan</b> &amp; <b>pendengar bulanan</b> diisi terus bila datanya ada: <b>±</b> = titik rekam terdekat (N hari dari akhir bulan), <b>ⓘ</b> = jangkar sumber publik (arahkan kursor untuk sumbernya), <b>≈</b> = estimasi situs (interpolasi/ekstrapolasi antar jangkar — bukan angka resmi). ${plat === "spotify" ? "Jangkar Spotify — BABYMONSTER: rekap tahunan akun statistik <b>@bmspotiify</b> di X (15 Nov 2026): 2023 = 34,21 jt · 2024 = 898,28 jt · 2025 = 936,50 jt (total karier akhir-2024 = 932,49 jt · akhir-2025 = 1.868,99 jt), tonggak <b>1 miliar total stream karier 1 Apr 2025</b> (r/BABYMONSTER), dan 2026 = 1.001.562.568 (tahun pertama tembus 1 miliar — sesuai postingan komunitas 14-15 Nov 2026). TREASURE: total 998.149.602 pada 23 Nov 2023 (rekap <b>@TEUMEonSpotify</b> di X). Basis <b>karier</b> = total kworb.net + era single asli yang sudah dicabut dari katalog (BATTER UP 2023 = +278.759.596 — selisih persis rekap 2.870.552.791 vs kworb 2.591.793.195 per 17 Nov 2026). Pendengar bulanan di luar titik rekam = tebakan dari ritme stream 30 hari (pangkat 0,5)." : "Total views akhir bulan di luar titik rekam = interpolasi antar titik riwayat channel (BM: jangkar resmi YG 10 miliar views 3 Sep 2026 + Social Blade harian; TREASURE: >100 jt views pra-debut menurut Chosun 20 Jul 2020, 1 miliar ±Jan 2022, Social Blade harian) — nilai lama bersifat perkiraan."} Baris <b>Total Jan–Des</b> = jumlah seluruh ${hmUnit(plat)} baru Jan–Des tahun itu. Ganti tab <b>Platform</b>, <b>Artis</b> dan <b>Tahun</b> untuk melihat kombinasi lain.</p>`;
 }
 function renderBulanPage(sec) {
   const plat = bulPlat();

@@ -70,6 +70,27 @@ async function fetchText(url, tries = 4) {
 const num = (s) => parseInt(String(s).replace(/[,\s]/g, ""), 10) || 0;
 const dayKey = (t) => Math.floor(t / DAY);
 
+/* ---------- override tanggal rilis (premier resmi single) ----------
+ * Spotify/kworb terkadang memberi tanggal VERSI ALBUM atau versi pengganti, bukan
+ * tanggal premier lagunya — akibatnya kurva estimasi (dan Rekap 12 bulan) mulai
+ * dari tanggal yang salah. Override = tanggal premier resmi yang bisa diverifikasi:
+ *  - BATTER UP: single pre-debut 27 Nov 2023 (versi "(7 ver.)" di EP BABYMONS7ER
+ *    1 Apr 2024 menggantikan single asli di katalog — stream era 2023 tak lagi
+ *    tercantum di kworb; selisih total karier diakomodasi offset di situs);
+ *  - FOREVER: digital single 1 Jul 2024 (versi album DRIP 1 Nov 2024);
+ *  - CLIK CLAK: pre-release single 10 Okt 2024 (versi album DRIP 1 Nov 2024);
+ *  - TREASURE: single THE FIRST STEP 2020-2021 (versi di kompilasi
+ *    TREASURE EFFECT 11 Jan 2021). */
+const RD_OVERRIDE = {
+  "babymonster::batterup": "2023-11-27",
+  "babymonster::forever": "2024-07-01",
+  "babymonster::clikclak": "2024-10-10",
+  "treasure::boy": "2020-08-07",
+  "treasure::iloveyou": "2020-10-13",
+  "treasure::mmm": "2020-11-09",
+  "treasure::mytreasure": "2021-01-08",
+};
+
 /* ---------------- kunci judul lagu ---------------- */
 function songKeyOf(title) {
   return String(title || "")
@@ -236,25 +257,60 @@ const ymd = (t) => new Date(t * 1000).toISOString().slice(0, 10);
 
 /**
  * Estimasi kurva kumulatif dari tanggal rilis sampai titik nyata pertama.
- * Model: kenaikan harian menurun power-law inc(d) ∝ (1+d)^-k, dinormalisasi
- * agar kumulatif tepat menyentuh C0 pada hari titik nyata pertama.
+ * Model: kenaikan harian power-law bergeser inc(d) = A·(K+d)^-α — dua parameter
+ * di-FIT PER LAGU dari data kworb:
+ *  - α: laju di ujung kurva ≈ harian kworb terkini (lagu yang masih ramai → α kecil,
+ *    distribusi rata; lagu sepi → α besar, terkonsentrasi di awal);
+ *  - K: pangsa hari pertama ≈ 0,45% dari total (kalibrasi rilis nyata: SHEESH 0,40%,
+ *    DRIP ±0,30%) supaya bulan rilis tidak dibengkakkan.
+ * Tanpa data harian → α default 0,75, K = 1. (Model lama: k tetap 0,9 → hari pertama
+ * mewakili ±10% total, jauh dari pola riil Spotify.)
  */
-function buildEstimatedSeries(releaseT, firstRealT, C0, k = 0.9) {
+function buildEstimatedSeries(releaseT, firstRealT, C0, currentDaily) {
   if (!releaseT || !firstRealT || !C0 || firstRealT <= releaseT) return [];
   const D0 = Math.floor((firstRealT - releaseT) / DAY);
   if (D0 < 3) return [];
-  let sum = 0;
-  for (let d = 0; d < D0; d++) sum += Math.pow(1 + d, -k);
-  const A = C0 / sum;
+  const LAUNCH = 0.0045; // pangsa total stream pada hari pertama
+  const sumInt = (K, a) => (Math.abs(a - 1) < 1e-9
+    ? Math.log((K + D0) / K)
+    : (Math.pow(K + D0, 1 - a) - Math.pow(K, 1 - a)) / (1 - a));
+  const endRate = (K, a) => (C0 / sumInt(K, a)) * Math.pow(K + D0, -a);
+  const launch = (K, a) => Math.pow(K, -a) / sumInt(K, a);
+  let K = 1, a = 0.75;
+  const cd = Math.max(0, Math.floor(currentDaily || 0));
+  if (cd > 0) {
+    const fitAcd = (K) => { // α agar laju ujung kurva = cd
+      let lo = 0.15, hi = 1.6;
+      const e = (al) => endRate(K, al) - cd;
+      if (e(lo) < 0) return lo;      // lagu masih naik/datar → kurva paling rata
+      if (e(hi) > 0) return hi;      // sangat sepi
+      for (let i = 0; i < 36; i++) { const m = (lo + hi) / 2; if (e(m) > 0) lo = m; else hi = m; }
+      return (lo + hi) / 2;
+    };
+    a = fitAcd(1);
+    if (a > 0.151 && a < 1.599 && launch(1, a) > LAUNCH) {
+      // cari K supaya pangsa hari pertama ≈ LAUNCH (α di-refit tiap K)
+      let lo = 1, hi = D0;
+      for (let i = 0; i < 36; i++) {
+        const m = (lo + hi) / 2;
+        if (launch(m, fitAcd(m)) > LAUNCH) lo = m; else hi = m;
+      }
+      K = (lo + hi) / 2; a = fitAcd(K);
+    }
+  }
+  const w = [];
+  for (let d = 0; d < D0; d++) w.push(Math.pow(K + d, -a));
+  const sumW = w.reduce((s, x) => s + x, 0);
+  const A = C0 / sumW;
   const pts = [];
   let cum = 0;
   const stepOf = (d) => (d < 30 ? 1 : d < 180 ? 7 : 30);
   for (let d = 0; d < D0; d += stepOf(d)) {
     cum = 0;
-    for (let i = 0; i < d; i++) cum += Math.pow(1 + i, -k);
+    for (let i = 0; i < d; i++) cum += w[i];
     pts.push({ t: releaseT + d * DAY + 12 * 3600, v: Math.round(A * cum), e: 1 });
   }
-  pts.push({ t: firstRealT - DAY, v: Math.round(A * (sum - Math.pow(1 + (D0 - 1), -k))), e: 1 });
+  pts.push({ t: firstRealT - DAY, v: Math.round(A * (sumW - w[D0 - 1])), e: 1 });
   return pts;
 }
 
@@ -581,19 +637,19 @@ async function main() {
         .sort((a, b) => a.t - b.t);
       let mx = 0;
       for (const p of merged) { if (p.v < mx) p.v = mx; mx = p.v; }
-      // tanggal rilis: minimum antar ID
+      // tanggal rilis: override premier resmi > minimum antar ID
       const rds = ids.map((tid) => (newTracksRaw[artist.id][tid] || {}).releaseDate).filter(Boolean).sort();
-      const rd = rds[0] || null;
-      // estimasi sejak rilis
+      const rd = RD_OVERRIDE[artist.id + "::" + gk] || rds[0] || null;
+      const totalSum = ids.reduce((s, tid) => s + ((newTracksRaw[artist.id][tid] || {}).total || 0), 0);
+      const dailySum = ids.reduce((s, tid) => s + ((newTracksRaw[artist.id][tid] || {}).daily || 0), 0);
+      // estimasi sejak rilis (α di-fit ke laju harian kworb)
       const firstReal = merged[0];
       let est = [];
       if (firstReal && rd) {
         const relT = Date.parse(rd + "T12:00:00Z") / 1000;
-        est = buildEstimatedSeries(relT, firstReal.t, firstReal.v, 0.9);
+        est = buildEstimatedSeries(relT, firstReal.t, firstReal.v, dailySum);
       }
       const primary = ids.slice().sort((a, b) => (newTracksRaw[artist.id][b].total || 0) - (newTracksRaw[artist.id][a].total || 0))[0];
-      const totalSum = ids.reduce((s, tid) => s + ((newTracksRaw[artist.id][tid] || {}).total || 0), 0);
-      const dailySum = ids.reduce((s, tid) => s + ((newTracksRaw[artist.id][tid] || {}).daily || 0), 0);
       const cover = (albumIds[0] && albumMeta[albumIds[0]] && albumMeta[albumIds[0]].cover)
         || ids.map((tid) => (newTracksRaw[artist.id][tid] || {}).cover).find(Boolean) || null;
       const duration = ids.map((tid) => (newTracksRaw[artist.id][tid] || {}).duration).find(Boolean) || null;
