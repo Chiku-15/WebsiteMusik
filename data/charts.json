@@ -14,8 +14,8 @@
      "best": null
     }
    },
-   "chartDate": "2026-11-16",
-   "updated": 1794825964,
+   "chartDate": "2026-11-18",
+   "updated": 1794997246,
    "lastError": null
   },
   "genie_top200": {
@@ -31,8 +31,8 @@
      "best": null
     }
    },
-   "chartDate": "2026-11-16",
-   "updated": 1794825972,
+   "chartDate": "2026-11-18",
+   "updated": 1794997255,
    "lastError": null
   },
   "billboard_global_excl_us": {
@@ -48,9 +48,9 @@
      "best": null
     }
    },
-   "updated": 1794825967,
+   "updated": 1794997247,
    "lastError": null,
-   "chartDate": "2026-11-16"
+   "chartDate": "2026-11-18"
   },
   "bugs_day100": {
    "label": "Bugs Top 100 (harian)",
@@ -65,8 +65,9 @@
      "best": null
     }
    },
-   "updated": 1794826040,
-   "chartDate": "2026-11-16"
+   "updated": 1794997258,
+   "chartDate": "2026-11-18",
+   "lastError": null
   },
   "spotify_global_200": {
    "label": "Spotify Global Top 200 (harian)",
@@ -81,10 +82,10 @@
      "best": null
     }
    },
-   "chartDate": "2026-11-14",
-   "updated": 1794825991,
+   "chartDate": "2026-11-16",
+   "updated": 1794997260,
    "lastError": null
   }
  },
- "updated": 1794825991
+ "updated": 1794997260
 }
