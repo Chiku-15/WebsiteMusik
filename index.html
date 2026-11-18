@@ -579,7 +579,6 @@
     .chextra{grid-template-columns:1fr}
   }
   /* ---------- SPOTIFY ---------- */
-  #platformTabs .tab[data-p="spotify"].active{background:linear-gradient(135deg,#1db954,#1ed760);color:#fff}
   .hero.sp{background:linear-gradient(135deg,rgba(29,185,84,.15),rgba(16,110,55,.08) 48%,rgba(106,120,255,.13))}
   .hero.sp::after{background:radial-gradient(closest-side,rgba(29,185,84,.30),transparent)}
   .dthumbsq{width:190px;aspect-ratio:1/1}
@@ -1144,11 +1143,8 @@
       <span class="lt"><b id="siteTitle">K-POP PULSE</b><small id="siteSubtitle">Statistik YouTube &amp; Spotify</small></span>
     </div>
     <button class="tab berandatab" id="berandaTab" title="Buka halaman BERANDA — garis besar seluruh situs dalam satu halaman" style="flex:none">Beranda</button>
+    <button class="tab" id="fiturTab" title="Buka halaman Semua Fitur — peta seluruh fitur situs dalam bentuk kartu" style="flex:none">Fitur</button>
     <div class="spacer"></div>
-    <nav class="tabs" id="platformTabs" aria-label="Pilih platform">
-      <button class="tab active" data-p="yt" id="ptabYT">YouTube</button>
-      <button class="tab" data-p="spotify" id="ptabSP">Spotify</button>
-    </nav>
     <div class="hbtns">
       <button class="iconbtn" id="searchBtn" title="Cari lagu, album, artis, video…" aria-label="Cari di seluruh situs">
         <svg viewBox="0 0 24 24"><path d="M10 2a8 8 0 1 0 4.9 14.3l5 5a1 1 0 0 0 1.4-1.4l-5-5A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12z"/></svg>
@@ -1557,7 +1553,7 @@ const state = {
   dailyRange: ["1", "7", "30", "365", "all"].includes(localStorage.getItem("py.range")) ? localStorage.getItem("py.range") : "all",
   chanMetric: "s", chanRange: ["1", "7", "30", "365", "all"].includes(localStorage.getItem("py.chanrange")) ? localStorage.getItem("py.chanrange") : "all",
   detailVid: null, detailMode: null, detailCombined: false, // {type:"video"|"channel"|"sptrack", id}
-  platform: "yt",          // "yt" | "spotify" — tombol di header
+  platform: "yt",          // "yt" | "spotify" — berganti lewat tombol di halaman BERANDA
   sp: { loading: null, error: null, meta: null, artists: null, albums: null, tracks: null, raw: null, vers: null },
   spQuery: "",
   spRange: "all",
@@ -1579,6 +1575,7 @@ const state = {
   chnOpen: false,         // halaman Statistik Channel — dropdown platform & artis, versi YouTube + Spotify
   quiOpen: false,         // halaman Kuis K-POP — runtime di state.quiz
   berOpen: true,          // halaman BERANDA — garis besar seluruh situs; SITUS SELALU DIBUKA di halaman ini
+  fiturOpen: false,       // halaman SEMUA FITUR — peta lengkap seluruh fitur situs dalam bentuk kartu
   chnPlat: null,          // pilihan dropdown platform di Statistik Channel ("yt"|"spotify")
   chnArt: null,           // pilihan dropdown artis di Statistik Channel (artistId)
   berArtPlat: null,       // pilihan dropdown platform di seksi "Dua artis yang dipantau" halaman BERANDA ("yt"|"spotify")
@@ -1703,7 +1700,7 @@ function bindPageClose(sec) {
     state.memOpen = false; state.troOpen = false; state.schOpen = false;
     state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false;
     state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
-    state.chnOpen = false; state.quiOpen = false; state.berOpen = false;
+    state.chnOpen = false; state.quiOpen = false; state.berOpen = false; state.fiturOpen = false;
     renderAll(); window.scrollTo(0, 0);
   }));
 }
@@ -1817,10 +1814,14 @@ function menuRowHTML(plat) {
   return `<div class="menurow">${menuItems(plat).map(mcardHTML).join("")}</div>`;
 }
 function menuGo(k) {
+  /* halaman SEMUA FITUR (tombol "Lihat semua fitur" di BERANDA & kartu pilihan) */
+  if (k === "allf") { openFitur(); return; }
   /* Rekor/Kalender = halaman khusus beranda — dari halaman artis pun kembali ke beranda dulu
    * supaya halamannya benar-benar tampil di kedua platform (YouTube & Spotify) */
   if (k === "wrap") {
-    state.berOpen = false; state.spWrapOpen = true;
+    state.berOpen = false; state.fiturOpen = false; state.spWrapOpen = true;
+    if (state.platform !== "spotify") state.platform = "spotify";   // Wrapped = fitur Spotify — pindah platform otomatis
+    if (state.view !== "home") state.view = "home";
     if (!state.sp.tracks && !state.sp.error) { renderAll(); loadSpData().then(renderAll); } else renderAll();
     window.scrollTo(0, 0);
     return;
@@ -1830,6 +1831,7 @@ function menuGo(k) {
     /* tutup halaman khusus lain dulu — tanpa ini, membuka halaman baru
      * sementara halaman khusus lain terbuka tidak akan berganti (flag pertama yang menang) */
     state.berOpen = false;
+    state.fiturOpen = false;
     state.recOpen = false; state.calOpen = false; state.memOpen = false;
     state.troOpen = false; state.schOpen = false;
     state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false;
@@ -1857,6 +1859,7 @@ function menuGo(k) {
 const ICO_HOME = "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z";
 function openBeranda() {
   state.berOpen = true;
+  state.fiturOpen = false;
   state.recOpen = false; state.calOpen = false; state.memOpen = false;
   state.troOpen = false; state.schOpen = false;
   state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false;
@@ -1865,6 +1868,50 @@ function openBeranda() {
   if (state.view !== "home") state.view = "home";
   renderAll();
   window.scrollTo(0, 0);
+}
+function openFitur() {
+  state.fiturOpen = true;
+  state.berOpen = false;
+  state.recOpen = false; state.calOpen = false; state.memOpen = false;
+  state.troOpen = false; state.schOpen = false;
+  state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false;
+  state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
+  state.chnOpen = false; state.quiOpen = false; state.spWrapOpen = false; state.spAlbumOpen = false;
+  if (state.view !== "home") state.view = "home";
+  renderAll();
+  window.scrollTo(0, 0);
+}
+/* ---------- definisi SELURUH kartu fitur situs ----------
+ * Dipakai bersama: halaman SEMUA FITUR (16 kartu) & seksi "jelajahi fitur pilihan"
+ * di BERANDA (subset terpilih — sisanya dibuka lewat halaman Fitur di header). */
+function featDefs(isSp) {
+  return [
+    ["chn", "#ef4444", ICO_STATS, "Statistik Channel", "subscriber · views · pendengar bulanan — dropdown YouTube &amp; Spotify"],
+    ["bul", "#06b6d4", ICO_CAL, "Rekap 12 bulan", "view YouTube &amp; pendengar Spotify Januari–Desember per tahun"],
+    ["heat", hmAccent(state.platform), HM_ICO, "Peta panas harian", "view/stream baru tiap hari dalam setahun · bisa per artis"],
+    ["rec", "#ffb02e", ICO_TROPHY, "Rekor &amp; Fakta", "rekor sepanjang situs berjalan — tercepat &amp; terbesar"],
+    ["cal", "#8b5cf6", ICO_CAL, "Kalender rilisan", "garis waktu MV, album &amp; singel"],
+    ["cmp", "#1ed760", ICO_SWAP, isSp ? "Bandingkan lagu" : "Bandingkan video", isSp ? "adu 2 lagu sejak hari rilis" : "adu 2 video sejak diunggah"],
+    ["mem", "#f472b6", ICO_PEOPLE, "Profil anggota", "17 anggota — klik kartu untuk profil detail"],
+    ["tro", "#f59e0b", ICO_MEDAL, "Trofi &amp; Penghargaan", "menang acara musik &amp; penghargaan"],
+    ["sch", "#38bdf8", ICO_CAL, "Jadwal &amp; Countdown", "tur, rilisan &amp; hitung mundur"],
+    ["soc", "#ec4899", ICO_SHARE, "Media Sosial", "Instagram · X · TikTok · Weverse"],
+    ["cha", "#f97316", ICO_RANK, "Peringkat Chart", "Billboard · Genie · Bugs · Spotify Global"],
+    ["dis", "#a78bfa", ICO_DISC, "Diskografi", "album &amp; singel beserta stream-nya"],
+    ["tml", "#14b8a6", ICO_TML, "Timeline Grup", "perjalanan debut → sekarang"],
+    ["bru", "#22c55e", ICO_NEWS, "Berita K-pop", "berita terbaru dua grup"],
+    ["qui", "#eab308", ICO_QUIZ, "Kuis K-POP", "uji pengetahuan BABYMONSTER &amp; TREASURE"],
+    ["wrap", "#1ed760", ICO_SP_TROPHY, "Spotify Wrapped", "rekap stream bulanan &amp; tahunan"],
+  ];
+}
+function featCardHTML([k, c, ico, t, s]) {
+  return `
+      <div class="obcard" data-menu="${k}" style="--oc:${c}" tabindex="0" role="button" aria-label="${t}">
+        <span class="sic" style="--oc:${c}"><svg viewBox="0 0 24 24"><path d="${ico}"/></svg></span>
+        <b>${t}</b>
+        <p>${s}</p>
+        <span class="go">→</span>
+      </div>`;
 }
 /* kartu artis besar di BERANDA — statistik mengikuti dropdown platform (YouTube atau Spotify) */
 function berArtistCard(a, plat) {
@@ -1971,25 +2018,10 @@ function renderBerandaPage(sec) {
         </a>`).join("")}</div>
       <div style="margin-top:10px"><button class="mtab" data-gomenu="bru">Lihat semua berita →</button></div>
     </section>` : "";
-  /* peta fitur — semua kartu menu dalam gaya outline besar */
-  const berDefs = [
-    ["chn", "#ef4444", ICO_STATS, "Statistik Channel", "subscriber · views · pendengar bulanan — dropdown YouTube &amp; Spotify"],
-    ["bul", "#06b6d4", ICO_CAL, "Rekap 12 bulan", "view YouTube &amp; pendengar Spotify Januari–Desember per tahun"],
-    ["heat", hmAccent(plat), HM_ICO, "Peta panas harian", "view/stream baru tiap hari dalam setahun · bisa per artis"],
-    ["rec", "#ffb02e", ICO_TROPHY, "Rekor &amp; Fakta", "rekor sepanjang situs berjalan — tercepat &amp; terbesar"],
-    ["cal", "#8b5cf6", ICO_CAL, "Kalender rilisan", "garis waktu MV, album &amp; singel"],
-    ["cmp", "#1ed760", ICO_SWAP, isSp ? "Bandingkan lagu" : "Bandingkan video", isSp ? "adu 2 lagu sejak hari rilis" : "adu 2 video sejak diunggah"],
-    ["mem", "#f472b6", ICO_PEOPLE, "Profil anggota", "17 anggota — klik kartu untuk profil detail"],
-    ["tro", "#f59e0b", ICO_MEDAL, "Trofi &amp; Penghargaan", "menang acara musik &amp; penghargaan"],
-    ["sch", "#38bdf8", ICO_CAL, "Jadwal &amp; Countdown", "tur, rilisan &amp; hitung mundur"],
-    ["soc", "#ec4899", ICO_SHARE, "Media Sosial", "Instagram · X · TikTok · Weverse"],
-    ["cha", "#f97316", ICO_RANK, "Peringkat Chart", "Billboard · Genie · Bugs · Spotify Global"],
-    ["dis", "#a78bfa", ICO_DISC, "Diskografi", "album &amp; singel beserta stream-nya"],
-    ["tml", "#14b8a6", ICO_TML, "Timeline Grup", "perjalanan debut → sekarang"],
-    ["bru", "#22c55e", ICO_NEWS, "Berita K-pop", "berita terbaru dua grup"],
-    ["qui", "#eab308", ICO_QUIZ, "Kuis K-POP", "uji pengetahuan BABYMONSTER &amp; TREASURE"],
-    ...(isSp ? [["wrap", "#1ed760", ICO_SP_TROPHY, "Spotify Wrapped", "rekap stream bulanan &amp; tahunan"]] : []),
-  ];
+  /* peta fitur — kartu PILIHAN saja (8 teratas, Spotify Wrapped selalu ada);
+   * seluruh 16 fitur tampil di halaman SEMUA FITUR (tombol Fitur di header) */
+  const berSel = ["chn", "bul", "heat", "rec", "wrap", "cha", "mem", "sch"];
+  const berDefs = featDefs(isSp).filter((d) => berSel.includes(d[0]));
   /* BERANDA = halaman awal: satu-satunya halaman TANPA tombol X/kembali —
    * halaman fitur lain tetap punya tombol X di atas. Masuk halaman lain lewat kartu fitur. */
   sec.innerHTML = `
@@ -2018,17 +2050,12 @@ function renderBerandaPage(sec) {
     <div class="ber-artists">${state.config.artists.map((a) => berArtistCard(a, artPlat)).join("")}</div>
     ${featSectHead("#38bdf8", ICO_TROPHY, "Sorotan hari ini", "top 3 tiap kategori lintas platform — nama grup di tiap baris, klik untuk grafik &amp; detail")}
     <div class="ber-hl3">${hl.join("")}</div>
-    ${featSectHead("#ffb02e", ICO_GRID, "Jelajahi semua fitur", "peta lengkap website — tekan kartu untuk langsung membuka")}
-    <div class="obgrid">${berDefs.map(([k, c, ico, t, s]) => `
-      <div class="obcard" data-menu="${k}" style="--oc:${c}" tabindex="0" role="button" aria-label="${t}">
-        <span class="sic" style="--oc:${c}"><svg viewBox="0 0 24 24"><path d="${ico}"/></svg></span>
-        <b>${t}</b>
-        <p>${s}</p>
-        <span class="go">→</span>
-      </div>`).join("")}
+    ${featSectHead("#ffb02e", ICO_GRID, "Jelajahi fitur pilihan", "kartu terpilih — seluruh 16 fitur situs ada di halaman Fitur (tombol di samping Beranda)")}
+    <div class="obgrid">${berDefs.map(featCardHTML).join("")}
     </div>
+    <div style="margin-top:12px"><button class="mtab" data-gomenu="allf">Lihat semua fitur →</button></div>
     ${newsTeaser}
-    <p class="note">Situs dibuka langsung di halaman BERANDA ini — masuk lagi kapan pun lewat tombol <b>Beranda</b> di kiri header, tepat di samping logo K-POP PULSE; kembali ke beranda platform lewat tab YouTube/Spotify atau logo situs. Angka gabungan dihitung langsung dari data pemantauan (YouTube 2× sehari, Spotify Charts via kworb.net tiap jam); angka Spotify tampil begitu data Spotify dimuat.</p>`;
+    <p class="note">Situs dibuka langsung di halaman BERANDA ini — masuk lagi kapan pun lewat tombol <b>Beranda</b> di kiri header, tepat di samping logo K-POP PULSE; beranda platform YouTube/Spotify dibuka lewat dua tombol besar di atas halaman ini, dan peta seluruh fitur lewat tombol <b>Fitur</b> di header. Angka gabungan dihitung langsung dari data pemantauan (YouTube 2× sehari, Spotify Charts via kworb.net tiap jam); angka Spotify tampil begitu data Spotify dimuat.</p>`;
   bindPageClose(sec);
   bindMenu(sec);
   sec.querySelectorAll("[data-berplat]").forEach((b) => b.addEventListener("click", () => setPlatform(b.dataset.berplat)));
@@ -2054,6 +2081,22 @@ function renderBerandaPage(sec) {
     el.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
   });
   sec.querySelectorAll("[data-gomenu]").forEach((b) => b.addEventListener("click", () => menuGo(b.dataset.gomenu)));
+}
+/* ===================== HALAMAN SEMUA FITUR — peta lengkap 16 fitur situs =====================
+ * Masuk lewat tombol "Fitur" di header (samping Beranda) atau tombol "Lihat semua fitur"
+ * di BERANDA. BERANDA hanya menampilkan kartu pilihan; di sini SEMUA fitur tampil,
+ * termasuk Spotify Wrapped (membuka halaman Wrapped — platform pindah otomatis). */
+function renderFiturPage(sec) {
+  const isSp = state.platform === "spotify";
+  const head = pageCloseBar("Semua Fitur", "peta lengkap seluruh fitur K-POP PULSE — tekan kartu untuk langsung membuka fiturnya", ICO_GRID, "#ffb02e");
+  sec.innerHTML = `${head}
+  <section style="margin-top:16px">
+    <div class="obgrid">${featDefs(isSp).map(featCardHTML).join("")}
+    </div>
+    <p class="note">Kartu pilihan juga tampil di halaman BERANDA — halaman ini memuat semuanya: kartu <b>Spotify Wrapped</b> membuka rekap stream bulanan &amp; tahunan, kartu <b>Statistik Channel</b> punya dropdown YouTube (kanal) &amp; Spotify (artis), dan label kartu pembanding menyesuaikan platform aktif.</p>
+  </section>`;
+  bindPageClose(sec);
+  bindMenu(sec);
 }
 function bindMenu(root) {
   if (!root) return;
@@ -4890,37 +4933,35 @@ function renderSearchRes(q) {
 }
 
 /* ===================== render: tabs & navigasi ===================== */
-/* Tab YouTube/Spotify membawa ke beranda platform itu; tombol BERANDA di sebelah KIRI
- * (samping logo K-POP PULSE) membuka halaman BERANDA (garis besar seluruh situs).
- * Kembali ke beranda platform lewat tab platform (klik lagi) atau logo situs di kiri atas. */
+/* Tab YouTube/Spotify di kanan atas DIHAPUS — beranda platform dibuka lewat tombol
+ * besar di halaman BERANDA ("Buka beranda YouTube/Spotify"). Header kini berisi:
+ * logo · Beranda · Fitur · (spacer) · cari · tema. Tombol BERANDA membuka halaman
+ * BERANDA (garis besar seluruh situs), tombol FITUR membuka peta semua fitur. */
 function renderTabs() {
-  const spN = state.sp.tracks ? Object.keys(state.sp.tracks).length : null;
-  const ytN = state.videos ? watchedIds().size : null;
-  $("#ptabYT").textContent = "YouTube" + (ytN ? " (" + ytN + ")" : "");
-  $("#ptabSP").textContent = "Spotify" + (spN ? " (" + spN + ")" : "");
-  /* tombol BERANDA di header — masuk ke halaman BERANDA */
+  /* tombol BERANDA & FITUR di header */
   const bt = $("#berandaTab");
   if (bt) {
     bt.classList.toggle("active", !!state.berOpen);
     bt.onclick = () => openBeranda();
   }
-  document.querySelectorAll("#platformTabs .tab[data-p]").forEach((b) => {
-    b.classList.toggle("active", b.dataset.p === state.platform && !state.berOpen);
-    b.onclick = () => setPlatform(b.dataset.p);
-  });
+  const ft = $("#fiturTab");
+  if (ft) {
+    ft.classList.toggle("active", !!state.fiturOpen);
+    ft.onclick = () => openFitur();
+  }
 }
 
 async function setPlatform(p) {
   const same = state.platform === p;
   /* halaman khusus terbuka? menekan tab platform = kembali ke beranda bersih */
-  const anyPage = state.berOpen || state.spWrapOpen || state.recOpen || state.calOpen || state.memOpen || state.troOpen || state.schOpen || state.socOpen || state.chaOpen || state.disOpen || state.bruOpen || state.tmlOpen || state.heatOpen || state.bulOpen || state.chnOpen || state.quiOpen || state.spAlbumOpen;
+  const anyPage = state.berOpen || state.fiturOpen || state.spWrapOpen || state.recOpen || state.calOpen || state.memOpen || state.troOpen || state.schOpen || state.socOpen || state.chaOpen || state.disOpen || state.bruOpen || state.tmlOpen || state.heatOpen || state.bulOpen || state.chnOpen || state.quiOpen || state.spAlbumOpen;
   if (same && state.view === "home" && !anyPage) return;   // sudah di beranda platform ini
   state.view = "home";                          // menekan tab platform = masuk beranda
   state.berOpen = false;                        // …sekaligus menutup halaman BERANDA bila terbuka
   state.spWrapOpen = false;                     // …sekaligus menutup halaman Wrapped bila terbuka
   state.recOpen = false; state.calOpen = false; state.memOpen = false; state.troOpen = false; state.schOpen = false; state.spAlbumOpen = false;
   state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false; state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
-  state.chnOpen = false; state.quiOpen = false;   // halaman khusus kembali punya tombol ✕ — tab header tetap bisa menutup semua halaman
+  state.chnOpen = false; state.quiOpen = false; state.fiturOpen = false;   // halaman khusus kembali punya tombol ✕ — tab header tetap bisa menutup semua halaman
   if (!same) {
     state.platform = p;
     if (p === "spotify" && !state.sp.tracks && !state.sp.error) {
@@ -4967,12 +5008,12 @@ function loadSpData() {
 function setView(v) {
   if (v !== "home" && !artistOf(v)) return;
   state.view = v;
-  state.berOpen = false;      // pindah halaman = halaman khusus (BERANDA/Wrapped/Rekor/Album) ditutup
+  state.berOpen = false;      // pindah halaman = halaman khusus (BERANDA/Fitur/Wrapped/Rekor/Album) ditutup
   state.spWrapOpen = false;   // pindah halaman = halaman khusus (Wrapped/Rekor/Kalender/Album) ditutup
   state.recOpen = false; state.calOpen = false; state.memOpen = false; state.troOpen = false; state.schOpen = false; state.spAlbumOpen = false;
   state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false; state.tmlOpen = false;
   state.heatOpen = false; state.bulOpen = false;
-  state.chnOpen = false; state.quiOpen = false;   // halaman khusus kembali punya tombol ✕ — tab header tetap bisa menutup semua halaman
+  state.chnOpen = false; state.quiOpen = false; state.fiturOpen = false;   // halaman khusus kembali punya tombol ✕ — tab header tetap bisa menutup semua halaman
   state.spQuery = "";   // kosongkan pencarian Spotify saat pindah halaman
   if (v !== "home") { state.artist = v; state.msTab = "table"; }
   renderAll();
@@ -7458,6 +7499,7 @@ function renderSpAll() {
   if (state.view === "home") {
     /* Wrapped/Rekor/Kalender terbuka = HALAMAN KHUSUS (fitur beranda lain tidak tampil) */
     if (state.berOpen) renderBerandaPage(sec); // halaman BERANDA (header)
+    else if (state.fiturOpen) renderFiturPage(sec); // halaman SEMUA FITUR (header)
     else if (state.spWrapOpen) renderWrappedPage(sec);
     else if (state.recOpen) renderSpRecords(sec);
     else if (state.calOpen) renderSpCalendar(sec);
@@ -7610,7 +7652,8 @@ function spWrappedCompute(gran, key, noPrev) {
 }
 
 /* Kartu teaser Wrapped di beranda Spotify DIHAPUS (dulu ada 2 pintu Wrapped) —
- * pintu tunggal sekarang: kartu "Spotify Wrapped" di peta fitur halaman BERANDA. */
+ * pintu sekarang: kartu "Spotify Wrapped" di BERANDA (selalu tampil, semua platform)
+ * & di halaman SEMUA FITUR; dibuka dari sisi YouTube pun otomatis pindah ke Spotify. */
 
 /* milestone yang DITEMBUS selama periode Wrapped — dari riwayat nilai tiap lagu */
 function spWrappedMilestones(wd) {
@@ -8808,6 +8851,7 @@ function renderAll() {
   $("#videoGrid").style.display = home ? "none" : "";
   if (home) {
     if (state.berOpen) renderBerandaPage($("#homeSection"));       // halaman BERANDA (header)
+    else if (state.fiturOpen) renderFiturPage($("#homeSection"));    // halaman SEMUA FITUR (header)
     else if (state.recOpen) renderYtRecords($("#homeSection"));       // halaman Rekor & Fakta
     else if (state.calOpen) renderYtCalendar($("#homeSection")); // halaman Kalender rilisan
     else if (state.troOpen) renderTrofiPage($("#homeSection"));  // halaman Trofi & Penghargaan
