@@ -926,6 +926,9 @@
   .wbsub{display:block;font-size:10.5px;color:var(--muted);font-weight:700;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   /* ---------- kepala halaman khusus ---------- */
   .pagehead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:2px 2px 14px;flex-wrap:wrap}
+  /* tombol ✕ halaman khusus — HANYA halaman BERANDA yang tidak memakainya */
+  .pagex{width:36px;height:36px;flex:none;border:1px solid var(--border);background:var(--card);color:var(--muted);border-radius:11px;font-size:16px;font-weight:900;line-height:1;cursor:pointer;display:grid;place-items:center;transition:border-color .15s,color .15s,transform .15s,background .15s}
+  .pagex:hover{color:var(--text);border-color:#ff4d6d;background:color-mix(in srgb,#ff4d6d 10%,var(--card));transform:scale(1.06)}
   .pagehead .ptitle{font-size:clamp(19px,3vw,25px);font-weight:800}
   .pagehead .psub{font-size:11px;color:var(--muted);font-weight:700;margin-top:2px}
   /* ---------- halaman album ---------- */
@@ -1691,6 +1694,7 @@ function pageCloseBar(title, sub, ico, color) {
   return `
   <div class="pagehead">
     <div style="display:flex;align-items:center;gap:12px;min-width:0">${chip}<div style="min-width:0"><div class="ptitle">${title}</div>${sub ? `<div class="psub">${sub}</div>` : ""}</div></div>
+    <button class="pagex" id="pageClose" aria-label="Tutup halaman — kembali ke beranda" title="Tutup halaman — kembali ke beranda">✕</button>
   </div>`;
 }
 function bindPageClose(sec) {
@@ -1953,14 +1957,15 @@ function renderBerandaPage(sec) {
       <span class="hlval">${fmtCompact(t.total)} stream</span>
     </div>`;
   }).join("")));
-  /* teaser berita — 3 teratas dari data/news.json (kolektor RSS) */
-  const nItems = state.news && Array.isArray(state.news.items) ? state.news.items.slice(0, 3) : null;
+  /* teaser berita — 4 teratas dari data/news.json (kolektor RSS) — dengan foto artikel */
+  const nItems = state.news && Array.isArray(state.news.items) ? state.news.items.slice(0, 4) : null;
   const newsTeaser = nItems && nItems.length ? `
     <section style="margin-top:24px">
-      ${featSectHead("#22c55e", ICO_NEWS, "Berita terbaru", "3 berita teratas — halaman Berita memuat maksimum 60 entri")}
+      ${featSectHead("#22c55e", ICO_NEWS, "Berita terbaru", "4 berita teratas — halaman Berita memuat maksimum 60 entri")}
       <div class="newsgrid">${nItems.map((it) => `
         <a class="newscard" href="${esc(it.link)}" target="_blank" rel="noopener" style="--sc:${newsSourceColor(it.source || "")}">
           <div class="nctop"><span class="ncsrc"><i></i>${esc(it.source || "RSS")}</span><span class="ncdate">${it.t ? `<b>${fmtDate(isoDate(it.t))}</b>` : "–"}</span></div>
+          <div class="ncthumbwrap">${it.img ? `<img src="${esc(it.img)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}<span class="ncph">${esc((it.source || "RSS")[0].toUpperCase())}</span></div>
           <div class="nctitle">${esc(it.title)}</div>
           <div class="ncfoot"><span class="ncago">buka berita ↗</span></div>
         </a>`).join("")}</div>
@@ -1985,8 +1990,9 @@ function renderBerandaPage(sec) {
     ["qui", "#eab308", ICO_QUIZ, "Kuis K-POP", "uji pengetahuan BABYMONSTER &amp; TREASURE"],
     ...(isSp ? [["wrap", "#1ed760", ICO_SP_TROPHY, "Spotify Wrapped", "rekap stream bulanan &amp; tahunan"]] : []),
   ];
+  /* BERANDA = halaman awal: satu-satunya halaman TANPA tombol X/kembali —
+   * halaman fitur lain tetap punya tombol X di atas. Masuk halaman lain lewat kartu fitur. */
   sec.innerHTML = `
-    ${pageCloseBar("Beranda", "garis besar seluruh situs — statistik, fitur &amp; hiburan BABYMONSTER + TREASURE dalam satu halaman", ICO_HOME, "#ff8a3d")}
     <section class="ber-hero">
       <span class="hbadge">SELAMAT DATANG DI K-POP PULSE</span>
       <h1>Beranda — <span class="grad">garis besar seluruh situs</span></h1>
@@ -2048,8 +2054,6 @@ function renderBerandaPage(sec) {
     el.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
   });
   sec.querySelectorAll("[data-gomenu]").forEach((b) => b.addEventListener("click", () => menuGo(b.dataset.gomenu)));
-  const wt = sec.querySelector("#wrapTeaser");
-  if (wt) wt.addEventListener("click", () => { state.spWrapOpen = true; state.berOpen = false; renderAll(); window.scrollTo(0, 0); });
 }
 function bindMenu(root) {
   if (!root) return;
@@ -3578,7 +3582,7 @@ function renderChannelStatsPage(sec) {
   }
   const body = sel.plat === "spotify" ? chnSpBlock(a) : chnYtBlock(a);
   const note = sel.plat === "spotify"
-    ? `<p class="note">Sumber: <b>data/spotify-artists.json</b> + kworb (dikumpulkan workflow GitHub Actions tiap jam) — pendengar bulanan dibaca langsung dari profil artis Spotify; angka bertanda <b>±</b> adalah pembulatan ke ribuan. Stream baru per tahun dihitung dari lagu-lagu yang dipantau situs (metode sama dengan Rekap 12 bulan), sedangkan total stream artis mencakup semua lagu terdaftar di Spotify.</p>`
+    ? `<p class="note">Sumber: <b>data/spotify-artists.json</b> + kworb (dikumpulkan workflow GitHub Actions tiap jam) — pendengar bulanan dibaca langsung dari profil artis Spotify; angka bertanda <b>±</b> adalah pembulatan ke ribuan. Followers direkam lewat Spotify Web API (secret repo) atau fallback publik stats.fm, dan nilai terakhir dipertahankan bila sumbernya gagal. Stream baru per tahun dihitung dari lagu-lagu yang dipantau situs (metode sama dengan Rekap 12 bulan), sedangkan total stream artis mencakup semua lagu terdaftar di Spotify.</p>`
     : `<p class="note">Sumber: <b>data/channels.json</b> — direkam otomatis GitHub Actions dua kali sehari + jangkar resmi/kurasi (channel dibuat, Social Blade, Wikipedia, pengumuman YG — titik bertanda sumber di riwayat). Nilai akhir tahun &amp; tanggal milestone <b>≈</b> = hasil interpolasi lurus antar titik riwayat, bukan pengumuman resmi; tanggal tanpa ≈ = penembusan tepat di titik data tercatat. Jumlah subscriber YouTube dibulatkan YouTube ke ribuan terdekat, jadi angka harian bergerak dalam kelipatan ribuan.</p>`;
   sec.innerHTML = head + chnCtrlHTML(sel) + body + note;
   bindPageClose(sec);
@@ -4916,7 +4920,7 @@ async function setPlatform(p) {
   state.spWrapOpen = false;                     // …sekaligus menutup halaman Wrapped bila terbuka
   state.recOpen = false; state.calOpen = false; state.memOpen = false; state.troOpen = false; state.schOpen = false; state.spAlbumOpen = false;
   state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false; state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
-  state.chnOpen = false; state.quiOpen = false;   // tombol ✕ di halaman khusus sudah dihapus — header harus bisa menutup semua halaman
+  state.chnOpen = false; state.quiOpen = false;   // halaman khusus kembali punya tombol ✕ — tab header tetap bisa menutup semua halaman
   if (!same) {
     state.platform = p;
     if (p === "spotify" && !state.sp.tracks && !state.sp.error) {
@@ -4968,7 +4972,7 @@ function setView(v) {
   state.recOpen = false; state.calOpen = false; state.memOpen = false; state.troOpen = false; state.schOpen = false; state.spAlbumOpen = false;
   state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false; state.tmlOpen = false;
   state.heatOpen = false; state.bulOpen = false;
-  state.chnOpen = false; state.quiOpen = false;   // tombol ✕ di halaman khusus sudah dihapus — header harus bisa menutup semua halaman
+  state.chnOpen = false; state.quiOpen = false;   // halaman khusus kembali punya tombol ✕ — tab header tetap bisa menutup semua halaman
   state.spQuery = "";   // kosongkan pencarian Spotify saat pindah halaman
   if (v !== "home") { state.artist = v; state.msTab = "table"; }
   renderAll();
@@ -7605,43 +7609,8 @@ function spWrappedCompute(gran, key, noPrev) {
   };
 }
 
-/* ---------- kartu TEASER di beranda (tertutup) ----------
- * Ditekan -> masuk HALAMAN WRAPPED penuh: di halaman itu HANYA Wrapped yang tampil
- * (fitur beranda lain tidak), persis seperti menekan kartu channel/artis. */
-function wrapTeaserHTML() {
-  if (!state.spWrap) {
-    try { state.spWrap = JSON.parse(localStorage.getItem("py.spwrap") || "null"); } catch { state.spWrap = null; }
-    if (!state.spWrap || (state.spWrap.gran !== "month" && state.spWrap.gran !== "year")) state.spWrap = { gran: "year", key: null };
-  }
-  const plist = spWrappedPeriodList();
-  const avail = state.spWrap.gran === "month" ? plist.months : plist.years;
-  if (!avail.length) return "";
-  if (!state.spWrap.key || !avail.includes(state.spWrap.key)) state.spWrap.key = avail[0];
-  const wd = spWrappedCompute(state.spWrap.gran, state.spWrap.key);
-  if (!wd || wd.nSongs === 0) return "";
-  const wLabel = spWrappedLabel(state.spWrap.gran, state.spWrap.key);
-  const top0 = wd.songs.length ? wd.songs[0] : null;
-  return `
-  <section style="margin-top:26px" id="spWrapped">
-    ${spSectHead("#1ed760", "M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17l-6.1 3.6 1.4-6.8L2.2 9.1l6.9-.8z", "Wrapped", "rekap bulanan &amp; tahunan — ditekan untuk dibuka")}
-    <div class="wpteaser" id="wrapTeaser" tabindex="0" role="button" aria-label="Buka rekap Wrapped ${esc(wLabel)}" title="Klik untuk membuka halaman Wrapped">
-      <div class="wpbadge">♪ SPOTIFY WRAPPED · ${state.spWrap.gran === "month" ? "REKAP BULANAN" : "REKAP TAHUNAN"}</div>
-      <div class="wptrow">
-        <div style="min-width:0">
-          <div class="wptitle" style="font-size:clamp(20px,3.2vw,28px)">${esc(wLabel)}</div>
-          <div class="wpsub">rekap stream ${state.spWrap.gran === "month" ? "bulan ini" : "setahun"} dari situs ini</div>
-        </div>
-        <div class="wpbig" style="text-align:right">+${fmtCompact(wd.total)}</div>
-      </div>
-      <div class="wptfoot">
-        <span class="wptop">${top0
-          ? `Lagu teratas: <b style="color:#fff">${esc(top0.tr.name)}</b> +${fmtCompact(top0.delta)} stream`
-          : "Belum ada stream tercatat pada periode ini"}</span>
-        <span class="wpopen">Tekan untuk buka <svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg></span>
-      </div>
-    </div>
-  </section>`;
-}
+/* Kartu teaser Wrapped di beranda Spotify DIHAPUS (dulu ada 2 pintu Wrapped) —
+ * pintu tunggal sekarang: kartu "Spotify Wrapped" di peta fitur halaman BERANDA. */
 
 /* milestone yang DITEMBUS selama periode Wrapped — dari riwayat nilai tiap lagu */
 function spWrappedMilestones(wd) {
@@ -7688,6 +7657,7 @@ function renderWrappedPage(sec) {
   const closeBar = `
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin:2px 2px 12px;flex-wrap:wrap">
       <div style="font-size:10.5px;font-weight:800;letter-spacing:1.6px;color:var(--muted);text-transform:uppercase">Rekap otomatis dari stream yang direkam situs ini</div>
+      <button class="pagex" id="wrapClose" aria-label="Tutup halaman Wrapped — kembali ke beranda" title="Tutup halaman — kembali ke beranda">✕</button>
     </div>`;
   const granTabs = `
     <div class="stabs" style="margin:0 2px 12px">
@@ -7998,9 +7968,6 @@ function renderSpHome(sec) {
     msPairs += (okCards[i] || "<div></div>") + (nextCards[i] || "<div></div>");
   }
 
-  /* kartu teaser Wrapped — DITEKAN untuk masuk halaman Wrapped penuh */
-  const wrapHTML = wrapTeaserHTML();
-
   sec.innerHTML = `
     <section class="hero sp">
       <span class="hbadge">SPOTIFY · PEMANTAUAN OTOMATIS TIAP JAM</span>
@@ -8014,7 +7981,6 @@ function renderSpHome(sec) {
       </div>
     </section>
     ${menuRowHTML("spotify")}
-    ${wrapHTML}
     ${watchSummaryHTML("spotify")}
     <div class="hgrid">
       <div>
@@ -8049,12 +8015,6 @@ function renderSpHome(sec) {
   });
   sec.querySelectorAll("[data-art]").forEach((el) => {
     const go = () => setView(el.dataset.art);
-    el.addEventListener("click", go);
-    el.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
-  });
-  /* kartu Wrapped ditekan -> masuk HALAMAN WRAPPED (di situ hanya Wrapped yang tampil) */
-  sec.querySelectorAll("#wrapTeaser").forEach((el) => {
-    const go = () => { state.spWrapOpen = true; renderAll(); window.scrollTo(0, 0); };
     el.addEventListener("click", go);
     el.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
   });

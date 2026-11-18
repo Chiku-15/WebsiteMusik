@@ -13,6 +13,8 @@
  *      (dipanggil sekali per lagu, lalu dicache di data/spotify-release-dates.json).
  *   5. (Opsional) Spotify Web API resmi — jika secret SPOTIFY_CLIENT_ID &
  *      SPOTIFY_CLIENT_SECRET diisi → followers artis ikut direkam.
+ *   6. api.stats.fm/search (publik, tanpa key) → fallback followers artis bila
+ *      token anonim Spotify diblokir; nilai terakhir tetap dipertahankan.
  *
  * Artis & daftar album dibaca dari config.json (field spotify_id,
  * kworb_songs_url, spotify_albums di masing-masing artis).
@@ -421,8 +423,29 @@ async function main() {
       } catch (e) {
         log("  ! followers (anonim) gagal:", String(e).slice(0, 120));
       }
+      /* 2b) fallback publik stats.fm — mirror data Spotify tanpa key. Dicoba per artis
+       *     yang masih kosong; pencocokan lewat Spotify ID supaya tidak salah nama. */
+      for (const artist of CONFIG.artists) {
+        if (!artist.spotify_id || followersMap[artist.id]) continue;
+        try {
+          const res = await fetch(`https://api.stats.fm/api/v1/search?query=${encodeURIComponent(artist.name)}&limit=5`, {
+            headers: { "User-Agent": UA, "Accept": "application/json" },
+            signal: AbortSignal.timeout ? AbortSignal.timeout(15000) : undefined,
+          });
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          const arts = ((await res.json()).items || {}).artists || [];
+          const hit = arts.find((x) => x && x.followers && ((x.externalIds || {}).spotify || []).includes(artist.spotify_id));
+          if (hit) {
+            followersMap[artist.id] = hit.followers;
+            log(`  ↳ stats.fm ${artist.name}: ${hit.followers.toLocaleString("en-US")} followers`);
+          }
+          await sleep(250);
+        } catch (e) {
+          log(`  ! stats.fm ${artist.name}:`, String(e).slice(0, 80));
+        }
+      }
       if (!Object.keys(followersMap).length) {
-        log("  ! followers kosong — isi secret SPOTIFY_CLIENT_ID & SPOTIFY_CLIENT_SECRET di repo untuk mengaktifkannya (lihat README).");
+        log("  ! followers kosong — isi secret SPOTIFY_CLIENT_ID & SPOTIFY_CLIENT_SECRET di repo (paling akurat); fallback publik stats.fm pun ikut dicoba otomatis.");
       }
     }
     log(`↳ followers: ${Object.keys(followersMap).length}/${artistIds.length} artis`);
@@ -753,7 +776,7 @@ async function main() {
     }
     const oldArt = oldArtists[artist.id] || {};
     const artHist = (oldArt.history || []).filter((p) => p && p.t && p.total != null);
-    artHist.push({ t: tn, total: kworbTotal, daily: kworbDaily, ml: ml ? ml.listeners : null });
+    artHist.push({ t: tn, total: kworbTotal, daily: kworbDaily, ml: ml ? ml.listeners : null, f: followersMap[artist.id] || oldArt.followers || null });
     const seen = new Map();
     for (const p of artHist.sort((a, b) => a.t - b.t)) {
       const age = tn - p.t;

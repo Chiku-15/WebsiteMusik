@@ -44,7 +44,7 @@ Situs statistik **YouTube + Spotify** untuk artis K-pop — saat ini berisi **BA
 - **Halaman artis Spotify**: total stream, stream/hari, **pendengar per bulan** + delta mingguan, followers (opsional), daftar **album/EP/singel lengkap dengan tipe (Single/EP/Album/Live), tanggal rilis, total stream & delta harian** — klik album untuk membuka daftar lagu dengan bar progres menuju milestone berikutnya, plus **kotak pencarian lagu**. Tab **Milestone** berisi **tabel milestone ala tabel YouTube**: baris = lagu, kolom = 1 jt s/d 1 mlr stream, sel = **hari ke-N sejak rilis** (✓ hijau = tercapai, pudar = dari kurva estimasi, ★ = tercepat di kolom) + sub-tab **Akan datang** dan **Tercapai**
 - **Modal lagu Spotify**: total stream (gabungan semua versi/ID), delta 24 jam, rata-rata 7 hari, grafik kumulatif sejak rilis (terukur vs estimasi) **dengan kotak “TOTAL STREAM + delta /24 jam” menempel di kanan-atas grafik**, chip milestone tercapai, tabel prediksi milestone berikutnya
 - **Stream harian lagu baru tetap terisi**: kworb kadang mengosongkan kolom harian (lagu baru di luar chart harian, mis. SHOCK) — angka harian otomatis diturunkan dari dua titik perekaman terakhir sehingga tidak ada lagi “+0/hari”
-- **Sumber data Spotify tanpa API key**: angka stream harian dari **Spotify Charts (via kworb.net)**, metadata album/track & tanggal rilis dari halaman **embed resmi Spotify** (di-cache). Pendengar per bulan dari daftar global kworb (artis yang masuk daftar). *Opsional*: isi Secret `SPOTIFY_CLIENT_ID` + `SPOTIFY_CLIENT_SECRET` (Spotify Web API) untuk ikut merekam **followers**
+- **Sumber data Spotify tanpa API key**: angka stream harian dari **Spotify Charts (via kworb.net)**, metadata album/track & tanggal rilis dari halaman **embed resmi Spotify** (di-cache). Pendengar per bulan dari daftar global kworb (artis yang masuk daftar). *Opsional*: isi Secret `SPOTIFY_CLIENT_ID` + `SPOTIFY_CLIENT_SECRET` (Spotify Web API) untuk ikut merekam **followers** — tanpa secret, kolektor mencoba token anonim lalu fallback publik **stats.fm**
 
 ## Cara kerja singkat
 
@@ -99,7 +99,7 @@ GitHub Pages menayangkan index.html — tombol YouTube/Spotify di header bergant
 3. **Simpan API key** sebagai Secret:
  - Buka *Settings → Secrets and variables → Actions → New repository secret*
  - Name: `YOUTUBE_API_KEY` — Secret: isi API key-mu → *Add secret*
- - (Direkomendasikan untuk **followers Spotify**) tambah `SPOTIFY_CLIENT_ID` & `SPOTIFY_CLIENT_SECRET` dari [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard) (buat app apa pun, dapatkan *Client ID* & *Client secret*). Tanpa ini collector mencoba token anonim Spotify; kalau itu pun gagal, kartu Followers tampil "–" — semua fitur lain tetap jalan penuh.
+ - (Direkomendasikan untuk **followers Spotify**) tambah `SPOTIFY_CLIENT_ID` & `SPOTIFY_CLIENT_SECRET` dari [developer.spotify.com/dashboard](https://developer.spotify.com/dashboard) (buat app apa pun, dapatkan *Client ID* & *Client secret*). Tanpa ini collector mencoba token anonim Spotify lalu fallback publik **stats.fm** (pencocokan via Spotify ID); nilai followers terakhir tetap dipertahankan bila keduanya gagal — semua fitur lain tetap jalan penuh.
 4. **Aktifkan GitHub Pages**:
  - *Settings → Pages → Build and deployment → Source: **Deploy from a branch***
  - Branch: `main`, folder: `/(root)` → *Save*
