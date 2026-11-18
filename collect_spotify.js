@@ -198,16 +198,31 @@ function coverOf(entity) {
  * fallback monthly listeners dari halaman artis Spotify (HTML SEO untuk bot
  * pencari: "Listen to TREASURE on Spotify. Artist · 1.8M monthly listeners.").
  * Dipakai untuk artis yang TIDAK masuk daftar 2.500 besar global kworb.
+ * Halaman memuat DUA bentuk angka: bentuk bulat utk pratinjau ("1.9M") dan
+ * angka PERSIS di bagian About/JSON-LD ("1,885,365"). Semua kemunculan di-
+ * pindai dan yang paling presisi dipilih (tanpa akhiran K/M/B & mengandung
+ * pemisah ribuan) supaya pendengar bulanan tercatat persis, bukan bulat.
  */
 async function fetchMonthlyListenersFallback(spotifyId) {
-  const re = /([0-9][0-9.,]*)\s*([KMB])?\s+monthly listeners/i;
-  const parse = (txt) => {
-    const m = String(txt || "").match(re);
-    if (!m) return null;
-    const n = parseFloat(m[1].replace(/,/g, ""));
-    if (!isFinite(n)) return null;
-    const mul = m[2] === "B" ? 1e9 : m[2] === "M" ? 1e6 : m[2] === "K" ? 1e3 : 1;
-    return Math.round(n * mul);
+  const parseAll = (txt) => {
+    const out = [];
+    const re = /([0-9][0-9.,]*)\s*([KMB])?\s+monthly listeners/gi;
+    let m;
+    while ((m = re.exec(String(txt || "")))) {
+      const n = parseFloat(m[1].replace(/,/g, ""));
+      if (!isFinite(n) || n <= 0) continue;
+      const mul = m[2] === "B" ? 1e9 : m[2] === "M" ? 1e6 : m[2] === "K" ? 1e3 : 1;
+      const exact = !m[2] && /,/.test(m[1]); // "1,885,365" = angka persis
+      out.push({ v: Math.round(n * mul), exact });
+    }
+    return out;
+  };
+  const pick = (cands) => {
+    if (!cands.length) return null;
+    const exact = cands.filter((c) => c.exact);
+    if (exact.length) return exact[0].v;
+    // tidak ada angka persis — pakai yang terbesar di antara bentuk bulat
+    return Math.max(...cands.map((c) => c.v));
   };
   try {
     const res = await fetch(`https://open.spotify.com/artist/${spotifyId}`, {
@@ -220,7 +235,8 @@ async function fetchMonthlyListenersFallback(spotifyId) {
     if (!res.ok) return null;
     const html = await res.text();
     const md = (html.match(/<meta name="description" content="([^"]*)"/) || [])[1];
-    const v = parse(md) || parse((html.match(/"description":"([^"]*)"/) || [])[1]);
+    const ld = (html.match(/"description":"([^"]*)"/) || [])[1];
+    const v = pick([...parseAll(md), ...parseAll(ld), ...parseAll(html.slice(0, 400000))]);
     if (v) log(`  ↳ monthly listeners dari halaman Spotify: ${v.toLocaleString("en-US")}`);
     return v;
   } catch (e) {

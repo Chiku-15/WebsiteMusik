@@ -342,6 +342,34 @@
   .bulgrid .bulrow.bultot{background:color-mix(in srgb,var(--acc,#06b6d4) 13%,transparent);border-top:2px solid color-mix(in srgb,var(--acc,#06b6d4) 55%,transparent)}
   .bulgrid .bulrow.bultot .bm{color:var(--acc,#06b6d4);text-transform:uppercase;letter-spacing:.7px;font-size:11px}
   .bulgrid .bulrow.bultot .bg{font-size:13.5px}
+  /* ---------- halaman Kuis K-POP ---------- */
+  .quiz-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 18px 16px;margin-top:14px}
+  .quiz-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+  .quiz-top .qp{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--muted)}
+  .quiz-top .qs{font-size:13px;font-weight:800}
+  .quiz-q{font-size:16.5px;font-weight:800;margin-top:10px;line-height:1.45}
+  .quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+  @media (max-width:640px){.quiz-opts{grid-template-columns:1fr}}
+  .quiz-opt{border:1px solid var(--border);background:var(--bg2);color:var(--text);font:inherit;font-weight:700;font-size:14px;padding:12px 14px;border-radius:12px;cursor:pointer;text-align:left;transition:.15s;line-height:1.4}
+  .quiz-opt:hover{border-color:var(--text)}
+  .quiz-opt.ok{background:color-mix(in srgb,#2fd57b 16%,var(--bg2));border-color:#2fd57b;color:#0e7a45}
+  .quiz-opt.no{background:color-mix(in srgb,#ff6b81 14%,var(--bg2));border-color:#ff6b81;color:#a3213a}
+  .quiz-opt:disabled{cursor:default;opacity:.92}
+  .quiz-why{margin-top:12px;font-size:13px;color:var(--muted);background:var(--bg2);border:1px dashed var(--border);border-radius:11px;padding:10px 13px;line-height:1.55}
+  .quiz-bar{height:8px;border-radius:99px;background:var(--bg2);overflow:hidden;margin-top:16px}
+  .quiz-bar i{display:block;height:100%;background:linear-gradient(90deg,#eab308,#f59e0b);border-radius:99px;transition:width .3s}
+  .quiz-res{text-align:center;padding:10px 0 2px}
+  .quiz-res .big{font-size:44px;font-weight:800;letter-spacing:.5px}
+  .quiz-res .sub{color:var(--muted);font-weight:600;margin-top:4px}
+  /* tabel pertumbuhan per tahun di halaman Statistik Channel */
+  .chgrid{margin-top:14px;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+  .chrow{display:grid;grid-template-columns:74px 1fr 1fr 1fr 1fr;gap:8px;align-items:center;padding:7px 14px;border-top:1px solid var(--border);font-variant-numeric:tabular-nums;font-size:12.5px}
+  .chrow:first-child{border-top:none}
+  .chrow.chhead{background:color-mix(in srgb,var(--acc,#ef4444) 10%,transparent);font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);padding:9px 14px}
+  .chrow .ck{font-weight:800}
+  .chrow:not(.chhead):nth-child(even){background:color-mix(in srgb,var(--card2,var(--card)) 55%,transparent)}
+  .chrow .est{color:var(--muted)}
+  @media (max-width:640px){.chrow{grid-template-columns:64px 1fr 1fr;font-size:11.5px}.chrow .hide-m{display:none}}
   .hm-legend .hm-c{cursor:default}
   .hm-legend .hm-c:hover{outline:none}
   .hm-tip{position:absolute;z-index:20;background:var(--overlay);backdrop-filter:blur(6px);border:1px solid var(--border);border-radius:10px;padding:7px 11px;font-size:12px;pointer-events:none;display:none;box-shadow:var(--shadow);white-space:nowrap}
@@ -1417,6 +1445,8 @@ const state = {
   schOpen: false,         // halaman Jadwal & Countdown
   tmlOpen: false,         // halaman Timeline Grup (no 27) — statis, tanpa data kolektor
   bulOpen: false,         // halaman Rekap 12 bulan — view YT & pendengar Spotify Jan–Des
+  chnOpen: false,         // halaman Statistik Channel — subscriber/views/video 2 kanal YT
+  quiOpen: false,         // halaman Kuis K-POP — runtime di state.quiz
   tlFilter: "all",        // filter chip timeline: "all" | "bm" | "trs"
   calOpen: false,         // halaman Kalender rilisan (isi mengikuti platform aktif)
   spAlbumOpen: false,     // halaman album Spotify terbuka?
@@ -1538,6 +1568,7 @@ function bindPageClose(sec) {
     state.memOpen = false; state.troOpen = false; state.schOpen = false;
     state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false;
     state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
+    state.chnOpen = false; state.quiOpen = false;
     renderAll(); window.scrollTo(0, 0);
   }));
 }
@@ -1615,6 +1646,8 @@ const ICO_RANK = "M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z";
 const ICO_DISC = "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-5.5c-.55 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z";
 const ICO_NEWS = "M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z";
 const ICO_TML = "M13 3a9 9 0 00-9 9H1l3.9 3.9.1.1L9 12H6a7 7 0 117 7c-1.9 0-3.7-.8-4.9-2.1l-1.4 1.4A8.9 8.9 0 0013 21a9 9 0 000-18zm-1 5v5l4.3 2.5.7-1.2-3.5-2V8h-1.5z";
+const ICO_STATS = "M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z";
+const ICO_QUIZ = "M11 18h2v-2h-2v2zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z";
 function menuRowHTML(plat) {
   const cmp = plat === "spotify"
     ? ["cmp", "#1ed760", ICO_SWAP, "Bandingkan lagu", "adu 2 lagu sejak hari rilis"]
@@ -1636,8 +1669,10 @@ function menuRowHTML(plat) {
   const bru = ["bru", "#22c55e", ICO_NEWS, "Berita K-pop", "berita terbaru dua grup"];
   const tml = ["tml", "#14b8a6", ICO_TML, "Timeline Grup", "perjalanan debut → sekarang"];
   const heat = ["heat", hmAccent("yt"), HM_ICO, "Peta panas harian", "view/stream baru tiap hari · per artis"];
+  const chn = ["chn", "#ef4444", ICO_STATS, "Statistik Channel", "subscriber · total views · video — 2 kanal YT"];
   const bul = ["bul", "#06b6d4", ICO_CAL, "Rekap 12 bulan", "view YT &amp; pendengar Spotify Jan–Des"];
-  return `<div class="menurow">${[cmp, rec, cal, tro, mem, sch, soc, cha, dis, bru, tml, heat, bul].map(card).join("")}</div>`;
+  const qui = ["qui", "#eab308", ICO_QUIZ, "Kuis K-POP", "uji pengetahuan BABYMONSTER &amp; TREASURE"];
+  return `<div class="menurow">${[cmp, rec, cal, tro, mem, sch, soc, cha, dis, bru, tml, heat, chn, bul, qui].map(card).join("")}</div>`;
 }
 function menuGo(k) {
   /* Rekor/Kalender = halaman khusus beranda — dari halaman artis pun kembali ke beranda dulu
@@ -1650,6 +1685,7 @@ function menuGo(k) {
     state.troOpen = false; state.schOpen = false;
     state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false;
     state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
+    state.chnOpen = false; state.quiOpen = false;
     if (k === "rec") { state.recOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
     else if (k === "cal") { state.calOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
     else if (k === "tro") { state.troOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
@@ -1661,7 +1697,9 @@ function menuGo(k) {
     else if (k === "bru") { state.bruOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
     else if (k === "tml") { state.tmlOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
     else if (k === "heat") { state.heatOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
+    else if (k === "chn") { state.chnOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
     else if (k === "bul") { state.bulOpen = true; if (state.view !== "home") state.view = "home"; if (!state.sp.tracks && !state.sp.error) { renderAll(); loadSpData().then(renderAll); } else renderAll(); window.scrollTo(0, 0); }
+    else if (k === "qui") { state.quiOpen = true; if (state.view !== "home") state.view = "home"; quizNewRound(); renderAll(); window.scrollTo(0, 0); }
   }
 }
 function bindMenu(root) {
@@ -2945,6 +2983,320 @@ function renderTimelinePage(sec) {
   sec.querySelectorAll("[data-tf]").forEach((b) => {
     b.addEventListener("click", () => { state.tlFilter = b.dataset.tf; renderTimelinePage(sec); });
   });
+}
+
+/* ===================== halaman Statistik Channel (chn) =====================
+ * Ringkasan level KANAL YouTube untuk kedua artis: subscriber, total views, jumlah
+ * video, umur kanal, pertumbuhan per tahun (nilai 31 Des — interpolasi antar titik
+ * riwayat channel, ditandai ≈) dan milestone kanal (subscriber & total views) dengan
+ * tanggal penembusan hasil interpolasi kurva. Sumber: data/channels.json — GitHub
+ * Actions dua kali sehari + jangkar resmi (YG, Social Blade, Wikipedia). */
+function chanValueAt(h, key, t) {
+  const H = (h || []).filter((p) => p[key] != null).sort((a, b) => a.t - b.t);
+  if (!H.length) return null;
+  if (t <= H[0].t) return { v: H[0][key], est: H[0].e === 1 };
+  if (t >= H[H.length - 1].t) return { v: H[H.length - 1][key], est: false };
+  let lo = 0, hi = H.length - 1;
+  while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (H[mid].t <= t) lo = mid; else hi = mid; }
+  const x = H[lo], y = H[hi];
+  if (y.t <= x.t) return { v: y[key], est: true };
+  return { v: Math.round(x[key] + (y[key] - x[key]) * ((t - x.t) / (y.t - x.t))), est: x.e === 1 || y.e === 1 };
+}
+/* seperti crossPoint tetapi generik utk metrik kanal mana pun (v = views, s = subscriber) */
+function chanCross(h, key, milestone) {
+  const H = (h || []).filter((p) => p[key] != null).sort((a, b) => a.t - b.t);
+  if (!H.length) return null;
+  if (H[0][key] >= milestone) {
+    const exact = H[0][key] === milestone;
+    return { t: H[0].t, interp: !exact, pre: !exact };
+  }
+  for (let i = 1; i < H.length; i++) {
+    if (H[i][key] >= milestone) {
+      const p = H[i - 1];
+      const frac = H[i][key] > p[key] ? (milestone - p[key]) / (H[i][key] - p[key]) : 1;
+      return { t: p.t + frac * (H[i].t - p.t), interp: frac > 0.02 && frac < 0.98 };
+    }
+  }
+  return null;
+}
+function chanYearRows(ch) {
+  const h = ch.history || [];
+  const now = Date.now() / 1000;
+  const curY = new Date().getFullYear();
+  const startY = Math.max(ch.created ? new Date(ch.created + "T00:00:00").getFullYear() : 2019, 2019);
+  const rows = [];
+  for (let y = startY; y <= curY; y++) {
+    const eTs = Math.min(Date.UTC(y, 11, 31, 23, 59) / 1000, now);
+    const pTs = Math.max(Date.UTC(y - 1, 11, 31, 23, 59) / 1000, ch.created ? new Date(ch.created + "T00:00:00").getTime() / 1000 : eTs);
+    const s = chanValueAt(h, "s", eTs), v = chanValueAt(h, "v", eTs);
+    const s0 = chanValueAt(h, "s", pTs), v0 = chanValueAt(h, "v", pTs);
+    rows.push({
+      y,
+      s: s && s.v, v: v && v.v,
+      ds: s && s0 ? s.v - s0.v : null, dv: v && v0 ? v.v - v0.v : null,
+      est: (s && s.est) || (v && v.est) || false,
+      cur: y === curY,
+    });
+  }
+  return rows;
+}
+function renderChannelStatsPage(sec) {
+  const head = pageCloseBar("Statistik Channel", "subscriber · total ditonton · jumlah video — level kanal YouTube BABYMONSTER &amp; TREASURE", ICO_STATS, "#ef4444");
+  const artColor = { babymonster: "#ff4d6d", treasure: "#38bdf8" };
+  const blocks = state.config.artists.map((a) => {
+    const ch = state.channels && state.channels[a.id];
+    if (!ch || !ch.history || !ch.history.length) return `<div class="banner">Belum ada data channel untuk ${esc(a.name)}.</div>`;
+    const h = ch.history, last = h[h.length - 1];
+    const d7 = deltaDays(h, 7);
+    const rateS7 = d7 && d7.deltaS != null ? d7.deltaS / 7 : 0;
+    const rateV7 = d7 ? d7.rate : 0;
+    const createdAge = ch.created ? ageDays(ch.created) : null;
+    /* bar pertumbuhan subscriber per tahun */
+    const yr = chanYearRows(ch);
+    const maxS = Math.max(...yr.map((r) => r.s || 0), 1);
+    const maxV = Math.max(...yr.map((r) => r.v || 0), 1);
+    const bars = (key, mx, lbl) => `<div class="hm-months2">${yr.map((r) => {
+      const v = r[key] || 0;
+      return `<div class="hmm" title="${r.y}: ${fmtExact(v)}${r.est ? " (interpolasi)" : ""}"><i style="height:${Math.max(3, Math.round((v / mx) * 74))}px"></i><b>${fmtCompact(v)}</b><span>${r.y}</span></div>`;
+    }).join("")}</div>`;
+    /* tabel tahunan */
+    const trows = yr.slice().reverse().map((r) => `
+      <div class="chrow${r.est ? " est" : ""}" title="${r.y}${r.est ? " — nilai 31 Des hasil interpolasi antar titik riwayat (≈)" : r.cur ? " — berjalan sampai hari ini" : ""}">
+        <div class="ck">${r.y}${r.cur ? " *" : ""}</div>
+        <div>${r.s != null ? fmtExact(r.s) : "–"}</div>
+        <div class="up">${r.ds != null && r.ds > 0 ? "+" + fmtExact(r.ds) : "–"}</div>
+        <div class="hide-m">${r.v != null ? fmtExact(r.v) : "–"}</div>
+        <div class="hide-m up">${r.dv != null && r.dv > 0 ? "+" + fmtExact(r.dv) : "–"}</div>
+      </div>`).join("");
+    const thead = `<div class="chrow chhead" style="--acc:${artColor[a.id] || a.color}">
+        <div class="ck">Tahun</div><div>Subscriber</div><div>+ setahun</div><div class="hide-m">Total views</div><div class="hide-m">+ setahun</div>
+      </div>`;
+    /* milestone kanal */
+    const subList = [1e6, 2e6, 3e6, 5e6, 8e6, 10e6, 15e6].filter((m) => m <= (last.s || 0)).concat(last.s != null && last.s < 15e6 ? [] : []);
+    const viewList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15].map((n) => n * 1e9).filter((m) => m <= (last.v || 0));
+    const nextSub = [1e6, 2e6, 3e6, 5e6, 8e6, 10e6, 15e6].find((m) => m > (last.s || 0)) || null;
+    const nextView = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15].map((n) => n * 1e9).find((m) => m > (last.v || 0)) || null;
+    const msRows = (items, key, unit) => items.map((m) => {
+      const c = chanCross(h, key, m);
+      const d = c ? new Date(c.t * 1000) : null;
+      const age = c && ch.created ? Math.round((c.t - new Date(ch.created + "T00:00:00").getTime() / 1000) / 86400) : null;
+      return `<div class="chrow" style="--acc:${artColor[a.id] || a.color}">
+        <div class="ck">${fmtCompact(m)}</div>
+        <div>${c ? DAY_FULL.format(d) + (c.interp ? " <span class='cellno' title='tanggal hasil interpolasi antar titik riwayat — bukan pengumuman resmi'>≈</span>" : "") : "belum"}</div>
+        <div class="hide-m">${age != null ? NF.format(age) + " hari kanal" : "–"}</div>
+        <div class="hide-m">${unit}</div>
+      </div>`;
+    }).join("");
+    const msHead = (l1) => `<div class="chrow chhead" style="--acc:${artColor[a.id] || a.color}"><div class="ck">Milestone</div><div>${l1}</div><div class="hide-m">Umur kanal</div><div class="hide-m">Jenis</div></div>`;
+    const nextRow = (m, key, unit, lbl) => m == null ? "" : `<div class="chrow est" style="--acc:${artColor[a.id] || a.color}"><div class="ck">${fmtCompact(m)}</div><div>berikutnya — ${lbl}</div><div class="hide-m">–</div><div class="hide-m">${unit}</div></div>`;
+    return `
+    <section style="margin-top:22px">
+      <div class="hsect"><span class="sic" style="--c:${artColor[a.id] || a.color}"><svg viewBox="0 0 24 24"><path d="${ICO_STATS}"/></svg></span>
+        <div style="min-width:0"><b style="color:${artColor[a.id] || a.color}">${esc(ch.name || a.name)}</b><span class="sub">${esc(ch.handle || "")} · dibuat ${ch.created ? fmtDate(ch.created) : "–"}${ch.channel_id ? ` · <a href="https://www.youtube.com/channel/${esc(ch.channel_id)}" target="_blank" rel="noopener">buka YouTube</a>` : ""}</span></div>
+      </div>
+      <div class="chstats">
+        <div class="stat"><div class="k">Subscriber</div><div class="v">${fmtExact(last.s)}</div><div class="d">${d7 && d7.deltaS != null && rateS7 > 0 ? `<span class="up">+${fmtExact(Math.round(rateS7))}</span> / hari (7 hari)` : "–"}</div></div>
+        <div class="stat"><div class="k">Total ditonton</div><div class="v">${fmtExact(last.v)}</div><div class="d">${rateV7 > 0 ? `<span class="up">+${fmtExact(Math.round(rateV7))}</span> / hari (7 hari)` : "–"}</div></div>
+        <div class="stat"><div class="k">Jumlah video</div><div class="v">${fmtExact(lastKnown(h, "c"))}</div><div class="d">di channel YouTube</div></div>
+        <div class="stat"><div class="k">Umur kanal</div><div class="v">${createdAge != null ? NF.format(createdAge) : "–"}</div><div class="d">hari sejak dibuat</div></div>
+      </div>
+      <div class="hsect" style="margin-top:18px"><b>Subscriber per tahun</b><span class="sub">nilai akhir tahun — sebelum pemantauan hasil interpolasi (≈)</span></div>
+      ${bars("s", maxS)}
+      <div class="chgrid" style="--acc:${artColor[a.id] || a.color}">${thead}${trows}</div>
+      <p class="note" style="margin-top:6px">* ${new Date().getFullYear()} berjalan — nilai per hari ini. Kolom <b>+ setahun</b> = selisih nilai akhir tahun vs akhir tahun sebelumnya.</p>
+      <div class="hsect" style="margin-top:18px"><b>Milestone subscriber</b><span class="sub">tanggal penembusan dari kurva riwayat channel</span></div>
+      <div class="chgrid" style="--acc:${artColor[a.id] || a.color}">${msHead("Tercapai")}${msRows(subList, "s", "subscriber")}${nextRow(nextSub, "s", "subscriber", "dalam kurva belum menembus")}</div>
+      <div class="hsect" style="margin-top:18px"><b>Milestone total views</b><span class="sub">tanggal penembusan dari kurva riwayat channel</span></div>
+      <div class="chgrid" style="--acc:${artColor[a.id] || a.color}">${msHead("Tercapai")}${msRows(viewList, "v", "total views")}${nextRow(nextView, "v", "total views", "dalam kurva belum menembus")}</div>
+    </section>`;
+  }).join("");
+  sec.innerHTML = head + blocks + `
+    <p class="note">Sumber: <b>data/channels.json</b> — direkam otomatis GitHub Actions dua kali sehari + jangkar resmi/kurasi (channel dibuat, Social Blade, Wikipedia, pengumuman YG — titik bertanda sumber di riwayat). Nilai akhir tahun &amp; tanggal milestone <b>≈</b> = hasil interpolasi lurus antar titik riwayat, bukan pengumuman resmi; tanggal tanpa ≈ = penembusan tepat di titik data tercatat. Jumlah subscriber YouTube dibulatkan YouTube ke ribuan terdekat, jadi angka harian bergerak dalam kelipatan ribuan.</p>`;
+  bindPageClose(sec);
+}
+
+/* ===================== halaman Kuis K-POP (qui) =====================
+ * Kuis 8 soal acak per ronde dari gabungan fakta terkurasi (debut, anggota, milestone,
+ * chart) + angka DINAMIS dari data situs (subscriber kanal, MV terbanyak, pendengar
+ * bulanan) — jadi jawaban selalu ikut data terbaru. Skor terbaik disimpan di
+ * localStorage (py.quizbest). */
+function quizBest() { try { return parseInt(localStorage.getItem("py.quizbest") || "0", 10) || 0; } catch { return 0; } }
+function quizPool() {
+  const P = [];
+  const add = (q, opts, a, why) => P.push({ q, opts, a, why });
+  /* ---- statis: fakta terkurasi (members.json, milestones.json, trofi.json, sumber publik) ---- */
+  add("Kapan BABYMONSTER debut RESMI sebagai grup penuh (mini album BABYMONS7ER)?",
+    ["1 April 2024", "27 November 2023", "1 Juli 2024", "10 Mei 2024"], 0,
+    "Mini album BABYMONS7ER dirilis 1 April 2024 — debut resmi grup penuh. 'BATTER UP' (27 Nov 2023) adalah singel yang dirilis lebih dulu saat formasi belum lengkap.");
+  add("Kapan singel 'BATTER UP' BABYMONSTER dirilis?",
+    ["27 November 2023", "1 April 2024", "27 Desember 2022", "15 November 2023"], 0,
+    "BATTER UP tayang 27 November 2023 — video pertama BABYMONSTER, sekarang lebih dari 278 juta stream di Spotify.");
+  add("Berapa jumlah anggota BABYMONSTER?",
+    ["7", "6", "8", "9"], 0,
+    "Ruka, Pharita, Asa, Ahyeon, Rami, Rora & Chiquita — 7 anggota.");
+  add("Berapa jumlah anggota TREASURE?",
+    ["10", "9", "11", "12"], 0,
+    "Hyunsuk, Jihoon, Yoshi, Junkyu, Jaehyuk, Asahi, Doyoung, Haruto, Jeongwoo & Junghwan — 10 anggota.");
+  add("Kapan TREASURE debut dengan singel 'BOY'?",
+    ["7 Agustus 2020", "13 Agustus 2020", "7 Januari 2020", "8 Februari 2019"], 0,
+    "TREASURE debut 7 Agustus 2020 (WIB) dengan singel 'BOY' — 8 Februari 2019 adalah tanggal kanal YouTube-nya dibuat.");
+  add("M/V BABYMONSTER tercepat tembus 100 juta views YouTube (10 hari 11 jam)?",
+    ["SHEESH", "BATTER UP", "DRIP", "FOREVER"], 0,
+    "SHEESH (rilis 1 Apr 2024) tembus 100 juta dalam 10 hari 11 jam menurut pengumuman YG Entertainment — rekor grup di situs ini.");
+  add("Lagu BABYMONSTER paling banyak di-stream di Spotify?",
+    ["SHEESH", "DRIP", "FOREVER", "LIKE THAT"], 0,
+    "SHEESH ±438 juta stream (kworb, Nov 2026) — disusul DRIP ±327 juta dan FOREVER ±242 juta.");
+  add("Kapan BABYMONSTER menembus 1 MILIAR total stream karier di Spotify?",
+    ["1 April 2025", "1 April 2024", "31 Desember 2024", "27 November 2025"], 0,
+    "Tonggak 1 miliar total stream karier tercapai 1 April 2025 — tepat setahun setelah debut resmi (r/BABYMONSTER).");
+  add("Tahun pertama BABYMONSTER tembus 1 miliar STREAM SPOTIFY dalam satu tahun?",
+    ["2026", "2024", "2025", "2023"], 0,
+    "Per 15 Nov 2026 stream 2026 = 1.001.562.568 (rekap @bmspotiify) — tahun pertama melewati 1 miliar dalam setahun.");
+  add("Berapa jumlah menang acara musik BABYMONSTER menurut data situs?",
+    ["2", "1", "3", "5"], 0,
+    "2 menang acara musik tercatat di trofi.json (kurasi pengumuman resmi).");
+  add("Berapa rekor pendengar bulanan Spotify TREASURE sepanjang karier?",
+    ["6,65 juta", "4,65 juta", "2,42 juta", "10,07 juta"], 0,
+    "Puncak 6.652.201 pendengar — era DARARI (2022), salah satu puncak tertinggi generasinya (data komunitas).");
+  add("Album mini ke-4 TREASURE yang rilis 2026 berjudul?",
+    ["SHOCK", "PARADISE", "LOVE PULSE", "YELLOW"], 0,
+    "SHOCK — 4th MINI ALBUM TREASURE (2026); LOVE PULSE adalah mini album ke-3 (2025).");
+  add("Single digital BABYMONSTER yang rilis Oktober 2026 berjudul?",
+    ["DESERVE", "CHOOM", "SUGAR HONEY ICE TEA", "SUPA DUPA LUV"], 0,
+    "DESERVE (Okt 2026) — single terbaru; CHOOM (Mei 2026) adalah mini album ke-3 dan SUGAR HONEY ICE TEA (Jun 2026) single musim panas.");
+  add("Apa nama tur dunia pertama BABYMONSTER (2025)?",
+    ["HELLO MONSTERS", "DRIP WORLD", "MONSTERS ON STAGE", "WE GO UP TOUR"], 0,
+    "1st WORLD TOUR <HELLO MONSTERS> 2025 — berpuncak di K-Arena Yokohama, Jepang (April 2025).");
+  add("Berapa anggota BABYMONSTER yang berasal dari Thailand?",
+    ["3", "1", "2", "4"], 0,
+    "Ruka, Pharita & Chiquita dari Thailand; Asa & Rora dari Jepang; Ahyeon & Rami dari Korea.");
+  add("Kapan kanal YouTube TREASURE dibuat (pra-debut)?",
+    ["8 Februari 2019", "7 Agustus 2020", "1 Januari 2020", "5 Mei 2019"], 0,
+    "Kanal dibuat 8 Februari 2019 — hampir 1,5 tahun sebelum debut, dipakai era YG Treasure Box.");
+  add("Lagu TREASURE paling banyak tercatat di chart history Spotify (kworb)?",
+    ["DARARI", "JIKJIN", "BONA BONA", "HELLO"], 0,
+    "DARARI ±91,4 juta stream di chart history kworb dengan puncak Global #102 (11 Mar 2022) — lagu TREASURE paling besar di daftar itu.");
+  /* ---- dinamis: angka dari data situs (channels.json / videos.json) ---- */
+  const chBm = state.channels && state.channels.babymonster;
+  const chTr = state.channels && state.channels.treasure;
+  if (chTr && chTr.history && chTr.history.length) {
+    const s = chTr.history[chTr.history.length - 1].s || 0;
+    add("Berapa subscriber kanal YouTube TREASURE saat ini (dibulatkan YouTube)?",
+      [fmtExact(s), fmtExact(Math.round(s * 0.75 / 1e4) * 1e4), fmtExact(Math.round(s * 0.5 / 1e4) * 1e4), fmtExact(Math.round(s * 1.25 / 1e4) * 1e4)], 0,
+      `Data kanal terpantau situs ini: ${fmtExact(s)} subscriber — diperbarui otomatis oleh GitHub Actions.`);
+  }
+  if (chBm && chBm.history && chBm.history.length) {
+    const v = chBm.history[chBm.history.length - 1].v || 0;
+    const bb = Math.round(v / 1e9);
+    add(`Total views kanal YouTube BABYMONSTER sudah menembus berapa miliar?`,
+      [`${bb} miliar`, `${bb + 1} miliar`, `${Math.max(1, bb - 1)} miliar`, `${bb + 2} miliar`], 0,
+      `Total kanal ${fmtExact(v)} views — YG mengumumkan tonggak 10 miliar views pada 3 September 2026.`);
+  }
+  let topV = null;
+  const vidList = [];
+  for (const [id, vv] of Object.entries(state.videos || {})) {
+    const lv = vv.history && vv.history.length ? vv.history[vv.history.length - 1].v : null;
+    if (lv != null) vidList.push({ t: vv.title, v: lv });
+    if (lv != null && (!topV || lv > topV.v)) topV = { t: vv.title, v: lv };
+  }
+  if (topV) {
+    vidList.sort((x, y) => y.v - x.v);
+    const distract = vidList.slice(1, 5).map((x) => x.t); // 4 video berikutnya sbg pengecoh nyata
+    add("Video mana yang paling banyak DITONTON di seluruh data situs ini?",
+      [topV.t].concat(distract), 0,
+      `${topV.t} — ${fmtExact(topV.v)} views per data terpantau.`);
+  }
+  add("Kira-kira berapa pendengar bulanan Spotify BABYMONSTER (Nov 2026)?",
+    ["±7,9 juta", "±2 juta", "±16 juta", "±1,9 juta"], 0,
+    "Resmi open.spotify.com 17 Nov 2026 = 7.933.013 · kworb 7.931.780 · titik rekam situs 7.938.566 — cocok <0,1%.");
+  add("Kira-kira berapa pendengar bulanan Spotify TREASURE (Nov 2026)?",
+    ["±1,9 juta", "±7,9 juta", "±6,7 juta", "±4 juta"], 0,
+    "Resmi open.spotify.com 17 Nov 2026 = 1.885.365 — situs kini memakai angka persis ini, bukan pembulatan.");
+  return P;
+}
+function quizNewRound() {
+  const pool = quizPool();
+  for (let i = pool.length - 1; i > 0; i--) { const j = (Math.random() * (i + 1)) | 0; [pool[i], pool[j]] = [pool[j], pool[i]]; }
+  state.quiz = { qs: pool.slice(0, 8), i: 0, score: 0, streak: 0, picked: null, done: false };
+}
+function quizPick(idx) {
+  const qz = state.quiz;
+  if (!qz || qz.picked != null || qz.done) return;
+  qz.picked = idx;
+  qz.pickedArr = qz.pickedArr || [];
+  qz.pickedArr[qz.i] = idx; // direkap utk layar hasil
+  if (idx === qz.qs[qz.i].a) { qz.score++; qz.streak++; } else qz.streak = 0;
+  renderAll();
+}
+function quizNext() {
+  const qz = state.quiz;
+  if (!qz) return;
+  if (qz.i >= qz.qs.length - 1) {
+    qz.done = true;
+    if (qz.score > quizBest()) { try { localStorage.setItem("py.quizbest", String(qz.score)); } catch {} }
+  } else { qz.i++; qz.picked = null; }
+  renderAll();
+}
+function renderQuizPage(sec) {
+  const head = pageCloseBar("Kuis K-POP", "uji pengetahuan BABYMONSTER &amp; TREASURE — 8 soal acak per ronde dari data situs", ICO_QUIZ, "#eab308");
+  let qz = state.quiz;
+  if (!qz || !qz.qs || !qz.qs.length) { quizNewRound(); qz = state.quiz; }
+  let body = "";
+  if (qz.done) {
+    const best = quizBest();
+    const grade = qz.score === qz.qs.length ? "Sempurna — level Monster & Teume sejati!"
+      : qz.score >= 6 ? "Hebat — hampir semua benar!"
+      : qz.score >= 4 ? "Lumayan — terus pantau datanya!"
+      : "Belum kali ini — coba lagi, datanya ada di halaman lain situs ini.";
+    const review = qz.qs.map((it, i) => {
+      const ok = Array.isArray(qz.pickedArr) && qz.pickedArr[i] === it.a;
+      return `<div style="display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-top:1px solid var(--border);font-size:12.5px">
+        <span style="font-weight:800;color:${ok ? "#2fd57b" : "#ff6b81"}">${ok ? "✓" : "✗"}</span>
+        <div style="min-width:0"><b>${esc(it.q)}</b><br><span style="color:var(--muted)">Jawaban benar: <b style="color:#2fd57b">${esc(it.opts[it.a])}</b></span></div>
+      </div>`;
+    }).join("");
+    body = `
+    <div class="quiz-card">
+      <div class="quiz-res">
+        <div class="big">${qz.score}<span style="color:var(--muted);font-size:24px">/${qz.qs.length}</span></div>
+        <div class="sub">${grade}</div>
+        <div class="sub">Skor terbaik: <b>${best}</b>/${qz.qs.length}${qz.score >= best && qz.score > 0 ? " — rekor baru!" : ""}</div>
+        <button class="mtab active" id="quizAgain" style="margin-top:14px">Main lagi</button>
+      </div>
+      <div style="margin-top:16px;text-align:left">${review}</div>
+    </div>`;
+  } else {
+    const it = qz.qs[qz.i];
+    const opts = it.opts.map((o, i) => {
+      let cls = "quiz-opt";
+      if (qz.picked != null) {
+        if (i === it.a) cls += " ok";
+        else if (i === qz.picked) cls += " no";
+      }
+      return `<button type="button" class="${cls}" data-qi="${i}"${qz.picked != null ? " disabled" : ""}>${String.fromCharCode(65 + i)}. ${esc(o)}</button>`;
+    }).join("");
+    const why = qz.picked != null ? `<div class="quiz-why"><b style="color:${qz.picked === it.a ? "#2fd57b" : "#ff6b81"}">${qz.picked === it.a ? "Benar!" : "Belum tepat."}</b> ${esc(it.why)}</div>` : "";
+    body = `
+    <div class="quiz-card">
+      <div class="quiz-top">
+        <span class="qp">Soal ${qz.i + 1} dari ${qz.qs.length}</span>
+        <span class="qs">Skor <b>${qz.score}</b>${qz.streak > 1 ? ` · beruntun <b>${qz.streak}</b>` : ""}</span>
+      </div>
+      <div class="quiz-bar"><i style="width:${Math.round(((qz.i + (qz.picked != null ? 1 : 0)) / qz.qs.length) * 100)}%"></i></div>
+      <div class="quiz-q">${esc(it.q)}</div>
+      <div class="quiz-opts">${opts}</div>
+      ${why}
+      ${qz.picked != null ? `<div style="margin-top:14px;text-align:right"><button class="mtab active" id="quizNextBtn">${qz.i >= qz.qs.length - 1 ? "Lihat hasil" : "Soal berikutnya"}</button></div>` : ""}
+    </div>`;
+  }
+  sec.innerHTML = head + body + `
+    <p class="note">Soal dirakit dari data situs ini (members, milestones, trofi, kanal) + sumber publik yang sama seperti halaman lain (YG Entertainment, kworb.net, open.spotify.com, rekap komunitas <b>@bmspotiify</b> &amp; <b>@TEUMEonSpotify</b> di X). Angka subscriber, total views dan MV terbanyak diambil LANGSUNG dari data terpantau saat halaman dibuka — jadi jawabannya ikut terbaru. Skor terbaik disimpan di peramban (localStorage).</p>`;
+  bindPageClose(sec);
+  sec.querySelectorAll("[data-qi]").forEach((b) => b.addEventListener("click", () => quizPick(parseInt(b.dataset.qi, 10))));
+  const nb = sec.querySelector("#quizNextBtn");
+  if (nb) nb.addEventListener("click", quizNext);
+  const ab = sec.querySelector("#quizAgain");
+  if (ab) ab.addEventListener("click", () => { quizNewRound(); renderAll(); });
 }
 
 /* ---------- seksi anomali di beranda (log kolektor, no 18) ---------- */
@@ -4821,6 +5173,29 @@ const BUL_SRC_ANCHORS = {
   ],
   treasure: [
     { t: Date.UTC(2023, 10, 23, 12) / 1000, total: 998149602, src: "rekap @TEUMEonSpotify (X, 23 Nov 2023) — total 998.149.602 mendekati 1 miliar" },
+    { t: Date.UTC(2025, 7, 31, 12) / 1000, total: 1482516823, src: "update harian @TEUMEonSpotify (X, 31 Agu 2025) — total stream karier 1.482.516.823 (ml 1.940.007)" },
+  ],
+};
+/* ---------- jangkar PENDENGAR BULANAN (sumber publik, terverifikasi silang) ----------
+ * Situs baru merekam pendengar bulanan sejak 6 Nov 2026 — bulan sebelumnya diperkaya
+ * jangkar publik (ditandai ⓘ; ±N hari bila tanggalnya tidak persis di akhir bulan):
+ *  - BABYMONSTER 8.021.801 pada 13 Nov 2026 (hitungan @bmspotiify di X). Silang:
+ *    open.spotify.com 17 Nov 2026 = 7.933.013 · kworb.net listeners = 7.931.780 —
+ *    cocok dengan titik rekam situs 7.938.566 (16 Nov, selisih <0,1%). Puncak sejak
+ *    1 Mar 2023 = 10.072.324 (kworb listeners).
+ *  - TREASURE 1.940.007 (31 Agu 2025), 2.052.580 (9 Sep 2025), 2.420.819 (19 Sep
+ *    2025) — @TEUMEonSpotify & komunitas TEUME di X. Silang: open.spotify.com
+ *    17 Nov 2026 = 1.885.365 (kini DIPAKAI sebagai titik rekam persis — bukan lagi
+ *    pembulatan 1,9 jt). Rekor karier 6.652.201 (era DARARI 2022, data komunitas
+ *    4th-gen — salah satu puncak tertinggi generasi). */
+const BUL_ML_ANCHORS = {
+  babymonster: [
+    { t: Date.UTC(2026, 10, 13, 12) / 1000, ml: 8021801, src: "hitungan @bmspotiify (X, 13 Nov 2026)" },
+  ],
+  treasure: [
+    { t: Date.UTC(2025, 7, 31, 12) / 1000, ml: 1940007, src: "update harian @TEUMEonSpotify (X, 31 Agu 2025)" },
+    { t: Date.UTC(2025, 8, 9, 12) / 1000, ml: 2052580, src: "posting komunitas TEUME (X, 9 Sep 2025)" },
+    { t: Date.UTC(2025, 8, 19, 12) / 1000, ml: 2420819, src: "posting komunitas TEUME (X, 19 Sep 2025)" },
   ],
 };
 function bulReconSp(artId) {
@@ -4879,22 +5254,31 @@ function bulReconSp(artId) {
     const aL = A[i], aR = A[i + 1];
     return { v: Math.round(aL.v + segK(aL, aR) * (cAt(t) - cAt(aL.t))), how: "est", src: null, off: null };
   };
-  /* pendengar bulanan: titik rekam nyata bila ≤10 hari; selain itu tebakan dari
-   * ritme 30 hari kurva rekonsiliasi (pangkat 0,5 — efek dedup pendengar), dibatasi
-   * maks 1,12× puncak terekam. Bukan angka resmi — ditandai ≈. */
-  const mlPts = (a.history || []).filter((p) => p.ml != null).map((p) => ({ t: p.t, ml: p.ml, approx: a.mlApprox === true }));
+  /* pendengar bulanan: titik rekam nyata bila ≤10 hari; jangkar sumber publik
+   * (BUL_ML_ANCHORS) bila ≤14 hari — ditandai ⓘ (±N hari bila tidak persis di
+   * akhir bulan); selain itu tebakan dari ritme 30 hari kurva rekonsiliasi
+   * (pangkat 0,5 — efek dedup pendengar), dibatasi maks 1,12× puncak terekam/
+   * jangkar. Bukan angka resmi — ditandai ≈. */
+  const mlPts = (a.history || []).filter((p) => p.ml != null).map((p) => ({ t: p.t, ml: p.ml, how: a.mlApprox === true ? "est" : "real", src: "titik rekam situs" + (a.mlApprox === true ? " (perkiraan)" : "") }));
+  for (const s of (BUL_ML_ANCHORS[artId] || [])) mlPts.push({ t: s.t, ml: s.ml, how: "src", src: s.src });
   const maxMl = mlPts.length ? Math.max(...mlPts.map((p) => p.ml)) : null;
   const paceOf = (tt) => { const r1 = at(tt), r0 = at(tt - 30 * 86400); return r1.v == null ? null : r1.v - (r0.v || 0); };
   const mlAt = (t) => {
     if (!mlPts.length) return { v: null, how: null, src: null, off: null };
-    let best = null, bd = Infinity;
-    for (const p of mlPts) { const d = Math.abs(p.t - t); if (d < bd) { bd = d; best = p; } }
-    if (bd <= 10 * 86400) return { v: best.ml, how: best.approx ? "est" : "real", src: "titik rekam situs" + (best.approx ? " (perkiraan)" : ""), off: Math.max(1, Math.round(bd / 86400)) };
+    let bR = null, bdR = Infinity, bS = null, bdS = Infinity;
+    for (const p of mlPts) {
+      const d = Math.abs(p.t - t);
+      if (p.how === "src") { if (d < bdS) { bdS = d; bS = p; } }
+      else { if (d < bdR) { bdR = d; bR = p; } }
+    }
+    if (bR && bdR <= 10 * 86400) return { v: bR.ml, how: bR.how, src: bR.src, off: Math.max(1, Math.round(bdR / 86400)) };
+    if (bS && bdS <= 14 * 86400) return { v: bS.ml, how: "src", src: bS.src, off: Math.max(1, Math.round(bdS / 86400)) };
     if (at(t).v == null) return { v: null, how: null, src: null, off: null };
-    const pace = paceOf(t), paceRef = paceOf(best.t);
-    if (pace == null || paceRef == null || paceRef <= 0 || pace < 0) return { v: Math.round(best.ml), how: "est", src: null, off: null };
+    const ref = bR || bS;
+    const pace = paceOf(t), paceRef = paceOf(ref.t);
+    if (pace == null || paceRef == null || paceRef <= 0 || pace < 0) return { v: Math.round(ref.ml), how: "est", src: null, off: null };
     const ratio = Math.min(Math.max(Math.sqrt(pace / paceRef), 0.10), 1.12);
-    let v = best.ml * ratio;
+    let v = ref.ml * ratio;
     if (maxMl != null) v = Math.min(v, maxMl * 1.12);
     return { v: Math.round(v), how: "est", src: null, off: null };
   };
@@ -5024,7 +5408,7 @@ function bulBodyHTML(plat, year) {
   <div class="hm-bar"><div class="hm-sum">${sumHTML}</div></div>
   <div class="chartbox"><canvas id="bulChart"></canvas></div>
   ${tableHTML}
-  <p class="note">Kolom <b>${hmUnit(plat)} baru</b> = ${plat === "spotify" ? "selisih <b>total stream karier</b> antar akhir bulan pada kurva yang direkonsiliasi dengan jangkar — bukan lagi penjumlahan riwayat lagu yang distribusinya masih perkiraan model" : "selisih total antar pengumuman yang direkam situs, dipadatkan per bulan (semantik sama dengan peta panas harian)"}. Kolom <b>akhir bulan</b> &amp; <b>pendengar bulanan</b> diisi terus bila datanya ada: <b>±</b> = titik rekam terdekat (N hari dari akhir bulan), <b>ⓘ</b> = jangkar sumber publik (arahkan kursor untuk sumbernya), <b>≈</b> = estimasi situs (interpolasi/ekstrapolasi antar jangkar — bukan angka resmi). ${plat === "spotify" ? "Jangkar Spotify — BABYMONSTER: rekap tahunan akun statistik <b>@bmspotiify</b> di X (15 Nov 2026): 2023 = 34,21 jt · 2024 = 898,28 jt · 2025 = 936,50 jt (total karier akhir-2024 = 932,49 jt · akhir-2025 = 1.868,99 jt), tonggak <b>1 miliar total stream karier 1 Apr 2025</b> (r/BABYMONSTER), dan 2026 = 1.001.562.568 (tahun pertama tembus 1 miliar — sesuai postingan komunitas 14-15 Nov 2026). TREASURE: total 998.149.602 pada 23 Nov 2023 (rekap <b>@TEUMEonSpotify</b> di X). Basis <b>karier</b> = total kworb.net + era single asli yang sudah dicabut dari katalog (BATTER UP 2023 = +278.759.596 — selisih persis rekap 2.870.552.791 vs kworb 2.591.793.195 per 17 Nov 2026). Pendengar bulanan di luar titik rekam = tebakan dari ritme stream 30 hari (pangkat 0,5)." : "Total views akhir bulan di luar titik rekam = interpolasi antar titik riwayat channel (BM: jangkar resmi YG 10 miliar views 3 Sep 2026 + Social Blade harian; TREASURE: >100 jt views pra-debut menurut Chosun 20 Jul 2020, 1 miliar ±Jan 2022, Social Blade harian) — nilai lama bersifat perkiraan."} Baris <b>Total Jan–Des</b> = jumlah seluruh ${hmUnit(plat)} baru Jan–Des tahun itu. Ganti tab <b>Platform</b>, <b>Artis</b> dan <b>Tahun</b> untuk melihat kombinasi lain.</p>`;
+  <p class="note">Kolom <b>${hmUnit(plat)} baru</b> = ${plat === "spotify" ? "selisih <b>total stream karier</b> antar akhir bulan pada kurva yang direkonsiliasi dengan jangkar — bukan lagi penjumlahan riwayat lagu yang distribusinya masih perkiraan model" : "selisih total antar pengumuman yang direkam situs, dipadatkan per bulan (semantik sama dengan peta panas harian)"}. Kolom <b>akhir bulan</b> &amp; <b>pendengar bulanan</b> diisi terus bila datanya ada: <b>±</b> = titik rekam terdekat (N hari dari akhir bulan), <b>ⓘ</b> = jangkar sumber publik (arahkan kursor untuk sumbernya), <b>≈</b> = estimasi situs (interpolasi/ekstrapolasi antar jangkar — bukan angka resmi). ${plat === "spotify" ? "Jangkar Spotify — BABYMONSTER: rekap tahunan akun statistik <b>@bmspotiify</b> di X (15 Nov 2026): 2023 = 34,21 jt · 2024 = 898,28 jt · 2025 = 936,50 jt (total karier akhir-2024 = 932,49 jt · akhir-2025 = 1.868,99 jt), tonggak <b>1 miliar total stream karier 1 Apr 2025</b> (r/BABYMONSTER), dan 2026 = 1.001.562.568 (tahun pertama tembus 1 miliar — sesuai postingan komunitas 14-15 Nov 2026). TREASURE: total 998.149.602 pada 23 Nov 2023 dan 1.482.516.823 pada 31 Agu 2025 (rekap &amp; update harian <b>@TEUMEonSpotify</b> di X). Basis <b>karier</b> = total kworb.net + era single asli yang sudah dicabut dari katalog (BATTER UP 2023 = +278.759.596 — selisih persis rekap 2.870.552.791 vs kworb 2.591.793.195 per 17 Nov 2026). Pendengar bulanan terverifikasi silang per 17 Nov 2026: BABYMONSTER 7.933.013 (open.spotify.com) &amp; 7.931.780 (kworb) vs titik rekam situs 7.938.566 — cocok &lt;0,1%; TREASURE 1.885.365 resmi — kini dipakai PERSIS (bukan lagi pembulatan 1,9 jt). Jangkar pendengar (ⓘ): BABYMONSTER 8.021.801 (13 Nov 2026, @bmspotiify); TREASURE 1.940.007 (31 Agu 2025), 2.052.580 (9 Sep) &amp; 2.420.819 (19 Sep 2025, komunitas TEUME). Puncak: BM 10.072.324 (kworb, sejak Mar 2023) · TREASURE 6.652.201 (era DARARI 2022, data komunitas). Bulan tanpa jangkar = tebakan dari ritme stream 30 hari (pangkat 0,5)." : "Total views akhir bulan di luar titik rekam = interpolasi antar titik riwayat channel (BM: jangkar resmi YG 10 miliar views 3 Sep 2026 + Social Blade harian; TREASURE: >100 jt views pra-debut menurut Chosun 20 Jul 2020, 1 miliar ±Jan 2022, Social Blade harian) — nilai lama bersifat perkiraan."} Baris <b>Total Jan–Des</b> = jumlah seluruh ${hmUnit(plat)} baru Jan–Des tahun itu. Ganti tab <b>Platform</b>, <b>Artis</b> dan <b>Tahun</b> untuk melihat kombinasi lain.</p>`;
 }
 function renderBulanPage(sec) {
   const plat = bulPlat();
@@ -6575,7 +6959,9 @@ function renderSpAll() {
     else if (state.bruOpen) renderNewsPage(sec);
     else if (state.tmlOpen) renderTimelinePage(sec);
     else if (state.heatOpen) renderHeatmapPage(sec); // halaman Peta panas harian
+    else if (state.chnOpen) renderChannelStatsPage(sec); // halaman Statistik Channel
     else if (state.bulOpen) renderBulanPage(sec); // halaman Rekap 12 bulan
+    else if (state.quiOpen) renderQuizPage(sec); // halaman Kuis K-POP
     else renderSpHome(sec);
   }
   else renderSpArtist(sec);
@@ -7965,7 +8351,9 @@ function renderAll() {
     else if (state.bruOpen) renderNewsPage($("#homeSection"));    // halaman Berita K-pop
     else if (state.tmlOpen) renderTimelinePage($("#homeSection")); // halaman Timeline Grup
     else if (state.heatOpen) renderHeatmapPage($("#homeSection")); // halaman Peta panas harian
+    else if (state.chnOpen) renderChannelStatsPage($("#homeSection")); // halaman Statistik Channel
     else if (state.bulOpen) renderBulanPage($("#homeSection")); // halaman Rekap 12 bulan
+    else if (state.quiOpen) renderQuizPage($("#homeSection")); // halaman Kuis K-POP
     else renderHome();
   }
   else {
