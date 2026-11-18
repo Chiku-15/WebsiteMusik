@@ -32,7 +32,7 @@
     }
    },
    "chartDate": "2026-11-18",
-   "updated": 1794962873,
+   "updated": 1794984973,
    "lastError": null
   },
   "billboard_global_excl_us": {
@@ -65,7 +65,7 @@
      "best": null
     }
    },
-   "updated": 1794962875,
+   "updated": 1794984975,
    "chartDate": "2026-11-18",
    "lastError": null
   },
@@ -83,9 +83,9 @@
     }
    },
    "chartDate": "2026-11-16",
-   "updated": 1794962877,
+   "updated": 1794984977,
    "lastError": null
   }
  },
- "updated": 1794981154
+ "updated": 1794984977
 }
