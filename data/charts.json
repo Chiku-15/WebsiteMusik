@@ -14,8 +14,8 @@
      "best": null
     }
    },
-   "chartDate": "2026-11-17",
-   "updated": 1794917314,
+   "chartDate": "2026-11-18",
+   "updated": 1794962866,
    "lastError": null
   },
   "genie_top200": {
@@ -32,7 +32,7 @@
     }
    },
    "chartDate": "2026-11-18",
-   "updated": 1794941150,
+   "updated": 1794962873,
    "lastError": null
   },
   "billboard_global_excl_us": {
@@ -48,9 +48,9 @@
      "best": null
     }
    },
-   "updated": 1794917315,
+   "updated": 1794962867,
    "lastError": null,
-   "chartDate": "2026-11-17"
+   "chartDate": "2026-11-18"
   },
   "bugs_day100": {
    "label": "Bugs Top 100 (harian)",
@@ -65,7 +65,7 @@
      "best": null
     }
    },
-   "updated": 1794941154,
+   "updated": 1794962875,
    "chartDate": "2026-11-18",
    "lastError": null
   },
@@ -82,10 +82,10 @@
      "best": null
     }
    },
-   "chartDate": "2026-11-15",
-   "updated": 1794941156,
+   "chartDate": "2026-11-16",
+   "updated": 1794962877,
    "lastError": null
   }
  },
- "updated": 1794958785
+ "updated": 1794962877
 }
