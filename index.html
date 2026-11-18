@@ -40,7 +40,8 @@
     background:color-mix(in srgb, var(--bg) 78%, transparent);
     border-bottom:1px solid var(--border);
   }
-  .hwrap{max-width:1180px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  /* lebar penuh sampai ujung kiri-kanan (tanpa ruang kosong di tepi layar lebar) */
+  .hwrap{max-width:none;margin:0;padding:12px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
   .hbtns{display:flex;gap:8px;align-items:center}
   .logo{display:flex;align-items:center;gap:11px;cursor:pointer;border:none;background:none;color:inherit;padding:0;font-family:inherit;min-width:0}
   .logo .dot{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#ff4d6d 0%,#8a5cf6 52%,#6a78ff 100%);display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 6px 18px rgba(138,92,246,.32)}
@@ -66,7 +67,7 @@
   .iconbtn:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
   .iconbtn svg{width:18px;height:18px;fill:currentColor}
   /* ---------- layout ---------- */
-  main{max-width:1180px;margin:0 auto;padding:22px 20px 40px}
+  main{max-width:none;margin:0;padding:22px 22px 40px}
   .topline{color:var(--muted);font-size:12.5px;margin:2px 2px 16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
   .pulse{width:8px;height:8px;border-radius:50%;background:#2fd57b;box-shadow:0 0 0 3px rgba(47,213,123,.18)}
   .banner{
@@ -163,7 +164,7 @@
   .vright .l{font-size:10.5px;color:var(--muted);font-weight:600}
   /* ---------- footer ---------- */
   footer{border-top:1px solid var(--border);color:var(--muted);font-size:12.5px}
-  .fwrap{max-width:1180px;margin:0 auto;padding:18px 20px;display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}
+  .fwrap{max-width:none;margin:0;padding:18px 22px;display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}
   footer a{color:var(--muted)}
   /* ---------- detail overlay ---------- */
   .overlay{
@@ -1109,11 +1110,11 @@
       <span class="dot"><svg viewBox="0 0 24 24"><path d="M3 12h4.2l1.9-6.5 3.8 13 1.9-6.5H21"/></svg></span>
       <span class="lt"><b id="siteTitle">K-POP PULSE</b><small id="siteSubtitle">Statistik YouTube &amp; Spotify</small></span>
     </div>
+    <button class="tab berandatab" id="berandaTab" title="Buka halaman BERANDA — garis besar seluruh situs dalam satu halaman" style="flex:none">Beranda</button>
     <div class="spacer"></div>
     <nav class="tabs" id="platformTabs" aria-label="Pilih platform">
       <button class="tab active" data-p="yt" id="ptabYT">YouTube</button>
       <button class="tab" data-p="spotify" id="ptabSP">Spotify</button>
-      <button class="tab berandatab" id="berandaTab" title="Buka halaman BERANDA — garis besar seluruh situs dalam satu halaman">Beranda</button>
     </nav>
     <div class="hbtns">
       <button class="iconbtn" id="searchBtn" title="Cari lagu, album, artis, video…" aria-label="Cari di seluruh situs">
@@ -1970,7 +1971,7 @@ function renderBerandaPage(sec) {
     </div>
     ${newsTeaser}
     ${isSp ? wrapTeaserHTML() : ""}
-    <p class="note">Halaman BERANDA masuknya lewat tombol <b>Beranda</b> di samping tab YouTube/Spotify di header — kembali ke beranda platform lewat tab itu atau logo situs. Angka gabungan dihitung langsung dari data pemantauan (YouTube 2× sehari, Spotify Charts via kworb.net tiap jam); angka Spotify tampil begitu data Spotify dimuat.</p>`;
+    <p class="note">Halaman BERANDA masuknya lewat tombol <b>Beranda</b> di kiri header — tepat di samping logo K-POP PULSE; kembali ke beranda platform lewat tab YouTube/Spotify atau logo situs. Angka gabungan dihitung langsung dari data pemantauan (YouTube 2× sehari, Spotify Charts via kworb.net tiap jam); angka Spotify tampil begitu data Spotify dimuat.</p>`;
   bindPageClose(sec);
   bindMenu(sec);
   sec.querySelectorAll("[data-berplat]").forEach((b) => b.addEventListener("click", () => setPlatform(b.dataset.berplat)));
@@ -4828,9 +4829,9 @@ function renderSearchRes(q) {
 }
 
 /* ===================== render: tabs & navigasi ===================== */
-/* Tab YouTube/Spotify membawa ke beranda platform itu; tombol BERANDA di sampingnya
- * membuka halaman BERANDA (garis besar seluruh situs). Kembali ke beranda platform
- * lewat tab platform (klik lagi) atau logo situs di kiri atas. */
+/* Tab YouTube/Spotify membawa ke beranda platform itu; tombol BERANDA di sebelah KIRI
+ * (samping logo K-POP PULSE) membuka halaman BERANDA (garis besar seluruh situs).
+ * Kembali ke beranda platform lewat tab platform (klik lagi) atau logo situs di kiri atas. */
 function renderTabs() {
   const spN = state.sp.tracks ? Object.keys(state.sp.tracks).length : null;
   const ytN = state.videos ? watchedIds().size : null;
@@ -5610,20 +5611,28 @@ const BUL_SRC_ANCHORS = {
 /* ---------- jangkar PENDENGAR BULANAN (sumber publik, terverifikasi silang) ----------
  * Situs baru merekam pendengar bulanan sejak 6 Nov 2026 — bulan sebelumnya diperkaya
  * jangkar publik (ditandai ⓘ; ±N hari bila tanggalnya tidak persis di akhir bulan):
- *  - BABYMONSTER 8.021.801 pada 13 Nov 2026 (hitungan @bmspotiify di X). Silang:
- *    open.spotify.com 17 Nov 2026 = 7.933.013 · kworb.net listeners = 7.931.780 —
- *    cocok dengan titik rekam situs 7.938.566 (16 Nov, selisih <0,1%). Puncak sejak
- *    1 Mar 2023 = 10.072.324 (kworb listeners).
- *  - TREASURE 1.940.007 (31 Agu 2025), 2.052.580 (9 Sep 2025), 2.420.819 (19 Sep
- *    2025) — @TEUMEonSpotify & komunitas TEUME di X. Silang: open.spotify.com
+ *  - PUNCAK KARIER BABYMONSTER = 10.072.324 pada MEI 2024 — era debut EP
+ *    BABYMONS7ER (1 Apr 2024) + SHEESH, saat kurva pendengar paling tinggi
+ *    (data statistik komunitas BM di X; titik jangkar kedua: 6 Mei 2024 =
+ *    6.602.531, terus naik menuju puncak di akhir Mei). Titik rekam situs sejak
+ *    6 Nov 2026: 8.021.801 (13 Nov 2026, @bmspotiify). Silang: open.spotify.com
+ *    17 Nov 2026 = 7.933.013 · kworb.net listeners = 7.931.780 — cocok dgn titik
+ *    rekam situs 7.938.566 (16 Nov, selisih <0,1%).
+ *  - PUNCAK KARIER TREASURE = 6.652.201 pada MARET 2022 — puncaknya membentang
+ *    Maret–April 2022, era THE SECOND STEP : CHAPTER ONE + DARARI (data komunitas
+ *    TEUME — salah satu puncak tertinggi generasi 4). Titik lain: 1.940.007
+ *    (31 Agu 2025), 2.052.580 (9 Sep 2025), 2.420.819 (19 Sep 2025) —
+ *    @TEUMEonSpotify & komunitas TEUME di X. Silang: open.spotify.com
  *    17 Nov 2026 = 1.885.365 (kini DIPAKAI sebagai titik rekam persis — bukan lagi
- *    pembulatan 1,9 jt). Rekor karier 6.652.201 (era DARARI 2022, data komunitas
- *    4th-gen — salah satu puncak tertinggi generasi). */
+ *    pembulatan 1,9 jt). */
 const BUL_ML_ANCHORS = {
   babymonster: [
+    { t: Date.UTC(2024, 4, 31, 12) / 1000, ml: 10072324, src: "puncak pendengar bulanan Mei 2024 — era BABYMONS7ER/SHEESH (data statistik komunitas BM di X)" },
+    { t: Date.UTC(2024, 4, 6, 12) / 1000, ml: 6602531, src: "rekap harian statistik BM di X (6 Mei 2024) — 6.602.531 (+87.837), fase naik menuju puncak Mei 2024" },
     { t: Date.UTC(2026, 10, 13, 12) / 1000, ml: 8021801, src: "hitungan @bmspotiify (X, 13 Nov 2026)" },
   ],
   treasure: [
+    { t: Date.UTC(2022, 2, 31, 12) / 1000, ml: 6652201, src: "puncak pendengar bulanan Maret–April 2022 — era DARARI / THE SECOND STEP : CHAPTER ONE (data komunitas TEUME)" },
     { t: Date.UTC(2025, 7, 31, 12) / 1000, ml: 1940007, src: "update harian @TEUMEonSpotify (X, 31 Agu 2025)" },
     { t: Date.UTC(2025, 8, 9, 12) / 1000, ml: 2052580, src: "posting komunitas TEUME (X, 9 Sep 2025)" },
     { t: Date.UTC(2025, 8, 19, 12) / 1000, ml: 2420819, src: "posting komunitas TEUME (X, 19 Sep 2025)" },
@@ -5688,8 +5697,10 @@ function bulReconSp(artId) {
   /* pendengar bulanan: titik rekam nyata bila ≤10 hari; jangkar sumber publik
    * (BUL_ML_ANCHORS) bila ≤14 hari — ditandai ⓘ (±N hari bila tidak persis di
    * akhir bulan); selain itu tebakan dari ritme 30 hari kurva rekonsiliasi
-   * (pangkat 0,5 — efek dedup pendengar), dibatasi maks 1,12× puncak terekam/
-   * jangkar. Bukan angka resmi — ditandai ≈. */
+   * (pangkat 0,5 — efek dedup pendengar) dibandingkan dgn jangkar/titik
+   * TERDEKAT (bukan selalu titik Nov 2026), dibatasi maks 98% puncak
+   * terekam/jangkar supaya bulan puncak karier (Mei 2024 BM · Maret 2022
+   * TREASURE) selalu jadi bulan tertinggi. Bukan angka resmi — ditandai ≈. */
   const mlPts = (a.history || []).filter((p) => p.ml != null).map((p) => ({ t: p.t, ml: p.ml, how: a.mlApprox === true ? "est" : "real", src: "titik rekam situs" + (a.mlApprox === true ? " (perkiraan)" : "") }));
   for (const s of (BUL_ML_ANCHORS[artId] || [])) mlPts.push({ t: s.t, ml: s.ml, how: "src", src: s.src });
   const maxMl = mlPts.length ? Math.max(...mlPts.map((p) => p.ml)) : null;
@@ -5705,12 +5716,17 @@ function bulReconSp(artId) {
     if (bR && bdR <= 10 * 86400) return { v: bR.ml, how: bR.how, src: bR.src, off: Math.max(1, Math.round(bdR / 86400)) };
     if (bS && bdS <= 14 * 86400) return { v: bS.ml, how: "src", src: bS.src, off: Math.max(1, Math.round(bdS / 86400)) };
     if (at(t).v == null) return { v: null, how: null, src: null, off: null };
-    const ref = bR || bS;
+    /* pembanding = titik dgn JARAK TERDEKAT (titik rekam ATAU jangkar publik) —
+     * supaya tiap masa mengikuti jangkar terdekatnya: era 2024 mengikuti puncak
+     * Mei 2024, era 2025-2026 mengikuti titik rekam Nov 2026, dst. */
+    const ref = !bR ? bS : (!bS ? bR : (bdR <= bdS ? bR : bS));
     const pace = paceOf(t), paceRef = paceOf(ref.t);
     if (pace == null || paceRef == null || paceRef <= 0 || pace < 0) return { v: Math.round(ref.ml), how: "est", src: null, off: null };
     const ratio = Math.min(Math.max(Math.sqrt(pace / paceRef), 0.10), 1.12);
     let v = ref.ml * ratio;
-    if (maxMl != null) v = Math.min(v, maxMl * 1.12);
+    /* estimasi tak boleh melewati puncak karier — dibatasi 98% puncak terekam/
+     * jangkar supaya bulan puncak (Mei 2024 BM · Maret 2022 TREASURE) tetap tertinggi */
+    if (maxMl != null) v = Math.min(v, Math.round(maxMl * 0.98));
     return { v: Math.round(v), how: "est", src: null, off: null };
   };
   return { at, mlAt };
@@ -5839,7 +5855,7 @@ function bulBodyHTML(plat, year) {
   <div class="hm-bar"><div class="hm-sum">${sumHTML}</div></div>
   <div class="chartbox"><canvas id="bulChart"></canvas></div>
   ${tableHTML}
-  <p class="note">Kolom <b>${hmUnit(plat)} baru</b> = ${plat === "spotify" ? "selisih <b>total stream karier</b> antar akhir bulan pada kurva yang direkonsiliasi dengan jangkar — bukan lagi penjumlahan riwayat lagu yang distribusinya masih perkiraan model" : "selisih total antar pengumuman yang direkam situs, dipadatkan per bulan (semantik sama dengan peta panas harian)"}. Kolom <b>akhir bulan</b> &amp; <b>pendengar bulanan</b> diisi terus bila datanya ada: <b>±</b> = titik rekam terdekat (N hari dari akhir bulan), <b>ⓘ</b> = jangkar sumber publik (arahkan kursor untuk sumbernya), <b>≈</b> = estimasi situs (interpolasi/ekstrapolasi antar jangkar — bukan angka resmi). ${plat === "spotify" ? "Jangkar Spotify — BABYMONSTER: rekap tahunan akun statistik <b>@bmspotiify</b> di X (15 Nov 2026): 2023 = 34,21 jt · 2024 = 898,28 jt · 2025 = 936,50 jt (total karier akhir-2024 = 932,49 jt · akhir-2025 = 1.868,99 jt), tonggak <b>1 miliar total stream karier 1 Apr 2025</b> (r/BABYMONSTER), dan 2026 = 1.001.562.568 (tahun pertama tembus 1 miliar — sesuai postingan komunitas 14-15 Nov 2026). TREASURE: total 998.149.602 pada 23 Nov 2023 dan 1.482.516.823 pada 31 Agu 2025 (rekap &amp; update harian <b>@TEUMEonSpotify</b> di X). Basis <b>karier</b> = total kworb.net + era single asli yang sudah dicabut dari katalog (BATTER UP 2023 = +278.759.596 — selisih persis rekap 2.870.552.791 vs kworb 2.591.793.195 per 17 Nov 2026). Pendengar bulanan terverifikasi silang per 17 Nov 2026: BABYMONSTER 7.933.013 (open.spotify.com) &amp; 7.931.780 (kworb) vs titik rekam situs 7.938.566 — cocok &lt;0,1%; TREASURE 1.885.365 resmi — kini dipakai PERSIS (bukan lagi pembulatan 1,9 jt). Jangkar pendengar (ⓘ): BABYMONSTER 8.021.801 (13 Nov 2026, @bmspotiify); TREASURE 1.940.007 (31 Agu 2025), 2.052.580 (9 Sep) &amp; 2.420.819 (19 Sep 2025, komunitas TEUME). Puncak: BM 10.072.324 (kworb, sejak Mar 2023) · TREASURE 6.652.201 (era DARARI 2022, data komunitas). Bulan tanpa jangkar = tebakan dari ritme stream 30 hari (pangkat 0,5)." : "Total views akhir bulan di luar titik rekam = interpolasi antar titik riwayat channel (BM: jangkar resmi YG 10 miliar views 3 Sep 2026 + Social Blade harian; TREASURE: >100 jt views pra-debut menurut Chosun 20 Jul 2020, 1 miliar ±Jan 2022, Social Blade harian) — nilai lama bersifat perkiraan."} Baris <b>Total Jan–Des</b> = jumlah seluruh ${hmUnit(plat)} baru Jan–Des tahun itu. Ganti tab <b>Platform</b>, <b>Artis</b> dan <b>Tahun</b> untuk melihat kombinasi lain.</p>`;
+  <p class="note">Kolom <b>${hmUnit(plat)} baru</b> = ${plat === "spotify" ? "selisih <b>total stream karier</b> antar akhir bulan pada kurva yang direkonsiliasi dengan jangkar — bukan lagi penjumlahan riwayat lagu yang distribusinya masih perkiraan model" : "selisih total antar pengumuman yang direkam situs, dipadatkan per bulan (semantik sama dengan peta panas harian)"}. Kolom <b>akhir bulan</b> &amp; <b>pendengar bulanan</b> diisi terus bila datanya ada: <b>±</b> = titik rekam terdekat (N hari dari akhir bulan), <b>ⓘ</b> = jangkar sumber publik (arahkan kursor untuk sumbernya), <b>≈</b> = estimasi situs (interpolasi/ekstrapolasi antar jangkar — bukan angka resmi). ${plat === "spotify" ? "Jangkar Spotify — BABYMONSTER: rekap tahunan akun statistik <b>@bmspotiify</b> di X (15 Nov 2026): 2023 = 34,21 jt · 2024 = 898,28 jt · 2025 = 936,50 jt (total karier akhir-2024 = 932,49 jt · akhir-2025 = 1.868,99 jt), tonggak <b>1 miliar total stream karier 1 Apr 2025</b> (r/BABYMONSTER), dan 2026 = 1.001.562.568 (tahun pertama tembus 1 miliar — sesuai postingan komunitas 14-15 Nov 2026). TREASURE: total 998.149.602 pada 23 Nov 2023 dan 1.482.516.823 pada 31 Agu 2025 (rekap &amp; update harian <b>@TEUMEonSpotify</b> di X). Basis <b>karier</b> = total kworb.net + era single asli yang sudah dicabut dari katalog (BATTER UP 2023 = +278.759.596 — selisih persis rekap 2.870.552.791 vs kworb 2.591.793.195 per 17 Nov 2026). Pendengar bulanan terverifikasi silang per 17 Nov 2026: BABYMONSTER 7.933.013 (open.spotify.com) &amp; 7.931.780 (kworb) vs titik rekam situs 7.938.566 — cocok &lt;0,1%; TREASURE 1.885.365 resmi — kini dipakai PERSIS (bukan lagi pembulatan 1,9 jt). Jangkar pendengar (ⓘ): BABYMONSTER <b>10.072.324 (Mei 2024 — puncak karier, era BABYMONS7ER/SHEESH)</b>, 6.602.531 (6 Mei 2024, fase naik) &amp; 8.021.801 (13 Nov 2026, @bmspotiify); TREASURE <b>6.652.201 (Maret 2022 — puncak karier Maret–April 2022, era DARARI/THE SECOND STEP)</b>, 1.940.007 (31 Agu 2025), 2.052.580 (9 Sep) &amp; 2.420.819 (19 Sep 2025, komunitas TEUME). Bulan tanpa jangkar = tebakan dari ritme stream 30 hari (pangkat 0,5) — dibatasi maks 98% puncak karier supaya bulan puncak selalu bulan tertinggi." : "Total views akhir bulan di luar titik rekam = interpolasi antar titik riwayat channel (BM: jangkar resmi YG 10 miliar views 3 Sep 2026 + Social Blade harian; TREASURE: >100 jt views pra-debut menurut Chosun 20 Jul 2020, 1 miliar ±Jan 2022, Social Blade harian) — nilai lama bersifat perkiraan."} Baris <b>Total Jan–Des</b> = jumlah seluruh ${hmUnit(plat)} baru Jan–Des tahun itu. Ganti tab <b>Platform</b>, <b>Artis</b> dan <b>Tahun</b> untuk melihat kombinasi lain.</p>`;
 }
 function renderBulanPage(sec) {
   const plat = bulPlat();
