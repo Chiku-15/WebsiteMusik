@@ -60,6 +60,9 @@
   .tab.berandatab{color:#ff8a3d;font-weight:800;position:relative}
   .tab.berandatab:hover{color:#ffa95c}
   .tab.berandatab.active{background:linear-gradient(135deg,#ff8a3d,#ff4d6d);color:#fff;box-shadow:0 4px 14px rgba(255,106,61,.35)}
+  .tab.fiturtab{color:#ffb02e;font-weight:800;position:relative}
+  .tab.fiturtab:hover{color:#ffc35c}
+  .tab.fiturtab.active{background:linear-gradient(135deg,#ffb02e,#ff8a3d);color:#fff;box-shadow:0 4px 14px rgba(255,176,46,.35)}
   .iconbtn{
     width:38px;height:38px;border-radius:11px;border:1px solid var(--border);background:var(--card);
     color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.18s;
@@ -1143,7 +1146,7 @@
       <span class="lt"><b id="siteTitle">K-POP PULSE</b><small id="siteSubtitle">Statistik YouTube &amp; Spotify</small></span>
     </div>
     <button class="tab berandatab" id="berandaTab" title="Buka halaman BERANDA — garis besar seluruh situs dalam satu halaman" style="flex:none">Beranda</button>
-    <button class="tab" id="fiturTab" title="Buka halaman Semua Fitur — peta seluruh fitur situs dalam bentuk kartu" style="flex:none">Fitur</button>
+    <button class="tab fiturtab" id="fiturTab" title="Buka halaman Semua Fitur — peta seluruh fitur situs dalam bentuk kartu" style="flex:none">Fitur</button>
     <div class="spacer"></div>
     <div class="hbtns">
       <button class="iconbtn" id="searchBtn" title="Cari lagu, album, artis, video…" aria-label="Cari di seluruh situs">
@@ -1691,7 +1694,7 @@ function pageCloseBar(title, sub, ico, color) {
   return `
   <div class="pagehead">
     <div style="display:flex;align-items:center;gap:12px;min-width:0">${chip}<div style="min-width:0"><div class="ptitle">${title}</div>${sub ? `<div class="psub">${sub}</div>` : ""}</div></div>
-    <button class="pagex" id="pageClose" aria-label="Tutup halaman — kembali ke beranda" title="Tutup halaman — kembali ke beranda">✕</button>
+    <button class="pagex" id="pageClose" aria-label="Tutup halaman — kembali ke BERANDA" title="Tutup halaman — kembali ke BERANDA">✕</button>
   </div>`;
 }
 function bindPageClose(sec) {
@@ -1700,7 +1703,8 @@ function bindPageClose(sec) {
     state.memOpen = false; state.troOpen = false; state.schOpen = false;
     state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false;
     state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
-    state.chnOpen = false; state.quiOpen = false; state.berOpen = false; state.fiturOpen = false;
+    state.chnOpen = false; state.quiOpen = false; state.fiturOpen = false; state.spWrapOpen = false;
+    state.berOpen = true;   // ✕ halaman mana pun = pulang ke BERANDA (garis besar situs)
     renderAll(); window.scrollTo(0, 0);
   }));
 }
@@ -7700,7 +7704,7 @@ function renderWrappedPage(sec) {
   const closeBar = `
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin:2px 2px 12px;flex-wrap:wrap">
       <div style="font-size:10.5px;font-weight:800;letter-spacing:1.6px;color:var(--muted);text-transform:uppercase">Rekap otomatis dari stream yang direkam situs ini</div>
-      <button class="pagex" id="wrapClose" aria-label="Tutup halaman Wrapped — kembali ke beranda" title="Tutup halaman — kembali ke beranda">✕</button>
+      <button class="pagex" id="wrapClose" aria-label="Tutup halaman Wrapped — kembali ke BERANDA" title="Tutup halaman — kembali ke BERANDA">✕</button>
     </div>`;
   const granTabs = `
     <div class="stabs" style="margin:0 2px 12px">
@@ -7910,7 +7914,7 @@ function renderWrappedPage(sec) {
 /* event halaman Wrapped: tutup, ganti Bulanan/Tahunan & periode, buka detail lagu */
 function bindWrapPageEvents(sec) {
   sec.querySelectorAll("#wrapClose").forEach((b) => {
-    b.addEventListener("click", () => { state.spWrapOpen = false; renderAll(); window.scrollTo(0, 0); });
+    b.addEventListener("click", () => { state.spWrapOpen = false; state.berOpen = true; renderAll(); window.scrollTo(0, 0); });
   });
   sec.querySelectorAll("[data-wgran]").forEach((b) => {
     b.addEventListener("click", () => { state.spWrap = { gran: b.dataset.wgran, key: null }; renderSpAll(); });
