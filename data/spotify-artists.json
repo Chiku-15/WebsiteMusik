@@ -5,8 +5,8 @@
   "spotifyId": "1SIocsqdEefUTE6XKGUiVS",
   "color": "#ff4d6d",
   "image": "https://image-cdn-ak.spotifycdn.com/image/ab676161000051747eed59dfba0a93af631a6654",
-  "monthlyListeners": 7931028,
-  "mlDelta": -752,
+  "monthlyListeners": 7927434,
+  "mlDelta": -3594,
   "followers": 9459627,
   "totalStreams": 2604064227,
   "dailyStreams": 3067742,
@@ -25,10 +25,10 @@
     "ml": 7938566
    },
    {
-    "t": 1795135531,
+    "t": 1795139883,
     "total": 2604064227,
     "daily": 3067742,
-    "ml": 7931028,
+    "ml": 7927434,
     "f": 9459627
    }
   ],
@@ -39,7 +39,7 @@
   "name": "TREASURE",
   "spotifyId": "3KonOYiLsU53m4yT7gNotP",
   "color": "#38bdf8",
-  "image": "https://image-cdn-ak.spotifycdn.com/image/ab67616100005174946efd7262fe76ff1f08e776",
+  "image": "https://image-cdn-fa.spotifycdn.com/image/ab67616100005174946efd7262fe76ff1f08e776",
   "monthlyListeners": 1900000,
   "mlDelta": null,
   "mlApprox": true,
@@ -61,7 +61,7 @@
     "ml": 1885365
    },
    {
-    "t": 1795135539,
+    "t": 1795139891,
     "total": 1734438692,
     "daily": 588817,
     "ml": 1900000,
