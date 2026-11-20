@@ -883,8 +883,8 @@
   .ber-artsel:hover{border-color:color-mix(in srgb,var(--acc,#06b6d4) 55%,var(--border))}
   .ber-artsel:focus{outline:none;border-color:var(--acc,#06b6d4)}
   /* sorotan hari ini — 3 kolom fitur, top 3 per fitur dengan nama grup */
-  .ber-hl3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
-  @media (max-width:1000px){.ber-hl3{grid-template-columns:1fr}}
+  .ber-hl3{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+  @media (max-width:640px){.ber-hl3{grid-template-columns:1fr}}
   .ber-hlcol{display:flex;flex-direction:column;gap:8px;border:1px solid var(--border);border-radius:16px;
     background:color-mix(in srgb,var(--card) 72%,transparent);padding:12px;min-width:0}
   .ber-hlchead{display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:800;color:var(--hc,#6a78ff);margin-bottom:2px}
@@ -1613,6 +1613,7 @@ const state = {
   spAlbumOpen: false,     // halaman album Spotify terbuka?
   spAlbum: null,          // id album yang dibuka
   cmpSel: null,           // pilihan modal perbandingan: [idA, idB]
+  retTo: "ber",           // halaman header tempat fitur terakhir dibuka ("ber"|"fitur"|"bantuan") — tujuan tombol ✕
 };
 
 /* deteksi plugin zoom (opsional; kalau CDN gagal, semua tetap jalan) */
@@ -1757,21 +1758,28 @@ function featSectHead(c, ico, title, sub) {
 }
 function pageCloseBar(title, sub, ico, color) {
   const chip = ico ? `<span class="sic" style="--c:${color || "#6a78ff"};width:40px;height:40px;border-radius:12px"><svg viewBox="0 0 24 24"><path d="${ico}"/></svg></span>` : "";
+  /* label ✕ mengikuti halaman header asal fitur dibuka (BERANDA/Fitur/Bantuan) */
+  const back = state.retTo === "fitur" ? "Fitur" : state.retTo === "bantuan" ? "Bantuan" : "BERANDA";
   return `
   <div class="pagehead">
     <div style="display:flex;align-items:center;gap:12px;min-width:0">${chip}<div style="min-width:0"><div class="ptitle">${title}</div>${sub ? `<div class="psub">${sub}</div>` : ""}</div></div>
-    <button class="pagex" id="pageClose" aria-label="Tutup halaman — kembali ke BERANDA" title="Tutup halaman — kembali ke BERANDA">✕</button>
+    <button class="pagex" id="pageClose" aria-label="Tutup halaman — kembali ke ${back}" title="Tutup halaman — kembali ke ${back}">✕</button>
   </div>`;
 }
 function bindPageClose(sec) {
   sec.querySelectorAll("#pageClose").forEach((b) => b.addEventListener("click", () => {
+    /* ✕ kembali ke halaman header tempat fitur dibuka: kartu ditekan di FITUR → pulang ke halaman
+     * Fitur, ditekan di BERANDA → pulang ke BERANDA (halaman Fitur/Bantuan sendiri selalu ke BERANDA) */
+    const ret = state.retTo === "fitur" ? "fitur" : state.retTo === "bantuan" ? "bantuan" : "ber";
     state.recOpen = false; state.calOpen = false;
     state.memOpen = false; state.troOpen = false; state.schOpen = false;
     state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false;
     state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
     state.chnOpen = false; state.quiOpen = false; state.fiturOpen = false; state.bantuanOpen = false; state.spWrapOpen = false;
     state.xplatOpen = false; state.rilOpen = false;
-    state.berOpen = true;   // ✕ halaman mana pun = pulang ke BERANDA (garis besar situs)
+    if (ret === "fitur") state.fiturOpen = true;
+    else if (ret === "bantuan") state.bantuanOpen = true;
+    else state.berOpen = true;
     renderAll(); window.scrollTo(0, 0);
   }));
 }
@@ -1853,6 +1861,11 @@ const ICO_STATS = "M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c
 const ICO_QUIZ = "M11 18h2v-2h-2v2zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z";
 const ICO_GRID = "M3 3h8v8H3V3zm10 0h8v8h-8V3zM3 13h8v8H3v-8zm10 0h8v8h-8v-8z";
 function menuGo(k) {
+  /* catat asal navigasi utk tombol ✕: halaman header tempat kartu ditekan.
+   * Ditekan dari dalam halaman fitur lain? asal awal tetap dipakai (✕ tetap pulang ke sana). */
+  if (state.fiturOpen) state.retTo = "fitur";
+  else if (state.bantuanOpen) state.retTo = "bantuan";
+  else if (state.berOpen) state.retTo = "ber";
   /* halaman SEMUA FITUR (tombol "Lihat semua fitur" di BERANDA & kartu pilihan) */
   if (k === "allf") { openFitur(); return; }
   /* Rekor/Kalender = halaman khusus beranda — dari halaman artis pun kembali ke beranda dulu
@@ -1901,6 +1914,7 @@ function menuGo(k) {
  * (statistik YouTube + Spotify digabung), sorotan hari ini, peta semua fitur & berita. */
 const ICO_HOME = "M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z";
 function openBeranda() {
+  state.retTo = "ber";   // navigasi header = asal ✕ kembali ke BERANDA
   state.berOpen = true;
   state.fiturOpen = false;
   state.bantuanOpen = false;
@@ -1915,6 +1929,7 @@ function openBeranda() {
   window.scrollTo(0, 0);
 }
 function openFitur() {
+  state.retTo = "ber";   // navigasi header = asal ✕ kembali ke BERANDA
   state.fiturOpen = true;
   state.berOpen = false;
   state.recOpen = false; state.calOpen = false; state.memOpen = false;
@@ -1929,6 +1944,7 @@ function openFitur() {
   window.scrollTo(0, 0);
 }
 function openBantuan() {
+  state.retTo = "ber";   // navigasi header = asal ✕ kembali ke BERANDA
   state.bantuanOpen = true;
   state.berOpen = false;
   state.recOpen = false; state.calOpen = false; state.memOpen = false;
@@ -2042,11 +2058,15 @@ function renderBerandaPage(sec) {
   const artPlat = state.berArtPlat === "yt" || state.berArtPlat === "spotify" ? state.berArtPlat : plat;
   /* sorotan hari ini — TOP 3 per fitur, nama grup tampil di tiap baris */
   const vids = allVideosFlat();
-  const rate7 = (v) => { const d = deltaDays(v.history, 7); return d ? d.rate : 0; };
   const grpPill = (name, color) => `<span class="hlgrp" style="--gc:${esc(color || "#6a78ff")}"><i></i>${esc(name || "–")}</span>`;
   const top3V = vids.filter((v) => lastV(v) > 0).sort((a, b) => lastV(b) - lastV(a)).slice(0, 3);
-  const top3H = vids.map((v) => ({ v, r: rate7(v) })).sort((a, b) => b.r - a.r || lastV(b.v) - lastV(a.v)).filter((x) => x.r > 0).slice(0, 3);
+  /* views MV terbanyak dalam 1 minggu — selisih views vs titik ~7 hari lalu (bukan rate/hari) */
+  const d7v = (v) => { const d = deltaDays(v.history, 7); return d ? Math.max(0, d.delta) : 0; };
+  const top3H = vids.map((v) => ({ v, d: d7v(v) })).sort((a, b) => b.d - a.d || lastV(b.v) - lastV(a.v)).filter((x) => x.d > 0).slice(0, 3);
   const top3T = spLoaded && (state.sp.vers || []).length ? [...state.sp.vers].sort((a, b) => b.total - a.total).slice(0, 3) : [];
+  /* stream Spotify terbanyak dalam 1 minggu — selisih total stream lagu vs titik ~7 hari lalu */
+  const top3W = spLoaded ? Object.values(state.sp.tracks || {}).map((t) => ({ t, d: spWeekDelta(t) }))
+    .filter((x) => x.d > 0).sort((a, b) => b.d - a.d || spTrackTotal(b.t) - spTrackTotal(a.t)).slice(0, 3) : [];
   const hlCol = (ico, color, title, rows) => `
     <div class="ber-hlcol" style="--hc:${color}">
       <div class="ber-hlchead"><span class="sic" style="--c:${color}"><svg viewBox="0 0 24 24"><path d="${ico}"/></svg></span>${title}</div>
@@ -2060,12 +2080,12 @@ function renderBerandaPage(sec) {
       <div class="hlmain"><b>${esc(rowTitleOf(v, v.art))}</b>${grpPill(v.art.name, v.art.color)}</div>
       <span class="hlval">${fmtCompact(lastV(v))} views</span>
     </div>`).join("")));
-  hl.push(hlCol(ICO_STATS, "#ff8a3d", "Kenaikan tercepat 7 hari", top3H.map(({ v, r }, i) => `
+  hl.push(hlCol(ICO_STATS, "#ff8a3d", "Views MV terbanyak 7 hari", top3H.map(({ v, d }, i) => `
     <div class="ber-hlrow" data-id="${esc(v.id)}" tabindex="0" role="button" aria-label="Buka grafik ${esc(rowTitleOf(v, v.art))}">
       <span class="hlrank">${i + 1}</span>
       <img src="https://i.ytimg.com/vi/${esc(v.id)}/mqdefault.jpg" alt="" loading="lazy">
       <div class="hlmain"><b>${esc(rowTitleOf(v, v.art))}</b>${grpPill(v.art.name, v.art.color)}</div>
-      <span class="hlval">+${fmtCompact(Math.round(r))}/hari</span>
+      <span class="hlval">+${fmtCompact(d)} views</span>
     </div>`).join("")));
   hl.push(hlCol(ICO_SP_TROPHY, "#1ed760", "Lagu paling di-stream", top3T.map((t, i) => {
     const ar = spArtistOf(t.artistId) || {};
@@ -2075,6 +2095,16 @@ function renderBerandaPage(sec) {
       ${t.cover ? `<img src="${esc(t.cover)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : `<div class="hlph">♪</div>`}
       <div class="hlmain"><b>${esc(t.name)}</b>${grpPill(ar.name, ar.color)}</div>
       <span class="hlval">${fmtCompact(t.total)} stream</span>
+    </div>`;
+  }).join("")));
+  hl.push(hlCol(ICO_FIRE, "#1ed760", "Stream Spotify terbanyak 7 hari", top3W.map(({ t, d }, i) => {
+    const ar = spArtistOf(t.artistId) || {};
+    return `
+    <div class="ber-hlrow" data-spk="${esc(t.key)}" tabindex="0" role="button" aria-label="Buka grafik ${esc(t.name)}">
+      <span class="hlrank">${i + 1}</span>
+      ${t.cover ? `<img src="${esc(t.cover)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : `<div class="hlph">♪</div>`}
+      <div class="hlmain"><b>${esc(t.name)}</b>${grpPill(ar.name, ar.color)}</div>
+      <span class="hlval">+${fmtCompact(d)} stream</span>
     </div>`;
   }).join("")));
   /* teaser berita — 4 teratas dari data/news.json (kolektor RSS) — dengan foto artikel */
@@ -2201,7 +2231,7 @@ function renderBantuanPage(sec) {
     ${featSectHead("#22c55e", ICO_GRID, "Tips pakai", "navigasi & hal yang sering ditanya")}
     ${bntQA("Cara pindah antara YouTube dan Spotify?", `Lewat tombol besar <b>“Buka beranda YouTube / Buka beranda Spotify”</b> di halaman BERANDA. Beberapa kartu fitur yang butuh data Spotify (mis. Spotify Wrapped, Diskografi) otomatis memuat data Spotify saat ditekan.`)}
     ${bntQA("Fungsi tiga tombol di header?", `<b>Beranda</b> = garis besar seluruh situs (halaman awal). <b>Fitur</b> = peta lengkap seluruh fitur dalam bentuk kartu. <b>Bantuan</b> = halaman yang sedang kamu baca.`)}
-    ${bntQA("Tombol ✕ di atas halaman itu ke mana?", `Menutup halaman tersebut dan <b>pulang ke BERANDA</b> — semua halaman khusus punya tombol yang sama, hanya BERANDA yang tidak (karena memang halaman awal).`)}
+    ${bntQA("Tombol ✕ di atas halaman itu ke mana?", `Kembali ke halaman header <b>tempat fiturnya dibuka</b>: kartu ditekan di halaman <b>Fitur</b> → ✕ pulang ke halaman Fitur; ditekan di <b>BERANDA</b> → ✕ pulang ke BERANDA. Halaman Fitur &amp; Bantuan sendiri selalu pulang ke BERANDA (karena memang dibuka lewat header).`)}
     ${bntQA("Kenapa beranda Spotify perlu “memuat data” dulu?", `Data Spotify diambil terpisah saat pertama kali dibuka (sedikit tunggu). Setelah terbuka, selama sesi berjalan semua halaman Spotify — artis, lagu, Wrapped, Rekap 12 bulan — langsung tampil tanpa memuat ulang.`)}
     <p class="note" style="margin-top:14px">Sumber teknis semuanya terbuka di repo: <b>data/channels.json</b> (riwayat kanal YouTube), riwayat video, <b>data/spotify-*.json</b> (artis, lagu, album, Wrapped), dan <b>data/news.json</b> (berita) — semuanya ditulis otomatis oleh GitHub Actions.</p>
   </section>`;
@@ -7636,6 +7666,22 @@ function spTrackDaily(tr) {
   }
   return 0;
 }
+/* stream dalam 1 minggu terakhir — selisih total vs titik ~7 hari lalu (hanya titik terukur);
+ * null kalau riwayat terukur belum cukup → lagu tak ikut peringkat mingguan */
+function spWeekDelta(tr) {
+  const h = (tr.history || []).filter((p) => !p.e);
+  if (h.length < 2) return null;
+  const last = h[h.length - 1];
+  const targetT = last.t - 7 * 86400;
+  let best = null, bestDiff = Infinity;
+  for (let i = h.length - 2; i >= 0; i--) {
+    const diff = Math.abs(h[i].t - targetT);
+    if (diff < bestDiff) { bestDiff = diff; best = h[i]; }
+    if (h[i].t < targetT - 7 * 1.6 * 86400) break;
+  }
+  if (!best || bestDiff > 7 * 1.6 * 86400) return null;
+  return Math.max(0, last.v - best.v);
+}
 function spAvg7(tr) {
   const h = (tr.history || []).filter((p) => !p.e); // ritme dari titik terukur saja
   if (h.length < 2) return spTrackDaily(tr);
@@ -8011,7 +8057,7 @@ function renderWrappedPage(sec) {
   const closeBar = `
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin:2px 2px 12px;flex-wrap:wrap">
       <div style="font-size:10.5px;font-weight:800;letter-spacing:1.6px;color:var(--muted);text-transform:uppercase">Rekap otomatis dari stream yang direkam situs ini</div>
-      <button class="pagex" id="wrapClose" aria-label="Tutup halaman Wrapped — kembali ke BERANDA" title="Tutup halaman — kembali ke BERANDA">✕</button>
+      <button class="pagex" id="wrapClose" aria-label="Tutup halaman Wrapped — kembali ke ${state.retTo === "fitur" ? "Fitur" : "BERANDA"}" title="Tutup halaman — kembali ke ${state.retTo === "fitur" ? "Fitur" : "BERANDA"}">✕</button>
     </div>`;
   const granTabs = `
     <div class="stabs" style="margin:0 2px 12px">
@@ -8221,7 +8267,13 @@ function renderWrappedPage(sec) {
 /* event halaman Wrapped: tutup, ganti Bulanan/Tahunan & periode, buka detail lagu */
 function bindWrapPageEvents(sec) {
   sec.querySelectorAll("#wrapClose").forEach((b) => {
-    b.addEventListener("click", () => { state.spWrapOpen = false; state.berOpen = true; renderAll(); window.scrollTo(0, 0); });
+    b.addEventListener("click", () => {
+      state.spWrapOpen = false;
+      /* ✕ Wrapped pulang ke halaman header asalnya (BERANDA atau Fitur) */
+      if (state.retTo === "fitur") state.fiturOpen = true;
+      else state.berOpen = true;
+      renderAll(); window.scrollTo(0, 0);
+    });
   });
   sec.querySelectorAll("[data-wgran]").forEach((b) => {
     b.addEventListener("click", () => { state.spWrap = { gran: b.dataset.wgran, key: null }; renderSpAll(); });
