@@ -4,14 +4,26 @@
   "name": "BABYMONSTER",
   "spotifyId": "1SIocsqdEefUTE6XKGUiVS",
   "color": "#ff4d6d",
-  "image": "https://image-cdn-fa.spotifycdn.com/image/ab676161000051747eed59dfba0a93af631a6654",
-  "monthlyListeners": 7925693,
-  "mlDelta": -1741,
+  "image": "https://image-cdn-ak.spotifycdn.com/image/ab676161000051747eed59dfba0a93af631a6654",
+  "monthlyListeners": 7938566,
+  "mlDelta": 5553,
   "followers": 9459627,
-  "totalStreams": 2604064227,
-  "dailyStreams": 3067742,
+  "totalStreams": 2591793195,
+  "dailyStreams": 3064604,
   "trackCount": 43,
   "history": [
+   {
+    "t": 1714996800,
+    "ml": 6602531,
+    "src": "@bmspotiify (fase naik, era BABYMONS7ER/SHEESH)",
+    "seed": 1
+   },
+   {
+    "t": 1715774400,
+    "ml": 10072324,
+    "src": "@bmspotiify (PUNCAK karier — Mei 2024)",
+    "seed": 1
+   },
    {
     "t": 1794035588,
     "total": 2566592807,
@@ -19,24 +31,16 @@
     "ml": 8070662
    },
    {
+    "t": 1794571200,
+    "ml": 8021801,
+    "src": "@bmspotiify",
+    "seed": 1
+   },
+   {
     "t": 1794906249,
     "total": 2591793195,
     "daily": 3064604,
     "ml": 7938566
-   },
-   {
-    "t": 1795217808,
-    "total": 2604064227,
-    "daily": 3067742,
-    "ml": 7927434,
-    "f": 9459627
-   },
-   {
-    "t": 1795229236,
-    "total": 2604064227,
-    "daily": 3067742,
-    "ml": 7925693,
-    "f": 9459627
    }
   ],
   "openUrl": "https://open.spotify.com/artist/1SIocsqdEefUTE6XKGUiVS"
@@ -46,15 +50,38 @@
   "name": "TREASURE",
   "spotifyId": "3KonOYiLsU53m4yT7gNotP",
   "color": "#38bdf8",
-  "image": "https://image-cdn-fa.spotifycdn.com/image/ab67616100005174946efd7262fe76ff1f08e776",
-  "monthlyListeners": 1900000,
+  "image": "https://image-cdn-ak.spotifycdn.com/image/ab67616100005174946efd7262fe76ff1f08e776",
+  "monthlyListeners": 1885365,
   "mlDelta": null,
-  "mlApprox": true,
   "followers": 3955050,
   "totalStreams": 1734438692,
-  "dailyStreams": 588817,
+  "dailyStreams": 847628,
   "trackCount": 160,
   "history": [
+   {
+    "t": 1647345600,
+    "ml": 6652201,
+    "src": "rekap komunitas TEUME (PUNCAK karier Mar-Apr 2022, era THE SECOND STEP)",
+    "seed": 1
+   },
+   {
+    "t": 1756641600,
+    "ml": 1940007,
+    "src": "rekap komunitas TEUME di X",
+    "seed": 1
+   },
+   {
+    "t": 1757419200,
+    "ml": 2052580,
+    "src": "rekap komunitas TEUME di X",
+    "seed": 1
+   },
+   {
+    "t": 1758283200,
+    "ml": 2420819,
+    "src": "rekap komunitas TEUME di X",
+    "seed": 1
+   },
    {
     "t": 1794035595,
     "total": 1725941747,
@@ -66,20 +93,6 @@
     "total": 1734438692,
     "daily": 847628,
     "ml": 1885365
-   },
-   {
-    "t": 1795217817,
-    "total": 1734438692,
-    "daily": 588817,
-    "ml": 1900000,
-    "f": 3955050
-   },
-   {
-    "t": 1795229244,
-    "total": 1734438692,
-    "daily": 588817,
-    "ml": 1900000,
-    "f": 3955050
    }
   ],
   "openUrl": "https://open.spotify.com/artist/3KonOYiLsU53m4yT7gNotP"

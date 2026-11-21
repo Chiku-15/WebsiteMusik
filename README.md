@@ -236,3 +236,10 @@ Setiap kali Actions merekam angka baru, estimasi pada hari itu **ditimpa data ny
 
 ---
 Dibuat dengan GitHub Actions + GitHub Pages
+
+## Pembaruan 21 November 2026
+
+- **MAMA 2026 masuk Trofi & Penghargaan**: malam pertama (20 Nov, Kyocera Dome Osaka) — BABYMONSTER menang Fans' Choice Top 10 — Female (ke-3 berturut-turut), TREASURE menang Fans' Choice Top 10 — Male + penghargaan spesial Super Stage Artist. Kategori malam kedua (termasuk Best Rap & Hip Hop Performance: TREASURE 'IF I') tampil dengan badge **MENUNGGU** sampai pengumumannya dimasukkan manual ke `data/trofi.json`.
+- **Fitur baru**: halaman **Duel BM vs TREASURE** (adu statistik YouTube & Spotify, badge UNGGUL tiap kategori + skor), halaman **Papan peringkat lagu** (semua lagu diberi peringkat kenaikan 7 hari — dua tab: Views MV & Stream Spotify), banner **"Sejak kunjungan terakhirmu"** di Beranda (snapshot localStorage; titik pembanding diperbarui otomatis ±20 jam atau lewat tombol "perbarui titik"), dan tombol **⬇ CSV** di modal video YouTube & modal lagu Spotify.
+- **Riwayat pendengar bulanan diperkaya jangkar arsip**: puncak BABYMONSTER 10,07 jt (Mei 2024) & puncak TREASURE 6,65 jt (Mar–Apr 2022) + titik komunitas lain kini bagian riwayat artis; `collect_spotify.js` dipastikan tidak menghapus titik yang hanya membawa pendengar bulanan. Statistik Channel & Grafik silang menampilkan **puncak tercatat**.
+- **Kartu share & PWA ringan**: `og.png` (1200×630) + meta Open Graph/Twitter Card supaya pratinjau tautan rapi di WhatsApp/X/Discord, plus `manifest.json`, ikon 192/512 & apple-touch-icon (bisa dipasang sebagai app).

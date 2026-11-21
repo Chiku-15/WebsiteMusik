@@ -6,6 +6,19 @@
 <title>K-POP PULSE — Statistik YouTube &amp; Spotify Artis K-pop</title>
 <meta name="description" content="Pantau views, likes, subscriber YouTube &amp; streaming Spotify artis K-pop favoritmu — grafik pertumbuhan harian &amp; prediksi milestone. Data direkam otomatis tiap jam oleh GitHub Actions.">
 <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%23ff4d6d"/><path d="M26 20l18 12-18 12z" fill="white"/></svg>'>
+<meta name="theme-color" content="#0a0d13">
+<!-- kartu share (WhatsApp/X/Telegram/Discord) — ganti og:url/og:image bila pindah domain -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="K-POP PULSE">
+<meta property="og:title" content="K-POP PULSE — Statistik YouTube &amp; Spotify Artis K-pop">
+<meta property="og:description" content="Pantau views, subscriber & streaming Spotify BABYMONSTER dan TREASURE — grafik harian, rekor, trofi & prediksi milestone. Data direkam otomatis oleh GitHub Actions.">
+<meta property="og:url" content="https://chiku-15.github.io/WebsiteMusik/">
+<meta property="og:image" content="https://chiku-15.github.io/WebsiteMusik/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -903,6 +916,35 @@
   .hlgrp i{width:6px;height:6px;border-radius:50%;background:var(--gc,#6a78ff);flex:none}
   .hlval{flex:none;font-size:11px;font-weight:800;color:var(--muted);text-align:right;white-space:nowrap}
   .ber-hlempty{font-size:11.5px;color:var(--muted);font-weight:600;background:var(--card);border:1px dashed var(--border);border-radius:12px;padding:14px 12px;text-align:center}
+  /* ---------- papan peringkat + duel + banner kunjungan ---------- */
+  .ppwrap{display:flex;flex-direction:column;gap:8px}
+  .papantab{opacity:.65}
+  .papantab.active{opacity:1;background:color-mix(in srgb,#f97316 14%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,#f97316 45%,transparent)}
+  .duelhead{display:grid;grid-template-columns:1fr minmax(96px,150px) 1fr;gap:8px;margin-bottom:6px;font-weight:800;font-size:12px;letter-spacing:.4px}
+  .duelhead span:nth-child(2){text-align:center;color:var(--muted)}
+  .duelrow{display:grid;grid-template-columns:1fr minmax(96px,150px) 1fr;gap:8px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:10px 12px}
+  .duelval{display:flex;flex-direction:column;gap:3px;justify-content:center;min-width:0}
+  .duelval b{font-size:14.5px;letter-spacing:-.2px}
+  .duelval:last-child{text-align:right;align-items:flex-end}
+  .duelval.win b{color:#22c55e}
+  .duelbadge{font-size:9px;font-weight:800;letter-spacing:.8px;color:#22c55e;background:color-mix(in srgb,#22c55e 14%,transparent);border-radius:999px;padding:2px 7px;width:max-content}
+  .duelsub{font-size:10.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+  .duellab{text-align:center;display:flex;flex-direction:column;justify-content:center;gap:1px;min-width:0}
+  .duellab b{font-size:11.5px}
+  .duellab span{font-size:9.5px;color:var(--muted)}
+  .visitbn{margin-top:18px;background:var(--card);border:1px solid color-mix(in srgb,#22c55e 35%,var(--border));border-radius:16px;padding:14px 16px}
+  .visitbn .vhead{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .visitbn .vhead b{font-size:14px}
+  .visitbn .vsub{font-size:11.5px;color:var(--muted);display:block}
+  .visitbn .mtab{margin-left:auto;flex:none}
+  @media (max-width:640px){
+    .duelrow{grid-template-columns:1fr}
+    .duellab{order:-1;text-align:left}
+    .duelval:last-child{text-align:left;align-items:flex-start}
+    .duelhead{grid-template-columns:1fr auto 1fr;font-size:11px}
+    .visitbn .vhead{flex-wrap:wrap}
+    .visitbn .mtab{margin-left:44px}
+  }
   /* ---------- GARIS BESAR SITUS di halaman BERANDA (outline kartu) ---------- */
   .obgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px}
   @media (max-width:1080px){.obgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -1601,6 +1643,9 @@ const state = {
   quiOpen: false,         // halaman Kuis K-POP — runtime di state.quiz
   xplatOpen: false,       // halaman Grafik silang platform — subscriber YT vs pendengar Spotify
   rilOpen: false,         // halaman Performa rilisan terbaru — debut 24 jam & pekan pertama
+  duelOpen: false,        // halaman Duel BM vs TREASURE — adu statistik YouTube & Spotify
+  papanOpen: false,       // halaman Papan peringkat lagu — semua lagu diberi peringkat kenaikan 7 hari
+  papanTab: "yt",         // tab aktif Papan peringkat: "yt" (views MV 7 hari) | "sp" (stream Spotify 7 hari)
   chnHistMode: "baru",    // mode tabel riwayat pencatatan artis: "besar" | "baru" | "semua"
   berOpen: true,          // halaman BERANDA — garis besar seluruh situs; SITUS SELALU DIBUKA di halaman ini
   fiturOpen: false,       // halaman SEMUA FITUR — peta lengkap seluruh fitur situs dalam bentuk kartu
@@ -1614,6 +1659,7 @@ const state = {
   spAlbum: null,          // id album yang dibuka
   cmpSel: null,           // pilihan modal perbandingan: [idA, idB]
   retTo: "ber",           // halaman header tempat fitur terakhir dibuka ("ber"|"fitur"|"bantuan") — tujuan tombol ✕
+  visitRef: null,         // snapshot kunjungan utk banner "sejak kunjungan terakhirmu" — dikunci sekali per sesi biar stabil
 };
 
 /* deteksi plugin zoom (opsional; kalau CDN gagal, semua tetap jalan) */
@@ -1777,6 +1823,7 @@ function bindPageClose(sec) {
     state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
     state.chnOpen = false; state.quiOpen = false; state.fiturOpen = false; state.bantuanOpen = false; state.spWrapOpen = false;
     state.xplatOpen = false; state.rilOpen = false;
+    state.duelOpen = false; state.papanOpen = false;
     if (ret === "fitur") state.fiturOpen = true;
     else if (ret === "bantuan") state.bantuanOpen = true;
     else state.berOpen = true;
@@ -1891,6 +1938,7 @@ function menuGo(k) {
     state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
     state.chnOpen = false; state.quiOpen = false; state.spWrapOpen = false;
     state.xplatOpen = false; state.rilOpen = false;
+    state.duelOpen = false; state.papanOpen = false;
     if (k === "rec") { state.recOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
     else if (k === "cal") { state.calOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
     else if (k === "tro") { state.troOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
@@ -1907,6 +1955,8 @@ function menuGo(k) {
     else if (k === "qui") { state.quiOpen = true; if (state.view !== "home") state.view = "home"; quizNewRound(); renderAll(); window.scrollTo(0, 0); }
     else if (k === "xplat") { state.xplatOpen = true; if (state.view !== "home") state.view = "home"; if (!state.sp.tracks && !state.sp.error) { renderAll(); loadSpData().then(renderAll); } else renderAll(); window.scrollTo(0, 0); }
     else if (k === "rilbar") { state.rilOpen = true; if (state.view !== "home") state.view = "home"; if (!state.sp.tracks && !state.sp.error) { renderAll(); loadSpData().then(renderAll); } else renderAll(); window.scrollTo(0, 0); }
+    else if (k === "duel") { state.duelOpen = true; if (state.view !== "home") state.view = "home"; if (!state.sp.tracks && !state.sp.error) { renderAll(); loadSpData().then(renderAll); } else renderAll(); window.scrollTo(0, 0); }
+    else if (k === "papan") { state.papanOpen = true; if (state.view !== "home") state.view = "home"; if (!state.sp.tracks && !state.sp.error) { renderAll(); loadSpData().then(renderAll); } else renderAll(); window.scrollTo(0, 0); }
   }
 }
 /* ---------- HALAMAN BERANDA — garis besar seluruh situs, masuk lewat tombol header ----------
@@ -1924,6 +1974,7 @@ function openBeranda() {
   state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
   state.chnOpen = false; state.quiOpen = false; state.spWrapOpen = false; state.spAlbumOpen = false;
   state.xplatOpen = false; state.rilOpen = false;
+  state.duelOpen = false; state.papanOpen = false;
   if (state.view !== "home") state.view = "home";
   renderAll();
   window.scrollTo(0, 0);
@@ -1938,6 +1989,7 @@ function openFitur() {
   state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
   state.chnOpen = false; state.quiOpen = false; state.spWrapOpen = false; state.spAlbumOpen = false;
   state.xplatOpen = false; state.rilOpen = false;
+  state.duelOpen = false; state.papanOpen = false;
   state.bantuanOpen = false;
   if (state.view !== "home") state.view = "home";
   renderAll();
@@ -1953,13 +2005,14 @@ function openBantuan() {
   state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
   state.chnOpen = false; state.quiOpen = false; state.spWrapOpen = false; state.spAlbumOpen = false;
   state.xplatOpen = false; state.rilOpen = false;
+  state.duelOpen = false; state.papanOpen = false;
   state.fiturOpen = false;
   if (state.view !== "home") state.view = "home";
   renderAll();
   window.scrollTo(0, 0);
 }
 /* ---------- definisi SELURUH kartu fitur situs ----------
- * Dipakai bersama: halaman SEMUA FITUR (18 kartu) & seksi "jelajahi fitur pilihan"
+ * Dipakai bersama: halaman SEMUA FITUR (20 kartu) & seksi "jelajahi fitur pilihan"
  * di BERANDA (subset terpilih — sisanya dibuka lewat halaman Fitur di header). */
 function featDefs(isSp) {
   return [
@@ -1980,6 +2033,8 @@ function featDefs(isSp) {
     ["qui", "#eab308", ICO_QUIZ, "Kuis K-POP", "uji pengetahuan BABYMONSTER &amp; TREASURE"],
     ["xplat", "#f43f5e", ICO_SWAP, "Grafik silang platform", "subscriber YouTube vs pendengar bulanan Spotify — bergerak bareng?"],
     ["rilbar", "#0ea5e9", ICO_NEW, "Performa rilisan terbaru", "debut 24 jam &amp; pekan pertama MV terbaru + album Spotify"],
+    ["duel", "#ff4d6d", ICO_SWAP, "Duel BM vs TREASURE", "adu statistik YouTube &amp; Spotify kedua grup — siapa unggul di tiap kategori"],
+    ["papan", "#f97316", ICO_RANK, "Papan peringkat lagu", "semua lagu diberi peringkat kenaikan 7 hari — bukan cuma top 3"],
     ["wrap", "#1ed760", ICO_SP_TROPHY, "Spotify Wrapped", "rekap stream bulanan &amp; tahunan"],
   ];
 }
@@ -2054,6 +2109,38 @@ function renderBerandaPage(sec) {
   const totDl = spLoaded ? (state.sp.artists || []).reduce((s, x) => s + (x.dailyStreams || 0), 0) : 0;
   const spN = spLoaded ? Object.keys(state.sp.tracks).length : null;
   const ytN = state.videos ? watchedIds().size : null;
+  /* banner "sejak kunjungan terakhirmu" — selisih angka gabungan vs snapshot terakhir (min 2 jam lalu).
+   * Snapshot sendiri hanya diperbarui tiap ~20 jam / tombol, supaya selisihnya tidak nol setiap refresh. */
+  const nowT = Math.floor(Date.now() / 1000);
+  /* snapshot dikunci sekali per sesi (state.visitRef) supaya banner tetap tampil meski renderAll
+   * berulang (data Spotify selesai dimuat dsb.) — penimpanan baru tak mengganggu sesi berjalan */
+  if (!state.visitRef) { const s0 = visitSnap(); if (s0 && s0.t) state.visitRef = s0; }
+  const snap = state.visitRef;
+  const mlById = (id) => { const x = (state.sp.artists || []).find((y) => y.id === id); return x && x.monthlyListeners != null ? x.monthlyListeners : null; };
+  const curSnap = { t: nowT, totV: hasCh ? totV : null, totS: hasCh ? totS : null, totSp: spLoaded ? totSp : null,
+    mlBm: spLoaded ? mlById("babymonster") : null, mlTrs: spLoaded ? mlById("treasure") : null };
+  let visitHTML = "";
+  if (snap && snap.t && nowT - snap.t >= 2 * 3600) {
+    const ag = nowT - snap.t;
+    const agTxt = ag >= 86400 ? NF.format(Math.floor(ag / 86400)) + " hari" : Math.max(1, Math.floor(ag / 3600)) + " jam";
+    const chip = (k, val) => `<div class="chipstat" style="flex:0 0 auto;min-width:150px"><div class="k">${k}</div><div class="v up">${val}</div><div class="d">vs kunjungan ${agTxt} lalu</div></div>`;
+    const chips = [];
+    if (snap.totV != null && curSnap.totV != null && curSnap.totV - snap.totV > 0) chips.push(chip("VIEWS YOUTUBE", "+" + fmtCompact(curSnap.totV - snap.totV)));
+    if (snap.totS != null && curSnap.totS != null && curSnap.totS - snap.totS > 0) chips.push(chip("SUBSCRIBER", "+" + fmtCompact(curSnap.totS - snap.totS)));
+    if (snap.totSp != null && curSnap.totSp != null && curSnap.totSp - snap.totSp > 0) chips.push(chip("STREAM SPOTIFY", "+" + fmtCompact(curSnap.totSp - snap.totSp)));
+    for (const [gid, key, nm] of [["babymonster", "mlBm", "BM"], ["treasure", "mlTrs", "TRS"]]) {
+      if (snap[key] != null && curSnap[key] != null && curSnap[key] !== snap[key]) {
+        const d = curSnap[key] - snap[key];
+        chips.push(`<div class="chipstat" style="flex:0 0 auto;min-width:150px"><div class="k">PENDENGAR ${nm}</div><div class="v ${d >= 0 ? "up" : ""}">${d >= 0 ? "+" : "–"}${fmtCompact(Math.abs(d))}</div><div class="d">vs kunjungan ${agTxt} lalu</div></div>`);
+      }
+    }
+    if (chips.length) visitHTML = `
+    <div class="visitbn">
+      <div class="vhead"><span class="sic" style="--c:#22c55e"><svg viewBox="0 0 24 24"><path d="${ICO_STATS}"/></svg></span><div style="min-width:0"><b>Sejak kunjungan terakhirmu</b><span class="vsub">kunjungan terakhir ${agTxt} lalu · titik pembanding diperbarui otomatis ±20 jam</span></div><button class="mtab" data-visitnow title="Simpan angka sekarang sebagai titik pembanding baru">perbarui titik</button></div>
+      <div class="chiprow">${chips.join("")}</div>
+    </div>`;
+  }
+  if (!snap || !snap.t || nowT - snap.t >= 20 * 3600) visitSave(curSnap);
   /* platform kartu artis — dari dropdown, default = platform aktif */
   const artPlat = state.berArtPlat === "yt" || state.berArtPlat === "spotify" ? state.berArtPlat : plat;
   /* sorotan hari ini — TOP 3 per fitur, nama grup tampil di tiap baris */
@@ -2122,7 +2209,7 @@ function renderBerandaPage(sec) {
       <div style="margin-top:10px"><button class="mtab" data-gomenu="bru">Lihat semua berita →</button></div>
     </section>` : "";
   /* peta fitur — kartu PILIHAN saja (8 teratas, Spotify Wrapped selalu ada);
-   * seluruh 18 fitur tampil di halaman SEMUA FITUR (tombol Fitur di header) */
+   * seluruh 20 fitur tampil di halaman SEMUA FITUR (tombol Fitur di header) */
   const berSel = ["chn", "bul", "heat", "rec", "wrap", "cha", "mem", "sch"];
   const berDefs = featDefs(isSp).filter((d) => berSel.includes(d[0]));
   /* BERANDA = halaman awal: satu-satunya halaman TANPA tombol X/kembali —
@@ -2143,6 +2230,7 @@ function renderBerandaPage(sec) {
         <div class="stat"><div class="k">Stream 24 jam</div><div class="v up">${spLoaded ? "+" + fmtExact(totDl) : "–"}</div><div class="d">Spotify · semua artis</div></div>
       </div>
     </section>
+    ${visitHTML}
     <div class="ber-sectrow">
       ${featSectHead("#ffb02e", ICO_PEOPLE, "Dua artis yang dipantau", "pilih platform lewat dropdown — klik kartu untuk halaman lengkap")}
       <select class="ber-artsel" data-berartplat aria-label="Pilih platform kartu artis" title="Pilih platform: YouTube atau Spotify">
@@ -2153,7 +2241,7 @@ function renderBerandaPage(sec) {
     <div class="ber-artists">${state.config.artists.map((a) => berArtistCard(a, artPlat)).join("")}</div>
     ${featSectHead("#38bdf8", ICO_TROPHY, "Sorotan hari ini", "top 3 tiap kategori lintas platform — nama grup di tiap baris, klik untuk grafik &amp; detail")}
     <div class="ber-hl3">${hl.join("")}</div>
-    ${featSectHead("#ffb02e", ICO_GRID, "Jelajahi fitur pilihan", "kartu terpilih — seluruh 18 fitur situs ada di halaman Fitur (tombol di samping Beranda)")}
+    ${featSectHead("#ffb02e", ICO_GRID, "Jelajahi fitur pilihan", "kartu terpilih — seluruh 20 fitur situs ada di halaman Fitur (tombol di samping Beranda)")}
     <div class="obgrid">${berDefs.map(featCardHTML).join("")}
     </div>
     <div style="margin-top:12px"><button class="mtab" data-gomenu="allf">Lihat semua fitur →</button></div>
@@ -2161,6 +2249,7 @@ function renderBerandaPage(sec) {
     <p class="note">Situs dibuka langsung di halaman BERANDA ini — masuk lagi kapan pun lewat tombol <b>Beranda</b> di kiri header, tepat di samping logo K-POP PULSE; beranda platform YouTube/Spotify dibuka lewat dua tombol besar di atas halaman ini, peta seluruh fitur lewat tombol <b>Fitur</b>, dan cara kerja situs dijelaskan di halaman <b>Bantuan</b> — semuanya di header. Angka gabungan dihitung langsung dari data pemantauan (YouTube 2× sehari, Spotify Charts via kworb.net tiap jam); angka Spotify tampil begitu data Spotify dimuat.</p>`;
   bindPageClose(sec);
   bindMenu(sec);
+  sec.querySelectorAll("[data-visitnow]").forEach((b) => b.addEventListener("click", () => { visitSave(curSnap); state.visitRef = curSnap; renderAll(); }));
   /* sparkline 30 hari di kartu artis — digambar setelah HTML terpasang */
   sec.querySelectorAll("canvas.berspark").forEach(drawSpark30);
   sec.querySelectorAll("[data-berplat]").forEach((b) => b.addEventListener("click", () => setPlatform(b.dataset.berplat)));
@@ -2187,7 +2276,7 @@ function renderBerandaPage(sec) {
   });
   sec.querySelectorAll("[data-gomenu]").forEach((b) => b.addEventListener("click", () => menuGo(b.dataset.gomenu)));
 }
-/* ===================== HALAMAN SEMUA FITUR — peta lengkap 18 fitur situs =====================
+/* ===================== HALAMAN SEMUA FITUR — peta lengkap 20 fitur situs =====================
  * Masuk lewat tombol "Fitur" di header (samping Beranda) atau tombol "Lihat semua fitur"
  * di BERANDA. BERANDA hanya menampilkan kartu pilihan; di sini SEMUA fitur tampil,
  * termasuk Spotify Wrapped (membuka halaman Wrapped — platform pindah otomatis). */
@@ -2233,6 +2322,10 @@ function renderBantuanPage(sec) {
     ${bntQA("Fungsi tiga tombol di header?", `<b>Beranda</b> = garis besar seluruh situs (halaman awal). <b>Fitur</b> = peta lengkap seluruh fitur dalam bentuk kartu. <b>Bantuan</b> = halaman yang sedang kamu baca.`)}
     ${bntQA("Tombol ✕ di atas halaman itu ke mana?", `Kembali ke halaman header <b>tempat fiturnya dibuka</b>: kartu ditekan di halaman <b>Fitur</b> → ✕ pulang ke halaman Fitur; ditekan di <b>BERANDA</b> → ✕ pulang ke BERANDA. Halaman Fitur &amp; Bantuan sendiri selalu pulang ke BERANDA (karena memang dibuka lewat header).`)}
     ${bntQA("Kenapa beranda Spotify perlu “memuat data” dulu?", `Data Spotify diambil terpisah saat pertama kali dibuka (sedikit tunggu). Setelah terbuka, selama sesi berjalan semua halaman Spotify — artis, lagu, Wrapped, Rekap 12 bulan — langsung tampil tanpa memuat ulang.`)}
+    ${bntQA("Apa itu halaman Duel BM vs TREASURE?", `Kartu di halaman Fitur. Isinya adu statistik kedua grup per kategori dalam dua ronde — YouTube (subscriber, total views, MV terbanyak, video dipantau, subscriber baru 30 hari) dan Spotify (pendengar bulanan, followers, total stream karier, stream 24 jam, lagu terbesar, pendengar baru 30 hari). Sisi dengan angka lebih besar di tiap kategori diberi badge <b>UNGGUL</b> dan jumlahnya dirangkum di banner atas. Semua angka dihitung dari data pemantauan yang sama, rentang waktunya sama — jadi perbandingannya adil.`)}
+    ${bntQA("Peringkat di Papan peringkat lagu dihitung dari apa?", `Selisih angka vs titik rekam terdekat ~7 hari lalu (toleransi 7×1,6 hari) — bukan rata-rata per hari. Ada dua tab: <b>Views MV 7 hari</b> (seluruh video YouTube yang naik) dan <b>Stream Spotify 7 hari</b> (lagu yang naik, hanya titik terukur tanpa estimasi). Berbeda dengan Sorotan di BERANDA yang hanya menampilkan 3 teratas — di sini SEMUA lagu yang naik masuk daftar. Tekan baris untuk membuka grafiknya.`)}
+    ${bntQA("Kenapa ada badge MENUNGGU di Trofi & Penghargaan?", `Badge jingga itu artinya kategori <b>sudah dinominasikan tapi pemenangnya belum diumumkan</b> saat data terakhir direviu — misalnya kategori malam kedua MAMA 2026 (Best Rap &amp; Hip Hop Performance: TREASURE 'IF I'). Setelah pengumuman keluar, ubah "result" lagu itu di <b>data/trofi.json</b> jadi "win" atau "nom" — badge MENUNGGU otomatis pindah ke bagian yang benar.`)}
+    ${bntQA("Kenapa grafik pendengar bulanan punya titik dari 2022/2024 padahal situs baru berjalan 2026?", `Beberapa titik itu <b>jangkar arsip</b> — angka pendengar bulanan yang terekam oleh rekap akun statistik komunitas (@bmspotiify untuk BABYMONSTER, rekap TEUME untuk TREASURE), misalnya puncak BABYMONSTER 10,07 jt (Mei 2024) dan puncak TREASURE 6,65 jt (Mar–Apr 2022). Titik jangkar ditambahkan ke riwayat artis supaya grafik menampilkan puncak karier, dan kolektor kini diatur agar <b>tidak menghapus</b> titik jangkar saat menyimpan data baru. Tanda info di Rekap 12 bulan menjelaskan sumber tiap jangkar.`)}
     <p class="note" style="margin-top:14px">Sumber teknis semuanya terbuka di repo: <b>data/channels.json</b> (riwayat kanal YouTube), riwayat video, <b>data/spotify-*.json</b> (artis, lagu, album, Wrapped), dan <b>data/news.json</b> (berita) — semuanya ditulis otomatis oleh GitHub Actions.</p>
   </section>`;
   bindPageClose(sec);
@@ -2597,7 +2690,8 @@ function renderTrofiPage(sec) {
     const wins = g.wins || [], hs = g.hotstage || [];
     const awards = g.awards || [];
     const bigWin = awards.filter((a) => a.result === "win");
-    const noms = awards.filter((a) => a.result !== "win");
+    const noms = awards.filter((a) => a.result === "nom");
+    const pending = awards.filter((a) => a.result === "pending");
     const daesang = bigWin.some((a) => /daesang/i.test(a.cat || ""));
     html += `<div class="calyear" style="margin-top:24px"><span class="ln"></span><span class="yr" style="color:${color}">${esc(g.name)} · ${wins.length} trofi acara musik · ${bigWin.length} penghargaan${daesang ? " · 1 daesang" : ""}</span><span class="ln"></span></div>`;
     html += `<div class="hgrid" style="margin-top:12px">
@@ -2622,6 +2716,17 @@ function renderTrofiPage(sec) {
           </div>`).join("") + `</div>
       </div>
     </div>`;
+    if (pending.length) {
+      html += `<div style="margin-top:18px">
+        ${featSectHead("#ffb02e", ICO_TROPHY, "Menunggu pengumuman", "sudah dinominasikan — pemenang belum diumumkan saat data terakhir direviu")}
+        <div style="display:flex;flex-direction:column;gap:7px">` + pending.map((a) => `
+          <div class="wprow" style="cursor:default">
+            <div class="rk">•</div>
+            ${svgIco(ICO_TROPHY, "#ffb02e")}
+            <div class="nm"><b>${esc(a.name)}</b><span class="wbsub">${esc(a.cat)}</span></div>
+            <div class="del"><div class="d1"><span class="trobadg" style="background:color-mix(in srgb,#ffb02e 18%,transparent);color:#ffb02e">MENUNGGU</span></div><div class="d2">${fmtDateLoose(a.date)}${a.note ? " · " + esc(a.note) : ""}</div></div>
+          </div>`).join("") + `</div></div>`;
+    }
     if (hs.length) {
       html += `<div style="margin-top:18px">
         ${featSectHead("#a78bfa", ICO_TROPHY, "Inkigayo Hot Stage", "trofi khusus hasil voting fans di SBS Inkigayo — bukan no.1 mingguan, jadi tidak dihitung sebagai trofi acara musik")}
@@ -2645,7 +2750,7 @@ function renderTrofiPage(sec) {
           </div>`).join("") + `</div></div>`;
     }
   }
-  html += `<p class="note">Ada trofi yang belum tercantum? File <b>data/trofi.json</b> bisa diedit langsung — situs memuatnya otomatis saat halaman dibuka. Catatan: Inkigayo Hot Stage dicatat terpisah karena trofi itu diberikan lewat voting fans tiap siaran, bukan kemenangan no.1 mingguan; koreksi data lama: MAMA 2021 Best Dance Performance (Male Group) dimenangkan BTS, bukan TREASURE.</p></section>`;
+  html += `<p class="note">Ada trofi yang belum tercantum? File <b>data/trofi.json</b> bisa diedit langsung — situs memuatnya otomatis saat halaman dibuka. Catatan: Inkigayo Hot Stage dicatat terpisah karena trofi itu diberikan lewat voting fans tiap siaran, bukan kemenangan no.1 mingguan; koreksi data lama: MAMA 2021 Best Dance Performance (Male Group) dimenangkan BTS, bukan TREASURE. Trofi dikurasi <b>manual</b> (bukan hasil scrape otomatis) karena sumbernya artikel &amp; daftar resmi yang bentuknya berbeda-beda — hasil malam kedua MAMA 2026 (21 Nov, termasuk Best Rap &amp; Hip Hop Performance: TREASURE 'IF I' yang kini bertanda <b>MENUNGGU</b>) tinggal dipindahkan ke 'win'/'nom' setelah siaran selesai.</p></section>`;
   sec.innerHTML = html;
   bindPageClose(sec);
   startCountdownTick();
@@ -3746,7 +3851,7 @@ function chnSpBlock(a) {
       <div style="min-width:0"><b style="color:${acc}">${esc(sp.name || a.name)} — Spotify</b><span class="sub">${tracks.length} lagu dipantau situs · ${sp.trackCount || "–"} lagu terdaftar di Spotify${sp.openUrl ? ` · <a href="${esc(sp.openUrl)}" target="_blank" rel="noopener">buka Spotify</a>` : ""}</span></div>
     </div>
     <div class="chstats">
-      <div class="stat"><div class="k">Pendengar bulanan</div><div class="v">${sp.monthlyListeners ? fmtExact(sp.monthlyListeners) + (sp.mlApprox ? ' <span class="cellno">±</span>' : "") : "–"}</div><div class="d">${mlD != null ? `<span class="up">+${fmtExact(mlD)}</span> vs catatan sebelumnya` : "pencatatan langsung artis"}</div></div>
+      <div class="stat"><div class="k">Pendengar bulanan</div><div class="v">${sp.monthlyListeners ? fmtExact(sp.monthlyListeners) + (sp.mlApprox ? ' <span class="cellno">±</span>' : "") : "–"}</div><div class="d">${mlD != null ? `<span class="up">+${fmtExact(mlD)}</span> vs catatan sebelumnya` : "pencatatan langsung artis"}${mlPeakTxt(sp) ? ` · puncak tercatat ${mlPeakTxt(sp)}` : ""}</div></div>
       <div class="stat"><div class="k">Followers</div><div class="v">${sp.followers ? fmtExact(sp.followers) : "–"}</div><div class="d">profil artis Spotify</div></div>
       <div class="stat"><div class="k">Total stream artis</div><div class="v">${sp.totalStreams ? fmtExact(sp.totalStreams) : "–"}</div><div class="d">semua lagu terdaftar</div></div>
       <div class="stat"><div class="k">Stream / hari</div><div class="v up">${sp.dailyStreams ? "+" + fmtExact(sp.dailyStreams) : "–"}</div><div class="d">rata-rata 24 jam terakhir</div></div>
@@ -5121,14 +5226,14 @@ function renderTabs() {
 async function setPlatform(p) {
   const same = state.platform === p;
   /* halaman khusus terbuka? menekan tab platform = kembali ke beranda bersih */
-  const anyPage = state.berOpen || state.fiturOpen || state.bantuanOpen || state.spWrapOpen || state.recOpen || state.calOpen || state.memOpen || state.troOpen || state.schOpen || state.socOpen || state.chaOpen || state.disOpen || state.bruOpen || state.tmlOpen || state.heatOpen || state.bulOpen || state.chnOpen || state.quiOpen || state.spAlbumOpen || state.xplatOpen || state.rilOpen;
+  const anyPage = state.berOpen || state.fiturOpen || state.bantuanOpen || state.spWrapOpen || state.recOpen || state.calOpen || state.memOpen || state.troOpen || state.schOpen || state.socOpen || state.chaOpen || state.disOpen || state.bruOpen || state.tmlOpen || state.heatOpen || state.bulOpen || state.chnOpen || state.quiOpen || state.spAlbumOpen || state.xplatOpen || state.rilOpen || state.duelOpen || state.papanOpen;
   if (same && state.view === "home" && !anyPage) return;   // sudah di beranda platform ini
   state.view = "home";                          // menekan tab platform = masuk beranda
   state.berOpen = false;                        // …sekaligus menutup halaman BERANDA bila terbuka
   state.spWrapOpen = false;                     // …sekaligus menutup halaman Wrapped bila terbuka
   state.recOpen = false; state.calOpen = false; state.memOpen = false; state.troOpen = false; state.schOpen = false; state.spAlbumOpen = false;
   state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false; state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
-  state.chnOpen = false; state.quiOpen = false; state.fiturOpen = false; state.bantuanOpen = false; state.xplatOpen = false; state.rilOpen = false;   // halaman khusus kembali punya tombol ✕ — tab header tetap bisa menutup semua halaman
+  state.chnOpen = false; state.quiOpen = false; state.fiturOpen = false; state.bantuanOpen = false; state.xplatOpen = false; state.rilOpen = false; state.duelOpen = false; state.papanOpen = false;   // halaman khusus kembali punya tombol ✕ — tab header tetap bisa menutup semua halaman
   if (!same) {
     state.platform = p;
     if (p === "spotify" && !state.sp.tracks && !state.sp.error) {
@@ -5180,7 +5285,7 @@ function setView(v) {
   state.recOpen = false; state.calOpen = false; state.memOpen = false; state.troOpen = false; state.schOpen = false; state.spAlbumOpen = false;
   state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false; state.tmlOpen = false;
   state.heatOpen = false; state.bulOpen = false;
-  state.chnOpen = false; state.quiOpen = false; state.fiturOpen = false; state.bantuanOpen = false; state.xplatOpen = false; state.rilOpen = false;   // halaman khusus kembali punya tombol ✕ — tab header tetap bisa menutup semua halaman
+  state.chnOpen = false; state.quiOpen = false; state.fiturOpen = false; state.bantuanOpen = false; state.xplatOpen = false; state.rilOpen = false; state.duelOpen = false; state.papanOpen = false;   // halaman khusus kembali punya tombol ✕ — tab header tetap bisa menutup semua halaman
   state.spQuery = "";   // kosongkan pencarian Spotify saat pindah halaman
   if (v !== "home") { state.artist = v; state.msTab = "table"; }
   renderAll();
@@ -6220,6 +6325,169 @@ function mountBulan(sec, plat) {
  * satu grafik per artis, jendela 60 hari — untuk melihat apakah dua metrik bergerak
  * bareng (fanbase tumbuh serentak) atau bergantian. Poros tidak dimulai dari 0 supaya
  * bentuk geraknya terlihat; yang dibandingkan adalah BENTUK garis, bukan tinggi. */
+/* ---------- ekspor CSV umum — dipakai tombol ⬇ CSV di modal lagu & video ---------- */
+function dlCSV(fname, head, rows) {
+  const q = (x) => '"' + String(x == null ? "" : x).replace(/"/g, '""') + '"';
+  const lines = [head.map(q).join(";")].concat(rows.map((r) => r.map(q).join(";")));
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob(["\ufeff" + lines.join("\n")], { type: "text/csv;charset=utf-8" }));
+  a.download = fname;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+}
+/* titik pendengar bulanan TERTINGGI yang pernah terekam — dipakai Statistik Channel, Grafik silang & Duel.
+ * Termasuk jangkar arsip (mis. puncak BABYMONSTER Mei 2024) yang di-backfill ke riwayat artis. */
+function mlPeakOf(spArt) {
+  const h = ((spArt && spArt.history) || []).filter((p) => p.ml != null);
+  if (!h.length) return null;
+  let b = h[0];
+  for (const p of h) if (p.ml > b.ml) b = p;
+  return b;
+}
+function mlPeakTxt(spArt) {
+  const p = mlPeakOf(spArt);
+  if (!p) return null;
+  const d = new Date(p.t * 1000);
+  const my = d.toLocaleDateString("id-ID", { month: "long", year: "numeric" });
+  return fmtCompact(p.ml) + " (" + my + ")";
+}
+/* ---------- "sejak kunjungan terakhirmu" — snapshot angka gabungan di localStorage ----------
+ * Snapshot diperbarui otomatis maksimal sekali per ~20 jam (atau lewat tombol "perbarui titik")
+ * supaya selisih yang tampil selalu bermakna, bukan nol setiap refresh. */
+function visitSnap() { try { return JSON.parse(localStorage.getItem("py.visit") || "null"); } catch { return null; } }
+function visitSave(s) { try { localStorage.setItem("py.visit", JSON.stringify(s)); } catch {} }
+
+/* ===================== HALAMAN DUEL — BABYMONSTER vs TREASURE =====================
+ * Adu statistik kedua grup per kategori, dua ronde: YouTube & Spotify. Sisi dengan angka
+ * lebih besar di tiap kategori diberi badge UNGGUL; skor dirangkum di banner atas.
+ * Delta 30 hari memakai logika yang sama dengan halaman Grafik silang (xplatNear). */
+function renderDuelPage(sec) {
+  const head = pageCloseBar("Duel BABYMONSTER vs TREASURE", "adu statistik kedua grup di YouTube &amp; Spotify — sisi terbesar tiap kategori diberi badge UNGGUL", ICO_SWAP, "#ff4d6d");
+  const bm = artistOf("babymonster"), trs = artistOf("treasure");
+  if (!bm || !trs) { sec.innerHTML = head + `<div class="banner">Data artis belum lengkap.</div>`; bindPageClose(sec); return; }
+  const nowT = Date.now() / 1000;
+  const ch30 = (id) => {
+    const h = (((state.channels || {})[id] || {}).history || []).filter((p) => p.s != null);
+    if (!h.length) return { last: null, dS: null, dV: null };
+    const base = xplatNear(h, nowT - 30 * 86400, 8) || h[0];
+    const last = h[h.length - 1];
+    return { last, dS: base && base.s != null ? last.s - base.s : null, dV: base && base.v != null ? (last.v || 0) - base.v : null };
+  };
+  const sp30 = (id) => {
+    const x = spArtistOf(id);
+    const h = ((x && x.history) || []).filter((p) => p.ml != null);
+    if (!h.length) return { x, last: null, dMl: null };
+    const base = xplatNear(h, nowT - 30 * 86400, 10) || h[0];
+    const last = h[h.length - 1];
+    return { x, last, dMl: base && base.ml != null ? last.ml - base.ml : null };
+  };
+  const cb = ch30("babymonster"), ct = ch30("treasure"), sb = sp30("babymonster"), st = sp30("treasure");
+  const spLoaded = !!state.sp.tracks;
+  const vids = allVideosFlat();
+  const topVid = (id) => vids.filter((v) => v.channel === id && lastV(v) > 0).sort((a, b) => lastV(b) - lastV(a))[0] || null;
+  const topTrack = (id) => spLoaded ? Object.values(state.sp.tracks || {}).filter((t) => t.artistId === id).sort((a, b) => spTrackTotal(b) - spTrackTotal(a))[0] || null : null;
+  const nVid = (id) => vids.filter((v) => v.channel === id).length;
+  const mk = (label, sub, av, bv, f, subA, subB) => ({ label, sub, av, bv, f, subA, subB });
+  const d30txt = (d) => d == null ? null : (d >= 0 ? "+" : "–") + fmtCompact(Math.abs(d)) + " · 30 hari";
+  const ytCats = [
+    mk("Subscriber", "kanal YouTube resmi", cb.last ? cb.last.s : null, ct.last ? ct.last.s : null, fmtExact, d30txt(cb.dS), d30txt(ct.dS)),
+    mk("Total views", "semua video kanal", cb.last ? cb.last.v : null, ct.last ? ct.last.v : null, fmtExact, d30txt(cb.dV), d30txt(ct.dV)),
+    mk("MV terbanyak", "video terbesar yang dipantau", topVid("babymonster") ? lastV(topVid("babymonster")) : null, topVid("treasure") ? lastV(topVid("treasure")) : null, (x) => fmtCompact(x) + " views", topVid("babymonster") ? rowTitleOf(topVid("babymonster"), bm) : null, topVid("treasure") ? rowTitleOf(topVid("treasure"), trs) : null),
+    mk("Video dipantau", "jumlah video terekam", nVid("babymonster") || null, nVid("treasure") || null, (x) => NF.format(x), null, null),
+    mk("Subscriber baru 30 hari", "pertumbuhan", cb.dS, ct.dS, (x) => "+" + fmtCompact(Math.max(0, x)), null, null),
+  ];
+  const spCats = spLoaded ? [
+    mk("Pendengar bulanan", "Spotify", sb.last ? sb.last.ml : null, st.last ? st.last.ml : null, fmtExact, d30txt(sb.dMl), d30txt(st.dMl)),
+    mk("Followers", "profil artis", sb.x && sb.x.followers != null ? sb.x.followers : null, st.x && st.x.followers != null ? st.x.followers : null, fmtExact, null, null),
+    mk("Total stream karier", "kworb + era katalog asli", sb.x && sb.x.totalStreams != null ? sb.x.totalStreams : null, st.x && st.x.totalStreams != null ? st.x.totalStreams : null, fmtExact, null, null),
+    mk("Stream 24 jam", "pengukuran terakhir", sb.x && sb.x.dailyStreams != null ? sb.x.dailyStreams : null, st.x && st.x.dailyStreams != null ? st.x.dailyStreams : null, fmtExact, null, null),
+    mk("Lagu terbesar", "total stream tertinggi", topTrack("babymonster") ? spTrackTotal(topTrack("babymonster")) : null, topTrack("treasure") ? spTrackTotal(topTrack("treasure")) : null, (x) => fmtCompact(x) + " stream", topTrack("babymonster") ? topTrack("babymonster").name : null, topTrack("treasure") ? topTrack("treasure").name : null),
+    mk("Pendengar baru 30 hari", "pertumbuhan", sb.dMl, st.dMl, (x) => d30txt(x), null, null),
+  ] : [];
+  let scoreA = 0, scoreB = 0;
+  const renderCats = (cats) => cats.map((c) => {
+    const win = c.av != null && c.bv != null && c.av !== c.bv ? (c.av > c.bv ? "a" : "b") : null;
+    if (win === "a") scoreA++; else if (win === "b") scoreB++;
+    const cell = (side, val, subT) => `
+      <div class="duelval${win === side ? " win" : ""}">
+        <b>${val != null ? c.f(val) : "–"}</b>
+        ${win === side ? `<span class="duelbadge">UNGGUL</span>` : ""}
+        ${subT ? `<span class="duelsub">${esc(subT)}</span>` : ""}
+      </div>`;
+    return `<div class="duelrow">${cell("a", c.av, c.subA)}<div class="duellab"><b>${c.label}</b>${c.sub ? `<span>${esc(c.sub)}</span>` : ""}</div>${cell("b", c.bv, c.subB)}</div>`;
+  }).join("");
+  const ytHTML = renderCats(ytCats);
+  const spHTML = renderCats(spCats);
+  const tot = ytCats.length + spCats.length;
+  const verdict = scoreA === scoreB ? `imbang ${scoreA}–${scoreB}` : scoreA > scoreB ? `BABYMONSTER unggul ${scoreA}–${scoreB}` : `TREASURE unggul ${scoreB}–${scoreA}`;
+  const duelHead = `<div class="duelhead"><span style="color:${esc(bm.color || "#ff4d6d")}">${esc(bm.name || "BABYMONSTER")}</span><span>VS</span><span style="color:${esc(trs.color || "#6a78ff")}">${esc(trs.name || "TREASURE")}</span></div>`;
+  sec.innerHTML = head + `
+  <section style="margin-top:16px">
+    <div class="banner" style="border-color:color-mix(in srgb,#ff4d6d 40%,var(--border))"><b>Duel angka, bukan perasaan.</b> Dari ${tot} kategori terukur: <b>${verdict}</b>. Semua angka diambil langsung dari data pemantauan saat halaman dibuka — bukan klaim fandom.</div>
+    ${featSectHead("#ff0000", ICO_STATS, "Ronde YouTube", "subscriber · views · video terbesar")}
+    <div style="margin-top:12px">${duelHead}${ytHTML}</div>
+    ${spLoaded ? featSectHead("#1ed760", ICO_SP_TROPHY, "Ronde Spotify", "pendengar bulanan · followers · total stream") + `<div style="margin-top:12px">${duelHead}${spHTML}</div>` : `<div class="banner" style="margin-top:14px">Ronde Spotify tampil begitu data Spotify selesai dimuat — tunggu sesaat atau buka lagi.</div>`}
+    <p class="note">Badge <b>UNGGUL</b> berarti angkanya lebih besar SAAT HALAMAN DIBUKA — kategori pertumbuhan membandingkan delta 30 hari (logika sama dengan Grafik silang platform: titik rekam terdekat vs ~30 hari lalu). Situs ini memantau dua grup sekaligus, jadi perbandingan ini adil dalam arti pakai sumber &amp; rentang waktu yang sama; jumlah kategori bisa bertambah mengikuti data yang terekam.</p>
+  </section>`;
+  bindPageClose(sec);
+}
+
+/* ===================== HALAMAN PAPAN PERINGKAT LAGU =====================
+ * Semua lagu diberi peringkat kenaikan 7 hari — bukan cuma 3 besar seperti Sorotan di
+ * BERANDA. Tab "Views MV" = selisih views vs titik ~7 hari lalu (deltaDays); tab
+ * "Stream Spotify" = spWeekDelta (hanya titik terukur, toleransi 7×1,6 hari). */
+function renderPapanPage(sec) {
+  const spLoaded = !!state.sp.tracks;
+  const head = pageCloseBar("Papan peringkat lagu", "semua lagu diberi peringkat kenaikan 7 hari — bukan cuma top 3", ICO_RANK, "#f97316");
+  const tab = state.papanTab === "sp" ? "sp" : "yt";
+  const grpPill = (name, color) => `<span class="hlgrp" style="--gc:${esc(color || "#6a78ff")}"><i></i>${esc(name || "–")}</span>`;
+  const ytRows = allVideosFlat().filter((v) => lastV(v) > 0).map((v) => { const d = deltaDays(v.history, 7); return { v, d: d ? Math.max(0, d.delta) : 0 }; }).filter((x) => x.d > 0).sort((a, b) => b.d - a.d || lastV(b.v) - lastV(a.v));
+  const spRows = spLoaded ? Object.values(state.sp.tracks || {}).map((t) => ({ t, d: spWeekDelta(t) })).filter((x) => x.d > 0).sort((a, b) => b.d - a.d || spTrackTotal(b.t) - spTrackTotal(a.t)) : [];
+  const tabBtn = (k, t, n) => `<button class="mtab papantab${tab === k ? " active" : ""}" data-papantab="${k}" aria-pressed="${tab === k}">${t}${n != null ? ` · ${n} lagu` : ""}</button>`;
+  let body = "";
+  if (tab === "yt") {
+    body = ytRows.length ? `<div class="ppwrap">` + ytRows.map(({ v, d }, i) => `
+      <div class="ber-hlrow" data-id="${esc(v.id)}" tabindex="0" role="button" aria-label="Buka grafik ${esc(rowTitleOf(v, v.art))}">
+        <span class="hlrank">${i + 1}</span>
+        <img src="https://i.ytimg.com/vi/${esc(v.id)}/mqdefault.jpg" alt="" loading="lazy">
+        <div class="hlmain"><b>${esc(rowTitleOf(v, v.art))}</b>${grpPill(v.art.name, v.art.color)}</div>
+        <span class="hlval" style="color:#22c55e">+${fmtCompact(d)} views</span>
+      </div>`).join("") + `</div>` : `<div class="banner">Belum ada kenaikan 7 hari yang bisa dihitung untuk video — butuh minimal 2 titik rekam per video.</div>`;
+  } else {
+    body = spRows.length ? `<div class="ppwrap">` + spRows.map(({ t, d }, i) => {
+      const ar = spArtistOf(t.artistId) || {};
+      return `
+      <div class="ber-hlrow" data-spk="${esc(t.key)}" tabindex="0" role="button" aria-label="Buka grafik ${esc(t.name)}">
+        <span class="hlrank">${i + 1}</span>
+        ${t.cover ? `<img src="${esc(t.cover)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : `<div class="hlph">♪</div>`}
+        <div class="hlmain"><b>${esc(t.name)}</b>${grpPill(ar.name, ar.color)}</div>
+        <span class="hlval" style="color:#22c55e">+${fmtCompact(d)} stream</span>
+      </div>`;
+    }).join("") + `</div>` : `<div class="banner">Belum ada kenaikan stream 7 hari yang bisa dihitung — butuh riwayat minimal 2 titik terukur dalam rentang 7×1,6 hari terakhir.</div>`;
+  }
+  sec.innerHTML = head + `
+  <section style="margin-top:16px">
+    <div class="chiprow" style="margin:0 0 12px">
+      ${tabBtn("yt", "Views MV — 7 hari", ytRows.length)}
+      ${tabBtn("sp", "Stream Spotify — 7 hari", spLoaded ? spRows.length : null)}
+    </div>
+    ${body}
+    <p class="note">Peringkat = <b>selisih vs titik ~7 hari lalu</b> (titik rekam terdekat, toleransi 7×1,6 hari) — bukan rata-rata per hari. Ini daftar LENGKAP semua lagu yang naik; Sorotan di BERANDA tetap hanya menampilkan 3 teratas per kategori. Tekan baris mana pun untuk membuka grafik video/lagu, dan tombol ⬇ CSV di modal untuk mengunduh riwayatnya.</p>
+  </section>`;
+  bindPageClose(sec);
+  sec.querySelectorAll("[data-papantab]").forEach((b) => b.addEventListener("click", () => { state.papanTab = b.dataset.papantab; renderAll(); }));
+  sec.querySelectorAll("[data-id]").forEach((el) => {
+    const go = () => openDetail(el.dataset.id, false);
+    el.addEventListener("click", go);
+    el.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+  });
+  sec.querySelectorAll("[data-spk]").forEach((el) => {
+    const go = () => openSpTrack(el.dataset.spk);
+    el.addEventListener("click", go);
+    el.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+  });
+}
+
 function xplatNear(pts, ts, tolDays) {
   let best = null, bd = Infinity;
   for (const p of pts) { const d = Math.abs(p.t - ts); if (d < bd) { bd = d; best = p; } }
@@ -6251,16 +6519,16 @@ function renderXplatPage(sec) {
       const flat = Math.abs(dSub) < 1000 || Math.abs(dMl) < 1000;
       arah = flat ? "praktis datar" : (Math.sign(dSub) === Math.sign(dMl) ? "searah" : "berlawanan arah");
     }
-    return { a, ys, sps, subNow, dSub, mlNow, dMl, arah };
+    return { a, ys, sps, spArt, subNow, dSub, mlNow, dMl, arah };
   });
   sec.innerHTML = head + `
   <section style="margin-top:16px">
     <p class="note" style="margin-top:0">Grafik memakai <b>dua poros</b>: kiri = subscriber YouTube, kanan = pendengar bulanan Spotify — keduanya <b>tidak dimulai dari 0</b> supaya bentuk geraknya terlihat, jadi bandingkan <b>bentuk garis</b> (naik/turun bersamaan atau tidak), bukan tingginya. Jendela: <b>60 hari terakhir</b>. Garis Spotify bisa terlihat pendek/tajam bila titik rekamnya masih sedikit — ia memanjang sendiri makin lama situs berjalan.</p>
-    ${cards.map(({ a, ys, sps, subNow, dSub, mlNow, dMl, arah }) => `
+    ${cards.map(({ a, ys, sps, spArt, subNow, dSub, mlNow, dMl, arah }) => `
     ${featSectHead(a.color, ICO_PEOPLE, a.name, "gerak 30 hari terakhir: " + arah)}
     <div class="chstats">
       <div class="stat"><div class="k">Subscriber YouTube</div><div class="v">${subNow != null ? fmtExact(subNow) : "–"}</div><div class="d">${dSub != null ? `<span class="${dSub >= 0 ? "up" : ""}">${dSub >= 0 ? "+" : "–"}${fmtCompact(Math.abs(dSub))}</span> dalam 30 hari` : "–"}</div></div>
-      <div class="stat"><div class="k">Pendengar bulanan Spotify</div><div class="v">${mlNow != null ? fmtExact(mlNow) : "–"}</div><div class="d">${dMl != null ? `<span class="${dMl >= 0 ? "up" : ""}">${dMl >= 0 ? "+" : "–"}${fmtCompact(Math.abs(dMl))}</span> dalam 30 hari` : "belum terekam"}</div></div>
+      <div class="stat"><div class="k">Pendengar bulanan Spotify</div><div class="v">${mlNow != null ? fmtExact(mlNow) : "–"}</div><div class="d">${dMl != null ? `<span class="${dMl >= 0 ? "up" : ""}">${dMl >= 0 ? "+" : "–"}${fmtCompact(Math.abs(dMl))}</span> dalam 30 hari` : "belum terekam"}${mlPeakTxt(spArt) ? ` · puncak karier ${mlPeakTxt(spArt)}` : ""}</div></div>
       <div class="stat"><div class="k">Titik subscriber</div><div class="v">${NF.format(ys.length)}</div><div class="d">direkam 60 hari terakhir</div></div>
       <div class="stat"><div class="k">Titik pendengar</div><div class="v">${NF.format(sps.length)}</div><div class="d">direkam 60 hari terakhir</div></div>
     </div>
@@ -6688,6 +6956,7 @@ function openDetail(vid, combined) {
         </div>
         <div class="dsub" style="margin-top:6px">
           <a class="pill" href="https://www.youtube.com/watch?v=${vid}" target="_blank" rel="noopener">Tonton di YouTube</a>
+          <button class="pill pillbtn" id="csvVidBtn" title="Unduh riwayat views sebagai berkas CSV">⬇ CSV</button>
           ${watched != null ? `<span class="pill">dipantau ${watched >= 1 ? NF.format(watched) + " hari" : "baru mulai"}</span>` : ""}
         </div>
       </div>
@@ -6775,6 +7044,8 @@ function openDetail(vid, combined) {
   document.body.style.overflow = "hidden";
   $("#closeBtn").addEventListener("click", closeDetail);
   location.hash = "v=" + vid;
+  const csvVid = $("#csvVidBtn");
+  if (csvVid) csvVid.addEventListener("click", () => dlCSV(`youtube-${vid}-views.csv`, ["tanggal", "views", "jenis"], ((v.history || [])).map((p) => [new Date(p.t * 1000).toISOString().slice(0, 10), p.v != null ? p.v : "", p.e === 1 ? "estimasi" : "terukur"])));
   $("#sheet").querySelectorAll(".verslink").forEach((b) =>
     b.addEventListener("click", () => openDetail(b.dataset.vid, false))
   );
@@ -7872,6 +8143,8 @@ function renderSpAll() {
     else if (state.quiOpen) renderQuizPage(sec); // halaman Kuis K-POP
     else if (state.xplatOpen) renderXplatPage(sec); // halaman Grafik silang platform
     else if (state.rilOpen) renderRilisanPage(sec); // halaman Performa rilisan terbaru
+    else if (state.duelOpen) renderDuelPage(sec); // halaman Duel BM vs TREASURE
+    else if (state.papanOpen) renderPapanPage(sec); // halaman Papan peringkat lagu
     else renderSpHome(sec);
   }
   else renderSpArtist(sec);
@@ -9028,6 +9301,7 @@ function openSpTrack(key) {
         </div>
         <div class="dsub" style="margin-top:6px">
           <a class="pill" href="${esc(tr.openUrl)}" target="_blank" rel="noopener">Buka di Spotify</a>
+          <button class="pill pillbtn" id="csvSpBtn" title="Unduh riwayat stream sebagai berkas CSV">⬇ CSV</button>
           ${tr.trackIds.length > 1 ? `<span class="pill">gabungan ${tr.trackIds.length} versi/ID</span>` : ""}
         </div>
       </div>
@@ -9101,6 +9375,8 @@ function openSpTrack(key) {
     })
   );
   drawSpTrackChart(tr, ar.color || SP_GREEN);
+  const csvSp = $("#csvSpBtn");
+  if (csvSp) csvSp.addEventListener("click", () => dlCSV(`spotify-${tr.key}-stream.csv`, ["tanggal", "total_stream", "jenis"], ((tr.history || [])).map((p) => [new Date(p.t * 1000).toISOString().slice(0, 10), p.v != null ? p.v : "", p.e === 1 ? "estimasi" : "terukur"])));
   if ($("#spPopChart")) drawSpPopChart(tr, ar.color || SP_GREEN);
 }
 /* data popularity gabungan untuk lagu — pakai versi/ID yang riwayatnya paling baru */
@@ -9231,6 +9507,8 @@ function renderAll() {
     else if (state.quiOpen) renderQuizPage($("#homeSection")); // halaman Kuis K-POP
     else if (state.xplatOpen) renderXplatPage($("#homeSection")); // halaman Grafik silang platform
     else if (state.rilOpen) renderRilisanPage($("#homeSection")); // halaman Performa rilisan terbaru
+    else if (state.duelOpen) renderDuelPage($("#homeSection")); // halaman Duel BM vs TREASURE
+    else if (state.papanOpen) renderPapanPage($("#homeSection")); // halaman Papan peringkat lagu
     else renderHome();
   }
   else {

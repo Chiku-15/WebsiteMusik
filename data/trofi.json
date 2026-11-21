@@ -1,5 +1,5 @@
 {
-  "_info": "Trofi acara musik & penghargaan besar, hasil kurasi sumber publik: Wikipedia (List of awards and nominations received by Treasure / Babymonster — direviu ulang penuh 16 Nov 2026), Mnet (riwayat resmi MAMA), YG (yg-life), Soompi, Forbes, NME, Hindustan Times, akun statistik penggemar. 'win' = menang, 'nom' = hanya nominasi. Tanggal parsial (bulan/tahun saja) berarti hanya itu yang bisa dipastikan. INKIGAYO HOT STAGE = trofi khusus hasil voting fans tiap minggu (BUKAN no.1 mingguan), dipisah ke array 'hotstage'. Ringkasan reviu 16 Nov 2026: BABYMONSTER total 2 trofi acara musik (SHEESH & WE GO UP, keduanya M Countdown) + 12 trofi penghargaan besar (cocok dengan total Wikipedia); TREASURE total 4 trofi acara musik (JIKJIN x2, YELLOW, IF I) + 43 trofi penghargaan besar (cocok dengan total Wikipedia — sebelumnya banyak kemenangan kecil belum tercatat: APAN, Japan Gold Disc, TMEA, D Awards 2025, dll). Perbarui manual bila ada trofi baru.",
+  "_info": "Trofi acara musik & penghargaan besar, hasil kurasi sumber publik: Wikipedia (List of awards and nominations received by Treasure / Babymonster — direviu ulang penuh 16 Nov 2026), Mnet (riwayat resmi MAMA), YG (yg-life), Soompi, Forbes, NME, Hindustan Times, akun statistik penggemar. 'win' = menang, 'nom' = hanya nominasi. Tanggal parsial (bulan/tahun saja) berarti hanya itu yang bisa dipastikan. INKIGAYO HOT STAGE = trofi khusus hasil voting fans tiap minggu (BUKAN no.1 mingguan), dipisah ke array 'hotstage'. Ringkasan reviu 21 Nov 2026 (malam pertama MAMA 2026 masuk): BABYMONSTER total 2 trofi acara musik (SHEESH & WE GO UP, keduanya M Countdown) + 13 trofi penghargaan besar; TREASURE total 4 trofi acara musik (JIKJIN x2, YELLOW, IF I) + 45 trofi penghargaan besar — cocok dengan total Wikipedia. MAMA 2026 (20–21 Nov, Kyocera Dome Osaka): malam pertama 20 Nov — BABYMONSTER menang Fans' Choice Top 10 — Female (ke-3 berturut-turut), TREASURE menang Fans' Choice Top 10 — Male + penghargaan spesial Super Stage Artist; Best Female Group dimenangkan IVE, Artist of the Year & Fans' Choice of the Year oleh BTS/ENHYPEN. Kategori malam kedua 21 Nov (termasuk Best Rap & Hip Hop Performance — TREASURE 'IF I') ditandai result 'pending' sampai pengumuman selesai, lalu diperbarui manual. Perbarui manual bila ada trofi baru.",
   "groups": {
     "babymonster": {
       "wins": [
@@ -10,6 +10,7 @@
       "awards": [
         { "name": "MAMA 2024", "cat": "Fans' Choice Top 10 — Female", "result": "win", "date": "2024-11-23", "src": "Mnet (riwayat resmi) / Yonhap" },
         { "name": "MAMA 2025", "cat": "Fans' Choice Top 10 — Female", "result": "win", "date": "2025-11-28", "src": "Mnet / L'Officiel (daftar pemenang)" },
+        { "name": "MAMA 2026", "cat": "Fans' Choice Top 10 — Female", "result": "win", "date": "2026-11-20", "src": "Mnet / Indian Express (pemenang malam pertama) / detikHOT", "note": "trofi MAMA ke-3 berturut-turut (2024 · 2025 · 2026)" },
         { "name": "Golden Disc Awards ke-39", "cat": "Rookie Artist of the Year", "result": "win", "date": "2025-01", "src": "Wikipedia / NME / YG" },
         { "name": "Seoul Music Awards ke-34", "cat": "K-pop World Choice — Group", "result": "win", "date": "2025-06", "src": "Wikipedia / Hindustan Times" },
         { "name": "Circle Chart Music Awards ke-13", "cat": "Rookie of the Year — Global Streaming (BATTER UP)", "result": "win", "date": "2024-01", "src": "Wikipedia / The Korea Herald" },
@@ -26,6 +27,9 @@
         { "name": "MAMA 2025", "cat": "Fans' Choice of the Year", "result": "nom", "date": "2025-11", "src": "Wikipedia / Mnet" },
         { "name": "MAMA 2025", "cat": "Best Female Group", "result": "nom", "date": "2025-11", "src": "Wikipedia / Mnet" },
         { "name": "MAMA 2025", "cat": "Best Dance Performance — Female Group (DRIP)", "result": "nom", "date": "2025-11", "src": "Mnet" },
+        { "name": "MAMA 2026", "cat": "Best Female Group", "result": "nom", "date": "2026-11-20", "src": "Mnet / Indian Express", "note": "dimenangkan IVE" },
+        { "name": "MAMA 2026", "cat": "Fans' Choice of the Year", "result": "nom", "date": "2026-11-20", "src": "Mnet / Indian Express", "note": "dimenangkan ENHYPEN" },
+        { "name": "MAMA 2026", "cat": "Artist of the Year", "result": "nom", "date": "2026-11-20", "src": "Mnet / Wikipedia (longlist) / Indian Express", "note": "dimenangkan BTS" },
         { "name": "MAMA 2025", "cat": "Song of the Year (DRIP)", "result": "nom", "date": "2025-11", "src": "Mnet" },
         { "name": "MAMA 2025", "cat": "Album of the Year (DRIP)", "result": "nom", "date": "2025-11", "src": "Mnet" },
         { "name": "Golden Disc Awards ke-39", "cat": "Best Album (Bonsang) — DRIP", "result": "nom", "date": "2025-01", "src": "Wikipedia" },
@@ -92,6 +96,8 @@
         { "name": "MAMA 2023", "cat": "Favorite Dance Performance — Male Group", "result": "win", "date": "2023-11-28", "src": "Wikipedia" },
         { "name": "MAMA 2023", "cat": "Galaxy Neo Flip Artist", "result": "win", "date": "2023-11-28", "src": "Wikipedia", "note": "kategori khusus sponsor" },
         { "name": "MAMA 2024", "cat": "Favorite Male Group", "result": "win", "date": "2024-11-23", "src": "Mnet / Wikipedia" },
+        { "name": "MAMA 2026", "cat": "Fans' Choice Top 10 — Male", "result": "win", "date": "2026-11-20", "src": "Mnet / Indian Express (pemenang malam pertama)", "note": "trofi Fans' Choice ke-4 grup — kembali menang sejak 2022" },
+        { "name": "MAMA 2026", "cat": "Super Stage Artist", "result": "win", "date": "2026-11-20", "src": "Mnet / Indian Express", "note": "penghargaan spesial malam pertama" },
         { "name": "Korea Grand Music Awards 2026", "cat": "Grand Song — Daesang", "result": "win", "date": "2026-11-07", "src": "Forbes / KGMA", "note": "daesang PERTAMA grup" },
         { "name": "Korea Grand Music Awards 2026", "cat": "Best Artist (Bonsang)", "result": "win", "date": "2026-11", "src": "Forbes / Wikipedia" },
         { "name": "Korea Grand Music Awards 2026", "cat": "Best Hip-Hop", "result": "win", "date": "2026-11", "src": "Forbes" },
@@ -137,6 +143,9 @@
         { "name": "MAMA 2024", "cat": "Worldwide Fans' Choice Top 10", "result": "nom", "date": "2024-11", "src": "Wikipedia / Mnet" },
         { "name": "MAMA 2025", "cat": "Worldwide Fans' Choice Top 10", "result": "nom", "date": "2025-11-29", "src": "Mnet" },
         { "name": "MAMA 2025", "cat": "Best Vocal Performance — Group (YELLOW)", "result": "nom", "date": "2025-11", "src": "Wikipedia" },
+        { "name": "MAMA 2026", "cat": "Best Rap & Hip Hop Performance (IF I)", "result": "pending", "date": "2026-11-21", "src": "Mnet (nominasi resmi)", "note": "diumumkan malam kedua 21 Nov 2026 — badge MENUNGGU hilang setelah file ini diperbarui" },
+        { "name": "MAMA 2026", "cat": "Worldwide KCONer's Choice (IF I)", "result": "nom", "date": "2026-11-20", "src": "Mnet / Indian Express", "note": "dimenangkan ZEROBASEONE" },
+        { "name": "MAMA 2026", "cat": "Fans' Choice of the Year", "result": "nom", "date": "2026-11-20", "src": "Mnet / Indian Express", "note": "dimenangkan ENHYPEN" },
         { "name": "Golden Disc Awards ke-37", "cat": "Best Album (Bonsang) — The Second Step: Chapter One", "result": "nom", "date": "2023-01", "src": "Wikipedia / IBT" },
         { "name": "Golden Disc Awards ke-37", "cat": "TikTok Golden Disc Most Popular Artist", "result": "nom", "date": "2023-01", "src": "Wikipedia" },
         { "name": "Golden Disc Awards ke-38", "cat": "Best Album (Bonsang) — Reboot", "result": "nom", "date": "2024-01", "src": "Wikipedia" },

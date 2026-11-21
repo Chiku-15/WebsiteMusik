@@ -775,7 +775,7 @@ async function main() {
       await sleep(300);
     }
     const oldArt = oldArtists[artist.id] || {};
-    const artHist = (oldArt.history || []).filter((p) => p && p.t && p.total != null);
+    const artHist = (oldArt.history || []).filter((p) => p && p.t && (p.total != null || p.ml != null));
     artHist.push({ t: tn, total: kworbTotal, daily: kworbDaily, ml: ml ? ml.listeners : null, f: followersMap[artist.id] || oldArt.followers || null });
     const seen = new Map();
     for (const p of artHist.sort((a, b) => a.t - b.t)) {
