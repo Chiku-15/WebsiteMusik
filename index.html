@@ -79,6 +79,9 @@
   .tab.bantuantab{color:#38bdf8;font-weight:800;position:relative}
   .tab.bantuantab:hover{color:#67cdfd}
   .tab.bantuantab.active{background:linear-gradient(135deg,#38bdf8,#818cf8);color:#fff;box-shadow:0 4px 14px rgba(56,189,248,.35)}
+  .tab.awardstab{color:#c4b5fd;font-weight:800;position:relative}
+  .tab.awardstab:hover{color:#d8ccfe}
+  .tab.awardstab.active{background:linear-gradient(135deg,#a78bfa,#f472b6);color:#fff;box-shadow:0 4px 14px rgba(167,139,250,.35)}
   /* ---------- halaman BANTUAN ---------- */
   .bnt-qa{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-top:10px}
   .bnt-qa .q{display:block;font-size:14.5px;margin-bottom:6px;color:var(--text)}
@@ -89,6 +92,56 @@
   .bnt-tag{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px}
   .bnt-tag .sym{display:inline-block;background:var(--chip);border-radius:8px;padding:3px 9px;font-weight:800;color:var(--text);margin-bottom:6px}
   .bnt-tag p{margin:0;color:var(--muted);font-size:12.5px;line-height:1.6}
+  /* ---------- halaman AWARDS — panggung MAMA 2026 (gaya mama-2026.mirekapps.com) ---------- */
+  .mama-title{font-family:Georgia,'Times New Roman',serif;font-weight:400;font-size:clamp(30px,5vw,52px);line-height:1.06;letter-spacing:-.5px;margin:6px 0 10px}
+  .mama-title i{font-style:italic}
+  .mama-lede{color:var(--muted);font-size:13.5px;line-height:1.65;max-width:660px;margin:0}
+  .mama-facts{display:flex;gap:8px 26px;flex-wrap:wrap;align-items:baseline;margin-top:16px}
+  .mama-facts b{font-size:15px}
+  .mama-facts span{color:var(--muted);font-size:12.5px}
+  .mama-asof{color:#ffb02e;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
+  .mama-plate{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:16px;margin-top:14px;padding:14px 8px 4px;overflow-x:auto}
+  .mama-chart{min-width:880px}
+  .mama-chart svg{display:block;width:100%;height:auto}
+  .mama-cap{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10.5px;fill:var(--muted)}
+  .mama-grid{stroke:var(--border);stroke-width:1}
+  .mama-gridtxt{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10px;fill:var(--muted)}
+  .mama-starlbl{cursor:pointer}
+  .mama-starlbl .nm{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:13.5px;fill:var(--text)}
+  .mama-starlbl .vv{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:9.5px;fill:var(--muted)}
+  .mama-starlbl.foc .nm{font-weight:700}
+  .mama-dot{fill:var(--text);opacity:.9}
+  .mama-halo{fill:var(--text);opacity:.13}
+  .mama-star,.mama-halostar{cursor:pointer}
+  .mama-star:hover{filter:brightness(1.35)}
+  .mama-acts{margin-top:20px}
+  .mama-act{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 18px;margin-top:12px;position:relative}
+  .mama-act.focus{border-color:color-mix(in srgb,var(--ac) 55%,var(--border));box-shadow:0 8px 26px color-mix(in srgb,var(--ac) 13%,transparent)}
+  .mama-act.flash{animation:mamaflash 1.6s ease}
+  @keyframes mamaflash{0%,55%{box-shadow:0 0 0 3px var(--ac)}100%{box-shadow:none}}
+  .mama-acthead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .mama-idx{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:2px 8px}
+  .mama-actname{font-family:Georgia,'Times New Roman',serif;font-size:21px;font-weight:700}
+  .mama-ko{color:var(--muted);font-size:13px}
+  .mama-actviews{margin-left:auto;text-align:right}
+  .mama-actviews .tv{font-size:16px;font-weight:800}
+  .mama-actviews .tm{color:var(--muted);font-size:11.5px;display:block}
+  .mama-focustag{position:absolute;top:-9px;right:14px;background:var(--ac);color:#fff;font-size:10px;font-weight:800;letter-spacing:.6px;padding:3px 10px;border-radius:999px}
+  .mama-stage{color:var(--muted);font-size:12.5px;margin-top:8px}
+  .mama-stage b{color:var(--text)}
+  .mama-clips{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px;margin-top:12px}
+  .mama-clip{position:relative;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--card2);transition:.15s;text-decoration:none}
+  .mama-clip:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+  .mama-clip .th{position:relative;display:block;aspect-ratio:16/9;background:#000}
+  .mama-clip .th img{width:100%;height:100%;object-fit:cover;display:block}
+  .mama-clip .bg{position:absolute;left:6px;top:6px;background:rgba(0,0,0,.72);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px}
+  .mama-clip .du{position:absolute;right:6px;bottom:6px;background:rgba(0,0,0,.72);color:#fff;font-size:10.5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:1px 6px;border-radius:6px}
+  .mama-clip .ct{display:block;padding:9px 11px 3px;font-size:12px;font-weight:700;line-height:1.45;color:var(--text)}
+  .mama-clip:hover .ct{text-decoration:underline}
+  .mama-clip .cv{display:block;padding:0 11px 10px;color:var(--muted);font-size:11px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  @media (max-width:640px){.mama-actviews{margin-left:0;text-align:left;width:100%}.mama-clips{grid-template-columns:1fr 1fr}}
+  .mama-segs{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;margin:16px 2px 0}
+  .mtabs .cnt{background:var(--chip);border-radius:999px;padding:2px 8px;font-size:10.5px;margin-left:2px}
   .iconbtn{
     width:38px;height:38px;border-radius:11px;border:1px solid var(--border);background:var(--card);
     color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.18s;
@@ -1220,6 +1273,7 @@
     </div>
     <button class="tab berandatab" id="berandaTab" title="Buka halaman BERANDA — garis besar seluruh situs dalam satu halaman" style="flex:none">Beranda</button>
     <button class="tab fiturtab" id="fiturTab" title="Buka halaman Semua Fitur — peta seluruh fitur situs dalam bentuk kartu" style="flex:none">Fitur</button>
+    <button class="tab awardstab" id="awardsTab" title="Buka halaman Awards — chart panggung MAMA 2026 (views seluruh video panggung resmi Mnet)" style="flex:none">Awards</button>
     <button class="tab bantuantab" id="bantuanTab" title="Buka halaman Bantuan — cara kerja situs, sumber data &amp; arti tanda" style="flex:none">Bantuan</button>
     <div class="spacer"></div>
     <div class="hbtns">
@@ -1662,6 +1716,9 @@ const state = {
   berOpen: true,          // halaman BERANDA — garis besar seluruh situs; SITUS SELALU DIBUKA di halaman ini
   fiturOpen: false,       // halaman SEMUA FITUR — peta lengkap seluruh fitur situs dalam bentuk kartu
   bantuanOpen: false,     // halaman BANTUAN — cara kerja situs, sumber data & arti tanda
+  awardsOpen: false,      // halaman AWARDS — chart panggung MAMA 2026, gaya mama-2026.mirekapps.com
+  awardsDay: "all",       // filter hari AWARDS: "all" (kedua hari) | "1" | "2"
+  awardsSort: "order",    // urutan daftar artis AWARDS: "order" (urutan panggung) | "top" (terbanyak ditonton)
   chnPlat: null,          // pilihan dropdown platform di Statistik Channel ("yt"|"spotify")
   chnArt: null,           // pilihan dropdown artis di Statistik Channel (artistId)
   berArtPlat: null,       // pilihan dropdown platform di seksi "Dua artis yang dipantau" halaman BERANDA ("yt"|"spotify")
@@ -1786,7 +1843,7 @@ function drawSpark30(canvas) {
 
 async function loadData() {
   const bust = "?v=" + Date.now();
-  const [cfg, vids, chans, meta, ms, memb, trofi, jadwal, spPop, social, charts, chHist, news, anoms] = await Promise.all([
+  const [cfg, vids, chans, meta, ms, memb, trofi, jadwal, spPop, social, charts, chHist, news, anoms, mama] = await Promise.all([
     fetch("config.json" + bust).then((r) => r.json()),
     fetch("data/videos.json" + bust).then((r) => r.json()).catch(() => ({})),
     fetch("data/channels.json" + bust).then((r) => r.json()).catch(() => ({})),
@@ -1801,11 +1858,12 @@ async function loadData() {
     fetch("data/chart-history.json" + bust).then((r) => r.json()).catch(() => null),
     fetch("data/news.json" + bust).then((r) => r.json()).catch(() => null),
     fetch("data/anomalies.json" + bust).then((r) => r.json()).catch(() => null),
+    fetch("data/mama.json" + bust).then((r) => r.json()).catch(() => null),
   ]);
   state.config = cfg; state.videos = vids; state.channels = chans; state.meta = meta;
   state.milestones = ms.videos || {};
   state.members = memb; state.trofi = trofi; state.jadwal = jadwal; state.spPop = spPop;
-  state.social = social; state.charts = charts; state.chartHist = chHist; state.news = news; state.anoms = anoms;
+  state.social = social; state.charts = charts; state.chartHist = chHist; state.news = news; state.anoms = anoms; state.mama = mama;
 }
 
 function artistOf(id) { return state.config.artists.find((a) => a.id === id); }
@@ -1838,6 +1896,7 @@ function bindPageClose(sec) {
     state.chnOpen = false; state.quiOpen = false; state.fiturOpen = false; state.bantuanOpen = false; state.spWrapOpen = false;
     state.xplatOpen = false; state.rilOpen = false;
     state.duelOpen = false; state.papanOpen = false;
+    state.awardsOpen = false;
     if (ret === "fitur") state.fiturOpen = true;
     else if (ret === "bantuan") state.bantuanOpen = true;
     else state.berOpen = true;
@@ -1927,6 +1986,7 @@ function menuGo(k) {
   if (state.fiturOpen) state.retTo = "fitur";
   else if (state.bantuanOpen) state.retTo = "bantuan";
   else if (state.berOpen) state.retTo = "ber";
+  else if (state.awardsOpen) state.retTo = "ber";
   /* halaman SEMUA FITUR (tombol "Lihat semua fitur" di BERANDA & kartu pilihan) */
   if (k === "allf") { openFitur(); return; }
   /* Rekor/Kalender = halaman khusus beranda — dari halaman artis pun kembali ke beranda dulu
@@ -1946,6 +2006,7 @@ function menuGo(k) {
     state.berOpen = false;
     state.fiturOpen = false;
     state.bantuanOpen = false;
+    state.awardsOpen = false;
     state.recOpen = false; state.calOpen = false; state.memOpen = false;
     state.troOpen = false; state.schOpen = false;
     state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false;
@@ -1982,6 +2043,7 @@ function openBeranda() {
   state.berOpen = true;
   state.fiturOpen = false;
   state.bantuanOpen = false;
+  state.awardsOpen = false;
   state.recOpen = false; state.calOpen = false; state.memOpen = false;
   state.troOpen = false; state.schOpen = false;
   state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false;
@@ -1997,6 +2059,7 @@ function openFitur() {
   state.retTo = "ber";   // navigasi header = asal ✕ kembali ke BERANDA
   state.fiturOpen = true;
   state.berOpen = false;
+  state.awardsOpen = false;
   state.recOpen = false; state.calOpen = false; state.memOpen = false;
   state.troOpen = false; state.schOpen = false;
   state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false;
@@ -2013,6 +2076,7 @@ function openBantuan() {
   state.retTo = "ber";   // navigasi header = asal ✕ kembali ke BERANDA
   state.bantuanOpen = true;
   state.berOpen = false;
+  state.awardsOpen = false;
   state.recOpen = false; state.calOpen = false; state.memOpen = false;
   state.troOpen = false; state.schOpen = false;
   state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false;
@@ -2021,6 +2085,23 @@ function openBantuan() {
   state.xplatOpen = false; state.rilOpen = false;
   state.duelOpen = false; state.papanOpen = false;
   state.fiturOpen = false;
+  if (state.view !== "home") state.view = "home";
+  renderAll();
+  window.scrollTo(0, 0);
+}
+function openAwards() {
+  state.retTo = "ber";   // navigasi header = asal ✕ kembali ke BERANDA
+  state.awardsOpen = true;
+  state.berOpen = false;
+  state.fiturOpen = false;
+  state.bantuanOpen = false;
+  state.recOpen = false; state.calOpen = false; state.memOpen = false;
+  state.troOpen = false; state.schOpen = false;
+  state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false;
+  state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
+  state.chnOpen = false; state.quiOpen = false; state.spWrapOpen = false; state.spAlbumOpen = false;
+  state.xplatOpen = false; state.rilOpen = false;
+  state.duelOpen = false; state.papanOpen = false;
   if (state.view !== "home") state.view = "home";
   renderAll();
   window.scrollTo(0, 0);
@@ -2333,7 +2414,7 @@ function renderBantuanPage(sec) {
     </div>
     ${featSectHead("#22c55e", ICO_GRID, "Tips pakai", "navigasi & hal yang sering ditanya")}
     ${bntQA("Cara pindah antara YouTube dan Spotify?", `Lewat tombol besar <b>“Buka beranda YouTube / Buka beranda Spotify”</b> di halaman BERANDA. Beberapa kartu fitur yang butuh data Spotify (mis. Spotify Wrapped, Diskografi) otomatis memuat data Spotify saat ditekan.`)}
-    ${bntQA("Fungsi tiga tombol di header?", `<b>Beranda</b> = garis besar seluruh situs (halaman awal). <b>Fitur</b> = peta lengkap seluruh fitur dalam bentuk kartu. <b>Bantuan</b> = halaman yang sedang kamu baca.`)}
+    ${bntQA("Fungsi empat tombol di header?", `<b>Beranda</b> = garis besar seluruh situs (halaman awal). <b>Fitur</b> = peta lengkap seluruh fitur dalam bentuk kartu. <b>Awards</b> = chart panggung MAMA 2026 — views seluruh video panggung resmi Mnet, BABYMONSTER &amp; TREASURE disorot. <b>Bantuan</b> = halaman yang sedang kamu baca.`)}
     ${bntQA("Tombol ✕ di atas halaman itu ke mana?", `Kembali ke halaman header <b>tempat fiturnya dibuka</b>: kartu ditekan di halaman <b>Fitur</b> → ✕ pulang ke halaman Fitur; ditekan di <b>BERANDA</b> → ✕ pulang ke BERANDA. Halaman Fitur &amp; Bantuan sendiri selalu pulang ke BERANDA (karena memang dibuka lewat header).`)}
     ${bntQA("Kenapa beranda Spotify perlu “memuat data” dulu?", `Data Spotify diambil terpisah saat pertama kali dibuka (sedikit tunggu). Setelah terbuka, selama sesi berjalan semua halaman Spotify — artis, lagu, Wrapped, Rekap 12 bulan — langsung tampil tanpa memuat ulang.`)}
     ${bntQA("Apa itu halaman Duel BM vs TREASURE?", `Kartu di halaman Fitur. Isinya adu statistik kedua grup per kategori dalam dua ronde — YouTube (subscriber, total views, MV terbanyak, video dipantau, subscriber baru 30 hari) dan Spotify (pendengar bulanan, followers, total stream karier, stream 24 jam, lagu terbesar, pendengar baru 30 hari). Sisi dengan angka lebih besar di tiap kategori diberi badge <b>UNGGUL</b> dan jumlahnya dirangkum di banner atas. Semua angka dihitung dari data pemantauan yang sama, rentang waktunya sama — jadi perbandingannya adil.`)}
@@ -2343,6 +2424,147 @@ function renderBantuanPage(sec) {
     <p class="note" style="margin-top:14px">Sumber teknis semuanya terbuka di repo: <b>data/channels.json</b> (riwayat kanal YouTube), riwayat video, <b>data/spotify-*.json</b> (artis, lagu, album, Wrapped), dan <b>data/news.json</b> (berita) — semuanya ditulis otomatis oleh GitHub Actions.</p>
   </section>`;
   bindPageClose(sec);
+}
+/* ===================== HALAMAN AWARDS — chart panggung MAMA 2026 =====================
+ * Gaya mengikuti mama-2026.mirekapps.com: judul serif besar, garis fakta dengan cap
+ * waktu "views per …", filter hari & urutan, chart bintang (kiri→kanan = urutan naik
+ * panggung, tinggi & ukuran bintang = views) lalu daftar tiap artis beserta seluruh
+ * video panggungnya (thumbnail, durasi, views). BABYMONSTER & TREASURE disorot warna
+ * artis. Data snapshot manual di data/mama.json — diperbarui lewat edit file, sama
+ * seperti data/trofi.json & data/jadwal.json (kolektor tidak menimpanya). */
+function mamaOf() { return state.mama && Array.isArray(state.mama.acts) && state.mama.acts.length ? state.mama : null; }
+function mamaSlug(n) { return String(n).toLowerCase().replace(/[^a-z0-9]+/g, ""); }
+function mamaFocusColor(id) {
+  const a = (state.config.artists || []).find((x) => x.id === id);
+  return (a && a.color) || "#a78bfa";
+}
+/* chart bintang — x: urutan naik panggung, y: views (linier), r: akar views supaya
+ * artis kecil tetap terlihat. Label digeser naik/turun otomatis biar tidak bertumpuk. */
+function mamaChartSVG(acts, focCol) {
+  const W = 1080, H = 440, padL = 66, padR = 26, padT = 24, padB = 46;
+  const iw = W - padL - padR, ih = H - padT - padB;
+  const maxV = Math.max.apply(null, acts.map((a) => a.views));
+  const top = Math.max(2e6, Math.ceil(maxV / 2e6) * 2e6);
+  const X = (i) => (acts.length === 1 ? padL + iw / 2 : padL + (iw * i) / (acts.length - 1));
+  const Y = (v) => padT + ih * (1 - v / top);
+  const R = (v) => 3.4 + 12.8 * Math.sqrt(v / top);
+  let g = "";
+  for (let m = 0; m <= top + 1; m += 2e6) {
+    g += `<line class="mama-grid" x1="${padL}" y1="${Y(m).toFixed(1)}" x2="${W - padR}" y2="${Y(m).toFixed(1)}"/>` +
+      `<text class="mama-gridtxt" x="${padL - 9}" y="${(Y(m) + 3.5).toFixed(1)}" text-anchor="end">${m / 1e6} jt</text>`;
+  }
+  const placed = [];
+  /* kotak semua bintang ikut dihindari label — label tidak boleh menutupi bintang artis lain */
+  const starBoxes = acts.map((a, i) => {
+    const sx = X(i), sy = Y(a.views), sr = R(a.views);
+    return { x: sx - sr - 2, y: sy - sr - 2, w: 2 * sr + 4, h: 2 * sr + 4 };
+  });
+  const hits = (b) => placed.some((p) => b.x < p.x + p.w + 4 && b.x + b.w + 4 > p.x && b.y < p.y + p.h + 3 && b.y + b.h + 3 > p.y) ||
+    starBoxes.some((p) => b.x < p.x + p.w && b.x + b.w > p.x && b.y < p.y + p.h && b.y + b.h > p.y);
+  acts.forEach((a, i) => {
+    const x = X(i), y = Y(a.views), r = R(a.views);
+    const foc = !!a.focus;
+    const col = foc ? focCol[a.focus] || "#a78bfa" : null;
+    const dot = foc
+      ? `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r + 8).toFixed(1)}" style="fill:${col};opacity:.2"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" style="fill:${col}" stroke="var(--bg)" stroke-width="1.5"/>`
+      : `<circle class="mama-halo" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r + 5).toFixed(1)}"/><circle class="mama-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" stroke="var(--bg)" stroke-width="1.5"/>`;
+    g += `<g class="mama-star" data-jump="${mamaSlug(a.name)}"><title>${esc(a.name)} — ${fmtExact(a.views)} views · ${a.clips.length} video${a.day ? ` · Hari ${a.day}` : ""}</title>${dot}</g>`;
+    const vv = fmtCompact(a.views);
+    /* satu <text> berisi dua tspan — nama & angka mengalir berurutan, tidak mungkin saling menimpa */
+    const lw = a.name.length * 8.2 + vv.length * 6.2 + 16;
+    const left = x > W - padR - lw - 12;   /* mepet tepi kanan → label di kiri bintang */
+    const bx = left ? x - r - 8 - lw : x + r + 8;
+    let dy = 0;
+    for (const off of [0, -14, 14, -28, 28, -42, 42, -56, 56, -70, 70]) {
+      if (!hits({ x: bx, y: y - 8 + off, w: lw, h: 18 })) { dy = off; break; }
+    }
+    placed.push({ x: bx, y: y - 8 + dy, w: lw, h: 18 });
+    g += `<g class="mama-starlbl${foc ? " foc" : ""}" data-jump="${mamaSlug(a.name)}">` +
+      `<text x="${(left ? bx + lw : bx).toFixed(1)}" y="${(y + 4 + dy).toFixed(1)}" text-anchor="${left ? "end" : "start"}"><tspan class="nm">${esc(a.name)}</tspan><tspan class="vv" dx="5">${vv}</tspan></text></g>`;
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Chart panggung MAMA 2026 — tinggi & ukuran bintang = views">${g}
+    <text class="mama-cap" x="${padL}" y="${H - 6}">pertama naik panggung</text>
+    <text class="mama-cap" x="${W - padR}" y="${H - 6}" text-anchor="end">terakhir →</text>
+  </svg>`;
+}
+function mamaClipHTML(c) {
+  return `<a class="mama-clip" href="https://www.youtube.com/watch?v=${esc(c.id)}" target="_blank" rel="noopener" title="Buka di YouTube — ${esc(c.title)}">
+    <span class="th"><img src="https://i.ytimg.com/vi/${esc(c.id)}/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
+    ${c.full ? `<span class="bg">Full stage</span>` : ""}<span class="du">${esc(c.dur || "")}</span></span>
+    <span class="ct">${esc(c.title)}</span>
+    <span class="cv">${fmtExact(c.views)} views</span>
+  </a>`;
+}
+function renderAwardsPage(sec) {
+  const m = mamaOf();
+  if (!m) {
+    sec.innerHTML = `${pageCloseBar("Awards", "chart panggung MAMA 2026", ICO_MEDAL, "#a78bfa")}
+    <section style="margin-top:16px"><div class="banner">Data panggung MAMA 2026 belum tersedia — pastikan berkas <b>data/mama.json</b> ikut ada di repo (folder data/), lalu muat ulang halaman.</div></section>`;
+    bindPageClose(sec);
+    return;
+  }
+  const focCol = { babymonster: mamaFocusColor("babymonster"), treasure: mamaFocusColor("treasure") };
+  const dKey = state.awardsDay === "1" || state.awardsDay === "2" ? Number(state.awardsDay) : "all";
+  const actsAll = m.acts;
+  const chartActs = actsAll.filter((a) => dKey === "all" || a.day === dKey).slice().sort((x, y) => x.gorder - y.gorder);
+  const listActs = chartActs.slice().sort(state.awardsSort === "top" ? (x, y) => y.views - x.views : (x, y) => x.gorder - y.gorder);
+  const totV = actsAll.reduce((s, a) => s + a.views, 0);
+  const totC = actsAll.reduce((s, a) => s + a.clips.length, 0);
+  const nFoc = actsAll.filter((a) => a.focus).length;
+  const focNames = actsAll.filter((a) => a.focus).map((a) => esc(a.name)).join(" &amp; ");
+  const head = pageCloseBar("Awards", "chart panggung MAMA 2026 — views seluruh video panggung resmi Mnet, gaya mama-2026.mirekapps.com", ICO_MEDAL, "#a78bfa");
+  const chipD = (k, lbl, n) => `<button type="button" class="mtab${dKey === k ? " active" : ""}" data-awd="${k}" style="--artist-color:#a78bfa">${lbl} <span class="cnt">${n}</span></button>`;
+  const chipS = (k, lbl) => `<button type="button" class="mtab${state.awardsSort === k ? " active" : ""}" data-aws="${k}" style="--artist-color:#38bdf8">${lbl}</button>`;
+  sec.innerHTML = `${head}
+  <section style="margin-top:10px">
+    <h2 class="mama-title"><i>MAMA 2026</i> stage chart</h2>
+    <p class="mama-lede">Semua panggung MAMA 2026 — ${esc(m.venue || "Kyocera Dome Osaka, 20–21 November 2026")} — yang Mnet unggah ke YouTube, lengkap dengan setlist, video &amp; views tiap artis. Makin besar &amp; tinggi bintangnya, makin banyak views total video panggungnya. ${nFoc ? focNames : ""} disorot warna grup.</p>
+    <div class="mama-facts">
+      <span><b>${actsAll.length}</b> <span>artis</span></span>
+      <span><b>${totC}</b> <span>video</span></span>
+      <span><b>${fmtExact(totV)}</b> <span>views</span></span>
+      <span class="mama-asof">views per ${esc(m.asOf || "–")}</span>
+    </div>
+    <div class="mama-segs">
+      <div class="mtabs" style="margin:0">${chipD("all", "Kedua hari", actsAll.length)}${chipD("1", "Hari 1", actsAll.filter((a) => a.day === 1).length)}${chipD("2", "Hari 2", actsAll.filter((a) => a.day === 2).length)}</div>
+      <div class="mtabs" style="margin:0">${chipS("top", "Terbanyak ditonton")}${chipS("order", "Urutan panggung")}</div>
+    </div>
+    <div class="mama-plate"><div class="mama-chart">${mamaChartSVG(chartActs, focCol)}</div></div>
+    <p class="note" style="margin-top:8px">Kiri ke kanan: urutan naik panggung · tinggi &amp; ukuran bintang: views · tekan bintang/nama untuk lompat ke kartu artisnya. Bintang berwarna = grup yang dipantau situs ini.</p>
+    <div class="mama-acts">
+      <div class="hsect"><h2><span class="sic" style="--c:#a78bfa"><svg viewBox="0 0 24 24"><path d="${ICO_MEDAL}"/></svg></span>Para artis</h2><span class="sub">${state.awardsSort === "top" ? "terbanyak ditonton dulu" : "urutan panggung"} · ${dKey === "all" ? "kedua hari" : "Hari " + dKey}</span></div>
+      ${listActs.map((a, i) => {
+        const foc = !!a.focus;
+        return `<article class="mama-act${foc ? " focus" : ""}" id="mamaact-${mamaSlug(a.name)}" style="--ac:${foc ? focCol[a.focus] : "var(--border)"}">
+        ${foc ? `<span class="mama-focustag">GRUP DIPANTAU</span>` : ""}
+        <div class="mama-acthead">
+          <span class="mama-idx">${String(i + 1).padStart(2, "0")}</span>
+          <span class="mama-actname">${esc(a.name)}</span>
+          ${a.ko ? `<span class="mama-ko" lang="ko">${esc(a.ko)}</span>` : ""}
+          <span class="mama-actviews"><span class="tv">${fmtExact(a.views)}</span><span class="tm">views · ${a.clips.length} video · Hari ${a.day} · panggung ke-${a.order}</span></span>
+        </div>
+        ${a.stage ? `<div class="mama-stage">Tema panggung: <b>‘${esc(a.stage)}’</b></div>` : ""}
+        <div class="mama-clips">${a.clips.map(mamaClipHTML).join("")}</div>
+      </article>`;
+      }).join("")}
+    </div>
+    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
+      <button class="mtab" data-gomenu="tro" style="--artist-color:#f59e0b">Trofi &amp; Penghargaan — hasil MAMA 2026 &amp; music show →</button>
+    </div>
+    <p class="note" style="margin-top:14px">Sumber: kanal YouTube <b>Mnet</b> — unggahan panggung [#2026MAMA] (Shorts tidak dihitung). Total artis menjumlahkan semua videonya: unggahan full stage dan klip per lagu masing-masing dihitung; panggung yang dibagi beberapa artis dihitung untuk artis yang dikreditkan Mnet lebih dulu. Angka adalah <b>snapshot manual</b> per ${esc(m.asOf || "–")} — tidak ikut diperbarui kolektor; cara memperbarui: edit <b>data/mama.json</b> di repo (ringkasan total per artis dirangkum dari mama-2026.mirekapps.com).</p>
+  </section>`;
+  bindPageClose(sec);
+  const rerender = () => { const y = window.scrollY; renderAll(); window.scrollTo(0, y); };
+  sec.querySelectorAll("[data-awd]").forEach((b) => b.addEventListener("click", () => { state.awardsDay = b.dataset.awd; rerender(); }));
+  sec.querySelectorAll("[data-aws]").forEach((b) => b.addEventListener("click", () => { state.awardsSort = b.dataset.aws; rerender(); }));
+  sec.querySelectorAll("[data-gomenu]").forEach((b) => b.addEventListener("click", () => menuGo(b.dataset.gomenu)));
+  sec.querySelectorAll("[data-jump]").forEach((el) => el.addEventListener("click", () => {
+    const t = document.getElementById("mamaact-" + el.dataset.jump);
+    if (!t) return;
+    t.scrollIntoView({ behavior: "smooth", block: "start" });
+    t.classList.remove("flash"); void t.offsetWidth; t.classList.add("flash");
+    setTimeout(() => t.classList.remove("flash"), 1700);
+  }));
 }
 function bindMenu(root) {
   if (!root) return;
@@ -5622,19 +5844,24 @@ function renderTabs() {
     bn.classList.toggle("active", !!state.bantuanOpen);
     bn.onclick = () => openBantuan();
   }
+  const aw = $("#awardsTab");
+  if (aw) {
+    aw.classList.toggle("active", !!state.awardsOpen);
+    aw.onclick = () => openAwards();
+  }
 }
 
 async function setPlatform(p) {
   const same = state.platform === p;
   /* halaman khusus terbuka? menekan tab platform = kembali ke beranda bersih */
-  const anyPage = state.berOpen || state.fiturOpen || state.bantuanOpen || state.spWrapOpen || state.recOpen || state.calOpen || state.memOpen || state.troOpen || state.schOpen || state.socOpen || state.chaOpen || state.disOpen || state.bruOpen || state.tmlOpen || state.heatOpen || state.bulOpen || state.chnOpen || state.quiOpen || state.spAlbumOpen || state.xplatOpen || state.rilOpen || state.duelOpen || state.papanOpen;
+  const anyPage = state.berOpen || state.fiturOpen || state.bantuanOpen || state.awardsOpen || state.spWrapOpen || state.recOpen || state.calOpen || state.memOpen || state.troOpen || state.schOpen || state.socOpen || state.chaOpen || state.disOpen || state.bruOpen || state.tmlOpen || state.heatOpen || state.bulOpen || state.chnOpen || state.quiOpen || state.spAlbumOpen || state.xplatOpen || state.rilOpen || state.duelOpen || state.papanOpen;
   if (same && state.view === "home" && !anyPage) return;   // sudah di beranda platform ini
   state.view = "home";                          // menekan tab platform = masuk beranda
   state.berOpen = false;                        // …sekaligus menutup halaman BERANDA bila terbuka
   state.spWrapOpen = false;                     // …sekaligus menutup halaman Wrapped bila terbuka
   state.recOpen = false; state.calOpen = false; state.memOpen = false; state.troOpen = false; state.schOpen = false; state.spAlbumOpen = false;
   state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false; state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
-  state.chnOpen = false; state.quiOpen = false; state.fiturOpen = false; state.bantuanOpen = false; state.xplatOpen = false; state.rilOpen = false; state.duelOpen = false; state.papanOpen = false;   // halaman khusus kembali punya tombol ✕ — tab header tetap bisa menutup semua halaman
+  state.chnOpen = false; state.quiOpen = false; state.fiturOpen = false; state.bantuanOpen = false; state.awardsOpen = false; state.xplatOpen = false; state.rilOpen = false; state.duelOpen = false; state.papanOpen = false;   // halaman khusus kembali punya tombol ✕ — tab header tetap bisa menutup semua halaman
   if (!same) {
     state.platform = p;
     if (p === "spotify" && !state.sp.tracks && !state.sp.error) {
@@ -5686,7 +5913,7 @@ function setView(v) {
   state.recOpen = false; state.calOpen = false; state.memOpen = false; state.troOpen = false; state.schOpen = false; state.spAlbumOpen = false;
   state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false; state.tmlOpen = false;
   state.heatOpen = false; state.bulOpen = false;
-  state.chnOpen = false; state.quiOpen = false; state.fiturOpen = false; state.bantuanOpen = false; state.xplatOpen = false; state.rilOpen = false; state.duelOpen = false; state.papanOpen = false;   // halaman khusus kembali punya tombol ✕ — tab header tetap bisa menutup semua halaman
+  state.chnOpen = false; state.quiOpen = false; state.fiturOpen = false; state.bantuanOpen = false; state.awardsOpen = false; state.xplatOpen = false; state.rilOpen = false; state.duelOpen = false; state.papanOpen = false;   // halaman khusus kembali punya tombol ✕ — tab header tetap bisa menutup semua halaman
   state.spQuery = "";   // kosongkan pencarian Spotify saat pindah halaman
   if (v !== "home") { state.artist = v; state.msTab = "table"; }
   renderAll();
@@ -8541,6 +8768,7 @@ function renderSpAll() {
     if (state.berOpen) renderBerandaPage(sec); // halaman BERANDA (header)
     else if (state.fiturOpen) renderFiturPage(sec); // halaman SEMUA FITUR (header)
     else if (state.bantuanOpen) renderBantuanPage(sec); // halaman BANTUAN (header)
+    else if (state.awardsOpen) renderAwardsPage(sec); // halaman AWARDS (header) — panggung MAMA 2026
     else if (state.spWrapOpen) renderWrappedPage(sec);
     else if (state.recOpen) renderSpRecords(sec);
     else if (state.calOpen) (state.calView === "yt" ? renderYtCalendar : renderSpCalendar)(sec);
@@ -9906,6 +10134,7 @@ function renderAll() {
     if (state.berOpen) renderBerandaPage($("#homeSection"));       // halaman BERANDA (header)
     else if (state.fiturOpen) renderFiturPage($("#homeSection"));    // halaman SEMUA FITUR (header)
     else if (state.bantuanOpen) renderBantuanPage($("#homeSection"));  // halaman BANTUAN (header)
+    else if (state.awardsOpen) renderAwardsPage($("#homeSection"));  // halaman AWARDS (header) — panggung MAMA 2026
     else if (state.recOpen) renderYtRecords($("#homeSection"));       // halaman Rekor & Fakta
     else if (state.calOpen) (state.calView === "spotify" ? renderSpCalendar : renderYtCalendar)($("#homeSection")); // halaman Kalender rilisan
     else if (state.troOpen) renderTrofiPage($("#homeSection"));  // halaman Trofi & Penghargaan
