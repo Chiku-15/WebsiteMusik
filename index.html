@@ -4066,13 +4066,47 @@ function chnSpBlock(a) {
     : histMode === "semua" ? histAll : histAll.slice(0, 10);
   const histSub = histMode === "besar" ? "3 catatan dengan pendengar bulanan terbesar"
     : histMode === "semua" ? "seluruh catatan — terbaru dulu" : "10 catatan terakhir";
-  const histRows = histList.map((p) => `
+  /* perkiraan Total stream & Stream/hari untuk catatan lama (sebelum Actions mulai
+   * merekam — catatan itu hanya punya pendengar bulanan). Dibagi mundur dari jangkar
+   * nyata PERTAMA (catatan Actions dengan total stream), proporsional rasio pendengar
+   * bulanan tiap periode terhadap jangkar, dari dasar katalog awal yang kecil.
+   * Hasil ditandai ± (perkiraan), bukan angka resmi. */
+  const histEst = (() => {
+    const H = (sp.history || []).slice().sort((x, y) => x.t - y.t);
+    const r = H.findIndex((p) => p.total != null);
+    if (r <= 0) return {};
+    const B = sp.id === "babymonster" ? 300000 : sp.id === "treasure" ? 10000000 : 0; /* perkiraan katalog awal (BM: BATTER UP baru terbit 27 Nov 2023 · TR: BOY baru 8 hari) */
+    const S = H[r].total - B;
+    const w = (i) => Math.max(0.05, Math.min(4, (H[i].ml || H[r].ml || 1) / (H[r].ml || 1)));
+    const raw = [];
+    for (let i = 0; i < r; i++) raw.push(((w(i) + w(Math.min(i + 1, r))) / 2) * ((H[i + 1].t - H[i].t) / 86400));
+    const sum = raw.reduce((s, x) => s + x, 0) || 1;
+    const out = {};
+    let acc = B;
+    for (let i = 0; i < r; i++) {
+      const dt = Math.max(1, (H[i + 1].t - H[i].t) / 86400);
+      const Si = S * raw[i] / sum;
+      /* total dipatok di pertengahan gap supaya titik terakhir sebelum jangkar
+       * tidak persis sama dengan angka jangkar */
+      out[H[i].t] = { total: Math.round(acc + Si / 2), daily: Math.round(Si / dt) };
+      acc += Si;
+    }
+    return out;
+  })();
+  const histRows = histList.map((p) => {
+    const he = histEst[p.t] || {};
+    const tot = p.total != null ? p.total : he.total;
+    const dly = p.daily != null ? p.daily : he.daily;
+    const isEst = p.total == null && tot != null;
+    const tipEst = "perkiraan — dibagi mundur dari jangkar pencatatan nyata pertama, proporsional pendengar bulanan";
+    return `
     <div class="chrow" style="--acc:${acc}">
       <div class="ck" title="${esc(p.src || "")}">${fmtTs(p.t)}</div>
       <div>${p.ml != null ? fmtExact(p.ml) + (p.ml % 1000 === 0 ? " <span class='cellno' title='angka hasil pembulatan ke ribuan'>±</span>" : "") + (p.est ? " <span class='cellno' title='titik perkiraan — interpolasi bulanan antar jangkar komunitas/X, bukan pengukuran langsung'>est</span>" : "") : "–"}</div>
-      <div class="hide-m">${p.total != null ? fmtExact(p.total) : "–"}</div>
-      <div class="hide-m up">${p.daily != null ? "+" + fmtExact(p.daily) : "–"}</div>
-    </div>`).join("");
+      <div class="hide-m">${tot != null ? fmtExact(tot) + (isEst ? " <span class='cellno' title='" + tipEst + "'>±</span>" : "") : "–"}</div>
+      <div class="hide-m up">${dly != null ? "+" + fmtExact(dly) + (isEst ? " <span class='cellno' title='" + tipEst + "'>±</span>" : "") : "–"}</div>
+    </div>`;
+  }).join("");
   const histHead = `<div class="chrow chhead" style="--acc:${acc}"><div class="ck">Dicatat</div><div>Pendengar bulanan</div><div class="hide-m">Total stream</div><div class="hide-m">Stream/hari</div></div>`;
   /* top lagu terpantau */
   const topRows = tracks.slice(0, 10).map((t, i) => `
@@ -4099,7 +4133,7 @@ function chnSpBlock(a) {
     ${yearBars}
     <div class="chgrid" style="--acc:${acc}">${yearHead}${yearRows}</div>
     <p class="note" style="margin-top:6px">* ${new Date().getFullYear()} berjalan. Angka = penambahan stream lagu-lagu yang dipantau situs ini (sumber kworb) — total stream artis di atas lebih besar karena mencakup semua lagu terdaftar di Spotify.</p>
-    <div class="hsect histsect" style="margin-top:18px"><b>Riwayat pencatatan artis</b><span class="sub">pendengar bulanan profil Spotify — ± = pembulatan ke ribuan · est = titik perkiraan (jangkar komunitas/X diinterpolasi bulanan) · ${histSub} · ${NF.format(histList.length)} dari ${NF.format(histAll.length)} catatan</span></div>
+    <div class="hsect histsect" style="margin-top:18px"><b>Riwayat pencatatan artis</b><span class="sub">pendengar bulanan profil Spotify — ± = pembulatan ke ribuan (angka) atau perkiraan (total/stream-hari catatan lama, dibagi mundur dari jangkar nyata pertama) · est = titik perkiraan (jangkar komunitas/X diinterpolasi bulanan) · ${histSub} · ${NF.format(histList.length)} dari ${NF.format(histAll.length)} catatan</span></div>
     <div class="histtabs" style="--acc:${acc}" role="group" aria-label="Mode tabel riwayat pencatatan">
       <button class="histtab${histMode === "besar" ? " on" : ""}" data-histmode="besar">3 terbesar</button>
       <button class="histtab${histMode === "baru" ? " on" : ""}" data-histmode="baru">Terbaru</button>
@@ -4597,6 +4631,7 @@ const DEBUT_24H = {
   "o9V8HrgJgIg": { v: 14900000, src: "± laporan penggemar" },            // WE GO UP perf.
   "yd_uG3TtREs": { v: 13000000, src: "± laporan penggemar (13 jt+)" },   // PSYCHO
   "oC6brLXQe4I": { v: 12600000, src: "± laporan penggemar" },            // DESERVE
+  "xXZwZ0DolJc": { v: 9267038, src: "± laporan penggemar (X)" },          // MOON
   "ZJaKdBBzUYk": { v: 11316000, src: "± laporan penggemar" },            // JIKJIN
   "wlHwjkYpSr0": { v: 10200000, src: "± laporan penggemar" },            // WE GO UP
   "JSAfPh1A25E": { v: 9153000, src: "± laporan penggemar" },             // BOY
@@ -4611,6 +4646,70 @@ const DEBUT_24H = {
   "IR8gXjm507Y": { v: 4794000, src: "± laporan penggemar" },             // MOVE (T5)
   "eBrvBlnhR9c": { v: 4180000, src: "± laporan penggemar" },             // LAST NIGHT
 };
+/* jangkar awal tambahan dari media/laporan penggemar (bukan tepat 24 jam) —
+ * dipakai estimator kurva untuk menurunkan angka yang tidak dilaporkan langsung */
+const EARLY_ANCHORS = {
+  u_hpZueWI9g: [{ d: 2, v: 23800000, src: "media: 23,8 jt @48 jam" }],    // SHOCK
+};
+/* ===== perkiraan angka awal video (debut 24 jam / pekan pertama) =====
+ * Bila tidak ada sumber kurasi maupun titik rekam situs di sekitar hari target,
+ * angka diperkirakan — jangan tampil garis strip. Urutan: (1) fit least-squares
+ * log-log atas jangkar awal (24 jam kurasi + jangkar media + titik rekam ≤21 hari),
+ * (2) kalau cuma 1 jangkar awal, kurva tipikal b≈0,85 dari jangkar itu,
+ * (3) kalau tidak ada jangkar, rasio tipikal per tipe video terhadap total sekarang
+ * (dikalibrasi dari video terpantau yang debut & pekan pertamanya tercatat).
+ * Semua hasil bertanda “± perkiraan” supaya jelas bukan angka resmi. */
+function estEarlyPoint(v, targetDay) {
+  const rel = releaseEpoch(v);
+  if (rel == null) return null;
+  const tot = lastV(v);
+  const pts = [];
+  const db = DEBUT_24H[v.id];
+  if (db && db.v > 0) pts.push({ d: 1, v: db.v, src: "24 jam terkurasi" });
+  for (const a of EARLY_ANCHORS[v.id] || []) pts.push({ d: a.d, v: a.v, src: a.src });
+  for (const p of v.history || []) {
+    const d = (p.t - rel) / 86400;
+    if (d > 0 && d <= 21 && p.v > 0) pts.push({ d, v: p.v, src: "titik rekam situs" });
+  }
+  pts.sort((x, y) => x.d - y.d);
+  const age = Math.max(1, (Date.now() / 1000 - rel) / 86400);
+  const fit2 = (p1, p2) => {
+    if (!(p2.d > p1.d) || !(p2.v > 0) || !(p1.v > 0)) return null;
+    const b = Math.max(0.3, Math.min(1.4, Math.log(p2.v / p1.v) / Math.log(p2.d / p1.d)));
+    return p1.v * Math.pow(targetDay / p1.d, b);
+  };
+  let est = null, nAnch = 0;
+  const br = pts.find((p, i) => i > 0 && pts[i - 1].d < targetDay && targetDay <= p.d);
+  if (br) { /* target terkurung dua jangkar → interpolasi pasangan itu saja */
+    const i = pts.indexOf(br);
+    est = fit2(pts[i - 1], br); nAnch = 2;
+  } else if (pts.length >= 2 && targetDay < pts[0].d) { /* di bawah jangkar terkecil → dua jangkar terkecil */
+    est = fit2(pts[0], pts[1]); nAnch = 2;
+  } else if (pts.length >= 2 && targetDay > pts[pts.length - 1].d) { /* di atas jangkar terbesar → dua terbesar */
+    const m = pts.length; est = fit2(pts[m - 2], pts[m - 1]); nAnch = 2;
+  } else if (pts.length >= 2) { /* sisanya: dua jangkar terdekat */
+    const m = pts.length; est = fit2(pts[m - 2], pts[m - 1]); nAnch = 2;
+  }
+  if (est != null) {
+    const lo = pts.filter((p) => p.d < targetDay).reduce((m, p) => Math.max(m, p.v), 0);
+    const hi = pts.filter((p) => p.d > targetDay).reduce((m, p) => Math.min(m, p.v), Infinity);
+    if (lo) est = Math.max(est, lo * 1.02);
+    if (hi < Infinity) est = Math.min(est, hi * 0.98);
+    if (tot > 0) est = Math.min(est, tot);
+    return { v: Math.round(est), src: `± perkiraan kurva dari ${nAnch} jangkar awal` };
+  }
+  if (pts.length === 1 && pts[0].d <= 3.5) {
+    let est1 = pts[0].v * Math.pow(targetDay / pts[0].d, 0.85);
+    if (tot > 0) est1 = Math.min(est1, tot);
+    return { v: Math.round(est1), src: `± perkiraan dari ${fmtCompact(pts[0].v)} di hari ke-${Math.max(1, Math.round(pts[0].d))} (kurva tipikal)` };
+  }
+  if (tot <= 0) return null;
+  const perf = v.category === "dance_performance" || v.category === "dance_practice";
+  const ratio = targetDay <= 1.5
+    ? (perf ? (age <= 180 ? 0.08 : age <= 420 ? 0.065 : 0.05) : (age <= 45 ? 0.10 : age <= 180 ? 0.065 : age <= 420 ? 0.055 : 0.045))
+    : (perf ? (age <= 150 ? 0.28 : age <= 600 ? 0.20 : 0.14) : (age <= 60 ? 0.45 : age <= 200 ? 0.36 : age <= 600 ? 0.22 : 0.15));
+  return { v: Math.round(tot * ratio), src: "± perkiraan — rasio tipikal video sejenis" };
+}
 function renderYtRecords(sec) {
   const vids = allVideosFlat();
   if (!vids.length) {
@@ -6841,6 +6940,8 @@ function debut24Info(v) {
   const h = (v.history || []).slice().sort((x, y) => x.t - y.t);
   const rel = releaseEpoch(v);
   if (h.length && rel != null && h[0].v > 0 && h[0].t - rel <= 72 * 3600) return { d: h[0].v, src: "tercatat situs (±)" };
+  const est = estEarlyPoint(v, 1);
+  if (est) return { d: est.v, src: est.src };
   return null;
 }
 function renderRilisanPage(sec) {
@@ -6854,6 +6955,7 @@ function renderRilisanPage(sec) {
     const db = debut24Info(v);
     const fwP = rel != null ? closestPoint(v.history, rel + 7 * 86400, 3) : null;
     const fwDay = fwP && rel != null ? Math.round((fwP.t - rel) / 86400) : null;
+    const fwEst = !fwP && rel != null ? estEarlyPoint(v, 7) : null;
     const avg = rel != null && lastV(v) ? Math.round(lastV(v) / age) : null;
     return `
     <div class="rilrow" style="--ac:${v.art.color}" data-id="${esc(v.id)}" tabindex="0" role="button" aria-label="Buka grafik ${esc(rowTitleOf(v, v.art))}">
@@ -6866,7 +6968,7 @@ function renderRilisanPage(sec) {
       <div class="chstats rilstats">
         <div class="stat"><div class="k">Views kini</div><div class="v">${fmtCompact(lastV(v))}</div><div class="d">${fmtExact(lastV(v))}</div></div>
         <div class="stat"><div class="k">Debut 24 jam</div><div class="v">${db ? fmtCompact(db.d) : "–"}</div><div class="d">${db ? esc(db.src) : "tanpa sumber terpercaya"}</div></div>
-        <div class="stat"><div class="k">Pekan pertama</div><div class="v">${fwP ? fmtCompact(fwP.v) : "–"}</div><div class="d">${fwP ? `kumulatif · titik hari ke-${fwDay}` : "titik hari ke-7 belum ada"}</div></div>
+        <div class="stat"><div class="k">Pekan pertama</div><div class="v">${fwP ? fmtCompact(fwP.v) : fwEst ? fmtCompact(fwEst.v) : "–"}</div><div class="d">${fwP ? `kumulatif · titik hari ke-${fwDay}` : fwEst ? esc(fwEst.src) : "titik hari ke-7 belum ada"}</div></div>
         <div class="stat"><div class="k">Rata-rata/hari</div><div class="v">${avg != null ? fmtCompact(avg) : "–"}</div><div class="d">sejak rilis</div></div>
       </div>
     </div>`;
@@ -6896,7 +6998,7 @@ function renderRilisanPage(sec) {
   sec.innerHTML = head + `
   <section style="margin-top:16px">
     ${rows || `<div class="banner">Data belum tersedia — jalankan workflow “Kumpulkan data” di tab Actions.</div>`}
-    <p class="note">“Debut 24 jam” hanya ditampilkan bila ada sumber yang bisa dipertanggungjawabkan: pengumuman resmi YG/media (✓) atau laporan penggemar terkurasi (±); tanpa itu angka situs dipakai hanya bila titik rekam pertama jatuh ≤72 jam sejak rilis. “Pekan pertama” = views kumulatif pada titik rekam terdekat hari ke-7 sejak rilis (toleransi ±3 hari — hari aktual titiknya ditulis di bawah angka, mis. “titik hari ke-10”). Rata-rata/hari = views kini dibagi umur video. Klik baris mana pun untuk grafik harian &amp; milestone.</p>
+    <p class="note">“Debut 24 jam” ditampilkan bertingkat: sumber kurasi yang bisa dipertanggungjawabkan (pengumuman resmi YG/media ✓ atau laporan penggemar terkurasi ±), titik rekam pertama situs bila jatuh ≤72 jam sejak rilis, dan kalau keduanya tidak ada — <b>± perkiraan</b> dari kurva pertumbuhan video (fit jangkar awal atau rasio tipikal video sejenis), supaya tidak ada lagi kolom kosong. “Pekan pertama” = views kumulatif pada titik rekam terdekat hari ke-7 sejak rilis (toleransi ±3 hari — hari aktual ditulis di bawah angka, mis. “titik hari ke-10”); tanpa titik, ditampilkan ± perkiraan dari jangkar/kurva yang sama. Rata-rata/hari = views kini dibagi umur video. Klik baris mana pun untuk grafik harian &amp; milestone.</p>
   </section>
   ${albCards ? `<section style="margin-top:26px">
     ${featSectHead("#1ed760", ICO_SP_TROPHY, "Album terbaru di Spotify", "rilisan paling baru per artis — stream gabungan lagu di dalamnya")}
