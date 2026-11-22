@@ -1,15 +1,133 @@
 {
- "_info": "Jadwal manual. Tambahkan event baru ke 'events' dengan format: date (YYYY-MM-DD atau ISO penuh), title, group (babymonster|treasure), type (tour|release|event), venue, note. Ulang tahun anggota, ulang tahun debut & rilisan video baru ditambahkan OTOMATIS oleh situs. Sumber tur: ygfamily.com & Wikipedia (Choom World Tour).",
+ "_info": "Jadwal manual. Tambahkan event baru ke 'events' dengan format: date (YYYY-MM-DD atau ISO penuh), title, group (babymonster|treasure|both = dua grup sekaligus), type (tour|release|event), venue, note. Ulang tahun anggota, ulang tahun debut & rilisan video baru ditambahkan OTOMATIS oleh situs. Sumber tur: ygfamily.com, Wikipedia (Choom World Tour) & unggahan resmi BABYMONSTER di Facebook/X. Sumber event akhir tahun: pengumuman resmi stasiun (KBS/SBS/MBC), GDA, MBN — disertai sumber per baris; baris bertanda 'perkiraan' = jadwal rutin tahunan yang belum diumumkan resmi.",
  "events": [
-  {"date": "2026-11-14", "title": "World Tour [CHOOM] — Kuala Lumpur", "group": "babymonster", "type": "tour", "venue": "Unifi Arena, Malaysia"},
-  {"date": "2026-11-21", "title": "World Tour [CHOOM] — Taipei", "group": "babymonster", "type": "tour", "venue": "Taipei Arena · 21-22 Nov"},
-  {"date": "2026-11-28", "title": "World Tour [CHOOM] — Singapura", "group": "babymonster", "type": "tour", "venue": "Singapore Indoor Stadium · 28-29 Nov"},
-  {"date": "2026-12-08", "title": "World Tour [CHOOM] — Auckland", "group": "babymonster", "type": "tour", "venue": "Spark Arena, Selandia Baru"},
-  {"date": "2026-12-11", "title": "World Tour [CHOOM] — Melbourne", "group": "babymonster", "type": "tour", "venue": "Rod Laver Arena, Australia"},
-  {"date": "2026-12-13", "title": "World Tour [CHOOM] — Sydney", "group": "babymonster", "type": "tour", "venue": "Qudos Bank Arena, Australia"},
-  {"date": "2027-01-08", "title": "World Tour [CHOOM] — Hong Kong", "group": "babymonster", "type": "tour", "venue": "AsiaWorld-Arena · 8-10 Jan 2027"},
-  {"date": "2026-11-07", "title": "Korea Grand Music Awards 2026", "group": "treasure", "type": "event", "venue": "Gocheok Sky Dome, Seoul", "note": "TREASURE membawa pulang Grand Song (Daesang pertama grup) + 3 trofi lain"},
-  {"date": "2026-10-17", "title": "World Tour [CHOOM] — Jakarta", "group": "babymonster", "type": "tour", "venue": "Indonesia Arena, Jakarta"},
-  {"date": "2026-06-26", "title": "World Tour [CHOOM] — pembukaan di Seoul", "group": "babymonster", "type": "tour", "venue": "Jamsil Indoor Stadium · 26-28 Jun"}
+  {
+   "date": "2026-11-14",
+   "title": "World Tour [CHOOM] — Kuala Lumpur",
+   "group": "babymonster",
+   "type": "tour",
+   "venue": "Unifi Arena, Malaysia"
+  },
+  {
+   "date": "2026-11-21",
+   "title": "World Tour [CHOOM] — Taipei",
+   "group": "babymonster",
+   "type": "tour",
+   "venue": "Taipei Arena · 21-22 Nov"
+  },
+  {
+   "date": "2026-11-28",
+   "title": "World Tour [CHOOM] — Singapura",
+   "group": "babymonster",
+   "type": "tour",
+   "venue": "Singapore Indoor Stadium · 28-29 Nov"
+  },
+  {
+   "date": "2026-12-08",
+   "title": "World Tour [CHOOM] — Auckland",
+   "group": "babymonster",
+   "type": "tour",
+   "venue": "Spark Arena, Selandia Baru"
+  },
+  {
+   "date": "2026-12-11",
+   "title": "World Tour [CHOOM] — Melbourne",
+   "group": "babymonster",
+   "type": "tour",
+   "venue": "Rod Laver Arena, Australia"
+  },
+  {
+   "date": "2026-12-13",
+   "title": "World Tour [CHOOM] — Sydney",
+   "group": "babymonster",
+   "type": "tour",
+   "venue": "Qudos Bank Arena, Australia"
+  },
+  {
+   "date": "2027-01-08",
+   "title": "World Tour [CHOOM] — Hong Kong",
+   "group": "babymonster",
+   "type": "tour",
+   "venue": "AsiaWorld-Arena · 8-10 Jan 2027",
+   "note": "batas akhir kaki Asia-Oseania — kaki Amerika Utara/Selatan & Eropa diumumkan menyusul (TBA)"
+  },
+  {
+   "date": "2026-11-07",
+   "title": "Korea Grand Music Awards 2026",
+   "group": "treasure",
+   "type": "event",
+   "venue": "Gocheok Sky Dome, Seoul",
+   "note": "TREASURE membawa pulang Grand Song (Daesang pertama grup) + 3 trofi lain"
+  },
+  {
+   "date": "2026-10-17",
+   "title": "World Tour [CHOOM] — Jakarta",
+   "group": "babymonster",
+   "type": "tour",
+   "venue": "Indonesia Arena, Jakarta"
+  },
+  {
+   "date": "2026-06-26",
+   "title": "World Tour [CHOOM] — pembukaan di Seoul",
+   "group": "babymonster",
+   "type": "tour",
+   "venue": "Jamsil Indoor Stadium · 26-28 Jun"
+  },
+  {
+   "date": "2026-12-18",
+   "title": "KBS Song Festival 2026",
+   "group": "both",
+   "type": "event",
+   "venue": "KBS Arena, Seoul",
+   "note": "digelar 18 Des 19:00 KST — lineup 24 artis diumumkan 13 Nov 2026 · sumber: KBS / Soompi"
+  },
+  {
+   "date": "2026-12-24",
+   "title": "SBS Gayo Daejeon 2026 — malam pertama",
+   "group": "both",
+   "type": "event",
+   "venue": "KINTEX, Ilsan (Goyang)",
+   "note": "edisi ke-30, pertama kali digelar dua malam (24-25 Des) · sumber: SBS / KKday"
+  },
+  {
+   "date": "2026-12-25",
+   "title": "SBS Gayo Daejeon 2026 — malam kedua",
+   "group": "both",
+   "type": "event",
+   "venue": "KINTEX, Ilsan (Goyang)",
+   "note": "malam kedua edisi ke-30 · sumber: SBS / KKday"
+  },
+  {
+   "date": "2026-12-31",
+   "title": "MBC Gayo Daejejeon 2026",
+   "group": "both",
+   "type": "event",
+   "venue": "MBC, Seoul (venue menyusul)",
+   "note": "perkiraan: MBC rutin menggelar tiap 31 Desember — jam tayang & lineup diumumkan menyusul"
+  },
+  {
+   "date": "2027-01-09",
+   "title": "Golden Disc Awards ke-41 — malam pertama",
+   "group": "both",
+   "type": "event",
+   "venue": "Mỹ Đình National Stadium, Hanoi, Vietnam",
+   "note": "dua malam (9-10 Jan 2027) di Hanoi · sumber: GDA resmi / media (Sep 2026)"
+  },
+  {
+   "date": "2027-01-10",
+   "title": "Golden Disc Awards ke-41 — malam kedua",
+   "group": "both",
+   "type": "event",
+   "venue": "Mỹ Đình National Stadium, Hanoi, Vietnam",
+   "note": "malam kedua GDA ke-41 di Hanoi"
+  },
+  {
+   "date": "2027-02-26",
+   "title": "MKMA (MBN Music Awards) 2027",
+   "group": "both",
+   "type": "event",
+   "venue": "KSPO Dome, Seoul",
+   "note": "acara penghargaan musik baru yang diumumkan resmi · sumber: pengumuman MBN"
+  }
  ]
 }

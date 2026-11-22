@@ -1,5 +1,5 @@
 {
- "_info": "Trofi acara musik & penghargaan besar, hasil kurasi sumber publik: Wikipedia (List of awards and nominations received by Treasure / Babymonster — direviu ulang penuh 16 Nov 2026), Mnet (riwayat resmi MAMA), YG (yg-life), Soompi, Forbes, NME, Hindustan Times, akun statistik penggemar. 'win' = menang, 'nom' = hanya nominasi. Tanggal parsial (bulan/tahun saja) berarti hanya itu yang bisa dipastikan. INKIGAYO HOT STAGE = trofi khusus hasil voting fans tiap minggu (BUKAN no.1 mingguan), dipisah ke array 'hotstage'. Ringkasan reviu 21 Nov 2026 (malam pertama MAMA 2026 masuk): BABYMONSTER total 2 trofi acara musik (SHEESH & WE GO UP, keduanya M Countdown) + 13 trofi penghargaan besar; TREASURE total 4 trofi acara musik (JIKJIN x2, YELLOW, IF I) + 45 trofi penghargaan besar — cocok dengan total Wikipedia. MAMA 2026 (20–21 Nov, Kyocera Dome Osaka): malam pertama 20 Nov — BABYMONSTER menang Fans' Choice Top 10 — Female (ke-3 berturut-turut), TREASURE menang Fans' Choice Top 10 — Male + penghargaan spesial Super Stage Artist; Best Female Group dimenangkan IVE, Artist of the Year & Fans' Choice of the Year oleh BTS/ENHYPEN. Kategori malam kedua 21 Nov (termasuk Best Rap & Hip Hop Performance — TREASURE 'IF I') ditandai result 'pending' sampai pengumuman selesai, lalu diperbarui manual. Perbarui manual bila ada trofi baru.",
+ "_info": "Trofi acara musik & penghargaan besar, hasil kurasi sumber publik: Wikipedia (List of awards and nominations received by Treasure / Babymonster — direviu ulang penuh 16 Nov 2026), Mnet (riwayat resmi MAMA), YG (yg-life), Soompi, Forbes, NME, Hindustan Times, akun statistik penggemar. 'win' = menang, 'nom' = hanya nominasi. Tanggal parsial (bulan/tahun saja) berarti hanya itu yang bisa dipastikan. INKIGAYO HOT STAGE = trofi khusus hasil voting fans tiap minggu (BUKAN no.1 mingguan), dipisah ke array 'hotstage'. Array 'fanvote' HANYA berisi trofi voting fans dari ACARA MUSIK (Inkigayo Hot Stage & kategori khusus serupa) — MAMA Fans' Choice TIDAK masuk sini karena sudah tercatat di 'awards' (Penghargaan besar), sesuai permintaan 22 Nov 2026. Ringkasan reviu 21 Nov 2026 (malam pertama MAMA 2026 masuk): BABYMONSTER total 2 trofi acara musik (SHEESH & WE GO UP, keduanya M Countdown) + 13 trofi penghargaan besar; TREASURE total 4 trofi acara musik (JIKJIN x2, YELLOW, IF I) + 45 trofi penghargaan besar — cocok dengan total Wikipedia. MAMA 2026 (20–21 Nov, Kyocera Dome Osaka): malam pertama 20 Nov — BABYMONSTER menang Fans' Choice Top 10 — Female (ke-3 berturut-turut), TREASURE menang Fans' Choice Top 10 — Male + penghargaan spesial Super Stage Artist; Best Female Group dimenangkan IVE, Artist of the Year & Fans' Choice of the Year oleh BTS/ENHYPEN. Kategori malam kedua 21 Nov (termasuk Best Rap & Hip Hop Performance — TREASURE 'IF I') ditandai result 'pending' sampai pengumuman selesai, lalu diperbarui manual. Perbarui manual bila ada trofi baru.",
  "groups": {
   "babymonster": {
    "wins": [
@@ -475,20 +475,6 @@
    ],
    "fanvote": [
     {
-     "song": "Fans' Choice Top 10 - Female",
-     "show": "MAMA 2024",
-     "badge": "FANS' CHOICE",
-     "date": "2024-11-23",
-     "src": "Mnet - voting global"
-    },
-    {
-     "song": "Fans' Choice Top 10 - Female",
-     "show": "MAMA 2025",
-     "badge": "FANS' CHOICE",
-     "date": "2025-11-28",
-     "src": "Mnet - voting global"
-    },
-    {
      "song": "춤 (CHOOM)",
      "show": "SBS Inkigayo",
      "badge": "HOT STAGE",
@@ -503,14 +489,6 @@
      "date": "2026-11",
      "note": "EP.1329, awal November 2026 - trofi voting fans pertama grup",
      "src": "SBS / BABYMONSTER NEWS"
-    },
-    {
-     "song": "Fans' Choice Top 10 - Female",
-     "show": "MAMA 2026",
-     "badge": "FANS' CHOICE",
-     "date": "2026-11-20",
-     "note": "ke-3 berturut-turut - juga terhitung di Penghargaan besar",
-     "src": "Mnet"
     }
    ]
   },
@@ -1164,35 +1142,6 @@
      "date": "2026-07-12",
      "note": "trofi voting fans pertama untuk sub-unit",
      "src": "X @TREASUREunion (12 Jul 2026)"
-    },
-    {
-     "song": "Worldwide Fans' Choice Top 10",
-     "show": "MAMA 2020",
-     "badge": "FANS' CHOICE",
-     "date": "2020-12-06",
-     "src": "Mnet - voting global"
-    },
-    {
-     "song": "Worldwide Fans' Choice Top 10",
-     "show": "MAMA 2021",
-     "badge": "FANS' CHOICE",
-     "date": "2021-12-11",
-     "src": "Mnet - voting global"
-    },
-    {
-     "song": "Worldwide Fans' Choice Top 10",
-     "show": "MAMA 2022",
-     "badge": "FANS' CHOICE",
-     "date": "2022-11-29",
-     "src": "Mnet - voting global"
-    },
-    {
-     "song": "Fans' Choice Top 10 - Male",
-     "show": "MAMA 2026",
-     "badge": "FANS' CHOICE",
-     "date": "2026-11-20",
-     "note": "kembali menang sejak 2022 - juga terhitung di Penghargaan besar",
-     "src": "Mnet"
     }
    ]
   }
