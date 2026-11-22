@@ -178,9 +178,6 @@
   @media (max-width:820px){.mama-act{grid-template-columns:1fr;gap:14px}.mama-clips{grid-auto-flow:column;grid-template-columns:none;grid-auto-columns:min(72%,260px);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px}.mama-clip{scroll-snap-align:start}}
   @media (prefers-reduced-motion:reduce){.mama-collln{transition:none;stroke-dashoffset:0}}
   .mama-segs{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;margin:16px 2px 0}
-  .mama-selw{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}
-  .mama-sel{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:999px;padding:7px 12px;font:700 12.5px var(--font);cursor:pointer;outline:none}
-  .mama-sel:focus{border-color:#a78bfa}
   /* tombol “kreditkan juga artis featured” — switch kecil gaya situs referensi mama-2026 */
   .mama-feat{display:flex;align-items:center;gap:9px;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:999px;padding:7px 14px;font:700 12.5px var(--font);cursor:pointer;transition:border-color .2s,background .2s,color .2s}
   .mama-feat:hover{border-color:rgba(241,182,94,.7)}
@@ -1767,7 +1764,6 @@ const state = {
   awardsOpen: false,      // halaman AWARDS — chart panggung MAMA 2026, gaya mama-2026.mirekapps.com
   awardsDay: "all",       // filter hari AWARDS: "all" (kedua hari) | "1" | "2"
   awardsSort: "order",    // urutan daftar artis AWARDS: "order" (urutan panggung) | "top" (terbanyak ditonton)
-  awardsScale: "lin",     // skala Y chart AWARDS: "lin" (linear) | "log"
   awardsFeat: false,      // toggle AWARDS “kreditkan juga artis featured”: views panggung induk kolab ikut dihitung utk artis pendamping
   chnPlat: null,          // pilihan dropdown platform di Statistik Channel ("yt"|"spotify")
   chnArt: null,           // pilihan dropdown artis di Statistik Channel (artistId)
@@ -2563,29 +2559,25 @@ function mamaCollabBlock(a, stages) {
       `<ol class="mama-crun">${s.members.map((x, i) => `<li class="${x.name === a.name ? "me" : ""}"><span class="cn">${i + 1}</span><b>${esc(x.name)}</b><span class="cl">${mamaSongs(x).map(esc).join(" · ") || "–"}</span><span class="cd">Hari ${x.day} · panggung ke-${x.order}</span></li>`).join("")}</ol></div>`;
   }).join("");
 }
-/* chart bintang — x: urutan naik panggung, y: views (skala linear atau log), r: akar
- * views supaya artis kecil tetap terlihat. Label digeser naik/turun otomatis biar
- * tidak bertumpuk. opts.scale "lin"|"log" = skala Y; opts.collab = daftar panggung kolab
- * {base,hub,members} → garis amber DARI panggung induk KE tiap artis yang tampil bersama
- * (induk = titik dgn hubungan terbanyak; bila induk tak ikut filter, fallback polyline);
- * opts.vmap = slug → views efektif (toggle kredit artis featured); opts.featCred = slug →
- * kredit views kolab utk tooltip & label; opts.days = label hari → garis batas Hari 1 | 2. */
+/* chart bintang — x: urutan naik panggung, y: views (skala LINEAR — dropdown Log/Skala Y
+ * sudah dihapus karena membuat bingung), r: akar views supaya artis kecil tetap terlihat.
+ * Label digeser naik/turun otomatis biar tidak bertumpuk. opts.collab = daftar panggung
+ * kolab {base,hub,members} → garis amber DARI panggung induk KE tiap artis yang tampil
+ * bersama (induk = titik dgn hubungan terbanyak; bila induk tak ikut filter, fallback
+ * polyline); opts.vmap = slug → views efektif (toggle kredit artis featured); opts.featCred
+ * = slug → kredit views kolab utk tooltip & label; opts.days = label hari → garis batas
+ * Hari 1 | 2. Kanvas tinggi (700px, sebelumnya 440px) supaya bintang & label tidak mepet. */
 function mamaChartSVG(acts, focCol, opts) {
   opts = opts || {};
-  const W = 1080, H = 440, padL = 66, padR = 26, padT = 24, padB = 46;
+  const W = 1080, H = 700, padL = 66, padR = 26, padT = 30, padB = 46;
   const iw = W - padL - padR, ih = H - padT - padB;
-  const useLog = opts.scale === "log";
   /* views efektif — saat toggle “kreditkan juga artis featured” aktif, pakai views + kredit panggung kolab */
   const V = (a) => (opts.vmap && opts.vmap[mamaSlug(a.name)] != null) ? opts.vmap[mamaSlug(a.name)] : a.views;
   const maxV = Math.max.apply(null, acts.map((a) => V(a)));
-  const minV = Math.min.apply(null, acts.map((a) => V(a)));
   const top = Math.max(2e6, Math.ceil(maxV / 2e6) * 2e6);
-  const lo = useLog ? Math.pow(10, Math.floor(Math.log10(minV)) - 1) : 0;
   const X = (i) => (acts.length === 1 ? padL + iw / 2 : padL + (iw * (i + 0.5)) / acts.length);
-  const Y = useLog
-    ? (v) => { const t = (Math.log10(Math.max(v, lo)) - Math.log10(lo)) / (Math.log10(top) - Math.log10(lo)); return padT + ih * (1 - Math.min(1, Math.max(0, t))); }
-    : (v) => padT + ih * (1 - v / top);
-  const R = (v) => 2.6 + 11.5 * Math.sqrt(v / maxV);
+  const Y = (v) => padT + ih * (1 - v / top);
+  const R = (v) => 3 + 13 * Math.sqrt(v / maxV);
   let g = "";
   /* langit berbintang — titik kecil acak (seed tetap supaya posisi stabil antar render), gaya situs referensi */
   {
@@ -2595,17 +2587,10 @@ function mamaChartSVG(acts, focCol, opts) {
     for (let i = 0; i < Math.round(W / 9); i++) field += `<circle cx="${(rnd() * W).toFixed(1)}" cy="${(rnd() * H).toFixed(1)}" r="${(rnd() * 0.9 + 0.3).toFixed(2)}" opacity="${(rnd() * 0.25 + 0.08).toFixed(2)}"/>`;
     g += `<g class="mama-field" aria-hidden="true">${field}</g>`;
   }
-  if (useLog) {
-    [lo, 1e4, 3e4, 1e5, 3e5, 1e6, 3e6].forEach((m) => {
-      if (m < lo || m > top) return;
-      g += `<line class="mama-grid" x1="${padL}" y1="${Y(m).toFixed(1)}" x2="${W - padR}" y2="${Y(m).toFixed(1)}"/>` +
-        `<text class="mama-gridtxt" x="${padL - 9}" y="${(Y(m) + 3.5).toFixed(1)}" text-anchor="end">${fmtCompact(m)}</text>`;
-    });
-  } else {
-    for (let m = 0; m <= top + 1; m += 2e6) {
-      g += `<line class="mama-grid" x1="${padL}" y1="${Y(m).toFixed(1)}" x2="${W - padR}" y2="${Y(m).toFixed(1)}"/>` +
-        `<text class="mama-gridtxt" x="${padL - 9}" y="${(Y(m) + 3.5).toFixed(1)}" text-anchor="end">${m / 1e6} jt</text>`;
-    }
+  /* garis bantu tiap 1 jt — langkah rapat karena kanvas kini tinggi, angka lebih mudah dibaca */
+  for (let m = 0; m <= top + 1; m += 1e6) {
+    g += `<line class="mama-grid" x1="${padL}" y1="${Y(m).toFixed(1)}" x2="${W - padR}" y2="${Y(m).toFixed(1)}"/>` +
+      `<text class="mama-gridtxt" x="${padL - 9}" y="${(Y(m) + 3.5).toFixed(1)}" text-anchor="end">${m / 1e6} jt</text>`;
   }
   /* batas antar hari — garis putus-putus tegak + cap "Hari 1"/"Hari 2" di kiri-kanannya */
   const bi = acts.reduce((last, a, i) => (a.day === 1 ? i : last), -1);
@@ -2636,7 +2621,8 @@ function mamaChartSVG(acts, focCol, opts) {
   /* kotak semua bintang ikut dihindari label — label tidak boleh menutupi bintang artis lain */
   const starBoxes = acts.map((a, i) => {
     const sx = X(i), sy = Y(V(a)), sr = R(V(a));
-    return { x: sx - sr - 2, y: sy - sr - 2, w: 2 * sr + 4, h: 2 * sr + 4 };
+    /* +8 px = radius halo (r+6) + margin — label tidak menyentuh lingkaran halo artis lain */
+    return { x: sx - sr - 8, y: sy - sr - 8, w: 2 * sr + 16, h: 2 * sr + 16 };
   });
   const hits = (b) => b.x < padL - 6 || b.x + b.w > W - 2 || b.y < 2 || b.y + b.h > H - 16 ||
     placed.some((p) => b.x < p.x + p.w + 4 && b.x + b.w + 4 > p.x && b.y < p.y + p.h + 3 && b.y + b.h + 3 > p.y) ||
@@ -2731,7 +2717,6 @@ function renderAwardsPage(sec) {
   const head = pageCloseBar("Awards", "chart panggung MAMA 2026 — views seluruh video panggung resmi Mnet, gaya mama-2026.mirekapps.com", ICO_MEDAL, "#a78bfa");
   const chipD = (k, lbl, n) => `<button type="button" class="mtab${dKey === k ? " active" : ""}" data-awd="${k}" style="--artist-color:#a78bfa">${lbl} <span class="cnt">${n}</span></button>`;
   const chipS = (k, lbl) => `<button type="button" class="mtab${state.awardsSort === k ? " active" : ""}" data-aws="${k}" style="--artist-color:#38bdf8">${lbl}</button>`;
-  const chipScale = `<label class="mama-selw">Skala Y <select class="mama-sel" data-awscale><option value="lin"${state.awardsScale === "log" ? "" : " selected"}>Linear</option><option value="log"${state.awardsScale === "log" ? " selected" : ""}>Log</option></select></label>`;
   const chipFeat = `<button type="button" class="mama-feat${feat ? " on" : ""}" data-awfeat title="Saat aktif, views panggung induk kolaborasi (mis. Panic ‘MUTANTS' PARTY’, CL ‘STILL THE BADDEST’) juga dihitung untuk artis yang tampil bersama di panggung itu — seperti “Also credit featured acts” di situs referensi">Kreditkan juga artis featured <span class="mama-featsw" aria-hidden="true"></span></button>`;
   sec.innerHTML = `${head}
   <section style="margin-top:10px">
@@ -2746,10 +2731,10 @@ function renderAwardsPage(sec) {
     <div class="mama-segs">
       <div class="mtabs" style="margin:0">${chipD("all", "Kedua hari", actsAll.length)}${chipD("1", "Hari 1", actsAll.filter((a) => a.day === 1).length)}${chipD("2", "Hari 2", actsAll.filter((a) => a.day === 2).length)}</div>
       <div class="mtabs" style="margin:0">${chipS("top", "Terbanyak ditonton")}${chipS("order", "Urutan panggung")}</div>
-      <div style="margin:0;display:flex;gap:10px;flex-wrap:wrap;align-items:center">${chipScale}${chipFeat}</div>
+      <div style="margin:0;display:flex;gap:10px;flex-wrap:wrap;align-items:center">${chipFeat}</div>
     </div>
-    <div class="mama-plate"><div class="mama-chart">${mamaChartSVG(chartActs, focCol, { scale: state.awardsScale, collab: stages, collabMap: collabMap, vmap: vmap, featCred: feat ? featCred : null, days: dKey === "all" ? (m.days || []) : null })}</div></div>
-    <p class="note" style="margin-top:8px">Kiri ke kanan: urutan naik panggung · tinggi &amp; ukuran bintang: views · skala Y pilih <b>Linear</b> atau <b>Log</b> di dropdown atas · tekan bintang/nama untuk lompat ke kartu artisnya. Bintang berwarna = grup yang dipantau situs ini. <b style="color:#f1b65e">Garis oranye</b> = panggung kolaborasi, ditarik dari <b>panggung induk</b> ke tiap artis yang tampil bersama — jadi induknya selalu titik dengan garis terbanyak (Panic ‘MUTANTS' PARTY’ terhubung ke 5 artis; ALLDAY PROJECT hanya ke Panic &amp; CL ‘STILL THE BADDEST’). Tombol <b>Kreditkan juga artis featured</b>: saat aktif, views panggung induk kolaborasi ikut dihitung untuk artis pendampingnya — tinggi bintang, label, tooltip &amp; urutan “Terbanyak ditonton” memakai total itu. Saat “Kedua hari”, garis putus-putus tegak menjadi batas antara Hari 1 dan Hari 2, dan daftar Para artis di bawah juga dipisah pembatas hari.</p>
+    <div class="mama-plate"><div class="mama-chart">${mamaChartSVG(chartActs, focCol, { collab: stages, collabMap: collabMap, vmap: vmap, featCred: feat ? featCred : null, days: dKey === "all" ? (m.days || []) : null })}</div></div>
+    <p class="note" style="margin-top:8px">Kiri ke kanan: urutan naik panggung · tinggi &amp; ukuran bintang: views (skala linear) · tekan bintang/nama untuk lompat ke kartu artisnya. Bintang berwarna = grup yang dipantau situs ini. <b style="color:#f1b65e">Garis oranye</b> = panggung kolaborasi, ditarik dari <b>panggung induk</b> ke tiap artis yang tampil bersama — jadi induknya selalu titik dengan garis terbanyak (Panic ‘MUTANTS' PARTY’ terhubung ke 5 artis; ALLDAY PROJECT hanya ke Panic &amp; CL ‘STILL THE BADDEST’). Tombol <b>Kreditkan juga artis featured</b>: saat aktif, views panggung induk kolaborasi ikut dihitung untuk artis pendampingnya — tinggi bintang, label, tooltip &amp; urutan “Terbanyak ditonton” memakai total itu. Saat “Kedua hari”, garis putus-putus tegak menjadi batas antara Hari 1 dan Hari 2, dan daftar Para artis di bawah juga dipisah pembatas hari.</p>
     <div class="mama-acts">
       <div class="hsect"><h2><span class="sic" style="--c:#a78bfa"><svg viewBox="0 0 24 24"><path d="${ICO_MEDAL}"/></svg></span>Para artis</h2><span class="sub">${state.awardsSort === "top" ? "terbanyak ditonton dulu" : "urutan panggung"} · ${dKey === "all" ? "kedua hari" : "Hari " + dKey}</span></div>
       ${listActs.map((a, i) => {
@@ -2790,7 +2775,6 @@ function renderAwardsPage(sec) {
   const rerender = () => { const y = window.scrollY; renderAll(); window.scrollTo(0, y); };
   sec.querySelectorAll("[data-awd]").forEach((b) => b.addEventListener("click", () => { state.awardsDay = b.dataset.awd; rerender(); }));
   sec.querySelectorAll("[data-aws]").forEach((b) => b.addEventListener("click", () => { state.awardsSort = b.dataset.aws; rerender(); }));
-  sec.querySelectorAll("[data-awscale]").forEach((s) => s.addEventListener("change", () => { state.awardsScale = s.value; rerender(); }));
   sec.querySelectorAll("[data-awfeat]").forEach((b) => b.addEventListener("click", () => { state.awardsFeat = !state.awardsFeat; rerender(); }));
   sec.querySelectorAll("[data-gomenu]").forEach((b) => b.addEventListener("click", () => menuGo(b.dataset.gomenu)));
   sec.querySelectorAll("[data-jump]").forEach((el) => el.addEventListener("click", () => {
