@@ -1668,6 +1668,7 @@ const state = {
   tlFilter: "all",        // filter chip timeline: "all" | "bm" | "trs"
   calOpen: false,         // halaman Kalender rilisan
   calView: null,          // "spotify"|"yt" — platform yang tampil di halaman Kalender (null = ikut platform aktif)
+  disView: "spotify",     // "spotify"|"yt" — platform yang tampil di halaman Diskografi (versi YouTube ditambahkan sesuai permintaan)
   spAlbumOpen: false,     // halaman album Spotify terbuka?
   spAlbum: null,          // id album yang dibuka
   cmpSel: null,           // pilihan modal perbandingan: [idA, idB]
@@ -2040,7 +2041,7 @@ function featDefs(isSp) {
     ["sch", "#38bdf8", ICO_CAL, "Jadwal &amp; Countdown", "tur, rilisan &amp; hitung mundur"],
     ["soc", "#ec4899", ICO_SHARE, "Media Sosial", "Instagram · X · TikTok · Weverse"],
     ["cha", "#f97316", ICO_RANK, "Peringkat Chart", "Billboard · Genie · Bugs · Spotify Global"],
-    ["dis", "#a78bfa", ICO_DISC, "Diskografi", "album &amp; singel beserta stream-nya"],
+    ["dis", "#a78bfa", ICO_DISC, "Diskografi", "album &amp; singel — stream Spotify &amp; views YouTube"],
     ["tml", "#14b8a6", ICO_TML, "Timeline Grup", "perjalanan debut → sekarang"],
     ["bru", "#22c55e", ICO_NEWS, "Berita K-pop", "berita terbaru dua grup"],
     ["qui", "#eab308", ICO_QUIZ, "Kuis K-POP", "uji pengetahuan BABYMONSTER &amp; TREASURE"],
@@ -2775,7 +2776,7 @@ function renderTrofiPage(sec) {
       : hs.map((h) => ({ song: h.song, show: h.src || "SBS Inkigayo", badge: "HOT STAGE", date: h.date, src: h.src }));
     if (fv.length) {
       html += `<div style="margin-top:18px">
-        ${featSectHead("#a78bfa", ICO_TROPHY, "Trofi khusus voting fans", "Inkigayo Hot Stage (mingguan) &amp; Fans' Choice MAMA (tahunan) — ditentukan voting fans; Fans' Choice juga terhitung di Penghargaan besar")}
+        ${featSectHead("#a78bfa", ICO_TROPHY, "Trofi khusus voting fans", "hanya dari acara musik — Inkigayo Hot Stage &amp; kategori khusus serupa di M Countdown, Show Champion, Music Bank, The Show; MAMA Fans' Choice tidak masuk sini (sudah terhitung di Penghargaan besar)")}
         <div style="display:flex;flex-direction:column;gap:7px">` + fv.map((h) => {
           const bc = fvBadges[h.badge] || "#a78bfa";
           return `
@@ -2857,7 +2858,7 @@ function renderSchedulePage(sec) {
   const sf = state.schFilter;
   const matchSch = (e) => {
     if (sf === "all") return true;
-    if (sf === "babymonster" || sf === "treasure") return e.group === sf;
+    if (sf === "babymonster" || sf === "treasure") return e.group === sf || e.group === "both";
     if (sf === "other") return !["tour", "event", "birthday", "anniversary"].includes(e.type);
     return e.type === sf;
   };
@@ -2866,7 +2867,7 @@ function renderSchedulePage(sec) {
   const TYPE = { tour: ["TUR", "#38bdf8"], release: ["RILIS", "#a78bfa"], anniversary: ["ANNIV", "#f59e0b"], birthday: ["ULTAH", "#f472b6"], event: ["EVENT", "#22c55e"] };
   const evRow = (e, live) => {
     const t = TYPE[e.type] || TYPE.event;
-    const art = artistOf(e.group) || {};
+    const art = e.group === "both" ? { name: "BABYMONSTER & TREASURE", color: "#8b5cf6" } : artistOf(e.group) || {};
     const color = art.color || "#6a78ff";
     const dt = Date.parse(e.date.length <= 10 ? e.date + "T00:00:00+07:00" : e.date);
     const cd = live && !isNaN(dt) && dt > Date.now()
@@ -2911,7 +2912,7 @@ function renderSchedulePage(sec) {
     ${monthHTML || '<div class="banner">Belum ada acara mendatang.</div>'}
     <div style="margin-top:20px">${featSectHead("#8a93a8", ICO_CAL, "Sudah lewat", "10 acara terakhir")}</div>
     <div style="display:flex;flex-direction:column;gap:7px">${past.map((e) => evRow(e, false)).join("") || '<div class="banner">Belum ada riwayat.</div>'}</div>
-    <p class="note">Gunakan <b>dropdown filter</b> di atas untuk menampilkan hanya BABYMONSTER / TREASURE / tur / event / ulang tahun / anniversary / lainnya. Acara <b>otomatis</b> (ulang tahun anggota, ulang tahun debut, rilisan baru) dihitung situs sendiri dari data. Jadwal tur/event manual ada di <b>data/jadwal.json</b> — tambah/edit di file itu. Saat daftar melewati akhir tahun (mis. Desember 2026 → Januari 2027) ada pembatas <b>pergantian tahun</b> berisi hitung mundur Tahun Baru, sama seperti pembatas tahun di kalender rilisan. Sumber tur [CHOOM]: ygfamily.com &amp; Wikipedia.</p>
+    <p class="note">Gunakan <b>dropdown filter</b> di atas untuk menampilkan hanya BABYMONSTER / TREASURE / tur / event / ulang tahun / anniversary / lainnya. Acara <b>otomatis</b> (ulang tahun anggota, ulang tahun debut, rilisan baru) dihitung situs sendiri dari data. Jadwal tur/event manual ada di <b>data/jadwal.json</b> — tambah/edit di file itu. Saat daftar melewati akhir tahun (mis. Desember 2026 → Januari 2027) ada pembatas <b>pergantian tahun</b> berisi hitung mundur Tahun Baru, sama seperti pembatas tahun di kalender rilisan. Sumber tur [CHOOM]: ygfamily.com, Wikipedia &amp; unggahan resmi BABYMONSTER di Facebook/X; acara akhir tahun (KBS Song Festival, SBS Gayo Daejeon, MBC Gayo Daejejeon, Golden Disc Awards Hanoi, MKMA) dari pengumuman resmi stasiun — baris bertanda <b>perkiraan</b> = jadwal rutin tahunan yang belum diumumkan resmi. Acara <b>BABYMONSTER &amp; TREASURE</b> (untuk dua grup) tampil di filter kedua grup.</p>
   </section>`;
   bindPageClose(sec);
   const sfSel = $("#schFilter");
@@ -3437,6 +3438,20 @@ function gotoAlbum(id) {
   if (state.platform !== "spotify") { setPlatform("spotify").then(open); return; }
   open();
 }
+/* toggle Spotify | YouTube di halaman Diskografi — versi YT mengelompokkan video per lagu */
+function diskoViewToggle(mode) {
+  return `<div class="histtabs" style="margin-top:12px" role="group" aria-label="Platform diskografi">
+    <button class="histtab${mode === "spotify" ? " on" : ""}" data-disview="spotify">Spotify · stream</button>
+    <button class="histtab${mode === "yt" ? " on" : ""}" data-disview="yt">YouTube · views</button>
+  </div>`;
+}
+function bindDiscoView(sec) {
+  sec.querySelectorAll("[data-disview]").forEach((b) => b.addEventListener("click", () => {
+    if (state.disView === b.dataset.disview) return;
+    state.disView = b.dataset.disview;
+    renderAll();
+  }));
+}
 /* ---- showcase album gaya YG (carousel cover besar) — di atas daftar diskografi, bagian lama tetap ada ---- */
 function diskoShowHTML(a, albums, idx) {
   const n = albums.length;
@@ -3497,16 +3512,19 @@ function bindDiscoShow(wrap, gid) {
   wrap.querySelectorAll("[data-dkopen]").forEach((el) => el.addEventListener("click", () => gotoAlbum(el.dataset.dkopen)));
 }
 function renderDiscoPage(sec) {
+  if (state.disView === "yt") { renderDiscoYtPage(sec); return; }
   const head = pageCloseBar("Diskografi", "album, EP &amp; singel resmi — total stream per album dari riwayat situs", ICO_DISC, "#a78bfa");
   if (!state.sp.tracks && !state.sp.error) {
-    sec.innerHTML = head + `<div class="banner">Memuat data Spotify…</div>`;
+    sec.innerHTML = head + diskoViewToggle("spotify") + `<div class="banner">Memuat data Spotify…</div>`;
     bindPageClose(sec);
+    bindDiscoView(sec);
     loadSpData().then(renderAll);
     return;
   }
   if (state.sp.error) {
-    sec.innerHTML = head + `<div class="banner">Data Spotify gagal dimuat (${esc(state.sp.error)}). Jalankan workflow “Kumpulkan data”, lalu muat ulang.</div>`;
+    sec.innerHTML = head + diskoViewToggle("spotify") + `<div class="banner">Data Spotify gagal dimuat (${esc(state.sp.error)}). Jalankan workflow “Kumpulkan data”, lalu muat ulang — atau buka tab <b>YouTube</b> di atas.</div>`;
     bindPageClose(sec);
+    bindDiscoView(sec);
     return;
   }
   const nowT = Date.now() / 1000;
@@ -3540,8 +3558,9 @@ function renderDiscoPage(sec) {
       <p class="note">Klik kartu = tampilkan album di showcase atas (warna aksen ikut cover) · klik cover besar = buka halaman album: daftar lagu + grafik stream per lagu. Tanggal rilis dari metadata Spotify resmi.</p>
     </section>`;
   }).join("");
-  sec.innerHTML = head + sections;
+  sec.innerHTML = head + diskoViewToggle("spotify") + sections;
   bindPageClose(sec);
+  bindDiscoView(sec);
   mountDiscoShow(sec);
   /* klik kartu = tampilkan di showcase seperti yang diminta; klik cover besar = buka album */
   sec.querySelectorAll("[data-alb]").forEach((c) => {
@@ -3550,6 +3569,135 @@ function renderDiscoPage(sec) {
       const i = ctrl ? ctrl.albums.findIndex((al) => al.id === c.dataset.alb) : -1;
       if (ctrl && i >= 0) ctrl.show(i, true);
       else gotoAlbum(c.dataset.alb);
+    };
+    c.addEventListener("click", go);
+    c.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+  });
+}
+
+/* ---------- versi YouTube dari Diskografi (permintaan: "diskografi cuma bisa Spotify, kalo YT gimana") ----------
+ * Rilisan dikelompokkan dari JUDUL video yang dipantau: MV, performance & dance practice yang
+ * menyebut lagu yang sama digabung jadi satu baris — total views dijumlahkan dari semua videonya,
+ * thumbnail & tanggal diambil dari data YouTube itu sendiri (tanpa data Spotify sama sekali). */
+function diskoYtQuote(t) {
+  const q = /['\u2018\u2019]([^'\u2018\u2019]+)['\u2018\u2019]/.exec(String(t || ""));
+  return q ? q[1].trim() : String(t || "").replace(/^.*?\s*[-\u2013]\s*/, "").trim();
+}
+function diskoYtSongKey(v) {
+  const s = diskoYtQuote(v.title).replace(/\s*\(T5\)\s*$/i, "").trim(); // 'MOVE (T5)' & 'MOVE' jadi satu
+  return (s || String(v.title || "")).toUpperCase();
+}
+function discoYtGroups(a) {
+  const map = new Map();
+  for (const v of allVideosFlat()) {
+    if (v.channel !== a.id) continue;
+    const key = diskoYtSongKey(v);
+    if (!map.has(key)) map.set(key, { key, name: "", vids: [], mv: null, date: null });
+    const g = map.get(key);
+    g.vids.push(v);
+    if (v.published && (!g.date || v.published < g.date)) g.date = v.published;
+    if ((v.category === "v" || /M\/V/i.test(v.title || "")) && (!g.mv || lastV(v) > lastV(g.mv))) g.mv = v;
+  }
+  for (const g of map.values()) {
+    const nameV = g.mv || g.vids[0];
+    g.name = diskoYtQuote(nameV.title).replace(/\s*\(T5\)\s*$/i, "").trim() || g.key;
+    g.vids.sort((x, y) => lastV(y) - lastV(x));
+    g.tot = g.vids.reduce((s, v) => s + lastV(v), 0);
+    let rate = 0, haveRate = false;
+    for (const v of g.vids) { const d7 = deltaDays(v.history, 7); if (d7 && d7.rate > 0) { rate += d7.rate; haveRate = true; } }
+    g.rate = haveRate ? rate : null;
+    g.relDate = g.mv && g.mv.published ? g.mv.published : g.date;
+    g.coverId = (g.mv || g.vids[0]).id;
+  }
+  return [...map.values()].sort((x, y) => (y.relDate || "").localeCompare(x.relDate || ""));
+}
+function diskoYtShowHTML(a, groups, idx) {
+  const n = groups.length;
+  const cur = groups[idx];
+  const prev = groups[(idx - 1 + n) % n];
+  const next = groups[(idx + 1) % n];
+  const sideImg = (g) => g ? `<img class="dkside" src="https://i.ytimg.com/vi/${g.coverId}/mqdefault.jpg" alt="" loading="lazy" data-dkgo="${groups.indexOf(g)}" title="${esc(g.name)}">` : "";
+  return `
+    <div class="dkshow" style="--mc:${relAccent(cur.name) || a.color || "#a78bfa"}">
+      ${n > 1 ? `<button class="dknav" data-dkstep="-1" aria-label="Lagu sebelumnya">‹</button>` : ""}
+      <div class="dkstage">
+        ${n > 2 ? sideImg(prev) : ""}
+        <img class="dkmain" src="https://i.ytimg.com/vi/${cur.coverId}/hqdefault.jpg" alt="Cover ${esc(cur.name)}" data-dkopen="${esc(cur.coverId)}" title="Klik untuk membuka M/V utamanya">
+        ${n > 2 ? sideImg(next) : ""}
+      </div>
+      ${n > 1 ? `<button class="dknav" data-dkstep="1" aria-label="Lagu berikutnya">›</button>` : ""}
+    </div>
+    <div class="dkmeta">
+      <div class="dnm2">${esc(cur.name)} <span class="typetag">${cur.vids.length} video</span></div>
+      <div class="dks2">${cur.relDate ? fmtDate(cur.relDate) : "tanggal tidak diketahui"} · <b>${fmtExact(cur.tot)}</b> views${cur.rate ? ` · +${fmtCompact(Math.round(cur.rate))}/hari` : ""} · klik cover = buka M/V utamanya</div>
+      <div class="dkdots">${groups.map((g, i) => `<i class="${i === idx ? "on" : ""}" data-dkgo="${i}" title="${esc(g.name || "")}"></i>`).join("")}</div>
+    </div>`;
+}
+function mountDiscoYtShow(sec, groupsBy) {
+  sec.querySelectorAll("[data-dkwrap-yt]").forEach((wrap) => {
+    const gid = wrap.dataset.dkwrapYt;
+    const a = state.config.artists.find((x) => x.id === gid);
+    const groups = groupsBy[gid] || [];
+    if (!a || !groups.length) { wrap.style.display = "none"; return; }
+    state.disYtShow = state.disYtShow || {};
+    if (!Number.isInteger(state.disYtShow[gid])) state.disYtShow[gid] = 0;
+    state.disYtCtrl = state.disYtCtrl || {};
+    state.disYtCtrl[gid] = {
+      groups,
+      show(i, scroll) {
+        const n = groups.length;
+        state.disYtShow[gid] = ((i % n) + n) % n;
+        wrap.innerHTML = diskoYtShowHTML(a, groups, state.disYtShow[gid]);
+        bindDiscoYtShow(wrap, gid);
+        const sec0 = wrap.closest("section");
+        if (sec0) sec0.querySelectorAll(".dcard[data-dkyy]").forEach((c) => c.classList.toggle("on", c.dataset.dkyy === groups[state.disYtShow[gid]].key));
+        if (scroll) wrap.scrollIntoView({ behavior: "smooth", block: "center" });
+      },
+    };
+    state.disYtCtrl[gid].show(state.disYtShow[gid]);
+  });
+}
+function bindDiscoYtShow(wrap, gid) {
+  wrap.querySelectorAll("[data-dkstep]").forEach((b) => b.addEventListener("click", () => state.disYtCtrl[gid].show(state.disYtShow[gid] + parseInt(b.dataset.dkstep, 10))));
+  wrap.querySelectorAll("[data-dkgo]").forEach((el) => el.addEventListener("click", () => state.disYtCtrl[gid].show(parseInt(el.dataset.dkgo, 10))));
+  wrap.querySelectorAll("[data-dkopen]").forEach((el) => el.addEventListener("click", () => openDetail(el.dataset.dkopen)));
+}
+function renderDiscoYtPage(sec) {
+  const head = pageCloseBar("Diskografi — YouTube", "versi YouTube: semua MV, performance &amp; practice digabung per lagu — views, bukan stream", ICO_DISC, "#a78bfa");
+  const nowT = Date.now() / 1000;
+  const groupsBy = {};
+  const sections = state.config.artists.map((a) => {
+    const groups = discoYtGroups(a);
+    groupsBy[a.id] = groups;
+    if (!groups.length) return "";
+    const totAll = groups.reduce((s, g) => s + g.tot, 0);
+    const cards = groups.map((g) => {
+      const age = g.relDate ? Math.floor((nowT - new Date(g.relDate + "T00:00:00").getTime() / 1000) / 86400) : null;
+      return `<div class="dcard" data-dkyy="${esc(g.key)}" data-dkg-yt="${esc(a.id)}" style="--acc:${relAccent(g.name) || a.color || "#a78bfa"}" tabindex="0" role="button" aria-label="${esc(g.name)} — tampilkan di showcase">
+        <img class="dcvr" src="https://i.ytimg.com/vi/${g.coverId}/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
+        <div class="dinfo">
+          <div class="dnm">${esc(g.name)}<span class="typetag">${g.vids.length} video</span></div>
+          <div class="dsub">${g.relDate ? fmtDate(g.relDate) : "tanggal tidak diketahui"}${age != null && age >= 0 ? ` · ${NF.format(age)} hari lalu` : ""}</div>
+          <div class="dstr"><b>${fmtExact(g.tot)}</b> views${g.rate ? ` · +${fmtCompact(Math.round(g.rate))}/hari` : ""}</div>
+        </div>
+        <span class="go">→</span>
+      </div>`;
+    }).join("");
+    return `<section class="socartist">${featSectHead(a.color, ICO_DISC, esc(a.name), `${groups.length} lagu · total ${fmtExact(totAll)} views`)}
+      <div data-dkwrap-yt="${esc(a.id)}" style="margin-top:6px"></div>
+      <div class="dgrid">${cards}</div>
+    </section>`;
+  }).join("");
+  sec.innerHTML = head + diskoViewToggle("yt") + sections
+    + `<p class="note">Versi YouTube dari Diskografi: video yang memuat judul lagu yang sama (M/V, performance, dance practice) digabung jadi satu baris — total views = penjumlahan semua videonya, <b>+per hari</b> = rata-rata pertumbuhan 7 hari lagu itu. Klik kartu = tampilkan di showcase atas (warna aksen ikut rilisan) · klik cover besar = buka M/V utamanya. Data langsung dari riwayat YouTube yang dipantau — tab <b>Spotify</b> tetap tersedia untuk stream per album resmi.</p>`;
+  bindPageClose(sec);
+  bindDiscoView(sec);
+  mountDiscoYtShow(sec, groupsBy);
+  sec.querySelectorAll("[data-dkyy]").forEach((c) => {
+    const go = () => {
+      const ctrl = state.disYtCtrl && state.disYtCtrl[c.dataset.dkgYt];
+      const i = ctrl ? ctrl.groups.findIndex((g) => g.key === c.dataset.dkyy) : -1;
+      if (ctrl && i >= 0) ctrl.show(i, true);
     };
     c.addEventListener("click", go);
     c.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
@@ -7339,15 +7487,18 @@ function interpolatedBuckets(pts, gran, anchorT, clipFromIdx) {
   return out;
 }
 /* ---------- bucket harian dari PASANGAN PENGUKURAN NYATA (rentang 7/30 hari) ----------
- * Dulu rentang pendek memakai kurva PCHIP: bucket di segmen jarak renggang (>36 jam) ditandai
- * "(interpolasi)" — walau kedua ujungnya pengukuran NYATA. Setelah situs berjalan lama, label
- * itu justru membingungkan (data 1 minggu terakhir kok "masih interpolasi").
- * Sekarang: delta tiap hari = selisih DUA TITIK UKUR NYATA (akhir hari i vs akhir hari sebelumnya).
- * - Hari dengan rekaman di dua sisi → data nyata murni (tanpa label apa pun).
- * - Hari di tengah celah perekaman (tidak ada rekaman sama sekali) → selisih total segmen
- *   dibagi rata ke harinya, ditandai split = "(dibagi rata dari 2 pengukuran nyata)".
- * - Hari terakhir (hari berjalan) ditandai partial "(periode berjalan)", tanpa faktor skala.
- * Jumlahkan semua bucket = total kenaikan antara titik awal & akhir — persis seperti kurva PCHIP. */
+ * Dulu: delta tiap hari = selisih SATU pasang pengukuran berurutan lalu Map.set menimpa isi
+ * hari itu — padahal mode per jam menulis ~24 pasang per hari, jadi grafik "per hari" hanya
+ * menampilkan kenaikan SATU JAM terakhir (hari-hari terukur tampak rendah palsu, sementara
+ * hari sisa celah tampil besar — salah satu grafik yang terlihat "tidak real").
+ * Sekarang: delta hari i = nilai akhir hari i − nilai akhir hari i−1; nilai akhir hari =
+ * pengukuran TERAKHIR pada hari itu, hari di tengah celah perekaman diisi interpolasi linier
+ * antara dua pengukuran nyata di sekelilingnya (setara "dibagi rata" — jumlahkan semua bucket
+ * = total kenaikan antara titik awal & akhir, tetap persis). Penandaan:
+ * - Hari dengan pengukuran & hari sebelumnya juga terukur → data nyata murni (tanpa label).
+ * - Hari tanpa pengukuran sama sekali / berbatasan langsung dgn celah → split
+ *   "(dibagi rata dari 2 pengukuran nyata)".
+ * - Hari terakhir (hari berjalan) ditandai partial "(periode berjalan)". */
 function realDailyBuckets(pts, clipFromIdx) {
   const P = [];
   for (const p of pts) {
@@ -7360,31 +7511,39 @@ function realDailyBuckets(pts, clipFromIdx) {
   const iZ = dayIndexOf(P[P.length - 1].t);
   let i0 = dayIndexOf(P[0].t);
   if (clipFromIdx != null) i0 = Math.max(i0, clipFromIdx);
-  const byDay = new Map();
-  for (let k = 1; k < P.length; k++) {
-    const a = P[k - 1], b = P[k];
-    const ia = dayIndexOf(a.t), ib = dayIndexOf(b.t);
-    const g = Math.max(0, b.v - a.v);
-    const est = !!a.e || !!b.e;
-    const span = Math.max(1, ib - ia);
-    if (span === 1) {
-      if (ib >= i0) byDay.set(ib, { v: g, est, split: false });
-    } else {
-      const per = Math.floor(g / span);
-      let rem = g - per * span;
-      for (let j = 1; j <= span; j++) {
-        const di = ia + j;
-        if (di < i0) continue;
-        byDay.set(di, { v: per + (rem > 0 ? 1 : 0), est, split: true });
-        if (rem > 0) rem--;
+  const onDay = new Set(P.map((p) => dayIndexOf(p.t)));
+  /* nilai "akhir hari i": pengukuran terakhir pada hari itu; hari kosong = interpolasi linier
+   * ke akhir hari antara dua pengukuran nyata di sekelilingnya; null = belum ada pengukuran */
+  const vEnd = (i) => {
+    const te = tsOfDayIndex(i) + 86400 - 1;
+    if (te < P[0].t) return null;
+    if (te >= P[P.length - 1].t) return { v: P[P.length - 1].v, e: P[P.length - 1].e };
+    let a = P[0];
+    for (let k = 1; k < P.length; k++) {
+      if (P[k].t > te) {
+        const f = (te - a.t) / Math.max(1, P[k].t - a.t);
+        return { v: a.v + (P[k].v - a.v) * f, e: a.e || P[k].e };
       }
+      a = P[k];
     }
-  }
+    return { v: P[P.length - 1].v, e: P[P.length - 1].e };
+  };
   const out = [];
+  let prev = vEnd(i0 - 1);
   for (let i = i0; i <= iZ; i++) {
-    const b = byDay.get(i);
-    if (!b) continue;
-    out.push({ key: dateKeyOfDayIndex(i), v: b.v, est: b.est, ip: false, split: b.split, t: tsOfDayIndex(i) });
+    const cur = vEnd(i);
+    if (!cur) continue;
+    if (prev) {
+      out.push({
+        key: dateKeyOfDayIndex(i),
+        v: Math.max(0, cur.v - prev.v),
+        est: !!(cur.e || prev.e),
+        ip: false,
+        split: !onDay.has(i) || !onDay.has(i - 1),
+        t: tsOfDayIndex(i),
+      });
+    }
+    prev = cur;
   }
   /* hari terakhir = periode berjalan bila rekaman terakhirnya masih "hari ini" */
   if (out.length && Date.now() / 1000 - P[P.length - 1].t < 26 * 3600) out[out.length - 1].partial = true;
