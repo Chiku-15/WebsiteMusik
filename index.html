@@ -1106,7 +1106,10 @@
   .dkdots i.on{background:var(--mc,#6a78ff);width:20px}
   @media (max-width:560px){.dkside{display:none}.dknav{width:32px;height:60px;font-size:20px}.dkmain{width:min(240px,64vw)}}
   .dcard{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:11px 13px;cursor:pointer;transition:transform .15s,border-color .15s}
-  .dcard:hover{transform:translateY(-1px);border-color:#a78bfa}
+  .dcard:hover{transform:translateY(-1px);border-color:var(--acc,#a78bfa)}
+  /* kartu album yang sedang tampil di showcase — aksen ikut warna rilisan */
+  .dcard.on{border-color:var(--acc,#a78bfa);box-shadow:inset 0 0 0 1px var(--acc,#a78bfa),0 6px 18px color-mix(in srgb,var(--acc,#a78bfa) 16%,transparent)}
+  .dcard.on .dnm{color:var(--acc,#a78bfa)}
   .dcvr{width:56px;height:56px;border-radius:10px;object-fit:cover;flex-shrink:0}
   .dinfo{min-width:0;flex:1}
   .dnm{font-size:13.5px;font-weight:800;line-height:1.4;word-break:break-word}
@@ -1115,6 +1118,13 @@
   .dsub{font-size:11.5px;color:var(--muted);margin-top:2px}
   .dstr{font-size:12px;margin-top:4px}
   .dstr b{font-variant-numeric:tabular-nums}
+  /* dropdown urutan Trofi & Penghargaan + tombol buka/tutup Riwayat nominasi */
+  .trofisel{margin-top:8px;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:7px 11px;font:700 12.5px var(--font);cursor:pointer;width:100%}
+  .trofisel:hover,.trofisel:focus{outline:none;border-color:#ffb02e}
+  .nomtglbtn{display:flex;align-items:center;gap:12px;width:100%;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 14px;cursor:pointer;color:var(--text);text-align:left;font:800 13.5px var(--font);transition:border-color .15s}
+  .nomtglbtn:hover{border-color:#8a93a8}
+  .nomtglbtn .nsub{color:var(--muted);font-size:12px;font-weight:600}
+  .nomtglbtn .chev{margin-left:auto;color:var(--muted);font-size:11.5px;font-weight:800;white-space:nowrap}
   .newsgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:10px;margin-top:12px}
   .newscard{position:relative;display:flex;flex-direction:column;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:13px 15px 12px 17px;text-decoration:none;color:var(--text);transition:border-color .15s,transform .15s;overflow:hidden}
   .newscard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--sc,#6a78ff)}
@@ -1636,6 +1646,8 @@ const state = {
   recOpen: false,         // halaman Rekor & Fakta (isi mengikuti platform aktif)
   memOpen: false,         // halaman Profil anggota (17 anggota)
   troOpen: false,         // halaman Trofi & Penghargaan
+  trofiSort: "urutan",    // urutan daftar Penghargaan besar: "urutan"|"az"|"gengsi"
+  trofiNomsOpen: false,   // Riwayat nominasi terbuka (default tertutup biar scroll pendek)
   schOpen: false,         // halaman Jadwal & Countdown
   tmlOpen: false,         // halaman Timeline Grup (no 27) — statis, tanpa data kolektor
   bulOpen: false,         // halaman Rekap 12 bulan — view YT & pendengar Spotify Jan–Des
@@ -1654,7 +1666,8 @@ const state = {
   chnArt: null,           // pilihan dropdown artis di Statistik Channel (artistId)
   berArtPlat: null,       // pilihan dropdown platform di seksi "Dua artis yang dipantau" halaman BERANDA ("yt"|"spotify")
   tlFilter: "all",        // filter chip timeline: "all" | "bm" | "trs"
-  calOpen: false,         // halaman Kalender rilisan (isi mengikuti platform aktif)
+  calOpen: false,         // halaman Kalender rilisan
+  calView: null,          // "spotify"|"yt" — platform yang tampil di halaman Kalender (null = ikut platform aktif)
   spAlbumOpen: false,     // halaman album Spotify terbuka?
   spAlbum: null,          // id album yang dibuka
   cmpSel: null,           // pilihan modal perbandingan: [idA, idB]
@@ -1940,7 +1953,7 @@ function menuGo(k) {
     state.xplatOpen = false; state.rilOpen = false;
     state.duelOpen = false; state.papanOpen = false;
     if (k === "rec") { state.recOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
-    else if (k === "cal") { state.calOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
+    else if (k === "cal") { state.calOpen = true; state.calView = state.platform === "spotify" ? "spotify" : "yt"; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
     else if (k === "tro") { state.troOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
     else if (k === "mem") { state.memOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
     else if (k === "sch") { state.schOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
@@ -2308,7 +2321,7 @@ function renderBantuanPage(sec) {
     ${bntQA("Kapan angka diperbarui?", `Otomatis sesuai jadwal di atas — YouTube 2× sehari, Spotify tiap jam, berita beberapa jam sekali — dijalankan workflow <b>“Kumpulkan data”</b> di tab Actions repo. Kalau pembaruan tertahan (misal workflow dimatikan), pita atas halaman menampilkan peringatan ⚠ berwarna jingga.`)}
     ${bntQA("Kenapa angkanya bisa selisih kecil dari halaman resmi?", `Normal dan wajar: YouTube <b>membulatkan subscriber ke ribuan terdekat</b>, jadi angka harian bergerak dalam kelipatan ribuan. Stream kworb dibaca dari chart publik yang diagregasi — waktunya bisa beda beberapa jam dengan halaman resmi Spotify. Angka yang dibulatkan ditandai <b>±</b> supaya jelas.`)}
     ${featSectHead("#06b6d4", ICO_TML, "Riwayat pencatatan", "cara situs mencatat & membangun riwayat")}
-    ${bntQA("Fitur “Riwayat pencatatan artis” itu apa dan cara kerjanya?", `Ada di <b>Statistik Channel versi Spotify</b> (tabel di bawah “Stream baru per tahun”). Setiap kali workflow berjalan, kolektor membaca angka terbaru lalu <b>menambahkan satu baris catatan</b> — waktu pencatatan, pendengar bulanan, total stream, dan stream per hari — ke berkas <b>data/spotify-artists.json</b> di repo. Tabel riwayat, grafik, dan rekap Spotify Wrapped semuanya dibangun dari catatan-catatan itu. Makin lama situs berjalan, makin rapat dan akurat riwayatnya.`)}
+    ${bntQA("Fitur “Riwayat pencatatan artis” itu apa dan cara kerjanya?", `Ada di <b>Statistik Channel versi Spotify</b> (tabel di bawah “Stream baru per tahun”). Setiap kali workflow berjalan, kolektor membaca angka terbaru lalu <b>menambahkan satu baris catatan</b> — waktu pencatatan, pendengar bulanan, total stream, dan stream per hari — ke berkas <b>data/spotify-artists.json</b> di repo. Tabel riwayat, grafik, dan rekap Spotify Wrapped semuanya dibangun dari catatan-catatan itu. Makin lama situs berjalan, makin rapat dan akurat riwayatnya. Riwayat awal diisi <b>jangkar dari rekap komunitas di X</b> (@bmspotiify, rekap TEUME/MONSTIEZ) plus <b>titik perkiraan bulanan</b> bertanda <b>est</b> supaya tabel dan grafik tidak kosong sejak hari pertama.`)}
     ${bntQA("Kenapa ada angka estimasi di grafik lama?", `Pemantauan situs ini baru berjalan belakangan — angka sebelum catatan pertama tidak mungkin diketahui persis. Celah itu diisi <b>interpolasi/estimasi</b> (model + arsip seperti Wayback Machine) dan selalu ditandai, jadi tidak tertukar dengan data nyata. Makin lama situs jalan, makin sedikit bagian yang perlu diestimasi.`)}
     ${featSectHead("#ffb02e", ICO_TROPHY, "Arti tanda di angka", "supaya tidak salah baca")}
     <div class="bnt-tags">
@@ -2671,6 +2684,33 @@ function openMemberDetail(key) {
   }
 }
 /* ---- halaman TROFI & PENGHARGAAN (fitur no 16 + 17) ---- */
+/* ---------- urutan daftar Penghargaan besar (dropdown: urutan / A-Z / gengsi) ---------- */
+function trofiDateKey(d) {
+  const m = /^(\d{4})(?:-(\d{2}))?/.exec(String(d || ""));
+  return m ? (+m[1]) * 12 + (m[2] ? +m[2] - 1 : 0) : 9999 * 12;
+}
+function trofiTier(a) {
+  const s = `${a.name || ""} ${a.cat || ""}`;
+  if (/daesang/i.test(s)) return 0;
+  if (/artist of the year|album of the year|song of the year|rookie|best (album|song|group|artist|new artist|tour|stage|hip.?hop|dance|vocal|music video|collaboration)|main prize|bonsang/i.test(s)) return 1;
+  if (/fans' choice|top 10|favorite|popularity|worldwide|fandom|upick/i.test(s)) return 2;
+  return 3;
+}
+function trofiSortAwards(list, mode) {
+  const c = list.slice();
+  if (mode === "az") c.sort((x, y) => String(x.name).localeCompare(String(y.name)));
+  else if (mode === "gengsi") c.sort((x, y) => trofiTier(x) - trofiTier(y) || trofiDateKey(y.date) - trofiDateKey(x.date));
+  else c.sort((x, y) => trofiDateKey(x.date) - trofiDateKey(y.date) || String(x.name).localeCompare(String(y.name)));
+  return c;
+}
+function trofiSortSelect(mode) {
+  const opt = (v, lbl) => `<option value="${v}"${mode === v ? " selected" : ""}>${lbl}</option>`;
+  return `<select class="trofisel" data-trofisort aria-label="Urutan daftar penghargaan">
+    ${opt("urutan", "Urutan mendapat (terlama → terbaru)")}
+    ${opt("az", "Huruf depan A-Z")}
+    ${opt("gengsi", "Gengsi — Daesang di paling atas")}
+  </select>`;
+}
 function renderTrofiPage(sec) {
   const T = state.trofi && state.trofi.groups;
   if (!T) {
@@ -2706,8 +2746,9 @@ function renderTrofiPage(sec) {
           </div>`).join("") + `</div>` : `<div class="banner">Belum ada trofi acara musik.</div>`}
       </div>
       <div>
-        ${featSectHead("#ffb02e", ICO_TROPHY, "Penghargaan besar", "MAMA · GDA · SMA · KGMA · TFA · AAA — semuanya hasil menang")}
-        <div style="display:flex;flex-direction:column;gap:7px">` + bigWin.map((a) => `
+        ${featSectHead("#ffb02e", ICO_TROPHY, "Penghargaan besar", "MAMA · GDA · SMA · KGMA · TFA · AAA — semuanya hasil menang · urutan bisa diubah di dropdown")}
+        ${trofiSortSelect(state.trofiSort)}
+        <div style="display:flex;flex-direction:column;gap:7px">` + trofiSortAwards(bigWin, state.trofiSort).map((a) => `
           <div class="wprow${/daesang/i.test(a.cat || "") ? " top3" : ""}" style="cursor:default${/daesang/i.test(a.cat || "") ? ";border-color:color-mix(in srgb,#ffb02e 55%,var(--border))" : ""}">
             <div class="rk">${/daesang/i.test(a.cat || "") ? "★" : "•"}</div>
             ${svgIco(ICO_TROPHY, "#22c55e")}
@@ -2727,31 +2768,47 @@ function renderTrofiPage(sec) {
             <div class="del"><div class="d1"><span class="trobadg" style="background:color-mix(in srgb,#ffb02e 18%,transparent);color:#ffb02e">MENUNGGU</span></div><div class="d2">${fmtDateLoose(a.date)}${a.note ? " · " + esc(a.note) : ""}</div></div>
           </div>`).join("") + `</div></div>`;
     }
-    if (hs.length) {
+    /* trofi khusus hasil voting fans — dari berbagai acara, bukan cuma Inkigayo */
+    const fvBadges = { "HOT STAGE": "#a78bfa", "FANS' CHOICE": "#22c55e" };
+    const fv = (g.fanvote && g.fanvote.length)
+      ? g.fanvote.slice().sort((x, y) => String(x.date || "").localeCompare(String(y.date || "")))
+      : hs.map((h) => ({ song: h.song, show: h.src || "SBS Inkigayo", badge: "HOT STAGE", date: h.date, src: h.src }));
+    if (fv.length) {
       html += `<div style="margin-top:18px">
-        ${featSectHead("#a78bfa", ICO_TROPHY, "Inkigayo Hot Stage", "trofi khusus hasil voting fans di SBS Inkigayo — bukan no.1 mingguan, jadi tidak dihitung sebagai trofi acara musik")}
-        <div style="display:flex;flex-direction:column;gap:7px">` + hs.map((h) => `
+        ${featSectHead("#a78bfa", ICO_TROPHY, "Trofi khusus voting fans", "Inkigayo Hot Stage (mingguan) &amp; Fans' Choice MAMA (tahunan) — ditentukan voting fans; Fans' Choice juga terhitung di Penghargaan besar")}
+        <div style="display:flex;flex-direction:column;gap:7px">` + fv.map((h) => {
+          const bc = fvBadges[h.badge] || "#a78bfa";
+          return `
           <div class="wprow" style="cursor:default">
             <div class="rk">•</div>
-            ${svgIco(ICO_TROPHY, "#a78bfa")}
-            <div class="nm"><b>${esc(h.song)}</b><span class="wbsub">${esc(h.src || "SBS Inkigayo")}</span></div>
-            <div class="del"><div class="d1"><span class="trobadg" style="background:color-mix(in srgb,#a78bfa 18%,transparent);color:#a78bfa">HOT STAGE</span></div><div class="d2">${fmtDateLoose(h.date)}</div></div>
-          </div>`).join("") + `</div></div>`;
+            ${svgIco(ICO_TROPHY, bc)}
+            <div class="nm"><b>${esc(h.song || h.name || "")}</b><span class="wbsub">${esc(h.show || "")}${h.src && h.src !== h.show ? " · " + esc(h.src) : ""}${h.note ? " · " + esc(h.note) : ""}</span></div>
+            <div class="del"><div class="d1"><span class="trobadg" style="background:color-mix(in srgb,${bc} 18%,transparent);color:${bc}">${esc(h.badge || "HOT STAGE")}</span></div><div class="d2">${fmtDateLoose(h.date)}</div></div>
+          </div>`;
+        }).join("") + `</div></div>`;
     }
     if (noms.length) {
+      /* bisa dibuka/ditutup supaya scroll halaman tidak panjang ke bawah (default: TERTUTUP) */
       html += `<div style="margin-top:18px">
-        ${featSectHead("#8a93a8", ICO_TROPHY, "Riwayat nominasi", "dicatat terpisah — halaman ini berfokus pada kemenangan")}
+        <button type="button" class="nomtglbtn" data-nomtgl aria-expanded="${state.trofiNomsOpen}">
+          <span class="sic" style="--c:#8a93a8"><svg viewBox="0 0 24 24"><path d="${ICO_TROPHY}"/></svg></span>
+          <b>Riwayat nominasi</b><span class="nsub">${noms.length} nominasi — dicatat terpisah, halaman ini berfokus pada kemenangan</span>
+          <span class="chev">${state.trofiNomsOpen ? "▲ Tutup" : "▼ Buka"}</span>
+        </button>
+        <div style="display:${state.trofiNomsOpen ? "block" : "none"};margin-top:7px">
         <div style="display:flex;flex-direction:column;gap:7px">` + noms.map((a) => `
           <div class="wprow" style="cursor:default;opacity:.75">
             <div class="rk">•</div>
             ${svgIco(ICO_TROPHY, "var(--muted)")}
             <div class="nm"><b>${esc(a.name)}</b><span class="wbsub">${esc(a.cat)}</span></div>
-            <div class="del"><div class="d1"><span class="trobadg nom">NOMINASI</span></div><div class="d2">${fmtDateLoose(a.date)}</div></div>
-          </div>`).join("") + `</div></div>`;
+            <div class="del"><div class="d1"><span class="trobadg nom">NOMINASI</span></div><div class="d2">${fmtDateLoose(a.date)}${a.note ? " · " + esc(a.note) : ""}</div></div>
+          </div>`).join("") + `</div></div></div>`;
     }
   }
-  html += `<p class="note">Ada trofi yang belum tercantum? File <b>data/trofi.json</b> bisa diedit langsung — situs memuatnya otomatis saat halaman dibuka. Catatan: Inkigayo Hot Stage dicatat terpisah karena trofi itu diberikan lewat voting fans tiap siaran, bukan kemenangan no.1 mingguan; koreksi data lama: MAMA 2021 Best Dance Performance (Male Group) dimenangkan BTS, bukan TREASURE. Trofi dikurasi <b>manual</b> (bukan hasil scrape otomatis) karena sumbernya artikel &amp; daftar resmi yang bentuknya berbeda-beda — hasil malam kedua MAMA 2026 (21 Nov, termasuk Best Rap &amp; Hip Hop Performance: TREASURE 'IF I' yang kini bertanda <b>MENUNGGU</b>) tinggal dipindahkan ke 'win'/'nom' setelah siaran selesai.</p></section>`;
+  html += `<p class="note">Ada trofi yang belum tercantum? File <b>data/trofi.json</b> bisa diedit langsung — situs memuatnya otomatis saat halaman dibuka. MAMA 2026 sudah lengkap: malam kedua (21 Nov) Best Rap &amp; Hip Hop Performance dimenangkan Zico &amp; Lilas ("DUET") — 'IF I' TREASURE finis sebagai nominasi. Trofi dikurasi <b>manual</b> (bukan scrape otomatis) karena sumbernya artikel &amp; daftar resmi yang bentuknya berbeda-beda; pengumuman penghargaan bukan angka yang bisa di-scrape, jadi begitu ada hasil baru cukup ganti "pending" → "win"/"nom" di trofi.json. Koreksi data lama: MAMA 2021 Best Dance Performance (Male Group) dimenangkan BTS, bukan TREASURE.</p></section>`;
   sec.innerHTML = html;
+  sec.querySelectorAll("[data-trofisort]").forEach((s) => s.addEventListener("change", () => { state.trofiSort = s.value; renderTrofiPage(sec); }));
+  sec.querySelectorAll("[data-nomtgl]").forEach((b) => b.addEventListener("click", () => { state.trofiNomsOpen = !state.trofiNomsOpen; renderTrofiPage(sec); }));
   bindPageClose(sec);
   startCountdownTick();
 }
@@ -3338,6 +3395,27 @@ function renderChartsPage(sec) {
 }
 
 /* ---------- halaman Diskografi ---------- */
+/* warna aksen per rilisan (permintaan: warna ikut album/single-nya) — dicocokkan lewat
+ * potongan judul (huruf besar), urutan penting: kunci lebih spesifik di atas */
+const REL_ACCENT = [
+  ["BATTER UP -JP", "#fb923c"], ["BATTER UP", "#b91c1c"],
+  ["1ST WORLD TOUR", "#dc2626"], ["HELLO MONSTERS", "#dc2626"],
+  ["SUGAR HONEY ICE TEA", "#facc15"], ["춤 (CHOOM)", "#f43f5e"],
+  ["WE GO UP", "#22c55e"], ["DRIP", "#a855f7"], ["FOREVER", "#ec4899"],
+  ["GHOST", "#6366f1"], ["HOT SAUCE", "#ef4444"], ["BABYMONS7ER", "#94a3b8"],
+  ["THE FIRST STEP : CHAPTER ONE", "#38bdf8"], ["THE FIRST STEP : TREASURE EFFECT", "#60a5fa"],
+  ["THE SECOND STEP : CHAPTER TWO (JP", "#f87171"], ["THE SECOND STEP : CHAPTER TWO", "#e11d48"],
+  ["THE SECOND STEP : CHAPTER ONE", "#a5b4fc"],
+  ["2ND FULL ALBUM 'REBOOT'", "#eab308"], ["REBOOT (JP SPECIAL SELECTION)", "#fde047"],
+  ["3RD MINI ALBUM [LOVE PULSE]", "#fb7185"], ["SPECIAL JP SELECTION [LOVE PULSE]", "#fda4af"],
+  ["4TH MINI ALBUM [NEW WAV]", "#93c5fd"], ["TREASURE THE STAGE 2026 NEW WAV", "#38bdf8"],
+  ["SHOCK", "#dc2626"],
+];
+function relAccent(name) {
+  const s = String(name || "").toUpperCase();
+  for (const [k, c] of REL_ACCENT) if (s.includes(k)) return c;
+  return "";
+}
 /* rapikan judul panjang (album live/tur): pisah judul pendek + baris info venue/tanggal */
 function diskoSplit(al) {
   let nm = (al.name || "").trim();
@@ -3372,7 +3450,7 @@ function diskoShowHTML(a, albums, idx) {
   const { nm: curNm } = diskoSplit(cur);
   const sideImg = (al) => al && al.cover ? `<img class="dkside" src="${esc(al.cover)}" alt="" loading="lazy" data-dkgo="${albums.indexOf(al)}" title="${esc(al.name)}">` : "";
   return `
-    <div class="dkshow" style="--mc:${a.color || "#a78bfa"}">
+    <div class="dkshow" style="--mc:${relAccent(cur.name) || a.color || "#a78bfa"}">
       ${n > 1 ? `<button class="dknav" data-dkstep="-1" aria-label="Album sebelumnya">‹</button>` : ""}
       <div class="dkstage">
         ${n > 2 ? sideImg(prev) : ""}
@@ -3396,20 +3474,27 @@ function mountDiscoShow(sec) {
     if (!a || !albums.length) { wrap.style.display = "none"; return; }
     state.disShow = state.disShow || {};
     if (!Number.isInteger(state.disShow[gid])) state.disShow[gid] = 0;
-    const paint = () => { wrap.innerHTML = diskoShowHTML(a, albums, state.disShow[gid]); bind(); };
-    const bind = () => {
-      wrap.querySelectorAll("[data-dkstep]").forEach((b) => b.addEventListener("click", () => {
+    state.disCtrl = state.disCtrl || {};
+    state.disCtrl[gid] = {
+      albums,
+      /* tampilkan rilisan ke-i di showcase; scroll=true = tarik layar ke showcase (dipakai klik kartu) */
+      show(i, scroll) {
         const n = albums.length;
-        state.disShow[gid] = (state.disShow[gid] + parseInt(b.dataset.dkstep, 10) + n) % n;
-        paint();
-      }));
-      wrap.querySelectorAll("[data-dkgo]").forEach((el) => el.addEventListener("click", () => {
-        state.disShow[gid] = parseInt(el.dataset.dkgo, 10); paint();
-      }));
-      wrap.querySelectorAll("[data-dkopen]").forEach((el) => el.addEventListener("click", () => gotoAlbum(el.dataset.dkopen)));
+        state.disShow[gid] = ((i % n) + n) % n;
+        wrap.innerHTML = diskoShowHTML(a, albums, state.disShow[gid]);
+        bindDiscoShow(wrap, gid);
+        const sec0 = wrap.closest("section");
+        if (sec0) sec0.querySelectorAll(".dcard").forEach((c) => c.classList.toggle("on", c.dataset.alb === albums[state.disShow[gid]].id));
+        if (scroll) wrap.scrollIntoView({ behavior: "smooth", block: "center" });
+      },
     };
-    paint();
+    state.disCtrl[gid].show(state.disShow[gid]);
   });
+}
+function bindDiscoShow(wrap, gid) {
+  wrap.querySelectorAll("[data-dkstep]").forEach((b) => b.addEventListener("click", () => state.disCtrl[gid].show(state.disShow[gid] + parseInt(b.dataset.dkstep, 10))));
+  wrap.querySelectorAll("[data-dkgo]").forEach((el) => el.addEventListener("click", () => state.disCtrl[gid].show(parseInt(el.dataset.dkgo, 10))));
+  wrap.querySelectorAll("[data-dkopen]").forEach((el) => el.addEventListener("click", () => gotoAlbum(el.dataset.dkopen)));
 }
 function renderDiscoPage(sec) {
   const head = pageCloseBar("Diskografi", "album, EP &amp; singel resmi — total stream per album dari riwayat situs", ICO_DISC, "#a78bfa");
@@ -3438,7 +3523,7 @@ function renderDiscoPage(sec) {
       const age = al.releaseDate ? Math.floor((nowT - new Date(al.releaseDate + "T00:00:00").getTime() / 1000) / 86400) : null;
       const typ = SP_TYPE[al.type] || (al.type || "");
       const { nm: alNm, venue: alVenue } = diskoSplit(al);
-      return `<div class="dcard" data-alb="${esc(al.id)}" tabindex="0" role="button" aria-label="${esc(al.name)}">
+      return `<div class="dcard" data-alb="${esc(al.id)}" data-dkg="${esc(a.id)}" style="--acc:${relAccent(al.name) || a.color || "#a78bfa"}" tabindex="0" role="button" aria-label="${esc(al.name)} — tampilkan di showcase">
         ${al.cover ? `<img class="dcvr" src="${esc(al.cover)}" alt="" onerror="this.style.visibility='hidden'">` : `<div class="dcvr" style="display:grid;place-items:center;font-size:22px;color:var(--muted)">♪</div>`}
         <div class="dinfo">
           <div class="dnm">${esc(alNm)}${typ ? `<span class="typetag${al.type === "live" ? " live" : ""}">${typ}</span>` : ""}</div>
@@ -3452,14 +3537,20 @@ function renderDiscoPage(sec) {
     return `<section class="socartist">${featSectHead(a.color, ICO_DISC, esc(a.name), `${albums.length} rilisan · total ${fmtExact(totAll)} stream`)}
       <div data-dkwrap="${esc(a.id)}" style="margin-top:6px"></div>
       <div class="dgrid">${cards}</div>
-      <p class="note">Klik album untuk membuka halaman album: daftar lagu + grafik stream per lagu. Tanggal rilis dari metadata Spotify resmi.</p>
+      <p class="note">Klik kartu = tampilkan album di showcase atas (warna aksen ikut cover) · klik cover besar = buka halaman album: daftar lagu + grafik stream per lagu. Tanggal rilis dari metadata Spotify resmi.</p>
     </section>`;
   }).join("");
   sec.innerHTML = head + sections;
   bindPageClose(sec);
   mountDiscoShow(sec);
+  /* klik kartu = tampilkan di showcase seperti yang diminta; klik cover besar = buka album */
   sec.querySelectorAll("[data-alb]").forEach((c) => {
-    const go = () => gotoAlbum(c.dataset.alb);
+    const go = () => {
+      const ctrl = state.disCtrl && state.disCtrl[c.dataset.dkg];
+      const i = ctrl ? ctrl.albums.findIndex((al) => al.id === c.dataset.alb) : -1;
+      if (ctrl && i >= 0) ctrl.show(i, true);
+      else gotoAlbum(c.dataset.alb);
+    };
     c.addEventListener("click", go);
     c.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
   });
@@ -3829,8 +3920,8 @@ function chnSpBlock(a) {
     : histMode === "semua" ? "seluruh catatan — terbaru dulu" : "10 catatan terakhir";
   const histRows = histList.map((p) => `
     <div class="chrow" style="--acc:${acc}">
-      <div class="ck">${fmtTs(p.t)}</div>
-      <div>${p.ml != null ? fmtExact(p.ml) + (p.ml % 1000 === 0 ? " <span class='cellno' title='angka hasil pembulatan ke ribuan'>±</span>" : "") : "–"}</div>
+      <div class="ck" title="${esc(p.src || "")}">${fmtTs(p.t)}</div>
+      <div>${p.ml != null ? fmtExact(p.ml) + (p.ml % 1000 === 0 ? " <span class='cellno' title='angka hasil pembulatan ke ribuan'>±</span>" : "") + (p.est ? " <span class='cellno' title='titik perkiraan — interpolasi bulanan antar jangkar komunitas/X, bukan pengukuran langsung'>est</span>" : "") : "–"}</div>
       <div class="hide-m">${p.total != null ? fmtExact(p.total) : "–"}</div>
       <div class="hide-m up">${p.daily != null ? "+" + fmtExact(p.daily) : "–"}</div>
     </div>`).join("");
@@ -3860,7 +3951,7 @@ function chnSpBlock(a) {
     ${yearBars}
     <div class="chgrid" style="--acc:${acc}">${yearHead}${yearRows}</div>
     <p class="note" style="margin-top:6px">* ${new Date().getFullYear()} berjalan. Angka = penambahan stream lagu-lagu yang dipantau situs ini (sumber kworb) — total stream artis di atas lebih besar karena mencakup semua lagu terdaftar di Spotify.</p>
-    <div class="hsect histsect" style="margin-top:18px"><b>Riwayat pencatatan artis</b><span class="sub">pendengar bulanan langsung dari profil Spotify — ± = pembulatan ke ribuan · ${histSub} · ${NF.format(histList.length)} dari ${NF.format(histAll.length)} catatan</span></div>
+    <div class="hsect histsect" style="margin-top:18px"><b>Riwayat pencatatan artis</b><span class="sub">pendengar bulanan profil Spotify — ± = pembulatan ke ribuan · est = titik perkiraan (jangkar komunitas/X diinterpolasi bulanan) · ${histSub} · ${NF.format(histList.length)} dari ${NF.format(histAll.length)} catatan</span></div>
     <div class="histtabs" style="--acc:${acc}" role="group" aria-label="Mode tabel riwayat pencatatan">
       <button class="histtab${histMode === "besar" ? " on" : ""}" data-histmode="besar">3 terbesar</button>
       <button class="histtab${histMode === "baru" ? " on" : ""}" data-histmode="baru">Terbaru</button>
@@ -4634,6 +4725,20 @@ function startCountdownTick() {
     document.querySelectorAll("[data-cdown]").forEach((el) => { el.textContent = cdText(+el.dataset.cdown); });
   }, 1000);
 }
+/* toggle platform di halaman Kalender rilisan — Spotify & YouTube dalam satu halaman */
+function calViewToggle(mode) {
+  return `<div class="histtabs" style="margin-top:12px" role="group" aria-label="Platform kalender rilisan">
+    <button class="histtab${mode === "spotify" ? " on" : ""}" data-calview="spotify">Spotify</button>
+    <button class="histtab${mode === "yt" ? " on" : ""}" data-calview="yt">YouTube</button>
+  </div>`;
+}
+function bindCalView(sec) {
+  sec.querySelectorAll("[data-calview]").forEach((b) => b.addEventListener("click", () => {
+    if (state.calView === b.dataset.calview) return;
+    state.calView = b.dataset.calview;
+    renderAll();
+  }));
+}
 function renderSpCalendar(sec) {
   const rels = [];
   for (const al of Object.values(state.sp.albums || {})) {
@@ -4662,11 +4767,13 @@ function renderSpCalendar(sec) {
   }).join("");
   sec.innerHTML = `
   <section style="margin-top:26px">
-    ${pageCloseBar("Kalender rilisan — Spotify", "album, EP &amp; singel dari yang terbaru · ikut otomatis dengan data terbaru", ICO_CAL, "#8b5cf6")}
+    ${pageCloseBar("Kalender rilisan", "album, EP &amp; singel dari yang terbaru · ikut otomatis dengan data terbaru — pilih platform di bawah", ICO_CAL, "#8b5cf6")}
+    ${calViewToggle("spotify")}
     ${rels.length ? monthHTML : '<div class="banner">Belum ada rilisan.</div>'}
     <p class="note">Rilisan dengan tanggal di masa depan otomatis diberi hitung mundur begitu tanggalnya masuk data.</p>
   </section>`;
   bindPageClose(sec);
+  bindCalView(sec);
   sec.querySelectorAll("[data-galb]").forEach((el) => {
     const go = () => openSpAlbum(el.dataset.galb);
     el.addEventListener("click", go);
@@ -4700,11 +4807,13 @@ function renderYtCalendar(sec) {
   }).join("");
   sec.innerHTML = `
   <section style="margin-top:26px">
-    ${pageCloseBar("Kalender rilisan — YouTube", "MV, performance &amp; practice dari yang terbaru", ICO_CAL, "#8b5cf6")}
+    ${pageCloseBar("Kalender rilisan — YouTube", "MV, performance &amp; practice dari yang terbaru — versi YouTube dari kalender Spotify", ICO_CAL, "#8b5cf6")}
+    ${calViewToggle("yt")}
     ${vids.length ? monthHTML : '<div class="banner">Belum ada video.</div>'}
     <p class="note">Video dengan tanggal di masa depan otomatis diberi hitung mundur begitu tanggalnya masuk data.</p>
   </section>`;
   bindPageClose(sec);
+  bindCalView(sec);
   bindCards(sec);
   bindWatch(sec);
   startCountdownTick();
@@ -8128,7 +8237,7 @@ function renderSpAll() {
     else if (state.bantuanOpen) renderBantuanPage(sec); // halaman BANTUAN (header)
     else if (state.spWrapOpen) renderWrappedPage(sec);
     else if (state.recOpen) renderSpRecords(sec);
-    else if (state.calOpen) renderSpCalendar(sec);
+    else if (state.calOpen) (state.calView === "yt" ? renderYtCalendar : renderSpCalendar)(sec);
     else if (state.troOpen) renderTrofiPage(sec);
     else if (state.memOpen) renderMembersPage(sec);
     else if (state.schOpen) renderSchedulePage(sec);
@@ -9492,7 +9601,7 @@ function renderAll() {
     else if (state.fiturOpen) renderFiturPage($("#homeSection"));    // halaman SEMUA FITUR (header)
     else if (state.bantuanOpen) renderBantuanPage($("#homeSection"));  // halaman BANTUAN (header)
     else if (state.recOpen) renderYtRecords($("#homeSection"));       // halaman Rekor & Fakta
-    else if (state.calOpen) renderYtCalendar($("#homeSection")); // halaman Kalender rilisan
+    else if (state.calOpen) (state.calView === "spotify" ? renderSpCalendar : renderYtCalendar)($("#homeSection")); // halaman Kalender rilisan
     else if (state.troOpen) renderTrofiPage($("#homeSection"));  // halaman Trofi & Penghargaan
     else if (state.memOpen) renderMembersPage($("#homeSection")); // halaman Profil anggota
     else if (state.schOpen) renderSchedulePage($("#homeSection")); // halaman Jadwal & Countdown

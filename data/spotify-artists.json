@@ -4,14 +4,56 @@
   "name": "BABYMONSTER",
   "spotifyId": "1SIocsqdEefUTE6XKGUiVS",
   "color": "#ff4d6d",
-  "image": "https://image-cdn-fa.spotifycdn.com/image/ab676161000051747eed59dfba0a93af631a6654",
-  "monthlyListeners": 7893469,
-  "mlDelta": -32224,
+  "image": "https://image-cdn-ak.spotifycdn.com/image/ab676161000051747eed59dfba0a93af631a6654",
+  "monthlyListeners": 7938566,
+  "mlDelta": 5553,
   "followers": 9459627,
-  "totalStreams": 2604064227,
-  "dailyStreams": 3067742,
+  "totalStreams": 2591793195,
+  "dailyStreams": 3064604,
   "trackCount": 43,
   "history": [
+   {
+    "t": 1700020800,
+    "ml": 1600000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1702612800,
+    "ml": 1990000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1705291200,
+    "ml": 2595000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1707969600,
+    "ml": 3200000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1710475200,
+    "ml": 3578000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1713153600,
+    "ml": 4864000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
    {
     "t": 1714996800,
     "ml": 6602531,
@@ -23,6 +65,209 @@
     "ml": 10072324,
     "src": "@bmspotiify (PUNCAK karier — Mei 2024)",
     "seed": 1
+   },
+   {
+    "t": 1718424000,
+    "ml": 9500000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1721016000,
+    "ml": 9107000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1723694400,
+    "ml": 8700000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1726372800,
+    "ml": 8497000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1728964800,
+    "ml": 8300000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1731643200,
+    "ml": 8989000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1734235200,
+    "ml": 9145000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1736913600,
+    "ml": 9200000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1739592000,
+    "ml": 8885000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1742011200,
+    "ml": 8600000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1744689600,
+    "ml": 8397000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1747281600,
+    "ml": 8200000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1749960000,
+    "ml": 8403000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1752552000,
+    "ml": 8600000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1755230400,
+    "ml": 8450000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1757908800,
+    "ml": 8300000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1760500800,
+    "ml": 8729000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1763179200,
+    "ml": 8661000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1765771200,
+    "ml": 8500000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1768449600,
+    "ml": 8350000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1771128000,
+    "ml": 8200000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1773547200,
+    "ml": 8153000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1776225600,
+    "ml": 8100000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1778817600,
+    "ml": 8314000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1781496000,
+    "ml": 8373000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1784088000,
+    "ml": 8400000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1786766400,
+    "ml": 8225000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1789444800,
+    "ml": 8050000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1792036800,
+    "ml": 8093000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
    },
    {
     "t": 1794035588,
@@ -41,20 +286,6 @@
     "total": 2591793195,
     "daily": 3064604,
     "ml": 7938566
-   },
-   {
-    "t": 1795303661,
-    "total": 2604064227,
-    "daily": 3067742,
-    "ml": 7925693,
-    "f": 9459627
-   },
-   {
-    "t": 1795318951,
-    "total": 2604064227,
-    "daily": 3067742,
-    "ml": 7893469,
-    "f": 9459627
    }
   ],
   "openUrl": "https://open.spotify.com/artist/1SIocsqdEefUTE6XKGUiVS"
@@ -64,20 +295,439 @@
   "name": "TREASURE",
   "spotifyId": "3KonOYiLsU53m4yT7gNotP",
   "color": "#38bdf8",
-  "image": "https://image-cdn-fa.spotifycdn.com/image/ab67616100005174946efd7262fe76ff1f08e776",
-  "monthlyListeners": 1900000,
+  "image": "https://image-cdn-ak.spotifycdn.com/image/ab67616100005174946efd7262fe76ff1f08e776",
+  "monthlyListeners": 1885365,
   "mlDelta": null,
-  "mlApprox": true,
   "followers": 3955050,
   "totalStreams": 1734438692,
-  "dailyStreams": 588817,
+  "dailyStreams": 847628,
   "trackCount": 160,
   "history": [
+   {
+    "t": 1597464000,
+    "ml": 900000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1600142400,
+    "ml": 1102000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1602734400,
+    "ml": 1298000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1605412800,
+    "ml": 1500000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1608004800,
+    "ml": 1696000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1610683200,
+    "ml": 1898000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1613361600,
+    "ml": 2100000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1615780800,
+    "ml": 2257000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1618459200,
+    "ml": 2431000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1621051200,
+    "ml": 2600000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1623729600,
+    "ml": 2768000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1626321600,
+    "ml": 2932000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1629000000,
+    "ml": 3100000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1631678400,
+    "ml": 3268000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1634270400,
+    "ml": 3432000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1636948800,
+    "ml": 3600000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1639540800,
+    "ml": 4092000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1642219200,
+    "ml": 4600000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1644897600,
+    "ml": 5117000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
    {
     "t": 1647345600,
     "ml": 6652201,
     "src": "rekap komunitas TEUME (PUNCAK karier Mar-Apr 2022, era THE SECOND STEP)",
     "seed": 1
+   },
+   {
+    "t": 1649995200,
+    "ml": 6100000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1652587200,
+    "ml": 5737000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1655265600,
+    "ml": 5363000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1657857600,
+    "ml": 5000000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1660536000,
+    "ml": 5096000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1663214400,
+    "ml": 5192000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1665806400,
+    "ml": 5285000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1668484800,
+    "ml": 5031000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1671076800,
+    "ml": 4721000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1673755200,
+    "ml": 4400000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1676433600,
+    "ml": 4228000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1678852800,
+    "ml": 4072000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1681531200,
+    "ml": 3900000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1684123200,
+    "ml": 3959000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1686801600,
+    "ml": 4021000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1689393600,
+    "ml": 4080000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1692072000,
+    "ml": 3972000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1694750400,
+    "ml": 3783000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1697342400,
+    "ml": 3600000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1700020800,
+    "ml": 3465000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1702612800,
+    "ml": 3335000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1705291200,
+    "ml": 3200000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1707969600,
+    "ml": 3098000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1710475200,
+    "ml": 3002000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1713153600,
+    "ml": 2900000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1715745600,
+    "ml": 2851000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1718424000,
+    "ml": 2799000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1721016000,
+    "ml": 2750000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1723694400,
+    "ml": 2699000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1726372800,
+    "ml": 2649000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1728964800,
+    "ml": 2600000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1731643200,
+    "ml": 2499000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1734235200,
+    "ml": 2401000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1736913600,
+    "ml": 2300000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1739592000,
+    "ml": 2248000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1742011200,
+    "ml": 2202000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1744689600,
+    "ml": 2150000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1747281600,
+    "ml": 2171000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1749960000,
+    "ml": 2193000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1752552000,
+    "ml": 2214000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1755230400,
+    "ml": 2236000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
    },
    {
     "t": 1756641600,
@@ -98,6 +748,97 @@
     "seed": 1
    },
    {
+    "t": 1760500800,
+    "ml": 2278000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1763179200,
+    "ml": 2300000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1765771200,
+    "ml": 2202000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1768449600,
+    "ml": 2100000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1771128000,
+    "ml": 2021000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1773547200,
+    "ml": 1950000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1776225600,
+    "ml": 2001000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1778817600,
+    "ml": 2050000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1781496000,
+    "ml": 2250000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1784088000,
+    "ml": 2152000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1786766400,
+    "ml": 2050000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1789444800,
+    "ml": 1950000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
+    "t": 1792036800,
+    "ml": 1907000,
+    "seed": 1,
+    "est": 1,
+    "src": "perkiraan - interpolasi bulanan antar jangkar komunitas/X"
+   },
+   {
     "t": 1794035595,
     "total": 1725941747,
     "daily": 493940,
@@ -108,20 +849,6 @@
     "total": 1734438692,
     "daily": 847628,
     "ml": 1885365
-   },
-   {
-    "t": 1795303669,
-    "total": 1734438692,
-    "daily": 588817,
-    "ml": 1900000,
-    "f": 3955050
-   },
-   {
-    "t": 1795318958,
-    "total": 1734438692,
-    "daily": 588817,
-    "ml": 1900000,
-    "f": 3955050
    }
   ],
   "openUrl": "https://open.spotify.com/artist/3KonOYiLsU53m4yT7gNotP"

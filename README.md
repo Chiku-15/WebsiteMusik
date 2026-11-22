@@ -237,6 +237,14 @@ Setiap kali Actions merekam angka baru, estimasi pada hari itu **ditimpa data ny
 ---
 Dibuat dengan GitHub Actions + GitHub Pages
 
+## Pembaruan 22 November 2026
+
+- **Diskografi**: klik kartu album/single kini **menampilkannya di showcase atas** (cover besar + tanggal · jumlah lagu · total stream · stream/hari) tanpa langsung membuka halaman album — klik cover besar tetap membuka album. **Warna aksen tiap rilisan ikut cover-nya** (SHOCK merah, WE GO UP hijau, SUGAR HONEY ICE TEA kuning, DRIP ungu, REBOOT emas, dst.) — showcase, titik navigasi, dan kartu terpilih mengikutinya.
+- **Riwayat pencatatan artis kini terisi**: jangkar komunitas di X (@bmspotiify, rekap TEUME) + **titik perkiraan bulanan** (tanda `est`) menutup celah Mei 2024→Nov 2026 (BABYMONSTER) dan Mar 2022→Agu 2025 (TREASURE); tabel memberi tooltip sumber per titik. Titik perkiraan ditimpa data nyata saat Actions merekam.
+- **Kalender rilisan kini punya versi YouTube**: toggle **Spotify | YouTube** di atas halaman — versi YT menampilkan MV/performance/practice per bulan dengan views, tanpa perlu ganti platform.
+- **Trofi & Penghargaan**: dropdown urutan daftar Penghargaan besar (**urutan mendapat / A-Z / gengsi — Daesang paling atas**), seksi baru **Trofi khusus voting fans** (Inkigayo Hot Stage + Fans' Choice MAMA) untuk TREASURE & BABYMONSTER — termasuk 4 kemenangan Hot Stage baru: 'IF I' (Jun 2026) & 'NALLY-NA' unit HYUNHAYO (Jul 2026) untuk TREASURE, 'CHOOM' (Mei 2026) & 'DESERVE' EP.1329 (Nov 2026) untuk BABYMONSTER — dan **Riwayat nominasi kini bisa dibuka/tutup** (default tertutup supaya scroll pendek).
+- **MAMA 2026 tuntas**: malam kedua (21 Nov) Best Rap & Hip Hop Performance dimenangkan Zico & Lilas ("DUET") — 'IF I' TREASURE berstatus nominasi; badge MENUNGGU hilang. Sumber: Soompi & Billboard.
+
 ## Pembaruan 21 November 2026
 
 - **MAMA 2026 masuk Trofi & Penghargaan**: malam pertama (20 Nov, Kyocera Dome Osaka) — BABYMONSTER menang Fans' Choice Top 10 — Female (ke-3 berturut-turut), TREASURE menang Fans' Choice Top 10 — Male + penghargaan spesial Super Stage Artist. Kategori malam kedua (termasuk Best Rap & Hip Hop Performance: TREASURE 'IF I') tampil dengan badge **MENUNGGU** sampai pengumumannya dimasukkan manual ke `data/trofi.json`.
