@@ -5,8 +5,8 @@
   "spotifyId": "1SIocsqdEefUTE6XKGUiVS",
   "color": "#ff4d6d",
   "image": "https://image-cdn-ak.spotifycdn.com/image/ab676161000051747eed59dfba0a93af631a6654",
-  "monthlyListeners": 7925693,
-  "mlDelta": -1741,
+  "monthlyListeners": 7893469,
+  "mlDelta": -32224,
   "followers": 9459627,
   "totalStreams": 2604064227,
   "dailyStreams": 3067742,
@@ -50,10 +50,10 @@
     "f": 9459627
    },
    {
-    "t": 1795307706,
+    "t": 1795312692,
     "total": 2604064227,
     "daily": 3067742,
-    "ml": 7925693,
+    "ml": 7893469,
     "f": 9459627
    }
   ],
@@ -117,7 +117,7 @@
     "f": 3955050
    },
    {
-    "t": 1795307714,
+    "t": 1795312702,
     "total": 1734438692,
     "daily": 588817,
     "ml": 1900000,
