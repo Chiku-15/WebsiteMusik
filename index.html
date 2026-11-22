@@ -100,66 +100,83 @@
   .mama-facts b{font-size:15px}
   .mama-facts span{color:var(--muted);font-size:12.5px}
   .mama-asof{color:#ffb02e;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px}
-  .mama-plate{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:16px;margin-top:14px;padding:14px 8px 4px;overflow-x:auto}
+  /* pelat chart = langit malam (panel gelap tetap, sama di tema gelap & terang) */
+  .mama-plate{background:radial-gradient(120% 90% at 50% 0%,#121d3b 0%,#0b1224 70%);border:1px solid rgba(168,182,222,.16);border-radius:16px;margin-top:14px;padding:14px 8px 4px;overflow-x:auto}
   .mama-chart{min-width:880px}
   .mama-chart svg{display:block;width:100%;height:auto}
-  .mama-cap{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10.5px;fill:var(--muted)}
-  .mama-grid{stroke:var(--border);stroke-width:1}
-  .mama-gridtxt{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10px;fill:var(--muted)}
+  .mama-cap{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10.5px;fill:#7d89ab;letter-spacing:.04em}
+  .mama-grid{stroke:rgba(168,182,222,.16);stroke-width:1}
+  .mama-gridtxt{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10px;fill:#7d89ab}
+  .mama-field circle{fill:#a8b2cf}
   .mama-starlbl{cursor:pointer}
-  .mama-starlbl .nm{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:13.5px;fill:var(--text)}
-  .mama-starlbl .vv{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:9.5px;fill:var(--muted)}
+  .mama-starlbl .nm{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-size:13.5px;fill:#eaeef8;paint-order:stroke;stroke:#0b1224;stroke-width:4px;stroke-linejoin:round}
+  .mama-starlbl .vv{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:9.5px;fill:#7d89ab;font-style:normal}
   .mama-starlbl.foc .nm{font-weight:700}
-  .mama-dot{fill:var(--text);opacity:.9}
-  .mama-halo{fill:var(--text);opacity:.13}
+  .mama-dot{fill:#eaeef8;opacity:1}
+  .mama-halo{fill:#eaeef8;opacity:.14}
   .mama-star,.mama-halostar{cursor:pointer}
   .mama-star:hover{filter:brightness(1.35)}
+  /* daftar artis gaya situs referensi: baris terbuka 2 kolom — info di kiri, reel video di kanan */
   .mama-acts{margin-top:20px}
-  .mama-act{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px 18px;margin-top:12px;position:relative}
-  .mama-act.focus{border-color:color-mix(in srgb,var(--ac) 55%,var(--border));box-shadow:0 8px 26px color-mix(in srgb,var(--ac) 13%,transparent)}
+  .mama-act{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:16px 44px;padding:26px 0 30px;border-bottom:1px solid var(--border);position:relative}
+  .mama-ainfo{min-width:0}
+  .mama-act.focus{background:linear-gradient(90deg,color-mix(in srgb,var(--ac) 7%,transparent),transparent 72%)}
   .mama-act.flash{animation:mamaflash 1.6s ease}
-  @keyframes mamaflash{0%,55%{box-shadow:0 0 0 3px var(--ac)}100%{box-shadow:none}}
-  .mama-acthead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
-  .mama-idx{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:2px 8px}
-  .mama-actname{font-family:Georgia,'Times New Roman',serif;font-size:21px;font-weight:700}
-  .mama-ko{color:var(--muted);font-size:13px}
-  .mama-actviews{margin-left:auto;text-align:right}
-  .mama-actviews .tv{font-size:16px;font-weight:800}
-  .mama-actviews .tm{color:var(--muted);font-size:11.5px;display:block}
+  @keyframes mamaflash{0%,55%{box-shadow:inset 0 0 0 3px var(--ac)}100%{box-shadow:none}}
+  .mama-acthead{display:grid;grid-template-columns:auto 1fr;column-gap:14px;align-items:start}
+  .mama-idx{grid-row:1/span 3;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;color:var(--muted);padding-top:12px;min-width:2ch}
+  .mama-actname{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:500;font-size:clamp(24px,3.2vw,34px);line-height:1.05;letter-spacing:-.015em;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0}
+  .mama-mark{flex:none;align-self:center;width:13px;height:13px;border-radius:50%;background:var(--text);display:inline-block}
+  .mama-ko{color:var(--muted);font-size:13.5px;margin-top:4px}
+  .mama-actviews{margin-top:14px;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+  .mama-actviews .tv{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:clamp(24px,3vw,32px);font-weight:500;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+  .mama-actviews .tm{color:var(--muted);font-size:12.5px}
   .mama-focustag{position:absolute;top:-9px;right:14px;background:var(--ac);color:#fff;font-size:10px;font-weight:800;letter-spacing:.6px;padding:3px 10px;border-radius:999px}
-  .mama-stage{color:var(--muted);font-size:12.5px;margin-top:8px}
-  .mama-stage b{color:var(--text)}
-  .mama-clips{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px;margin-top:12px}
-  .mama-clip{position:relative;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:var(--card2);transition:.15s;text-decoration:none}
-  .mama-clip:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
-  .mama-clip .th{position:relative;display:block;aspect-ratio:16/9;background:#000}
-  .mama-clip .th img{width:100%;height:100%;object-fit:cover;display:block}
-  .mama-clip .bg{position:absolute;left:6px;top:6px;background:rgba(0,0,0,.72);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px}
-  .mama-clip .du{position:absolute;right:6px;bottom:6px;background:rgba(0,0,0,.72);color:#fff;font-size:10.5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:1px 6px;border-radius:6px}
-  .mama-clip .ct{display:block;padding:9px 11px 3px;font-size:12px;font-weight:700;line-height:1.45;color:var(--text)}
+  .mama-stage{color:var(--muted);font-size:13px;margin-top:16px}
+  .mama-stage b{color:#f1b65e;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-weight:500;font-size:12px;letter-spacing:.02em}
+  /* setlist bernomor 01, 02, … seperti daftar lagu pada situs referensi */
+  .mama-setlist{list-style:none;margin:14px 0 0;padding:0;counter-reset:sl}
+  .mama-setlist .song{counter-increment:sl;display:grid;grid-template-columns:2.2ch 1fr;gap:10px;align-items:baseline;padding:7px 0;border-top:1px solid var(--border);font-size:13px;font-weight:600}
+  .mama-setlist .song:last-child{border-bottom:1px solid var(--border)}
+  .mama-setlist .song::before{content:counter(sl,decimal-leading-zero);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;color:var(--muted);font-weight:400}
+  /* reel video di kolom kanan kartu artis — thumbnail + tombol putar + badge versi */
+  .mama-clips{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px 14px;align-content:start;margin-top:2px}
+  .mama-clip{position:relative;min-width:0;text-decoration:none;display:block}
+  .mama-clip .th{position:relative;display:block;aspect-ratio:16/9;background:#0b1224;border-radius:6px;overflow:hidden}
+  .mama-clip .th img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s ease}
+  .mama-clip:hover .th img{transform:scale(1.04)}
+  .mama-clip .th::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 0 0 1px rgba(234,238,248,.08)}
+  .mama-play{position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;background:rgba(234,238,248,.92);display:grid;place-items:center;box-shadow:0 2px 10px rgba(6,10,22,.45);transition:.15s;pointer-events:none}
+  .mama-play svg{width:22px;height:22px;fill:#0b1224}
+  .mama-clip:hover .mama-play{transform:scale(1.08)}
+  .mama-clip .bg{position:absolute;left:6px;top:6px;background:#e9edf5;color:#0b1224;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px}
+  .mama-clip .du{position:absolute;right:6px;bottom:6px;background:rgba(6,10,22,.82);color:#e9edf5;font-size:10.5px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:1px 6px;border-radius:6px}
+  .mama-clip .ct{display:block;padding:9px 0 0;font-size:12.5px;font-weight:700;line-height:1.45;color:var(--text)}
   .mama-clip:hover .ct{text-decoration:underline}
-  .mama-clip .cv{display:block;padding:0 11px 10px;color:var(--muted);font-size:11px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-  /* variasi badge versi video: klip lagu (kelabu) & full stage 4K (jingga) */
-  .mama-clip .bg.vc{background:rgba(88,98,122,.82)}
-  .mama-clip .bg.v4{background:rgba(180,83,9,.9)}
-  /* baris setlist kartu artis — judul lagu dari klip per lagu (bukan unggahan full stage) */
-  .mama-setlist{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:10px}
-  .mama-setlist .sl{color:var(--muted);font-size:10.5px;letter-spacing:.8px;text-transform:uppercase}
-  .mama-setlist .song{background:var(--chip);border:1px solid var(--border);border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:700}
+  .mama-clip .cv{display:block;padding:3px 0 0;color:var(--muted);font-size:11px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+  /* variasi badge versi video: klip lagu (transparan gelap) & full stage 4K (amber) */
+  .mama-clip .bg.vc{background:rgba(6,10,22,.82);color:#e9edf5}
+  .mama-clip .bg.v4{background:#f1b65e;color:#0b1224}
   /* blok panggung kolaborasi pada kartu artis + garis penghubung & batas hari di chart */
-  .mama-collab{margin-top:12px;border:1px dashed color-mix(in srgb,#facc15 40%,var(--border));border-radius:12px;padding:10px 12px;background:color-mix(in srgb,#facc15 5%,transparent)}
-  .mama-clbl{font-size:12px;color:var(--muted);line-height:1.5}
-  .mama-clbl b{color:#facc15}
+  .mama-collab{margin-top:16px;border:1px dashed rgba(241,182,94,.55);border-radius:6px;padding:12px 14px;background:color-mix(in srgb,#f1b65e 5%,transparent)}
+  .mama-clbl{font-size:12.5px;color:var(--muted);line-height:1.5}
+  .mama-clbl b{color:#f1b65e}
   .mama-crun{margin:8px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px;font-size:12.5px}
   .mama-crun li{display:flex;gap:8px;flex-wrap:wrap;align-items:baseline;border-radius:8px;padding:3px 8px;margin:0 -8px}
   .mama-crun li.me{background:color-mix(in srgb,var(--ac,#a78bfa) 14%,transparent)}
-  .mama-crun .cn{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#facc15;font-weight:700;font-size:11px;border:1px solid color-mix(in srgb,#facc15 45%,transparent);border-radius:6px;padding:0 6px}
+  .mama-crun .cn{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#f1b65e;font-weight:700;font-size:11px;border:1px solid rgba(241,182,94,.45);border-radius:6px;padding:0 6px}
   .mama-crun .cl{color:var(--muted)}
   .mama-crun .cd{color:var(--muted);font-size:11px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
-  .mama-collln{fill:none;stroke:#facc15;stroke-width:1.8;stroke-dasharray:6 4;opacity:.85}
-  .mama-daydiv{stroke:var(--muted);stroke-width:1.2;stroke-dasharray:5 4;opacity:.65}
-  .mama-daycap{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10.5px;fill:var(--muted);letter-spacing:.4px}
-  @media (max-width:640px){.mama-actviews{margin-left:0;text-align:left;width:100%}.mama-clips{grid-template-columns:1fr 1fr}}
+  /* garis penghubung kolaborasi: amber tipis, animasi tergambar saat halaman tampil */
+  .mama-collln{fill:none;stroke:#f1b65e;stroke-width:1.3;stroke-opacity:.8;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .8s ease .15s}
+  .mama-chart svg.collab-on .mama-collln{stroke-dashoffset:0}
+  .mama-daydiv{stroke:#7d89ab;stroke-width:1;stroke-dasharray:5 4;opacity:.6}
+  .mama-daycap{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10.5px;fill:#7d89ab;letter-spacing:.4px}
+  /* pembatas Hari 1 | Hari 2 pada daftar artis (mode kedua hari, urutan panggung) */
+  .mama-daysep{display:flex;align-items:center;gap:14px;margin:28px 0 0;color:var(--muted);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;letter-spacing:.6px;text-transform:uppercase}
+  .mama-daysep::before,.mama-daysep::after{content:"";flex:1;height:1px;background:var(--border)}
+  @media (max-width:820px){.mama-act{grid-template-columns:1fr;gap:14px}.mama-clips{grid-auto-flow:column;grid-template-columns:none;grid-auto-columns:min(72%,260px);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px}.mama-clip{scroll-snap-align:start}}
+  @media (prefers-reduced-motion:reduce){.mama-collln{transition:none;stroke-dashoffset:0}}
   .mama-segs{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;margin:16px 2px 0}
   .mama-selw{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}
   .mama-sel{background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:999px;padding:7px 12px;font:700 12.5px var(--font);cursor:pointer;outline:none}
@@ -2524,7 +2541,7 @@ function mamaCollabBlock(a, stages) {
 /* chart bintang — x: urutan naik panggung, y: views (skala linear atau log), r: akar
  * views supaya artis kecil tetap terlihat. Label digeser naik/turun otomatis biar
  * tidak bertumpuk. opts.scale "lin"|"log" = skala Y; opts.collab = daftar grup (slug
- * nama artis) → garis kuning penghubung panggung kolaborasi; opts.days = label hari
+ * nama artis) → garis amber penghubung panggung kolaborasi; opts.days = label hari
  * → garis batas Hari 1 | Hari 2 saat mode kedua hari. */
 function mamaChartSVG(acts, focCol, opts) {
   opts = opts || {};
@@ -2535,12 +2552,20 @@ function mamaChartSVG(acts, focCol, opts) {
   const minV = Math.min.apply(null, acts.map((a) => a.views));
   const top = Math.max(2e6, Math.ceil(maxV / 2e6) * 2e6);
   const lo = useLog ? Math.pow(10, Math.floor(Math.log10(minV)) - 1) : 0;
-  const X = (i) => (acts.length === 1 ? padL + iw / 2 : padL + (iw * i) / (acts.length - 1));
+  const X = (i) => (acts.length === 1 ? padL + iw / 2 : padL + (iw * (i + 0.5)) / acts.length);
   const Y = useLog
     ? (v) => { const t = (Math.log10(Math.max(v, lo)) - Math.log10(lo)) / (Math.log10(top) - Math.log10(lo)); return padT + ih * (1 - Math.min(1, Math.max(0, t))); }
     : (v) => padT + ih * (1 - v / top);
-  const R = (v) => 3.4 + 12.8 * Math.sqrt(v / top);
+  const R = (v) => 2.6 + 11.5 * Math.sqrt(v / maxV);
   let g = "";
+  /* langit berbintang — titik kecil acak (seed tetap supaya posisi stabil antar render), gaya situs referensi */
+  {
+    let seed = 20261120;
+    const rnd = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
+    let field = "";
+    for (let i = 0; i < Math.round(W / 9); i++) field += `<circle cx="${(rnd() * W).toFixed(1)}" cy="${(rnd() * H).toFixed(1)}" r="${(rnd() * 0.9 + 0.3).toFixed(2)}" opacity="${(rnd() * 0.25 + 0.08).toFixed(2)}"/>`;
+    g += `<g class="mama-field" aria-hidden="true">${field}</g>`;
+  }
   if (useLog) {
     [lo, 1e4, 3e4, 1e5, 3e5, 1e6, 3e6].forEach((m) => {
       if (m < lo || m > top) return;
@@ -2566,7 +2591,7 @@ function mamaChartSVG(acts, focCol, opts) {
   acts.forEach((a, i) => { slugIdx[mamaSlug(a.name)] = i; });
   (opts.collab || []).forEach((grp) => {
     const pts = grp.map((nm) => slugIdx[nm]).filter((i) => i !== undefined).map((i) => `${X(i).toFixed(1)},${Y(acts[i].views).toFixed(1)}`);
-    if (pts.length >= 2) g += `<polyline class="mama-collln" points="${pts.join(" ")}"/>`;
+    if (pts.length >= 2) g += `<polyline class="mama-collln" pathLength="1" points="${pts.join(" ")}"/>`;
   });
   const placed = [];
   /* kotak semua bintang ikut dihindari label — label tidak boleh menutupi bintang artis lain */
@@ -2574,30 +2599,41 @@ function mamaChartSVG(acts, focCol, opts) {
     const sx = X(i), sy = Y(a.views), sr = R(a.views);
     return { x: sx - sr - 2, y: sy - sr - 2, w: 2 * sr + 4, h: 2 * sr + 4 };
   });
-  const hits = (b) => placed.some((p) => b.x < p.x + p.w + 4 && b.x + b.w + 4 > p.x && b.y < p.y + p.h + 3 && b.y + b.h + 3 > p.y) ||
+  const hits = (b) => b.x < padL - 6 || b.x + b.w > W - 2 || b.y < 2 || b.y + b.h > H - 16 ||
+    placed.some((p) => b.x < p.x + p.w + 4 && b.x + b.w + 4 > p.x && b.y < p.y + p.h + 3 && b.y + b.h + 3 > p.y) ||
     starBoxes.some((p) => b.x < p.x + p.w && b.x + b.w > p.x && b.y < p.y + p.h && b.y + b.h > p.y);
   acts.forEach((a, i) => {
     const x = X(i), y = Y(a.views), r = R(a.views);
     const foc = !!a.focus;
     const col = foc ? focCol[a.focus] || "#a78bfa" : null;
     const dot = foc
-      ? `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r + 8).toFixed(1)}" style="fill:${col};opacity:.2"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" style="fill:${col}" stroke="var(--bg)" stroke-width="1.5"/>`
-      : `<circle class="mama-halo" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r + 5).toFixed(1)}"/><circle class="mama-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" stroke="var(--bg)" stroke-width="1.5"/>`;
+      ? `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r + 8).toFixed(1)}" style="fill:${col};opacity:.2"/><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" style="fill:${col}" stroke="#0b1224" stroke-width="2.5"/>`
+      : `<circle class="mama-halo" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(r + 6).toFixed(1)}"/><circle class="mama-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" stroke="#0b1224" stroke-width="2.5"/>`;
     const songs = mamaSongs(a).slice(0, 4);
     const collab = (opts.collabMap || {})[mamaSlug(a.name)];
     g += `<g class="mama-star" data-jump="${mamaSlug(a.name)}"><title>${esc(a.name)} — ${fmtExact(a.views)} views · ${a.clips.length} video${a.day ? ` · Hari ${a.day}` : ""}${songs.length ? ` · Lagu: ${esc(songs.join(", "))}` : ""}${collab ? ` · panggung kolab ‘${esc(collab)}’` : ""}</title>${dot}</g>`;
     const vv = fmtCompact(a.views);
-    /* satu <text> berisi dua tspan — nama & angka mengalir berurutan, tidak mungkin saling menimpa */
+    /* satu <text> berisi dua tspan — nama & angka mengalir berurutan, tidak mungkin saling menimpa.
+     * Kandidat posisi: kanan/kiri/atas/bawah bintang (gaya situs referensi); bila semua tabrakan,
+     * pakai posisi dgn total tumpang-tindih terkecil — label tidak menutupi bintang artis lain. */
     const lw = a.name.length * 8.2 + vv.length * 6.2 + 16;
-    const left = x > W - padR - lw - 12;   /* mepet tepi kanan → label di kiri bintang */
-    const bx = left ? x - r - 8 - lw : x + r + 8;
-    let dy = 0;
-    for (const off of [0, -14, 14, -28, 28, -42, 42, -56, 56, -70, 70]) {
-      if (!hits({ x: bx, y: y - 8 + off, w: lw, h: 18 })) { dy = off; break; }
+    const offs = [0, -14, 14, -28, 28, -42, 42, -56, 56, -70, 70];
+    const cands = [];
+    offs.forEach((off) => cands.push({ x: x + r + 8, y: y - 8 + off, anc: "start" }));
+    offs.forEach((off) => cands.push({ x: x - r - 8 - lw, y: y - 8 + off, anc: "end" }));
+    cands.push({ x: x - lw / 2, y: y - r - 22, anc: "middle" });
+    cands.push({ x: x - lw / 2, y: y + r + 6, anc: "middle" });
+    let chosen = cands[0], bestOv = Infinity;
+    for (const c of cands) {
+      const b = { x: c.x, y: c.y, w: lw, h: 18 };
+      if (!hits(b)) { chosen = c; break; }
+      const ov = placed.concat(starBoxes).reduce((s, p) => s + Math.max(0, Math.min(b.x + b.w, p.x + p.w) - Math.max(b.x, p.x)) * Math.max(0, Math.min(b.y + b.h, p.y + p.h) - Math.max(b.y, p.y)), 0);
+      if (ov < bestOv) { bestOv = ov; chosen = c; }
     }
-    placed.push({ x: bx, y: y - 8 + dy, w: lw, h: 18 });
+    placed.push({ x: chosen.x, y: chosen.y, w: lw, h: 18 });
+    const tx = chosen.anc === "end" ? chosen.x + lw : chosen.anc === "middle" ? chosen.x + lw / 2 : chosen.x;
     g += `<g class="mama-starlbl${foc ? " foc" : ""}" data-jump="${mamaSlug(a.name)}">` +
-      `<text x="${(left ? bx + lw : bx).toFixed(1)}" y="${(y + 4 + dy).toFixed(1)}" text-anchor="${left ? "end" : "start"}"><tspan class="nm">${esc(a.name)}</tspan><tspan class="vv" dx="5">${vv}</tspan></text></g>`;
+      `<text x="${tx.toFixed(1)}" y="${(chosen.y + 12).toFixed(1)}" text-anchor="${chosen.anc}"><tspan class="nm"${foc ? ` style="fill:${col}"` : ""}>${esc(a.name)}</tspan><tspan class="vv" dx="5">${vv}</tspan></text></g>`;
   });
   return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Chart panggung MAMA 2026 — tinggi & ukuran bintang = views">${g}
     <text class="mama-cap" x="${padL}" y="${H - 6}">pertama naik panggung</text>
@@ -2609,6 +2645,7 @@ function mamaClipHTML(c) {
   const vcls = ver === "Full stage 4K" ? " v4" : ver === "Klip lagu" ? " vc" : "";
   return `<a class="mama-clip" href="https://www.youtube.com/watch?v=${esc(c.id)}" target="_blank" rel="noopener" title="Buka di YouTube — ${esc(c.title)}">
     <span class="th"><img src="https://i.ytimg.com/vi/${esc(c.id)}/mqdefault.jpg" alt="" loading="lazy" onerror="this.style.display='none'">
+    <span class="mama-play"><svg viewBox="0 0 24 24"><path d="M9 7.2v9.6L16.6 12z"/></svg></span>
     <span class="bg${vcls}">${esc(ver)}</span><span class="du">${esc(c.dur || "")}</span></span>
     <span class="ct">${esc(c.title)}</span>
     <span class="cv">${fmtExact(c.views)} views</span>
@@ -2657,22 +2694,30 @@ function renderAwardsPage(sec) {
       <div style="margin:0">${chipScale}</div>
     </div>
     <div class="mama-plate"><div class="mama-chart">${mamaChartSVG(chartActs, focCol, { scale: state.awardsScale, collab: collabOpts, collabMap: collabMap, days: dKey === "all" ? (m.days || []) : null })}</div></div>
-    <p class="note" style="margin-top:8px">Kiri ke kanan: urutan naik panggung · tinggi &amp; ukuran bintang: views · skala Y pilih <b>Linear</b> atau <b>Log</b> di dropdown atas · tekan bintang/nama untuk lompat ke kartu artisnya. Bintang berwarna = grup yang dipantau situs ini. <b style="color:#facc15">Garis kuning putus-putus</b> = artis yang naik satu panggung kolaborasi (mis. CL ↔ ALLDAY PROJECT ‘STILL THE BADDEST’). Saat “Kedua hari”, garis putus-putus tegak menjadi batas antara Hari 1 dan Hari 2.</p>
+    <p class="note" style="margin-top:8px">Kiri ke kanan: urutan naik panggung · tinggi &amp; ukuran bintang: views · skala Y pilih <b>Linear</b> atau <b>Log</b> di dropdown atas · tekan bintang/nama untuk lompat ke kartu artisnya. Bintang berwarna = grup yang dipantau situs ini. <b style="color:#f1b65e">Garis oranye</b> = artis yang naik satu panggung kolaborasi (mis. CL ↔ ALLDAY PROJECT ‘STILL THE BADDEST’). Saat “Kedua hari”, garis putus-putus tegak menjadi batas antara Hari 1 dan Hari 2, dan daftar Para artis di bawah juga dipisah pembatas hari.</p>
     <div class="mama-acts">
       <div class="hsect"><h2><span class="sic" style="--c:#a78bfa"><svg viewBox="0 0 24 24"><path d="${ICO_MEDAL}"/></svg></span>Para artis</h2><span class="sub">${state.awardsSort === "top" ? "terbanyak ditonton dulu" : "urutan panggung"} · ${dKey === "all" ? "kedua hari" : "Hari " + dKey}</span></div>
       ${listActs.map((a, i) => {
         const foc = !!a.focus;
-        return `<article class="mama-act${foc ? " focus" : ""}" id="mamaact-${mamaSlug(a.name)}" style="--ac:${foc ? focCol[a.focus] : "var(--border)"}">
+        const col = foc ? focCol[a.focus] : "";
+        /* pembatas Hari 1 | Hari 2 pada daftar (mode kedua hari + urutan panggung) */
+        const sep = dKey === "all" && state.awardsSort === "order" && i > 0 && listActs[i - 1].day === 1 && a.day === 2
+          ? `<div class="mama-daysep">${esc((m.days && m.days[1] && m.days[1].label) || "Hari 2 · 21 Nov 2026")}</div>` : "";
+        return `${sep}<article class="mama-act${foc ? " focus" : ""}" id="mamaact-${mamaSlug(a.name)}" style="--ac:${foc ? focCol[a.focus] : "var(--border)"}">
         ${foc ? `<span class="mama-focustag">GRUP DIPANTAU</span>` : ""}
-        <div class="mama-acthead">
-          <span class="mama-idx">${String(i + 1).padStart(2, "0")}</span>
-          <span class="mama-actname">${esc(a.name)}</span>
-          ${a.ko ? `<span class="mama-ko" lang="ko">${esc(a.ko)}</span>` : ""}
-          <span class="mama-actviews"><span class="tv">${fmtExact(a.views)}</span><span class="tm">views · ${a.clips.length} video · Hari ${a.day} · panggung ke-${a.order}</span></span>
+        <div class="mama-ainfo">
+          <div class="mama-acthead">
+            <span class="mama-idx">${String(i + 1).padStart(2, "0")}</span>
+            <div>
+              <h3 class="mama-actname"><span class="mama-mark"${foc ? ` style="background:${col}"` : ""}></span>${esc(a.name)}</h3>
+              ${a.ko ? `<div class="mama-ko" lang="ko">${esc(a.ko)}</div>` : ""}
+            </div>
+          </div>
+          <div class="mama-actviews"><span class="tv">${fmtExact(a.views)}</span><span class="tm">views · ${a.clips.length} video · Hari ${a.day} · panggung ke-${a.order}</span></div>
+          ${a.stage ? `<div class="mama-stage">Tema panggung <b>‘${esc(a.stage)}’</b></div>` : ""}
+          ${mamaSongs(a).length ? `<ol class="mama-setlist">${mamaSongs(a).map((s) => `<li class="song">${esc(s)}</li>`).join("")}</ol>` : ""}
+          ${mamaCollabBlock(a, stages)}
         </div>
-        ${a.stage ? `<div class="mama-stage">Tema panggung: <b>‘${esc(a.stage)}’</b></div>` : ""}
-        ${mamaSongs(a).length ? `<div class="mama-setlist"><span class="sl">Setlist</span>${mamaSongs(a).map((s) => `<span class="song">${esc(s)}</span>`).join("")}</div>` : ""}
-        ${mamaCollabBlock(a, stages)}
         <div class="mama-clips">${a.clips.map(mamaClipHTML).join("")}</div>
       </article>`;
       }).join("")}
@@ -2683,6 +2728,9 @@ function renderAwardsPage(sec) {
     <p class="note" style="margin-top:14px">Sumber: kanal YouTube <b>Mnet</b> — unggahan panggung [#2026MAMA] (Shorts tidak dihitung). Total artis menjumlahkan semua videonya: unggahan full stage dan klip per lagu masing-masing dihitung; panggung yang dibagi beberapa artis dihitung untuk artis yang dikreditkan Mnet lebih dulu. Angka adalah <b>snapshot manual</b> per ${esc(m.asOf || "–")} — tidak ikut diperbarui kolektor; cara memperbarui: edit <b>data/mama.json</b> di repo (ringkasan total per artis dirangkum dari mama-2026.mirekapps.com).</p>
   </section>`;
   bindPageClose(sec);
+  /* garis kolaborasi “tergambar” — kelas collab-on menyusul satu frame biar transisi dash jalan */
+  const svgCollab = sec.querySelector(".mama-chart svg");
+  if (svgCollab) requestAnimationFrame(() => requestAnimationFrame(() => svgCollab.classList.add("collab-on")));
   const rerender = () => { const y = window.scrollY; renderAll(); window.scrollTo(0, y); };
   sec.querySelectorAll("[data-awd]").forEach((b) => b.addEventListener("click", () => { state.awardsDay = b.dataset.awd; rerender(); }));
   sec.querySelectorAll("[data-aws]").forEach((b) => b.addEventListener("click", () => { state.awardsSort = b.dataset.aws; rerender(); }));
