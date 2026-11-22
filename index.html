@@ -5080,21 +5080,66 @@ function cmpOptions() {
   })).filter((o) => o.tot > 0);
 }
 function cmpItem(id) { return cmpOptions().find((o) => o.id === id) || null; }
+/* Kurva kumulatif HARIAN untuk modal perbandingan — SAMPEL HARIAN pada segmen lurus
+ * antar pengukuran NYATA. Dulu kurva digambar mentah dari titik riwayat yang sangat
+ * jarang (anchored milestone + pantauan) sehingga tooltip mencampur hari berbeda
+ * (video A hari ke-187 vs video B hari ke-21) — perbandingan tak terbaca. Kini kedua
+ * kurva punya titik tiap hari pada HARI YANG SAMA:
+ * - hari dekat pengukuran nyata (±18 jam) = nyata → garis penuh + titik bulat;
+ * - hari di tengah celah perekaman = perkiraan (garis lurus antar 2 titik nyata)
+ *   → garis putus-putus + label "(perkiraan)".
+ * Interpolasi sengaja LINIER (bukan PCHIP) supaya satu metode dengan hari penembusan
+ * milestone di tabel & titik milestone di grafik (crossPoint juga lurus antar titik) —
+ * titik milestone selalu tepat duduk DI ATAS kurva, angka grafik = angka tabel. */
+function cmpDense(h, rel) {
+  const P = [];
+  for (const p of h.slice().sort((a, b) => a.t - b.t)) {
+    if (p.v == null) continue;
+    if (P.length && p.t <= P[P.length - 1].t) continue;
+    if (P.length && p.v <= P[P.length - 1].v) continue;   // jaga kemonotonan (mis-parse arsip)
+    P.push({ t: p.t, v: p.v, e: p.e === 1 ? 1 : 0 });
+  }
+  if (P.length < 2) return null;
+  const anchored = rel != null && P[0].t - rel > 6 * 3600;
+  const N = anchored ? [{ t: rel, v: 1, e: 0 }, ...P] : P.slice();
+  const lin = (t) => {
+    if (t <= N[0].t) return N[0].v;
+    for (let k = 1; k < N.length; k++) {
+      if (t <= N[k].t) {
+        const s = N[k].t > N[k - 1].t ? (t - N[k - 1].t) / (N[k].t - N[k - 1].t) : 1;
+        return N[k - 1].v + s * (N[k].v - N[k - 1].v);
+      }
+    }
+    return N[N.length - 1].v;
+  };
+  const realT = P.map((p) => p.t);
+  const dZ = Math.floor((P[P.length - 1].t - rel) / 86400);
+  const out = [];
+  let ri = 0;
+  for (let d = 0; d <= dZ; d++) {
+    const t = rel + d * 86400;
+    while (ri < realT.length && realT[ri] < t - 18 * 3600) ri++;
+    const near = ri < realT.length && realT[ri] <= t + 18 * 3600;
+    out.push({ x: d, y: d === 0 && anchored ? 0 : Math.max(0, lin(t)), e: near || (d === 0 && anchored) ? 0 : 1 });
+  }
+  const z = P[P.length - 1];
+  const xz = (z.t - rel) / 86400;
+  if (xz > dZ + 0.02) out.push({ x: Math.round(xz * 10) / 10, y: z.v, e: 0 });   // total TERAKHIR tetap nilai nyata persis
+  return { pts: out };
+}
 function cmpPoints(id) {
   if (state.platform === "spotify") {
     const tr = (state.sp.tracks || {})[id];
     if (!tr || !tr.history || tr.history.length < 2) return null;
-    const h = tr.history.slice().sort((x, y) => x.t - y.t);
     let rel = spRelT(tr);
-    if (rel == null) rel = h[0].t;
-    return { pts: h.map((p) => ({ x: (p.t - rel) / 86400, y: p.v, e: p.e === 1 })) };
+    if (rel == null) rel = tr.history[0].t;
+    return cmpDense(tr.history, rel);
   }
   const v = state.videos ? state.videos[id] : null;
   if (!v || !v.history || v.history.length < 2) return null;
-  const h = v.history.slice().sort((x, y) => x.t - y.t);
   let rel = releaseEpoch(v);
-  if (rel == null) rel = h[0].t;
-  return { pts: h.map((p) => ({ x: (p.t - rel) / 86400, y: p.v, e: p.e === 1 })) };
+  if (rel == null) rel = v.history[0].t;
+  return cmpDense(v.history, rel);
 }
 function cmpRate(s) {
   const p = s.pts;
@@ -5122,7 +5167,9 @@ function cmpDays(id, m) {
 function makeCompareChart(canvas, sA, sB, nA, nB, unit, marks) {
   const mk = (s, color) => ({
     data: s.pts.map((p) => ({ x: Math.round(p.x * 10) / 10, y: p.y })),
-    borderColor: color, borderWidth: 3, pointRadius: 0, pointHitRadius: 12, tension: 0.25, fill: false,
+    borderColor: color, borderWidth: 3,
+    pointRadius: (c) => { const p = s.pts[c.dataIndex]; return p && !p.e ? 2.4 : 0; },   // titik bulat = pengukuran nyata
+    pointHitRadius: 12, tension: 0.25, fill: false,
     pointHoverRadius: 4.5, pointHoverBackgroundColor: color, pointHoverBorderColor: "#fff", pointHoverBorderWidth: 2,
     segment: { borderDash: (c) => (((s.pts[c.p0DataIndex] || {}).e || (s.pts[c.p1DataIndex] || {}).e) ? [5, 4] : undefined) },
   });
@@ -5256,11 +5303,9 @@ function makeCompareChart(canvas, sA, sB, nA, nB, unit, marks) {
             title: (it) => (it && it.length && it[0].parsed ? "Hari ke-" + NF.format(Math.round(it[0].parsed.x)) : ""),
             label: (c) => {
               if (!c.parsed) return "";
-              const dps = c.chart && c.chart.tooltip ? (c.chart.tooltip.dataPoints || []) : [];
-              const p0 = dps.length ? dps[0] : null;
-              const x0 = p0 && p0.parsed ? p0.parsed.x : c.parsed.x;
-              const dx = Math.abs(c.parsed.x - x0);
-              return (c.dataset.label || "") + ": " + fmtCompact(Math.round(c.parsed.y)) + " " + unit + (dx > 1 ? "  ·  tercatat hr ke-" + NF.format(Math.round(c.parsed.x)) : "");
+              const src = c.datasetIndex === 0 ? sA : sB;
+              const p = src && src.pts ? src.pts[c.dataIndex] : null;
+              return (c.dataset.label || "") + ": " + fmtCompact(Math.round(c.parsed.y)) + " " + unit + (p && p.e ? " (perkiraan)" : "");
             },
             /* total DUA lagu tampil sekaligus + selisihnya, tanpa perlu menebak */
             afterBody: (it) => {
@@ -5307,7 +5352,7 @@ function openCompare() {
   $("#sheet").innerHTML = `
     <button class="close" id="closeBtn" aria-label="Tutup">✕</button>
     <h2 class="dtitle" style="margin-bottom:2px;display:flex;align-items:center;gap:10px"><span class="sic" style="--c:#1ed760;width:34px;height:34px;border-radius:10px"><svg viewBox="0 0 24 24"><path d="${ICO_SWAP}"/></svg></span>Perbandingan ${unit === "stream" ? "lagu" : "video"}</h2>
-    <p class="note">Geser kursor di grafik — total kedua lagu/video SELALU tampil berdampingan di tooltip lengkap dengan selisihnya (tak pernah cuma satu lagu) · titik milestone &amp; total terakhir juga tergambar langsung di grafik · garis bantu vertikal mengikuti kursor · garis putus-putus = estimasi.</p>
+    <p class="note">Kurva detail per hari sejak rilis, dibandingkan pada <b>hari yang sama</b> — geser kursor dan total kedua lagu/video selalu tampil berdampingan di tooltip lengkap dengan selisihnya. <b>Titik bulat &amp; garis penuh = pengukuran nyata</b> (milestone resmi YG/media, arsip Wayback, pantauan harian); <b>garis putus-putus = perkiraan</b> di antara dua pengukuran nyata. Titik milestone &amp; total terakhir tergambar langsung di grafik · garis bantu vertikal mengikuti kursor · tabel di bawah merinci siapa lebih cepat mencapai tiap milestone.</p>
     <div class="cmptop">
       <button class="mtab" id="cmpSwap">⇄ Tukar A &amp; B</button>
       <span class="lbnum">ketik di kotak pencarian untuk mempersempit daftar pilihan</span>
