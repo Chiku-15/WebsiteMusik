@@ -1,7 +1,7 @@
 {
  "asOf": "22 Nov, 18:01 KST",
  "captured": 1763821260,
- "source": "Kanal YouTube Mnet — unggahan panggung [#2026MAMA] (Shorts tidak dihitung); ringkasan total per artis mengikuti mama-2026.mirekapps.com",
+ "source": "Kanal YouTube Mnet — unggahan panggung [#2026MAMA] (Shorts tidak dihitung); ringkasan total per artis mengikuti mama-2026.mirekapps.com; KiiiKiii dicatat sebagai artis tamu — views-nya = video panggung bersama ‘GIRLS NEVER STOP’ + duet izna X KiiiKiii (video yang sama juga dihitung untuk izna)",
  "venue": "Kyocera Dome Osaka · 20–21 November 2026",
  "facts": {
   "acts": 26,
@@ -502,6 +502,41 @@
    "views": 1418188,
    "stage": "GIRLS NEVER STOP with KiiiKiii, I.O.I (Nayoung, Yoojung, Somi)",
    "focus": "",
+   "clips": [
+    {
+     "id": "Zg8RGFW3sr0",
+     "title": "Full stage · ‘GIRLS NEVER STOP’",
+     "views": 1005842,
+     "dur": "11:27",
+     "full": true
+    },
+    {
+     "id": "6E0VuaxUoQE",
+     "title": "Full stage · ‘GIRLS NEVER STOP’",
+     "views": 168278,
+     "dur": "2:17",
+     "full": false
+    },
+    {
+     "id": "w3Tbt_CMvXs",
+     "title": "404 (New Era) + METRONOME",
+     "views": 244068,
+     "dur": "4:34",
+     "full": false
+    }
+   ]
+  },
+  {
+   "name": "KiiiKiii",
+   "ko": "키키",
+   "day": 2,
+   "order": 2,
+   "gorder": 16.5,
+   "views": 1418188,
+   "stage": "GIRLS NEVER STOP with izna, I.O.I (Nayoung, Yoojung, Somi)",
+   "focus": "",
+   "guest": true,
+   "gnote": "Artis tamu — Mnet tidak mengunggah video panggung terpisah untuk KiiiKiii. Tampil di seluruh video panggung ‘GIRLS NEVER STOP’ (bersama izna & I.O.I) plus duet izna X KiiiKiii ‘404 (New Era) + METRONOME’, jadi views di kartu ini = views video bersama itu — angka yang sama juga dihitung untuk kartu izna.",
    "clips": [
     {
      "id": "Zg8RGFW3sr0",
