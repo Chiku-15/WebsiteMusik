@@ -2502,8 +2502,9 @@ function renderBantuanPage(sec) {
  * waktu "views per …", filter hari & urutan, chart bintang (kiri→kanan = urutan naik
  * panggung, tinggi & ukuran bintang = views) lalu daftar tiap artis beserta seluruh
  * video panggungnya (thumbnail, durasi, views). BABYMONSTER & TREASURE disorot warna
- * artis. Data snapshot manual di data/mama.json — diperbarui lewat edit file, sama
- * seperti data/trofi.json & data/jadwal.json (kolektor tidak menimpanya). */
+ * artis. Views tiap klip diperbarui OTOMATIS oleh kolektor (collect.js → updateMamaViews,
+ * YouTube Data API tiap jam); nama panggung, urutan & daftar video tetap dikurasi manual
+ * lewat edit file — sama seperti data/trofi.json & data/jadwal.json. */
 function mamaOf() { return state.mama && Array.isArray(state.mama.acts) && state.mama.acts.length ? state.mama : null; }
 function mamaSlug(n) { return String(n).toLowerCase().replace(/[^a-z0-9]+/g, ""); }
 function mamaFocusColor(id) {
@@ -2897,7 +2898,7 @@ function renderAwardsPage(sec) {
     <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
       <button class="mtab" data-gomenu="tro" style="--artist-color:#f59e0b">Trofi &amp; Penghargaan — hasil MAMA 2026 &amp; music show →</button>
     </div>
-    <p class="note" style="margin-top:14px">Sumber: kanal YouTube <b>Mnet</b> — unggahan panggung [#2026MAMA] (Shorts tidak dihitung). Total artis menjumlahkan semua videonya: unggahan full stage dan klip per lagu masing-masing dihitung; panggung yang dibagi beberapa artis dihitung untuk artis yang dikreditkan Mnet lebih dulu. Angka adalah <b>snapshot manual</b> per ${esc(m.asOf || "–")} — tidak ikut diperbarui kolektor; cara memperbarui: edit <b>data/mama.json</b> di repo (ringkasan total per artis dirangkum dari mama-2026.mirekapps.com).</p>
+    <p class="note" style="margin-top:14px">Sumber: kanal YouTube <b>Mnet</b> — unggahan panggung [#2026MAMA] (Shorts tidak dihitung). Total artis menjumlahkan semua videonya: unggahan full stage dan klip per lagu masing-masing dihitung; panggung yang dibagi beberapa artis dihitung untuk artis yang dikreditkan Mnet lebih dulu. Angka views <b>diperbarui otomatis</b> oleh kolektor tiap jam (YouTube Data API) — snapshot terakhir per ${esc(m.asOf || "–")}. Nama panggung, urutan naik panggung &amp; daftar videonya tetap dikurasi manual di <b>data/mama.json</b>; ringkasan awal per artis dirangkum dari mama-2026.mirekapps.com.</p>
   </section>`;
   bindPageClose(sec);
   /* garis kolaborasi “tergambar” — kelas collab-on menyusul satu frame biar transisi dash jalan */

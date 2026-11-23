@@ -1214,6 +1214,75 @@ async function collectScrape() {
   return { videos: Object.keys(videos).length, channels: Object.keys(channels).length, mode: "scrape" };
 }
 
+// ---------- views panggung MAMA 2026 (data/mama.json) ----------
+/* dulunya snapshot manual — kini angka views tiap video panggung MAMA diperbarui otomatis
+ * tiap putaran kolektor (YouTube Data API; 71 unik video = 2 panggilan API, kwantitas murah).
+ * Yang di-update HANYA angka: views per klip, total per artis (= jumlah klipnya), total
+ * views/video unik di facts, serta asOf & captured. Nama panggung, urutan naik panggung,
+ * daftar video & label lagu tetap dikurasi manual lewat edit data/mama.json. */
+const MAMA_BULAN = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+
+function mamaAsOf(ms) {
+  const d = new Date(ms);
+  const tz = { timeZone: "Asia/Seoul" }; // waktu acara MAMA (KST)
+  const bulan = MAMA_BULAN[parseInt(d.toLocaleDateString("en-GB", Object.assign({ month: "numeric" }, tz)), 10) - 1];
+  const day = d.toLocaleDateString("en-GB", Object.assign({ day: "2-digit" }, tz));
+  const hm = d.toLocaleTimeString("en-GB", Object.assign({ hour: "2-digit", minute: "2-digit", hour12: false }, tz));
+  return `${day} ${bulan}, ${hm} KST`;
+}
+
+async function updateMamaViews() {
+  const file = path.join(DATA_DIR, "mama.json");
+  let mama;
+  try {
+    mama = JSON.parse(fs.readFileSync(file, "utf-8"));
+  } catch {
+    log("MAMA: data/mama.json tidak ada / rusak — lewati pembaruan otomatis");
+    return false;
+  }
+  if (!mama || !Array.isArray(mama.acts)) { log("MAMA: mama.json tidak berisi acts — lewati"); return false; }
+  /* id unik semua klip — video yang dibagi dua artis (mis. izna ↔ KiiiKiii) cukup diambil sekali */
+  const ids = [];
+  mama.acts.forEach((a) => (a.clips || []).forEach((c) => { if (c && c.id && ids.indexOf(c.id) < 0) ids.push(c.id); }));
+  if (!ids.length) { log("MAMA: tidak ada klip — lewati"); return false; }
+  const items = await retry(() => apiVideos(ids), 3, 2000).catch((e) => {
+    log("MAMA: API gagal:", e && e.message ? e.message : e);
+    return [];
+  });
+  const stats = {};
+  for (const it of items || []) {
+    const v = it && it.statistics && Number(it.statistics.viewCount);
+    if (Number.isFinite(v)) stats[it.id] = v;
+  }
+  /* tulis views baru ke SEMUA salinan klip (artis yang berbagi video tetap sinkron),
+   * lalu total per artis = jumlah klipnya — model angka yang sudah dipakai situs */
+  let berubah = 0, hilang = 0;
+  mama.acts.forEach((a) => {
+    let s = 0;
+    (a.clips || []).forEach((c) => {
+      if (stats[c.id] != null) {
+        if (stats[c.id] !== c.views) berubah++;
+        c.views = stats[c.id];
+      } else hilang++; // video dihapus / tak terbaca → pertahankan angka lama
+      s += c.views || 0;
+    });
+    a.views = s;
+  });
+  /* facts = hitungan video UNIK — video dibagi 2 artis hanya dihitung sekali di total */
+  const uniq = {};
+  mama.acts.forEach((a) => (a.clips || []).forEach((c) => { uniq[c.id] = c.views || 0; }));
+  mama.facts = mama.facts || {};
+  mama.facts.videos = Object.keys(uniq).length;
+  mama.facts.views = Object.keys(uniq).reduce((t, k) => t + uniq[k], 0);
+  mama.facts.acts = mama.acts.filter((a) => !a.guest).length;
+  const nowMs = Date.now();
+  mama.captured = Math.floor(nowMs / 1000);
+  mama.asOf = mamaAsOf(nowMs);
+  fs.writeFileSync(file, JSON.stringify(mama, null, 1) + "\n");
+  log(`MAMA: ${ids.length} video dicek · ${berubah} klip berubah · ${hilang} id tak terbaca · total ${mama.facts.views.toLocaleString("id-ID")} views (per ${mama.asOf})`);
+  return true;
+}
+
 // ---------- main ----------
 async function main() {
   const started = Date.now();
@@ -1241,6 +1310,15 @@ async function main() {
     });
     log(`selesai dalam ${Math.round((Date.now() - started) / 1000)}s — videos=${result.videos} channels=${result.channels}`);
   }
+  // views panggung MAMA 2026 (data/mama.json) — hanya di mode API; di mode scraping
+  // 71 video terlalu berat/rapuh, jadi angka MAMA menunggu sampai API key terpasang.
+  if (API_KEY) {
+    try {
+      await updateMamaViews();
+    } catch (e) {
+      console.error("MAMA GAGAL:", e && e.message ? e.message : e);
+    }
+  }
   return result;
 }
 
@@ -1250,6 +1328,6 @@ module.exports = {
   main, appendHistory, mergeHistory, buildEstimatedSeries, buildChannelSeries, buildAnchoredSeries,
   rebuildVideoEstimates, rebuildChannelEstimates, thinSeries, migrateIfNeeded, applyOfficialMilestones,
   backfillFromWayback, waybackAnchors, classifyTitle, parseShortCount, scrapePlaylistPage,
-  parseLikeCountFromPage, parseViewCountFromPage,
+  parseLikeCountFromPage, parseViewCountFromPage, updateMamaViews, mamaAsOf,
   CONFIG, API_KEY, DATA_DIR, SCHEMA_VERSION,
 };

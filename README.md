@@ -51,6 +51,7 @@ Situs statistik **YouTube + Spotify** untuk artis K-pop — saat ini berisi **BA
 ```
 GitHub Actions (07:00 & 19:00 WIB)
   │ node collect.js        → YouTube Data API v3 (Secret YOUTUBE_API_KEY)
+  │                          + views panggung MAMA 2026 di data/mama.json (otomatis, tiap putaran)
   │ node collect_spotify.js → Spotify Charts via kworb.net + embed Spotify (tanpa API key;
   │                           opsional Spotify Web API utk followers)
   │ node collect_social.js  → sosmed (IG/X/TikTok), Billboard/Melon/Genie/Bugs/Spotify Global (kworb),
@@ -67,7 +68,7 @@ GitHub Pages menayangkan index.html — tombol YouTube/Spotify di header bergant
 | --- | --- |
 | `index.html` | Situs (satu file, tanpa build) — YouTube & Spotify |
 | `config.json` | Daftar artis, channel, video YouTube, dan album Spotify yang dipantau |
-| `collect.js` | Skrip pengambil data YouTube (Node.js, tanpa dependensi) |
+| `collect.js` | Skrip pengambil data YouTube + pembaruan otomatis views panggung MAMA (Node.js, tanpa dependensi) |
 | `collect_spotify.js` | Skrip pengambil data Spotify (kworb + embed; tanpa dependensi) |
 | `collect_social.js` | Skrip pengambil data sosial media, chart, berita & anomali (tanpa dependensi, best-effort) |
 | `data/videos.json` | Riwayat views & likes per video YouTube (harian sejak rilis) |
@@ -83,7 +84,7 @@ GitHub Pages menayangkan index.html — tombol YouTube/Spotify di header bergant
 | `data/chart-history.json` | Riwayat & rekor pencapaian chart dari debut (kurasi manual — puncak/debut/entri terverifikasi) |
 | `data/trofi.json` | Trofi acara musik, penghargaan besar, Inkigayo Hot Stage & nominasi (kurasi manual; reviu penuh 16 Nov 2026 vs Wikipedia: BABYMONSTER = 2 trofi acara musik + 12 penghargaan besar, TREASURE = 4 trofi acara musik + 43 penghargaan besar + 1 daesang KGMA 2026) |
 | `data/jadwal.json` | Jadwal tur/event manual untuk halaman Jadwal & Countdown |
-| `data/mama.json` | Snapshot panggung MAMA 2026 untuk halaman **Awards** (26 artis · 71 video · views per video, kurasi manual per 22 Nov 18:01 KST; kolektor tidak menimpanya — perbarui dengan edit file) |
+| `data/mama.json` | Panggung MAMA 2026 untuk halaman **Awards** (26 artis · 71 video). **Views per video diperbarui otomatis** oleh kolektor (`collect.js` → `updateMamaViews`, YouTube Data API, tiap jam); nama panggung, urutan naik panggung & daftar video tetap dikurasi manual — edit file untuk menambah/mengubah panggungan |
 | `data/members.json` | Profil 17 anggota (klik kartu = detail profil + **foto solo artis**) |
 | `img/members/` | Foto solo 17 anggota (dipakai di kartu profil & halaman detail; ganti file `<slug>.jpg` untuk mengganti foto) |
 | `data/news.json` | Berita terbaru yang menyebut artis (RSS, maks. 60 entri, tiap entri berisi thumbnail `img`) |
