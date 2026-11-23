@@ -17,6 +17,12 @@
       "f": 10519660,
       "approx": false,
       "src": "manual"
+     },
+     {
+      "t": 1795438555,
+      "f": 10519660,
+      "approx": false,
+      "src": "manual"
      }
     ]
    },
@@ -32,6 +38,12 @@
      },
      {
       "t": 1795365814,
+      "f": 1000000,
+      "approx": true,
+      "src": "manual"
+     },
+     {
+      "t": 1795438555,
       "f": 1000000,
       "approx": true,
       "src": "manual"
@@ -53,6 +65,12 @@
       "f": 14600000,
       "approx": true,
       "src": "manual"
+     },
+     {
+      "t": 1795438555,
+      "f": 14600000,
+      "approx": true,
+      "src": "manual"
      }
     ]
    },
@@ -69,6 +87,12 @@
      },
      {
       "t": 1795365814,
+      "f": 3000000,
+      "approx": true,
+      "src": "manual"
+     },
+     {
+      "t": 1795438555,
       "f": 3000000,
       "approx": true,
       "src": "manual"
@@ -92,6 +116,12 @@
       "f": 7056770,
       "approx": false,
       "src": "manual"
+     },
+     {
+      "t": 1795438555,
+      "f": 7056770,
+      "approx": false,
+      "src": "manual"
      }
     ]
    },
@@ -107,6 +137,12 @@
      },
      {
       "t": 1795365814,
+      "f": 2400000,
+      "approx": true,
+      "src": "manual"
+     },
+     {
+      "t": 1795438555,
       "f": 2400000,
       "approx": true,
       "src": "manual"
@@ -128,6 +164,12 @@
       "f": 8600000,
       "approx": true,
       "src": "manual"
+     },
+     {
+      "t": 1795438555,
+      "f": 8600000,
+      "approx": true,
+      "src": "manual"
      }
     ]
    },
@@ -144,6 +186,12 @@
      },
      {
       "t": 1795365814,
+      "f": 3000000,
+      "approx": true,
+      "src": "manual"
+     },
+     {
+      "t": 1795438555,
       "f": 3000000,
       "approx": true,
       "src": "manual"
