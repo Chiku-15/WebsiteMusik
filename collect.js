@@ -29,10 +29,11 @@ const WAYBACK_MAX_VIDEOS = parseInt(process.env.WAYBACK_MAX || "25", 10) || 25; 
 const WAYBACK_PER_VIDEO = 6; // maksimum snapshot arsip yang diambil per video (mode normal)
 const WAYBACK_MASS_PER_VIDEO = parseInt(process.env.WAYBACK_MASS_PER || "40", 10) || 40; // mode massal: snapshot per video
 const WAYBACK_SLEEP_MS = 1100; // jeda sopan antar permintaan ke web.archive.org
+const WAYBACK_RECENT_PER = parseInt(process.env.WAYBACK_RECENT_PER || "12", 10) || 12; // snapshot harian utk jendela 45 hari terakhir
 /* versi logika backfill — dinaikkan saat kriteria/parser berubah supaya video yang dulu
  * dicoba (marker lama) diulang dgn kriteria baru TANPA perlu bump schema (migrasi schema
  * menurunkan riwayat milestone lama channel, jadi tidak dipakai utk ini). */
-const BACKFILL_VER = 2;
+const BACKFILL_VER = 3;
 const SCHEMA_VERSION = 3; // penanda format data; beda versi -> migrasi otomatis
 const EST_CAP = 380; // batas titik estimasi per video (hemat ukuran file)
 const EST_KEEP_DAILY = 100; // estimasi 100 hari terakhir selalu harian
@@ -524,7 +525,7 @@ function cdxTsToEpoch(ts) {
   return Math.floor(Date.UTC(y, mo, d, h, mi, se) / 1000);
 }
 
-async function waybackAnchors(vid, publishedISO) {
+async function waybackAnchors(vid, publishedISO, recentFrom) {
   const from = (publishedISO || "").replace(/-/g, "");
   const mass = !!process.env.WAYBACK_MASS;
   const cdx =
@@ -559,6 +560,42 @@ async function waybackAnchors(vid, publishedISO) {
     }
     await sleep(WAYBACK_SLEEP_MS);
   }
+  /* jendela TERBARU (±45 hari terakhir) ditanya dgn runtutan HARIAN (bukan bulanan) —
+   * snapshot bulanan tidak bisa menambal celah rekam beberapa hari (mis. video yang
+   * Actions-nya berhenti sepekan), padahal celah pendek itulah yang membuat grafik
+   * "views per hari" di situs tampak datar palsu. Kalau recentFrom diberi nilai,
+   * ambil maks. WAYBACK_RECENT_PER snapshot tambahan yang tersebar di jendela itu. */
+  if (recentFrom) {
+    const fromStr = new Date(recentFrom * 1000).toISOString().slice(0, 10).replace(/-/g, "");
+    const cdxDay =
+      `https://web.archive.org/cdx/search/cdx?url=youtube.com%2Fwatch%3Fv%3D${vid}` +
+      `&output=json&fl=timestamp,statuscode&filter=statuscode:200&collapse=timestamp:8&limit=-80&from=${fromStr}`;
+    try {
+      const rows2 = JSON.parse(await fetchText(cdxDay, { headers: { "User-Agent": "pemantau-yt/1.0" } }));
+      const list2 = (Array.isArray(rows2) ? rows2.slice(1) : []).filter((r) => r[1] === "200").map((r) => r[0]);
+      const per = WAYBACK_RECENT_PER;
+      const picked2 = new Set();
+      const n2 = Math.min(per, list2.length);
+      for (let i = 0; i < n2; i++) {
+        const idx = Math.round((i * (list2.length - 1)) / Math.max(1, n2 - 1));
+        picked2.add(list2[idx]);
+      }
+      for (const ts of picked2) {
+        const t = cdxTsToEpoch(ts);
+        if (t < recentFrom) continue;
+        try {
+          const html = await fetchText(`https://web.archive.org/web/${ts}id_/https://www.youtube.com/watch?v=${vid}`);
+          const v = parseViewCountFromPage(html);
+          if (v && v > 0) anchors.push({ t, v, l: parseLikeCountFromPage(html) });
+        } catch (e) {
+          log(`  snapshot ${ts} gagal: ${String(e).slice(0, 70)}`);
+        }
+        await sleep(WAYBACK_SLEEP_MS);
+      }
+    } catch (e) {
+      log(`  CDX harian gagal (${String(e).slice(0, 70)}) — jendela terbaru dilewati`);
+    }
+  }
   return anchors;
 }
 
@@ -590,7 +627,24 @@ async function backfillFromWayback(videos, now) {
     if (readJSON(marker, null)) continue; // sudah pernah dicoba dgn logika versi ini
     budget--;
     try {
-      const anchors = await waybackAnchors(id, rec.published);
+      /* jendela harian utk celah TERBARU: bila dalam 45 hari terakhir ada celah rekam
+       * > 36 jam (mis. Actions berhenti sepekan), minta snapshot HARIAN utk menambalnya —
+       * tanpa ini grafik "views per hari" tampil datar palsu di segmen celah. */
+      let recentFrom = null;
+      {
+        const nowT = now || Math.floor(Date.now() / 1000);
+        const reals2 = rec.history.filter((p) => p.e !== 1).sort((a, b) => a.t - b.t);
+        const win0 = nowT - 45 * 86400;
+        let gap = reals2.length ? nowT - reals2[reals2.length - 1].t > 36 * 3600 : false;
+        if (!gap) for (let i = 1; i < reals2.length; i++) {
+          if (reals2[i].t > win0 && reals2[i].t - reals2[i - 1].t > 36 * 3600) { gap = true; break; }
+        }
+        if (gap) {
+          const pubT2 = Date.parse((rec.published || "") + "T00:00:00Z") / 1000;
+          recentFrom = Math.max(isFinite(pubT2) ? pubT2 : 0, win0);
+        }
+      }
+      const anchors = await waybackAnchors(id, rec.published, recentFrom);
       if (anchors === null) { archiveAlive = false; break; }
       if (anchors.length) {
         /* sisipkan jangkar arsip sbg titik NYATA (e:0) — tanpa model estimasi.
@@ -1231,16 +1285,16 @@ function mamaAsOf(ms) {
   return `${day} ${bulan}, ${hm} KST`;
 }
 
-async function updateMamaViews() {
-  const file = path.join(DATA_DIR, "mama.json");
+async function updateMamaFile(fname) {
+  const file = path.join(DATA_DIR, fname);
   let mama;
   try {
     mama = JSON.parse(fs.readFileSync(file, "utf-8"));
   } catch {
-    log("MAMA: data/mama.json tidak ada / rusak — lewati pembaruan otomatis");
+    log(`MAMA: data/${fname} tidak ada / rusak — lewati pembaruan otomatis`);
     return false;
   }
-  if (!mama || !Array.isArray(mama.acts)) { log("MAMA: mama.json tidak berisi acts — lewati"); return false; }
+  if (!mama || !Array.isArray(mama.acts)) { log(`MAMA: ${fname} tidak berisi acts — lewati`); return false; }
   /* id unik semua klip — video yang dibagi dua artis (mis. izna ↔ KiiiKiii) cukup diambil sekali */
   const ids = [];
   mama.acts.forEach((a) => (a.clips || []).forEach((c) => { if (c && c.id && ids.indexOf(c.id) < 0) ids.push(c.id); }));
@@ -1279,8 +1333,19 @@ async function updateMamaViews() {
   mama.captured = Math.floor(nowMs / 1000);
   mama.asOf = mamaAsOf(nowMs);
   fs.writeFileSync(file, JSON.stringify(mama, null, 1) + "\n");
-  log(`MAMA: ${ids.length} video dicek · ${berubah} klip berubah · ${hilang} id tak terbaca · total ${mama.facts.views.toLocaleString("id-ID")} views (per ${mama.asOf})`);
+  log(`MAMA(${fname}): ${ids.length} video dicek · ${berubah} klip berubah · ${hilang} id tak terbaca · total ${mama.facts.views.toLocaleString("id-ID")} views (per ${mama.asOf})`);
   return true;
+}
+
+/* perbarui SEMUA edisi MAMA — data/mama.json (2026) + data/mama-2025.json (2025).
+ * Struktur kedua berkas identik (acts[].clips[].id), jadi logikanya sama persis. */
+async function updateMamaViews() {
+  let ok = 0;
+  for (const f of ["mama.json", "mama-2025.json"]) {
+    try { if (await updateMamaFile(f)) ok++; }
+    catch (e) { log(`MAMA: ${f} gagal — ${String((e && e.message) || e).slice(0, 90)}`); }
+  }
+  return ok > 0;
 }
 
 // ---------- main ----------

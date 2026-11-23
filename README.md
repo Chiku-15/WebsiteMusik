@@ -51,7 +51,7 @@ Situs statistik **YouTube + Spotify** untuk artis K-pop — saat ini berisi **BA
 ```
 GitHub Actions (07:00 & 19:00 WIB)
   │ node collect.js        → YouTube Data API v3 (Secret YOUTUBE_API_KEY)
-  │                          + views panggung MAMA 2026 di data/mama.json (otomatis, tiap putaran)
+  │                          + views panggung MAMA 2026 & 2025 (data/mama.json + data/mama-2025.json, otomatis, tiap putaran)
   │ node collect_spotify.js → Spotify Charts via kworb.net + embed Spotify (tanpa API key;
   │                           opsional Spotify Web API utk followers)
   │ node collect_social.js  → sosmed (IG/X/TikTok), Billboard/Melon/Genie/Bugs/Spotify Global (kworb),
@@ -68,7 +68,7 @@ GitHub Pages menayangkan index.html — tombol YouTube/Spotify di header bergant
 | --- | --- |
 | `index.html` | Situs (satu file, tanpa build) — YouTube & Spotify |
 | `config.json` | Daftar artis, channel, video YouTube, dan album Spotify yang dipantau |
-| `collect.js` | Skrip pengambil data YouTube + pembaruan otomatis views panggung MAMA (Node.js, tanpa dependensi) |
+| `collect.js` | Skrip pengambil data YouTube + pembaruan otomatis views panggung MAMA 2026 & 2025 (Node.js, tanpa dependensi) |
 | `collect_spotify.js` | Skrip pengambil data Spotify (kworb + embed; tanpa dependensi) |
 | `collect_social.js` | Skrip pengambil data sosial media, chart, berita & anomali (tanpa dependensi, best-effort) |
 | `data/videos.json` | Riwayat views & likes per video YouTube (harian sejak rilis) |
@@ -85,6 +85,7 @@ GitHub Pages menayangkan index.html — tombol YouTube/Spotify di header bergant
 | `data/trofi.json` | Trofi acara musik, penghargaan besar, Inkigayo Hot Stage & nominasi (kurasi manual; reviu penuh 16 Nov 2026 vs Wikipedia: BABYMONSTER = 2 trofi acara musik + 12 penghargaan besar, TREASURE = 4 trofi acara musik + 43 penghargaan besar + 1 daesang KGMA 2026) |
 | `data/jadwal.json` | Jadwal tur/event manual untuk halaman Jadwal & Countdown |
 | `data/mama.json` | Panggung MAMA 2026 untuk halaman **Awards** (26 artis · 71 video). **Views per video diperbarui otomatis** oleh kolektor (`collect.js` → `updateMamaViews`, YouTube Data API, tiap jam); nama panggung, urutan naik panggung & daftar video tetap dikurasi manual — edit file untuk menambah/mengubah panggungan |
+| `data/mama-2025.json` | Panggung MAMA 2025 (Kai Tak Stadium, Hong Kong · 28–29 Nov 2025) untuk **dropdown MAMA 2025** di halaman Awards (30 artis termasuk 4 artis tamu · 29 panggung · 71 video). Struktur identik dengan `data/mama.json` — views juga diperbarui otomatis tiap jam oleh `collect.js`; ringkasan awal dirangkum dari mama-2025.mirekapps.com |
 | `data/members.json` | Profil 17 anggota (klik kartu = detail profil + **foto solo artis**) |
 | `img/members/` | Foto solo 17 anggota (dipakai di kartu profil & halaman detail; ganti file `<slug>.jpg` untuk mengganti foto) |
 | `data/news.json` | Berita terbaru yang menyebut artis (RSS, maks. 60 entri, tiap entri berisi thumbnail `img`) |
@@ -213,7 +214,7 @@ agar tidak ada pesan ganda, dan putaran pertama hanya sinkronisasi (tidak spam).
 YouTube **tidak menyediakan** riwayat views harian lewat API — hanya angka saat ini. Supaya grafik tetap terisi dari tanggal rilis:
 
 1. **Titik pengukuran nyata** (solid) — direkam tiap jam oleh Actions selama situs berjalan.
-2. **Jangkar arsip** — setiap putaran Actions, `collect.js` mencoba mengambil ±6 snapshot lama tiap video dari **Wayback Machine** (web.archive.org) sebagai titik nyata tambahan (views **+ likes**), maksimal 25 video per putaran (bertahap, dicache per versi logika di `data/backfill/v2-*.json`). Video di-backfill bila: titik nyata < 3, **ada celah > 30 hari** antar titik, titik pertama masih > 30 hari setelah rilis, atau **likes belum terekam sejak dekat tanggal rilis** — jadi MV lama ber-celah panjang (mis. DRIP) tidak lagi terlewat. Mode **“wayback-mass”** mengambil ±40 snapshot per video untuk semua video sekaligus.
+2. **Jangkar arsip** — setiap putaran Actions, `collect.js` mencoba mengambil ±6 snapshot lama tiap video dari **Wayback Machine** (web.archive.org) sebagai titik nyata tambahan (views **+ likes**), maksimal 25 video per putaran (bertahap, dicache per versi logika di `data/backfill/v3-*.json`). Video di-backfill bila: titik nyata < 3, **ada celah > 30 hari** antar titik, titik pertama masih > 30 hari setelah rilis, atau **likes belum terekam sejak dekat tanggal rilis** — jadi MV lama ber-celah panjang (mis. DRIP) tidak lagi terlewat. **Versi 3 tambah jendela harian**: bila dalam 45 hari terakhir ada celah rekam > 36 jam (mis. Actions sempat berhenti sepekan), kolektor mengambil maks. 12 snapshot HARIAN di jendela itu — grafik “views per hari” tidak lagi tampil datar palsu di segmen celah. Mode **“wayback-mass”** mengambil ±40 snapshot per video untuk semua video sekaligus.
 3. **Interpolasi antar titik** (putus-putus, legenda “Interpolasi”, tooltip “(interpolasi)”) — hari/pekan/bulan tanpa perekaman diisi dari kurva PCHIP monoton yang melewati SEMUA titik nyata, dihitung di frontend. **Tidak ada model estimasi** — jumlah seluruh nilai bucket selalu persis = total kenaikan views. Bucket terakhir (hari/pekan berjalan) diskalakan ke nilai setara periode penuh supaya ujung grafik tidak tampak “anjlok” palsu.
 
 **Grafik channel kini 100% data nyata — tanpa estimasi model.** Titik-titiknya dikumpulkan dari berbagai sumber: **YouTube Data API** (direkam GitHub Actions tiap jam), **Social Blade** (rekaman harian), **Wikipedia** + arsip media, dan **pengumuman resmi YG Entertainment** (tanggal milestone subscriber/total views, mis. 10 jt subscriber 9 Sep 2025, 10 miliar views 3 Sep 2026). Titik estimasi model lama dibuang otomatis setiap putaran Actions. Karena riwayat harian publik tidak tersedia, antar titik sumber dihubungkan garis lurus; tanggal milestone yang berada DI ANTARA dua titik data nyata ditandai **(±)** = perkiraan garis lurus, bukan tanggal resmi. Section **Milestone video** kini tampil di bagian paling bawah detail channel (buka lewat klik kartu channel di halaman artis).
