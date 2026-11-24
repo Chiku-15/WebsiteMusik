@@ -2651,8 +2651,8 @@ function mamaCollabBlock(a, stages, guests) {
     const grow = (guests || []).filter((gu) => String(gu.stage || "").toLowerCase() === s.base.toLowerCase())
       .map((gu) => `<li class="gst"><span class="cn">•</span><b>${esc(gu.name)}</b><span class="cl">artis tamu — ikut tampil di panggung ini, tapi Mnet tidak mengunggah video terpisah untuknya</span></li>`).join("");
     const exp = isHub
-      ? `Kartu ini menjadi <b>panggung induk</b> kolaborasi ini: video performa gabungannya diunggah di tagihan panggung kartu ini, lalu ${s.members.length - 1} artis lain bergabung tampil di panggung yang sama.`
-      : `Satu performa gabungan dari ${s.members.length} artis — panggung induknya <b>${esc(s.hub ? s.hub.name : "–")}</b> (video gabungan diunggah di tagihan panggung induk). Kartu ini (${esc(a.name)}) ikut tampil sebagai peserta <b>ke-${pos}</b> dari ${s.members.length}.`;
+      ? `Kartu ini menjadi <b>panggung induk</b> kolaborasi ini: video performa gabungannya diunggah di tagihan panggung kartu ini, lalu ${s.members.length - 1} entri panggung lain ikut tampil di panggung yang sama.`
+      : `Satu performa gabungan dari ${s.members.length} entri panggung — panggung induknya <b>${esc(s.hub ? s.hub.name : "–")}</b> (video gabungan diunggah di tagihan panggung induk). Kartu ini (${esc(a.name)}) ikut tampil sebagai peserta <b>ke-${pos}</b> dari ${s.members.length}.`;
     return `<div class="mama-collab" style="--cc:${col}"><div class="mama-clbl"><span class="mama-cchip"></span><b>Panggung kolaborasi ‘${esc(s.base)}’</b></div>` +
       `<p class="mama-cexp">${exp} Di grafik di atas, semua pesertanya dihubungkan <b style="color:${col}">garis warna ini</b>.</p>` +
       `<div class="mama-csub">Urutan tampil di panggung ini</div>` +
@@ -8705,6 +8705,13 @@ function hourlyDeltas(h, hours = 24) {
     out.push({ key: dayKeyOf(H * 3600) + "T" + hh, v: Math.max(0, Math.round(cur.v - prev.v)), est: !!cur.e || !!prev.e });
     prev = cur;
   }
+  /* jam terakhir = jam berjalan (belum penuh) — nilai delta-nya baru dihitung sebagian, jadi
+   * tandai est + partial supaya tidak tampak seperti views anjlok; tooltip memakai
+   * label "(periode berjalan)" yang sudah ada di makeAreaChart */
+  if (out.length) {
+    const lt = h[h.length - 1].t;
+    if (lt % 3600 < 3540) { out[out.length - 1].est = true; out[out.length - 1].partial = true; }
+  }
   return out;
 }
 
@@ -8778,6 +8785,8 @@ function buildDailyChart(h, color, anchorT) {
     ? `Rentang ini memotong masa <b>tanpa perekaman</b> — hari di tengah celah <b>tidak diinterpolasi</b> pada grafik pendek (dulu dibagi rata sehingga tampak seperti lonjakan palsu); yang tampil hanya blok pengukuran berjalan. Rentang <b>1 tahun</b> &amp; <b>Sejak rilis</b> tetap memakai interpolasi supaya totalnya tetap utuh.`
     : anySplit && gran === "day"
     ? `Hari berlabel <b>“dibagi rata”</b> = hari tanpa perekaman sama sekali di tengah celah — selisih total antara dua pengukuran nyata di sekelilingnya dibagi rata ke hari-hari itu, jadi jumlah semuanya tetap akurat. Hari dengan perekaman tampil sebagai <b>Data nyata</b> murni.`
+    : gran === "hour"
+    ? `Garis <b>putus-putus</b> = jam yang dijembatani garis lurus antara dua pengukuran yang jaraknya lebih dari 3 jam — bukan angka per jam sungguhan. Titik <b>terakhir</b> = jam berjalan (belum penuh) — wajar terlihat lebih rendah. Kolektor merekam tiap jam via GitHub Actions; makin lama berjalan, makin banyak titik <b>Data nyata</b>.`
     : anyIp && gran !== "hour"
     ? `Segmen putus-putus = <b>interpolasi</b> — hari/pekan/bulan tanpa perekaman diisi dari kurva mulus yang melewati semua titik data nyata (bukan estimasi model). Jumlahkan seluruh nilai = total kenaikan sejak titik awal. Makin rapat arsip (mode <b>“wayback-mass”</b>), makin panjang segmen data nyata.`
     : "";
