@@ -1349,7 +1349,7 @@
     </div>
     <button class="tab berandatab" id="berandaTab" title="Buka halaman BERANDA — garis besar seluruh situs dalam satu halaman" style="flex:none">Beranda</button>
     <button class="tab fiturtab" id="fiturTab" title="Buka halaman Semua Fitur — peta seluruh fitur situs dalam bentuk kartu" style="flex:none">Fitur</button>
-    <button class="tab awardstab" id="awardsTab" title="Buka halaman Awards — chart panggung MAMA 2026 (views seluruh video panggung resmi Mnet)" style="flex:none">Awards</button>
+    <button class="tab awardstab" id="awardsTab" title="Buka halaman Awards terpisah — chart panggung MAMA 2020–2026 (views seluruh video panggung resmi Mnet)" style="flex:none">Awards</button>
     <button class="tab bantuantab" id="bantuanTab" title="Buka halaman Bantuan — cara kerja situs, sumber data &amp; arti tanda" style="flex:none">Bantuan</button>
     <div class="spacer"></div>
     <div class="hbtns">
@@ -6286,7 +6286,7 @@ function renderTabs() {
   const aw = $("#awardsTab");
   if (aw) {
     aw.classList.toggle("active", !!state.awardsOpen);
-    aw.onclick = () => openAwards();
+    aw.onclick = () => { location.href = "awards.html"; }; // halaman Awards kini berkas terpisah
   }
 }
 
@@ -8400,14 +8400,20 @@ function realDailyBucketsNoGap(pts, clipFromIdx) {
   if (clipFromIdx != null) i0 = Math.max(i0, clipFromIdx);
   const iZ = dayIndexOf(P[P.length - 1].t);
   const out = [];
+  /* pasangan hanya antara hari yang BERDETELAN: dulu prev bisa melompati celah panjang
+   * (mis. jangkar 11 Nov → blok 22 Nov) sehingga seluruh kenaikan 11 hari dibebankan ke
+   * satu hari → gundukan palsu di grafik. Sekarang delta hanya dihitung antara hari
+   * kalender yang berurutan. */
   let prev = onDay.get(i0 - 1) || null;
+  let prevIdx = prev ? i0 - 1 : null;
   for (let i = i0; i <= iZ; i++) {
     const cur = onDay.get(i);
     if (!cur) continue;
-    if (prev) {
+    if (prev && i - prevIdx <= 1) {
       out.push({ key: dateKeyOfDayIndex(i), v: Math.max(0, cur.v - prev.v), est: !!(cur.e || prev.e), ip: false, split: false, t: tsOfDayIndex(i) });
     }
     prev = cur;
+    prevIdx = i;
   }
   if (out.length && Date.now() / 1000 - P[P.length - 1].t < 26 * 3600) out[out.length - 1].partial = true;
   return out;
@@ -8677,6 +8683,17 @@ function chartOpts(tooltipLabel, extra = {}) {
   };
 }
 
+/* panjang (jam) blok perekaman TERAKHIR — berjalan mundur dari pengukuran terakhir
+ * selama jarak antar pengukuran ≤ 24 jam. Dipakai grafik 7/30 hari saat jendela
+ * memotong celah perekaman panjang: alih-alih dataran interpolasi, tampilkan kurva
+ * per jam dari blok yang benar-benar terekam saja. */
+function recBlockHours(h) {
+  if (!h || h.length < 2) return 0;
+  let hours = 2, i = h.length - 1;
+  while (i > 0 && h[i].t - h[i - 1].t <= 24 * 3600) { hours += Math.ceil((h[i].t - h[i - 1].t) / 3600); i--; }
+  return hours;
+}
+
 /* delta views PER JAM utk 24 jam terakhir (tombol “1 hari”) — sekitar 24 titik.
  * Nilai tiap jam = interpolasi linier antara dua titik pengukuran yang mengapitnya.
  * Kalau jarak kedua pengukuran > 3 jam (perekaman masih jarang), titik ditandai estimasi;
@@ -8749,6 +8766,16 @@ function buildDailyChart(h, color, anchorT) {
       if (series.length >= 2 && dailyGapDays(win, clipIdx) > 0) {
         const alt = realDailyBucketsNoGap(win, clipIdx);
         if (alt.length >= 2) { series = alt; gapNote = true; }
+        else {
+          /* celah panjang tapi pasangan harian nyata terlalu sedikit (rekaman per jam baru
+           * berjalan kurang dari 3 hari) → kurva per jam atas blok terekam saja — lebih
+           * jujur daripada dataran “dibagi rata” yang menyamarkan celah perekaman */
+          const bh = recBlockHours(h);
+          if (bh >= 6) {
+            const hb = hourlyDeltas(h, Math.max(24, Math.min(24 * 30, bh)));
+            if (hb.length >= 2) { series = hb; gran = "hour"; gapNote = true; }
+          }
+        }
       }
       if (series.length < 2) series = interpolatedBuckets(win, gran, null, clipIdx);
     } else if (state.dailyRange === "365") {
@@ -8766,7 +8793,7 @@ function buildDailyChart(h, color, anchorT) {
        * supaya video yang baru 1 hari terpantau tetap punya grafik di rentang mana pun */
       const lastT = h.length ? h[h.length - 1].t : null;
       const t0 = h.length ? h[0].t : null;
-      const hb = lastT != null ? hourlyDeltas(h, Math.max(24, Math.min(24 * 30, Math.ceil((lastT - (t0 || lastT)) / 3600) + 2))) : [];
+      const hb = lastT != null ? hourlyDeltas(h, Math.max(24, Math.min(24 * 30, recBlockHours(h)))) : [];
       if (hb.length >= 2) { series = hb; gran = "hour"; gapNote = true; }
       else {
         const dl = state.dailyRange === "7" ? "7 hari" : state.dailyRange === "30" ? "30 hari" : state.dailyRange === "365" ? "1 tahun" : "sejak rilis";
@@ -8777,12 +8804,14 @@ function buildDailyChart(h, color, anchorT) {
     }
   }
   const t = $("#dailyTitle");
-  if (t) t.textContent = gran === "month" ? "Views ditambahkan per bulan" : gran === "week" ? "Views ditambahkan per pekan" : gran === "hour" ? "Views ditambahkan per jam · 24 jam terakhir" : "Views ditambahkan per hari";
+  if (t) t.textContent = gran === "month" ? "Views ditambahkan per bulan" : gran === "week" ? "Views ditambahkan per pekan" : gran === "hour" ? (state.dailyRange === "1" ? "Views ditambahkan per jam · 24 jam terakhir" : "Views ditambahkan per jam · blok terekam") : "Views ditambahkan per hari";
   const anyIp = series.some((b) => b.ip), anyEst = series.some((b) => b.est), anySplit = series.some((b) => b.split);
   updateLegendIp("dailyLegend", anyEst, anyIp, color, anySplit);
   const hint = $("#dailyHint");
   if (hint) hint.innerHTML = gapNote
-    ? `Rentang ini memotong masa <b>tanpa perekaman</b> — hari di tengah celah <b>tidak diinterpolasi</b> pada grafik pendek (dulu dibagi rata sehingga tampak seperti lonjakan palsu); yang tampil hanya blok pengukuran berjalan. Rentang <b>1 tahun</b> &amp; <b>Sejak rilis</b> tetap memakai interpolasi supaya totalnya tetap utuh.`
+    ? gran === "hour"
+      ? `Rentang ini memotong masa <b>tanpa perekaman</b> — celah tidak diisi palang palsu; yang tampil hanya kurva <b>per jam</b> dari blok yang benar-benar terekam (putus-putus = jam hasil jembatan antara dua pengukuran berjarak lebih dari 3 jam). Rentang <b>1 tahun</b> &amp; <b>Sejak rilis</b> tetap memakai interpolasi supaya totalnya tetap utuh.`
+      : `Rentang ini memotong masa <b>tanpa perekaman</b> — hari di tengah celah <b>tidak diinterpolasi</b> pada grafik pendek (dulu dibagi rata sehingga tampak seperti lonjakan palsu); yang tampil hanya blok pengukuran berjalan. Rentang <b>1 tahun</b> &amp; <b>Sejak rilis</b> tetap memakai interpolasi supaya totalnya tetap utuh.`
     : anySplit && gran === "day"
     ? `Hari berlabel <b>“dibagi rata”</b> = hari tanpa perekaman sama sekali di tengah celah — selisih total antara dua pengukuran nyata di sekelilingnya dibagi rata ke hari-hari itu, jadi jumlah semuanya tetap akurat. Hari dengan perekaman tampil sebagai <b>Data nyata</b> murni.`
     : gran === "hour"
