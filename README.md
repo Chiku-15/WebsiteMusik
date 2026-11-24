@@ -51,7 +51,8 @@ Situs statistik **YouTube + Spotify** untuk artis K-pop — saat ini berisi **BA
 ```
 GitHub Actions (07:00 & 19:00 WIB)
   │ node collect.js        → YouTube Data API v3 (Secret YOUTUBE_API_KEY)
-  │                          + views panggung MAMA 2026 & 2025 (data/mama.json + data/mama-2025.json, otomatis, tiap putaran)
+  │                          + views panggung SEMUA edisi MAMA (data/mama.json + data/mama-2020…2025.json,
+  │                            dipindai otomatis, tiap putaran)
   │ node collect_spotify.js → Spotify Charts via kworb.net + embed Spotify (tanpa API key;
   │                           opsional Spotify Web API utk followers)
   │ node collect_social.js  → sosmed (IG/X/TikTok), Billboard/Melon/Genie/Bugs/Spotify Global (kworb),
@@ -68,7 +69,7 @@ GitHub Pages menayangkan index.html — tombol YouTube/Spotify di header bergant
 | --- | --- |
 | `index.html` | Situs (satu file, tanpa build) — YouTube & Spotify |
 | `config.json` | Daftar artis, channel, video YouTube, dan album Spotify yang dipantau |
-| `collect.js` | Skrip pengambil data YouTube + pembaruan otomatis views panggung MAMA 2026 & 2025 (Node.js, tanpa dependensi) |
+| `collect.js` | Skrip pengambil data YouTube + pembaruan otomatis views panggung SEMUA edisi MAMA 2026 & 2020-2025 — dipindai otomatis dari folder data/ (Node.js, tanpa dependensi) |
 | `collect_spotify.js` | Skrip pengambil data Spotify (kworb + embed; tanpa dependensi) |
 | `collect_social.js` | Skrip pengambil data sosial media, chart, berita & anomali (tanpa dependensi, best-effort) |
 | `data/videos.json` | Riwayat views & likes per video YouTube (harian sejak rilis) |
@@ -85,7 +86,8 @@ GitHub Pages menayangkan index.html — tombol YouTube/Spotify di header bergant
 | `data/trofi.json` | Trofi acara musik, penghargaan besar, Inkigayo Hot Stage & nominasi (kurasi manual; reviu penuh 16 Nov 2026 vs Wikipedia: BABYMONSTER = 2 trofi acara musik + 12 penghargaan besar, TREASURE = 4 trofi acara musik + 43 penghargaan besar + 1 daesang KGMA 2026) |
 | `data/jadwal.json` | Jadwal tur/event manual untuk halaman Jadwal & Countdown |
 | `data/mama.json` | Panggung MAMA 2026 untuk halaman **Awards** (26 artis · 71 video). **Views per video diperbarui otomatis** oleh kolektor (`collect.js` → `updateMamaViews`, YouTube Data API, tiap jam); nama panggung, urutan naik panggung & daftar video tetap dikurasi manual — edit file untuk menambah/mengubah panggungan |
-| `data/mama-2025.json` | Panggung MAMA 2025 (Kai Tak Stadium, Hong Kong · 28–29 Nov 2025) untuk **dropdown MAMA 2025** di halaman Awards (30 artis termasuk 4 artis tamu · 29 panggung · 71 video). Struktur identik dengan `data/mama.json` — views juga diperbarui otomatis tiap jam oleh `collect.js`; ringkasan awal dirangkum dari mama-2025.mirekapps.com |
+| `data/mama-2025.json` | Panggung MAMA 2025 (Kai Tak Stadium, Hong Kong · 28–29 Nov 2025) untuk **dropdown MAMA 2025** di halaman Awards (29 artis + 4 artis tamu · 71 video). Struktur identik dengan `data/mama.json` — views juga diperbarui otomatis tiap jam oleh `collect.js`; ringkasan awal dirangkum dari mama-2025.mirekapps.com |
+| `data/mama-2020.json` … `data/mama-2024.json` | Panggung MAMA edisi lampau untuk **dropdown Edisi di halaman Awards** (dipilih lewat dropdown “EDISI”): MAMA 2020 (CJ ENM Contents World, Paju — daring pandemi · 6 Des 2020 · 28 artis · 29 video), MAMA 2021 (CJ ENM Contents World, Paju · 11 Des 2021 · 20 artis · 20 video), MAMA 2022 (Kyocera Dome Osaka · 29–30 Nov 2022 · 31 artis · 31 video, 2 hari), MAMA 2023 (Tokyo Dome · 28–29 Nov 2023 · 24 artis · 26 video, 2 hari), MAMA 2024 (Dolby Theatre LA + Kyocera Dome Osaka · 21–23 Nov 2024 · 29 artis · 31 video, 3 hari). Struktur identik dengan `data/mama.json` — views tiap video juga diperbarui otomatis tiap jam oleh `collect.js` (pemindaian `mama-*.json`); urutan naik panggung dirujuk ke daftar performer Wikipedia tiap edisi, video & views dari unggahan resmi kanal Mnet |
 | `data/members.json` | Profil 17 anggota (klik kartu = detail profil + **foto solo artis**) |
 | `img/members/` | Foto solo 17 anggota (dipakai di kartu profil & halaman detail; ganti file `<slug>.jpg` untuk mengganti foto) |
 | `data/news.json` | Berita terbaru yang menyebut artis (RSS, maks. 60 entri, tiap entri berisi thumbnail `img`) |
@@ -239,6 +241,12 @@ Setiap kali Actions merekam angka baru, estimasi pada hari itu **ditimpa data ny
 
 ---
 Dibuat dengan GitHub Actions + GitHub Pages
+
+## Pembaruan 24 November 2026
+
+- **Dropdown EDISI MAMA (2020-2026) di halaman Awards**: judul tahun MAMA kini menjadi **dropdown “EDISI”** di samping chip Hari/Urutan — MAMA 2026, 2025, 2024, 2023, 2022, 2021 & **2020** bisa dipilih langsung; tahun terpilih tersimpan (localStorage) dan tetap dipakai saat halaman dibuka lagi. Semua edisi diisi **data panggung asli dari unggahan resmi kanal Mnet** (video & views) dengan urutan naik panggung yang dirujuk ke daftar performer Wikipedia tiap edisi: MAMA 2020 (daring CJ ENM Contents World · 28 artis · 29 video — TREASURE disorot: ‘BOY + I LOVE YOU’ & ‘MMM’), MAMA 2021 (Paju · 20 artis · 20 video — TREASURE/BABYMONSTER memang tidak tampil di edisi ini), MAMA 2022 (Kyocera Dome, 2 hari · 31 artis — TREASURE ‘VolKno+JIKJIN+HELLO’), MAMA 2023 (Tokyo Dome, 2 hari · 24 artis — TREASURE ‘MOVE (T5) + BONA BONA’), MAMA 2024 (LA + Osaka, 3 hari · 29 artis — TREASURE ‘KING KONG + RUN’), MAMA 2025 (Kai Tak Stadium, 2 hari · 33 entri termasuk 4 artis tamu — BABYMONSTER dua panggung & TREASURE ‘TRAZY MODE’), MAMA 2026 (berjalan). Fitur pendukung mengikuti edisi: pembatas Hari 1|2|3, panggung kolaborasi, artis tamu, toggle “kreditkan juga artis featured” (2025/2026), dan chart bintang beradaptasi (langkah garis bantu otomatis utk edisi dgn views besar). Tahun yang berkasnya tidak ada di repo otomatis dinonaktifkan di dropdown.
+- **Views SEMUA edisi MAMA kini terupdate otomatis**: `collect.js` tidak lagi meng-hardcode daftar berkas — folder `data/` **dipindai otomatis** (pola `mama.json` & `mama-<tahun>.json`), jadi views tiap video panggung edisi 2020-2025 ikut segar tiap jam oleh GitHub Actions, dan edisi 2027 nanti terupdate begitu berkasnya ditambah tanpa mengubah kode.
+- **Grafik “ditambahkan per hari” rentang 7/30 hari kini tampil walau riwayat perekaman masih pendek**: dulu rentang 1 hari terlihat (per jam) tapi 7/30 hari kosong karena butuh ≥2 hari kalender perekaman. Sekarang: bucket harian dibangun dari **pasangan pengukuran nyata** (hari dgn rekaman di dua sisi = “Data nyata”), celah perekaman panjang di jendela pendek **tidak lagi diinterpolasi** (dulu muncul bar raksasa palsu yang menenggelamkan bar riil), fallback terakhir = kurva per jam atas blok yang sudah terekam, dan bila data benar-benar belum cukup muncul pesan jelas “grafik X hari belum bisa dibuat… butuh minimal 2 hari kalender perekaman — rentang 1 hari tetap tersedia”.
 
 ## Pembaruan 22 November 2026
 

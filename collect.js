@@ -1337,11 +1337,25 @@ async function updateMamaFile(fname) {
   return true;
 }
 
-/* perbarui SEMUA edisi MAMA — data/mama.json (2026) + data/mama-2025.json (2025).
- * Struktur kedua berkas identik (acts[].clips[].id), jadi logikanya sama persis. */
+/* perbarui SEMUA edisi MAMA — data/mama.json (edisi berjalan) + data/mama-<tahun>.json
+ * (edisi lampau 2020-2025 yang bisa dipilih lewat dropdown AWARDS). Daftar berkas
+ * DISCAN OTOMATIS dari folder data/ (pola mama.json & mama-<4 digit>.json), jadi edisi
+ * baru (2027 dst.) ikut terupdate begitu berkasnya ada, tanpa mengubah kode. Urutan:
+ * mama.json dulu, lalu edisi termuda → tertua. Struktur semua berkas identik
+ * (acts[].clips[].id), jadi logikanya sama persis. */
 async function updateMamaViews() {
+  let files;
+  try {
+    files = fs.readdirSync(DATA_DIR)
+      .filter((f) => /^mama(-\d{4})?\.json$/.test(f))
+      .sort((a, b) => {
+        if (a === "mama.json") return -1;
+        if (b === "mama.json") return 1;
+        return b.localeCompare(a); // 2025 → 2020
+      });
+  } catch { files = ["mama.json"]; }
   let ok = 0;
-  for (const f of ["mama.json", "mama-2025.json"]) {
+  for (const f of files) {
     try { if (await updateMamaFile(f)) ok++; }
     catch (e) { log(`MAMA: ${f} gagal — ${String((e && e.message) || e).slice(0, 90)}`); }
   }
@@ -1375,8 +1389,9 @@ async function main() {
     });
     log(`selesai dalam ${Math.round((Date.now() - started) / 1000)}s — videos=${result.videos} channels=${result.channels}`);
   }
-  // views panggung MAMA 2026 (data/mama.json) — hanya di mode API; di mode scraping
-  // 71 video terlalu berat/rapuh, jadi angka MAMA menunggu sampai API key terpasang.
+  // views panggung SEMUA edisi MAMA (data/mama.json + data/mama-<tahun>.json 2020-2025)
+  // — hanya di mode API; di mode scraping video panggung terlalu berat/rapuh, jadi
+  // angka MAMA menunggu sampai API key terpasang.
   if (API_KEY) {
     try {
       await updateMamaViews();

@@ -213,6 +213,11 @@
   .mama-feat.on .mama-featsw{background:#f1b65e}
   .mama-feat.on .mama-featsw::after{transform:translateX(13px)}
   .mtabs .cnt{background:var(--chip);border-radius:999px;padding:2px 8px;font-size:10.5px;margin-left:2px}
+  /* dropdown edisi MAMA (2020-2026) — gaya senada pil .mtab dengan aksen amber */
+  .myear{appearance:none;-webkit-appearance:none;background:var(--card);color:#f1b65e;border:1px solid rgba(241,182,94,.45);border-radius:999px;padding:7px 30px 7px 15px;font:700 13px/1.3 var(--font);cursor:pointer;outline:none;transition:border-color .2s,background .2s;background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23f1b65e' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+  .myear:hover,.myear:focus{border-color:rgba(241,182,94,.85);background-color:color-mix(in srgb,#f1b65e 12%,var(--card))}
+  .myear option{background:var(--card,#0b1224);color:var(--text);font-weight:600}
+  .myear-lab{color:var(--muted);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;letter-spacing:.6px;text-transform:uppercase;align-self:center;margin-left:2px}
   .iconbtn{
     width:38px;height:38px;border-radius:11px;border:1px solid var(--border);background:var(--card);
     color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.18s;
@@ -1791,7 +1796,7 @@ const state = {
   awardsDay: "all",       // filter hari AWARDS: "all" (kedua hari) | "1" | "2"
   awardsSort: "order",    // urutan daftar artis AWARDS: "order" (urutan panggung) | "top" (terbanyak ditonton)
   awardsFeat: false,      // toggle AWARDS “kreditkan juga artis featured”: views panggung induk kolab ikut dihitung utk artis pendamping
-  awardsYear: (function () { try { return localStorage.getItem("py.awyear") === "2025" ? "2025" : "2026"; } catch { return "2026"; } })(), // edisi MAMA yang tampil di AWARDS: "2026" | "2025"
+  awardsYear: (function () { try { const v = localStorage.getItem("py.awyear"); return v && /^202[0-6]$/.test(v) ? v : "2026"; } catch { return "2026"; } })(), // edisi MAMA yang tampil di AWARDS: "2026" | "2025" | ... | "2020"
   chnPlat: null,          // pilihan dropdown platform di Statistik Channel ("yt"|"spotify")
   chnArt: null,           // pilihan dropdown artis di Statistik Channel (artistId)
   berArtPlat: null,       // pilihan dropdown platform di seksi "Dua artis yang dipantau" halaman BERANDA ("yt"|"spotify")
@@ -1938,7 +1943,13 @@ async function loadData() {
   state.milestones = ms.videos || {};
   state.members = memb; state.trofi = trofi; state.jadwal = jadwal; state.spPop = spPop;
   state.social = social; state.charts = charts; state.chartHist = chHist; state.news = news; state.anoms = anoms; state.mama = mama;
+  /* edisi MAMA lampau (2020-2025): mama-2025.json di-load saat boot; 2020-2024 di-load saat
+   * pertama dipilih lewat dropdown AWARDS (ensureMamaEdition) lalu dicache di state.mamaHist */
+  if (mama && !mama.srcYear) mama.srcYear = "2026";
+  if (mamaPrev && !mamaPrev.srcYear) mamaPrev.srcYear = "2025";
   state.mama2025 = mamaPrev;
+  state.mamaHist = {};
+  if (mamaPrev) state.mamaHist["2025"] = mamaPrev;
 }
 
 function artistOf(id) { return state.config.artists.find((a) => a.id === id); }
@@ -2510,10 +2521,33 @@ function renderBantuanPage(sec) {
  * lewat edit file — sama seperti data/trofi.json & data/jadwal.json. */
 function mamaOf() {
   const pick = (x) => (x && Array.isArray(x.acts) && x.acts.length ? x : null);
-  /* edisi 2025 dipilih lewat dropdown MAMA di AWARDS; bila berkas 2025 belum ada di repo,
+  /* edisi 2020-2025 dipilih lewat dropdown MAMA di AWARDS; bila berkasnya belum ada di repo,
    * kembali mulus ke edisi 2026 supaya halaman tidak pernah kosong */
-  if (state.awardsYear === "2025") { const p = pick(state.mama2025); if (p) return p; }
+  if (state.awardsYear !== "2026") {
+    const h = state.mamaHist || {};
+    const p = pick(h[state.awardsYear] || (state.awardsYear === "2025" ? state.mama2025 : null));
+    if (p) return p;
+  }
   return pick(state.mama);
+}
+/* muat berkas edisi lampau data/mama-<tahun>.json saat pertama kali dipilih; hasil dicache
+ * di state.mamaHist. Bila berkasnya tidak ada di repo (fetch gagal), tahun itu dicatat di
+ * state.mamaFail supaya opsinya nonaktif di dropdown dan halaman kembali mulus ke 2026 */
+async function ensureMamaEdition(y) {
+  if (y === "2026") return true;
+  state.mamaHist = state.mamaHist || {};
+  if (state.mamaHist[y]) return true;
+  state.mamaFail = state.mamaFail || {};
+  if (state.mamaFail[y]) return false;
+  try {
+    const r = await fetch("data/mama-" + y + ".json?v=" + Date.now());
+    if (!r.ok) throw new Error("http " + r.status);
+    const j = await r.json();
+    if (!j || !Array.isArray(j.acts) || !j.acts.length) throw new Error("format");
+    if (!j.srcYear) j.srcYear = y;
+    state.mamaHist[y] = j;
+    return true;
+  } catch (e) { state.mamaFail[y] = 1; return false; }
 }
 /* kunci unik per entri artis MAMA — edisi 2025 punya artis dengan DUA panggung
  * (mis. BABYMONSTER hari 1 & hari 2), jadi identitas = field `key` dari data
@@ -2661,13 +2695,19 @@ function mamaChartSVG(acts, focCol, opts) {
     g += `<line class="mama-grid" x1="${padL}" y1="${Y(m).toFixed(1)}" x2="${W - padR}" y2="${Y(m).toFixed(1)}"/>` +
       `<text class="mama-gridtxt" x="${padL - 9}" y="${(Y(m) + 3.5).toFixed(1)}" text-anchor="end">${m / 1e6} jt</text>`;
   }
-  /* batas antar hari — garis putus-putus tegak + cap "Hari 1"/"Hari 2" di kiri-kanannya */
-  const bi = acts.reduce((last, a, i) => (a.day === 1 ? i : last), -1);
-  if (opts.days && opts.days.length === 2 && bi >= 0 && bi < acts.length - 1) {
-    const xd = (X(bi) + X(bi + 1)) / 2;
-    g += `<line class="mama-daydiv" x1="${xd.toFixed(1)}" y1="${padT}" x2="${xd.toFixed(1)}" y2="${(padT + ih).toFixed(1)}"/>` +
-      `<text class="mama-daycap" x="${((padL + xd) / 2).toFixed(1)}" y="${padT - 14}" text-anchor="middle">${esc(opts.days[0].label || "Hari 1")}</text>` +
-      `<text class="mama-daycap" x="${((xd + W - padR) / 2).toFixed(1)}" y="${padT - 14}" text-anchor="middle">${esc(opts.days[1].label || "Hari 2")}</text>`;
+  /* batas antar hari — garis putus-putus tegak di tiap pergantian hari + cap label hari di tengah
+   * tiap segmen (mendukung edisi 1 hari tanpa pembatas s.d. 3 hari seperti MAMA 2024) */
+  if (opts.days && opts.days.length >= 2) {
+    const bnd = [];
+    acts.forEach((a, i) => { if (i > 0 && a.day !== acts[i - 1].day) bnd.push(i); });
+    if (bnd.length) {
+      const marks = [padL].concat(bnd.map((i) => (X(i - 1) + X(i)) / 2), [W - padR]);
+      marks.forEach((mx, k) => {
+        if (k > 0 && k < marks.length - 1) g += `<line class="mama-daydiv" x1="${mx.toFixed(1)}" y1="${padT}" x2="${mx.toFixed(1)}" y2="${(padT + ih).toFixed(1)}"/>`;
+        const dl = (opts.days[k - 1] && opts.days[k - 1].label) || "Hari " + k;
+        g += `<text class="mama-daycap" x="${((marks[k - 1] + mx) / 2).toFixed(1)}" y="${padT - 14}" text-anchor="middle">${esc(dl)}</text>`;
+      });
+    }
   }
   /* garis penghubung panggung kolaborasi — digambar sebelum bintang supaya berada di bawahnya */
   const slugIdx = {};
@@ -2829,19 +2869,24 @@ function renderAwardsPage(sec) {
   const m = mamaOf();
   /* edisi yang benar-benar dirender — bila 2025 dipilih tapi berkasnya belum ada di repo,
    * mamaOf() kembali mulus ke 2026, jadi tahun ikut data yang tampil */
-  const year = m && m === state.mama2025 ? "2025" : "2026";
-  const mamaFile = year === "2025" ? "data/mama-2025.json" : "data/mama.json";
+  const selY = String(state.awardsYear || "2026");
+  const year = m && m.srcYear ? String(m.srcYear) : "2026";
+  const mamaFile = year === "2026" ? "data/mama.json" : "data/mama-" + year + ".json";
+  const selFile = selY === "2026" ? "data/mama.json" : "data/mama-" + selY + ".json";
   if (!m) {
-    sec.innerHTML = `${pageCloseBar("Awards", "chart panggung MAMA " + (state.awardsYear === "2025" ? "2025" : "2026"), ICO_MEDAL, "#a78bfa")}
-    <section style="margin-top:16px"><div class="banner">Data panggung MAMA ${state.awardsYear === "2025" ? "2025" : "2026"} belum tersedia — pastikan berkas <b>${mamaFile}</b> ikut ada di repo (folder data/), lalu muat ulang halaman.</div></section>`;
+    sec.innerHTML = `${pageCloseBar("Awards", "chart panggung MAMA " + selY, ICO_MEDAL, "#a78bfa")}
+    <section style="margin-top:16px"><div class="banner">Data panggung MAMA ${selY} belum tersedia — pastikan berkas <b>${selFile}</b> ikut ada di repo (folder data/), lalu muat ulang halaman.</div></section>`;
     bindPageClose(sec);
     return;
   }
   const focCol = { babymonster: mamaFocusColor("babymonster"), treasure: mamaFocusColor("treasure") };
-  /* dKey TETAP string — dulu diubah Number() lalu dibandingkan dengan k = "1"/"2" (string),
-   * 1 === "1" selalu salah → tombol Hari 1/Hari 2 tak pernah tampak aktif. */
-  const dKey = state.awardsDay === "1" || state.awardsDay === "2" ? state.awardsDay : "all";
   const actsAll = m.acts;
+  /* dKey TETAP string — dulu diubah Number() lalu dibandingkan dengan k = "1"/"2" (string),
+   * 1 === "1" selalu salah → tombol Hari 1/Hari 2 tak pernah tampak aktif. Jumlah hari bervariasi
+   * per edisi (2020/2021 = 1 hari, 2022/2023 = 2 hari, 2024 = 3 hari): bila hari yang tersimpan
+   * di localStorage tidak ada pada edisi ini, kembali mulus ke "semua hari". */
+  const dKey = /^\d+$/.test(String(state.awardsDay)) && actsAll.some((a) => a.day === Number(state.awardsDay)) ? String(state.awardsDay) : "all";
+  const nDays = Math.max.apply(null, actsAll.map((a) => a.day || 1));
   const chartActs = actsAll.filter((a) => dKey === "all" || a.day === Number(dKey)).slice().sort((x, y) => x.gorder - y.gorder);
   const stages = mamaCollabStages(actsAll);
   const collabMap = {};
@@ -2875,13 +2920,14 @@ function renderAwardsPage(sec) {
   const chipD = (k, lbl, n) => `<button type="button" class="mtab${dKey === k ? " active" : ""}" data-awd="${k}" style="--artist-color:#a78bfa">${lbl} <span class="cnt">${n}</span></button>`;
   const chipS = (k, lbl) => `<button type="button" class="mtab${state.awardsSort === k ? " active" : ""}" data-aws="${k}" style="--artist-color:#38bdf8">${lbl}</button>`;
   const chipFeat = `<button type="button" class="mama-feat${feat ? " on" : ""}" data-awfeat title="Saat aktif, views panggung induk kolaborasi (mis. Panic ‘MUTANTS' PARTY’, CL ‘STILL THE BADDEST’) juga dihitung untuk artis yang tampil bersama di panggung itu — seperti “Also credit featured acts” di situs referensi">Kreditkan juga artis featured <span class="mama-featsw" aria-hidden="true"></span></button>`;
-  /* dropdown edisi MAMA — pil MAMA 2026 / MAMA 2025; 2025 nonaktif bila berkasnya belum ada */
-  const has25 = !!(state.mama2025 && Array.isArray(state.mama2025.acts) && state.mama2025.acts.length);
-  const chipY = (k) => `<button type="button" class="mtab${year === k ? " active" : ""}" data-awy="${k}" style="--artist-color:#f1b65e"${k === "2025" && !has25 ? " disabled title=\"berkas data/mama-2025.json belum ada di repo\"" : ""}>MAMA ${k}</button>`;
+  /* dropdown edisi MAMA — MAMA 2020 s.d. 2026; tahun yang berkasnya gagal dimuat (tidak ada
+   * di repo) ditandai nonaktif dengan alasan di tooltip */
+  const yearOpts = ["2026", "2025", "2024", "2023", "2022", "2021", "2020"].map((k) =>
+    `<option value="${k}"${year === k ? " selected" : ""}${(state.mamaFail || {})[k] ? ` disabled title="berkas data/mama-${k}.json tidak ada di repo"` : ""}>MAMA ${k}</option>`).join("");
   sec.innerHTML = `${head}
   <section style="margin-top:10px">
     <h2 class="mama-title"><i>MAMA ${year}</i> stage chart</h2>
-    <p class="mama-lede">Semua panggung MAMA ${year} — ${esc(m.venue || (year === "2025" ? "Kai Tak Stadium, Hong Kong, 28–29 November 2025" : "Kyocera Dome Osaka, 20–21 November 2026"))} — yang Mnet unggah ke YouTube, lengkap dengan setlist, video &amp; views tiap artis. Makin besar &amp; tinggi bintangnya, makin banyak views total video panggungnya. ${nFoc ? focNames : ""} disorot warna grup.</p>
+    <p class="mama-lede">Semua panggung MAMA ${year} — ${esc(m.venue || (m.dateText || ""))} — yang Mnet unggah ke YouTube, lengkap dengan setlist, video &amp; views tiap artis. Makin besar &amp; tinggi bintangnya, makin banyak views total video panggungnya. ${nFoc ? focNames + " disorot warna grup." : ""}</p>
     <div class="mama-facts">
       <span><b>${(m.meta && m.meta.artists) || actsAll.length}</b> <span>artis${nGuest ? ` (termasuk ${nGuest} artis tamu)` : ""}</span></span>
       <span><b>${totC}</b> <span>video</span></span>
@@ -2889,15 +2935,15 @@ function renderAwardsPage(sec) {
       <span class="mama-asof">views per ${esc(m.asOf || "–")}</span>
     </div>
     <div class="mama-segs">
-      <div class="mtabs" style="margin:0">${chipY("2026")}${chipY("2025")}</div>
-      <div class="mtabs" style="margin:0">${chipD("all", "Kedua hari", actsAll.length)}${chipD("1", "Hari 1", actsAll.filter((a) => a.day === 1).length)}${chipD("2", "Hari 2", actsAll.filter((a) => a.day === 2).length)}</div>
+      <div class="mtabs" style="margin:0"><span class="myear-lab">Edisi</span><select id="mamaYearSel" class="myear" aria-label="Pilih edisi MAMA">${yearOpts}</select></div>
+      <div class="mtabs" style="margin:0">${chipD("all", nDays > 2 ? "Semua hari" : "Kedua hari", actsAll.length)}${Array.from({ length: nDays }, (_, k) => chipD(String(k + 1), "Hari " + (k + 1), actsAll.filter((a) => a.day === k + 1).length)).join("")}</div>
       <div class="mtabs" style="margin:0">${chipS("top", "Terbanyak ditonton")}${chipS("order", "Urutan panggung")}</div>
-      <div style="margin:0;display:flex;gap:10px;flex-wrap:wrap;align-items:center">${chipFeat}</div>
+      ${stages.length ? `<div style="margin:0;display:flex;gap:10px;flex-wrap:wrap;align-items:center">${chipFeat}</div>` : ""}
     </div>
     <div class="mama-plate"><div class="mama-chart">${mamaChartSVG(chartActs, focCol, { year: year, collab: stages, collabMap: collabMap, vmap: vmap, guests: m.guests || [], featCred: feat ? featCred : null, days: dKey === "all" ? (m.days || []) : null })}</div></div>
-    <p class="note" style="margin-top:8px">${year === "2025"
+    <p class="note" style="margin-top:8px">${m.note ? m.note : (year === "2025"
       ? `Kiri ke kanan: urutan naik panggung · tinggi &amp; ukuran bintang: views (skala linear) · tekan bintang/nama untuk lompat ke kartu artisnya. Bintang berwarna = grup yang dipantau situs ini — <b>BABYMONSTER tampil dua kali</b> (hari 1 ‘MONSTER\u2019s NIGHT LIVE’, hari 2 ‘KPop Demon Hunters · HUNTR/X’), jadi ada dua bintang merah. <b>Garis berwarna</b> = panggung kolaborasi — <b>satu warna untuk satu panggung kolab</b> (lihat legenda warna di dalam grafik), ditarik dari <b>panggung induk</b> ke tiap artis yang tampil bersama. Edisi 2025 punya 4 panggung kolab: <b>‘WISH to Hearts’</b> (induk NCT WISH ↔ Hearts2Hearts), <b>‘Flip The Coin’</b> (induk TWS ↔ MEOVV), <b>‘HEAR MY ROAR’</b> (induk ALLDAY PROJECT ↔ Felix &amp; Sung Hanbin) dan <b>‘Endlich der Übermensch!’</b> (induk G-DRAGON ↔ Song So-hee). Arahkan kursor ke garis atau legenda untuk melihat pesertanya; penjelasan lengkap tiap panggung kolab ada di blok “Panggung kolaborasi” pada kartu artisnya. Tombol <b>Kreditkan juga artis featured</b>: saat aktif, views panggung induk kolaborasi ikut dihitung untuk artis pendampingnya. Saat “Kedua hari”, garis putus-putus tegak menjadi batas Hari 1 | Hari 2. Bintang ber<strong style="color:#f1b65e">cincin amber putus-putus</strong> = <b>artis tamu</b> tanpa unggahan panggung sendiri: <b>Kim Hye-soo</b> &amp; <b>KYOKA</b> (‘HEAR MY ROAR’), <b>IDID</b> (bersama KickFlip) dan <b>Song So-hee</b> (vokal ‘DRAMA’-nya G-DRAGON) — views-nya dihitung dari video panggung bersama, angka yang sama juga dihitung untuk kartu panggung induknya (total views di atas memakai angka sumber, jadi video bersama tidak dihitung dua kali).`
-      : `Kiri ke kanan: urutan naik panggung · tinggi &amp; ukuran bintang: views (skala linear) · tekan bintang/nama untuk lompat ke kartu artisnya. Bintang berwarna = grup yang dipantau situs ini. <b>Garis berwarna</b> = panggung kolaborasi — <b>satu warna untuk satu panggung kolab</b> (lihat legenda warna di dalam grafik), ditarik dari <b>panggung induk</b> ke tiap artis yang tampil bersama — jadi induknya selalu titik dengan garis terbanyak (Panic ‘MUTANTS' PARTY’ terhubung ke 5 artis; ALLDAY PROJECT ikut dua panggung sekaligus, jadi kena garis Panic dan garis CL ‘STILL THE BADDEST’). Arahkan kursor ke garis atau legenda untuk melihat peserta panggungnya; penjelasan lengkap tiap panggung kolab (siapa induknya, urutan tampil) ada di blok “Panggung kolaborasi” pada kartu artisnya. Tombol <b>Kreditkan juga artis featured</b>: saat aktif, views panggung induk kolaborasi ikut dihitung untuk artis pendampingnya — tinggi bintang, label, tooltip &amp; urutan “Terbanyak ditonton” memakai total itu. Saat “Kedua hari”, garis putus-putus tegak menjadi batas antara Hari 1 dan Hari 2, dan daftar Para artis di bawah juga dipisah pembatas hari. Bintang ber<strong style="color:#f1b65e">cincin amber putus-putus</strong> = <b>artis tamu</b>: <b>KiiiKiii</b> ikut tampil di ‘GIRLS NEVER STOP’ bersama izna &amp; I.O.I tapi Mnet tidak mengunggah video panggung terpisah untuknya — views-nya dihitung dari seluruh video panggung bersama itu (1,42 jt; video yang sama juga dihitung untuk izna, makanya tidak ikut menjumlah total views di atas).`}</p>
+      : `Kiri ke kanan: urutan naik panggung · tinggi &amp; ukuran bintang: views (skala linear) · tekan bintang/nama untuk lompat ke kartu artisnya. Bintang berwarna = grup yang dipantau situs ini. <b>Garis berwarna</b> = panggung kolaborasi — <b>satu warna untuk satu panggung kolab</b> (lihat legenda warna di dalam grafik), ditarik dari <b>panggung induk</b> ke tiap artis yang tampil bersama — jadi induknya selalu titik dengan garis terbanyak (Panic ‘MUTANTS' PARTY’ terhubung ke 5 artis; ALLDAY PROJECT ikut dua panggung sekaligus, jadi kena garis Panic dan garis CL ‘STILL THE BADDEST’). Arahkan kursor ke garis atau legenda untuk melihat peserta panggungnya; penjelasan lengkap tiap panggung kolab (siapa induknya, urutan tampil) ada di blok “Panggung kolaborasi” pada kartu artisnya. Tombol <b>Kreditkan juga artis featured</b>: saat aktif, views panggung induk kolaborasi ikut dihitung untuk artis pendampingnya — tinggi bintang, label, tooltip &amp; urutan “Terbanyak ditonton” memakai total itu. Saat “Kedua hari”, garis putus-putus tegak menjadi batas antara Hari 1 dan Hari 2, dan daftar Para artis di bawah juga dipisah pembatas hari. Bintang ber<strong style="color:#f1b65e">cincin amber putus-putus</strong> = <b>artis tamu</b>: <b>KiiiKiii</b> ikut tampil di ‘GIRLS NEVER STOP’ bersama izna &amp; I.O.I tapi Mnet tidak mengunggah video panggung terpisah untuknya — views-nya dihitung dari seluruh video panggung bersama itu (1,42 jt; video yang sama juga dihitung untuk izna, makanya tidak ikut menjumlah total views di atas).`)}</p>
     <div class="mama-acts">
       <div class="hsect"><h2><span class="sic" style="--c:#a78bfa"><svg viewBox="0 0 24 24"><path d="${ICO_MEDAL}"/></svg></span>Para artis</h2><span class="sub">${state.awardsSort === "top" ? "terbanyak ditonton dulu" : "urutan panggung"} · ${dKey === "all" ? "kedua hari" : "Hari " + dKey}</span></div>
       ${listActs.map((a, i) => {
@@ -2905,8 +2951,8 @@ function renderAwardsPage(sec) {
         const col = foc ? focCol[a.focus] : "";
         const cr = feat ? (featCred[mamaKey(a)] || 0) : 0;
         /* pembatas Hari 1 | Hari 2 pada daftar (mode kedua hari + urutan panggung) */
-        const sep = dKey === "all" && state.awardsSort === "order" && i > 0 && listActs[i - 1].day === 1 && a.day === 2
-          ? `<div class="mama-daysep">${esc((m.days && m.days[1] && m.days[1].label) || "Hari 2 · 21 Nov 2026")}</div>` : "";
+        const sep = dKey === "all" && state.awardsSort === "order" && i > 0 && listActs[i - 1].day !== a.day
+          ? `<div class="mama-daysep">${esc((m.days && m.days[a.day - 1] && m.days[a.day - 1].label) || "Hari " + a.day)}</div>` : "";
         return `${sep}<article class="mama-act${foc ? " focus" : ""}" id="mamaact-${mamaKey(a)}" style="--ac:${foc ? focCol[a.focus] : "var(--border)"}">
         ${foc ? `<span class="mama-focustag">GRUP DIPANTAU</span>` : ""}
         ${a.guest ? `<span class="mama-guesttag">ARTIS TAMU</span>` : ""}
@@ -2929,9 +2975,9 @@ function renderAwardsPage(sec) {
       }).join("")}
     </div>
     <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
-      <button class="mtab" data-gomenu="tro" style="--artist-color:#f59e0b">Trofi &amp; Penghargaan — hasil MAMA 2026 &amp; music show →</button>
+      <button class="mtab" data-gomenu="tro" style="--artist-color:#f59e0b">Trofi &amp; Penghargaan — hasil MAMA ${year} &amp; music show →</button>
     </div>
-    <p class="note" style="margin-top:14px">Sumber: kanal YouTube <b>Mnet</b> — unggahan panggung [#2026MAMA] (Shorts tidak dihitung). Total artis menjumlahkan semua videonya: unggahan full stage dan klip per lagu masing-masing dihitung; panggung yang dibagi beberapa artis dihitung untuk artis yang dikreditkan Mnet lebih dulu. Angka views <b>diperbarui otomatis</b> oleh kolektor tiap jam (YouTube Data API) — snapshot terakhir per ${esc(m.asOf || "–")}. Nama panggung, urutan naik panggung &amp; daftar videonya tetap dikurasi manual di <b>data/mama.json</b>; ringkasan awal per artis dirangkum dari mama-2026.mirekapps.com.</p>
+    <p class="note" style="margin-top:14px">Sumber: kanal YouTube <b>Mnet</b> — unggahan panggung ${esc(m.srcTag || "resmi MAMA")} (Shorts, kompilasi &amp; behind tidak dihitung). Total artis menjumlahkan semua videonya: unggahan full stage dan klip per lagu masing-masing dihitung; panggung yang dibagi beberapa artis dihitung untuk artis yang dikreditkan Mnet lebih dulu. Angka views <b>diperbarui otomatis</b> oleh kolektor tiap jam (YouTube Data API) — snapshot terakhir per ${esc(m.asOf || "–")}. Nama panggung, urutan naik panggung &amp; daftar videonya tetap dikurasi manual di <b>${esc(mamaFile)}</b>${year === "2026" ? "; ringkasan awal per artis dirangkum dari mama-2026.mirekapps.com" : ""}.</p>
   </section>`;
   bindPageClose(sec);
   /* garis kolaborasi “tergambar” — kelas collab-on menyusul satu frame biar transisi dash jalan */
@@ -2939,7 +2985,15 @@ function renderAwardsPage(sec) {
   if (svgCollab) requestAnimationFrame(() => requestAnimationFrame(() => svgCollab.classList.add("collab-on")));
   const rerender = () => { const y = window.scrollY; renderAll(); window.scrollTo(0, y); };
   sec.querySelectorAll("[data-awd]").forEach((b) => b.addEventListener("click", () => { state.awardsDay = b.dataset.awd; rerender(); }));
-  sec.querySelectorAll("[data-awy]").forEach((b) => b.addEventListener("click", () => { state.awardsYear = b.dataset.awy; try { localStorage.setItem("py.awyear", state.awardsYear); } catch {} rerender(); }));
+  /* dropdown edisi MAMA — muat berkas tahunnya bila belum ada di memori, lalu render ulang */
+  const ysel = $("#mamaYearSel");
+  if (ysel) ysel.addEventListener("change", async () => {
+    state.awardsYear = ysel.value;
+    try { localStorage.setItem("py.awyear", state.awardsYear); } catch {}
+    rerender();
+    await ensureMamaEdition(ysel.value);
+    rerender();
+  });
   sec.querySelectorAll("[data-aws]").forEach((b) => b.addEventListener("click", () => { state.awardsSort = b.dataset.aws; rerender(); }));
   sec.querySelectorAll("[data-awfeat]").forEach((b) => b.addEventListener("click", () => { state.awardsFeat = !state.awardsFeat; rerender(); }));
   sec.querySelectorAll("[data-gomenu]").forEach((b) => b.addEventListener("click", () => menuGo(b.dataset.gomenu)));
@@ -8308,6 +8362,56 @@ function realDailyBuckets(pts, clipFromIdx) {
   if (out.length && Date.now() / 1000 - P[P.length - 1].t < 26 * 3600) out[out.length - 1].partial = true;
   return out;
 }
+  /* hari kalender di tengah celah perekaman >36 jam dalam jendela — hari yang tidak ada
+   * pengukurannya DAN hari sebelumnya juga kosong (bukan sekadar tepi jendela). Dipakai
+   * grafik pendek (7/30 hari) untuk memutuskan kapan interpolasi celah justru menyesatkan. */
+function dailyGapDays(pts, clipFromIdx) {
+  const P = [];
+  for (const p of pts) {
+    if (p.v == null) continue;
+    if (P.length && p.t <= P[P.length - 1].t) continue;
+    if (P.length && p.v <= P[P.length - 1].v) continue;
+    P.push(p);
+  }
+  if (P.length < 2) return 0;
+  const onDay = new Set(P.map((p) => dayIndexOf(p.t)));
+  const i0 = clipFromIdx != null ? Math.max(dayIndexOf(P[0].t), clipFromIdx) : dayIndexOf(P[0].t);
+  const iZ = dayIndexOf(P[P.length - 1].t);
+  let gap = 0;
+  for (let i = i0 + 1; i <= iZ; i++) if (!onDay.has(i) && !onDay.has(i - 1)) gap++;
+  return gap;
+}
+/* varian realDailyBuckets TANPA interpolasi: hari hanya dihitung bila ada pengukuran nyata
+ * pada hari itu DAN hari sebelumnya — hari di tengah celah dibiarkan kosong (bukan dibagi
+ * rata), jadi bar yang tampil murni kenaikan harian terukur. Untuk rentang pendek 7/30 hari
+ * ketika jendela memotong celah perekaman panjang (mis. jangkar lama + rekaman per jam baru). */
+function realDailyBucketsNoGap(pts, clipFromIdx) {
+  const P = [];
+  for (const p of pts) {
+    if (p.v == null) continue;
+    if (P.length && p.t <= P[P.length - 1].t) continue;
+    if (P.length && p.v <= P[P.length - 1].v) continue;
+    P.push(p);
+  }
+  if (P.length < 2) return [];
+  const onDay = new Map();
+  for (const p of P) { const k = dayIndexOf(p.t); if (!onDay.has(k) || p.t > onDay.get(k).t) onDay.set(k, p); }
+  let i0 = dayIndexOf(P[0].t);
+  if (clipFromIdx != null) i0 = Math.max(i0, clipFromIdx);
+  const iZ = dayIndexOf(P[P.length - 1].t);
+  const out = [];
+  let prev = onDay.get(i0 - 1) || null;
+  for (let i = i0; i <= iZ; i++) {
+    const cur = onDay.get(i);
+    if (!cur) continue;
+    if (prev) {
+      out.push({ key: dateKeyOfDayIndex(i), v: Math.max(0, cur.v - prev.v), est: !!(cur.e || prev.e), ip: false, split: false, t: tsOfDayIndex(i) });
+    }
+    prev = cur;
+  }
+  if (out.length && Date.now() / 1000 - P[P.length - 1].t < 26 * 3600) out[out.length - 1].partial = true;
+  return out;
+}
 /* granularitas otomatis berdasar RENTANG WAKTU — data gersang tetap terbaca,
  * video baru (rentang pendek) tetap dapat rincian harian */
 function granForSpan(days, anchorT) {
@@ -8613,7 +8717,7 @@ function buildDailyChart(h, color, anchorT) {
     updateLegendIp("dailyLegend", false, false, color);
     return;
   }
-  let gran, series;
+  let gran, series, gapNote = false;
   if (state.dailyRange === "1") {
     const hb = hourlyDeltas(h, 24);
     if (hb.length < 2) {
@@ -8627,10 +8731,19 @@ function buildDailyChart(h, color, anchorT) {
       const nd = state.dailyRange === "7" ? 7 : 30;
       const win = sliceWindow(days, nd);
       gran = "day";
+      const clipIdx = dayIndexOf(days[days.length - 1].t - nd * 86400);
       /* bucket harian dari PASANGAN PENGUKURAN NYATA — hari dengan rekaman di dua sisi
        * tampil sebagai Data nyata; hanya hari di tengah celah perekaman yang diberi label */
-      series = realDailyBuckets(win, dayIndexOf(days[days.length - 1].t - nd * 86400));
-      if (series.length < 2) series = interpolatedBuckets(win, gran, null, dayIndexOf(days[days.length - 1].t - nd * 86400));
+      series = realDailyBuckets(win, clipIdx);
+      /* celah perekaman PANJANG di tengah jendela pendek (mis. jangkar arsip lama + rekaman
+       * per jam yang baru berjalan beberapa hari) dulu diinterpolasi → bar harian raksasa
+       * palsu yang menenggelamkan bar riil ("datanya tidak terlihat"). Sekarang: di rentang
+       * pendek hari tengah celah TIDAK diinterpolasi — tampilkan blok pengukuran berjalan saja. */
+      if (series.length >= 2 && dailyGapDays(win, clipIdx) > 0) {
+        const alt = realDailyBucketsNoGap(win, clipIdx);
+        if (alt.length >= 2) { series = alt; gapNote = true; }
+      }
+      if (series.length < 2) series = interpolatedBuckets(win, gran, null, clipIdx);
     } else if (state.dailyRange === "365") {
       const win = sliceWindow(days, 365);
       gran = "week";
@@ -8642,9 +8755,18 @@ function buildDailyChart(h, color, anchorT) {
       series = interpolatedBuckets(days, gran, anchorT, null);
     }
     if (series.length < 2) {
-      wait("Belum cukup data untuk grafik rentang ini.");
-      updateLegendIp("dailyLegend", false, false, color);
-      return;
+      /* fallback terakhir: kurva per jam atas blok yang SUDAH terekam — data nyata,
+       * supaya video yang baru 1 hari terpantau tetap punya grafik di rentang mana pun */
+      const lastT = h.length ? h[h.length - 1].t : null;
+      const t0 = h.length ? h[0].t : null;
+      const hb = lastT != null ? hourlyDeltas(h, Math.max(24, Math.min(24 * 30, Math.ceil((lastT - (t0 || lastT)) / 3600) + 2))) : [];
+      if (hb.length >= 2) { series = hb; gran = "hour"; gapNote = true; }
+      else {
+        const dl = state.dailyRange === "7" ? "7 hari" : state.dailyRange === "30" ? "30 hari" : state.dailyRange === "365" ? "1 tahun" : "sejak rilis";
+        wait(`Grafik ${dl} belum bisa dibuat: pengukuran per jam situs ini baru terekam${t0 ? ` sejak <b>${fmtTs(t0)}</b>` : ""} dan butuh minimal 2 hari kalender perekaman. Grafik ini otomatis terisi begitu rekaman GitHub Actions berjalan. Sementara itu rentang <b>1 hari</b> (per jam) tetap tersedia.`);
+        updateLegendIp("dailyLegend", false, false, color);
+        return;
+      }
     }
   }
   const t = $("#dailyTitle");
@@ -8652,7 +8774,9 @@ function buildDailyChart(h, color, anchorT) {
   const anyIp = series.some((b) => b.ip), anyEst = series.some((b) => b.est), anySplit = series.some((b) => b.split);
   updateLegendIp("dailyLegend", anyEst, anyIp, color, anySplit);
   const hint = $("#dailyHint");
-  if (hint) hint.innerHTML = anySplit && gran === "day"
+  if (hint) hint.innerHTML = gapNote
+    ? `Rentang ini memotong masa <b>tanpa perekaman</b> — hari di tengah celah <b>tidak diinterpolasi</b> pada grafik pendek (dulu dibagi rata sehingga tampak seperti lonjakan palsu); yang tampil hanya blok pengukuran berjalan. Rentang <b>1 tahun</b> &amp; <b>Sejak rilis</b> tetap memakai interpolasi supaya totalnya tetap utuh.`
+    : anySplit && gran === "day"
     ? `Hari berlabel <b>“dibagi rata”</b> = hari tanpa perekaman sama sekali di tengah celah — selisih total antara dua pengukuran nyata di sekelilingnya dibagi rata ke hari-hari itu, jadi jumlah semuanya tetap akurat. Hari dengan perekaman tampil sebagai <b>Data nyata</b> murni.`
     : anyIp && gran !== "hour"
     ? `Segmen putus-putus = <b>interpolasi</b> — hari/pekan/bulan tanpa perekaman diisi dari kurva mulus yang melewati semua titik data nyata (bukan estimasi model). Jumlahkan seluruh nilai = total kenaikan sejak titik awal. Makin rapat arsip (mode <b>“wayback-mass”</b>), makin panjang segmen data nyata.`
