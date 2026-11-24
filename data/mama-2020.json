@@ -1,6 +1,6 @@
 {
- "asOf": "25 Nov, 04:07 KST",
- "captured": 1795547267,
+ "asOf": "25 Nov, 05:10 KST",
+ "captured": 1795551024,
  "source": "Kanal YouTube Mnet (Mnet K-POP) — unggahan panggung resmi [2020 MAMA] (Shorts, kompilasi, behind, countdown & fancam tidak dihitung); viewCount real via API terbuka Return YouTube Dislike API per 24 Nov 2026",
  "srcTag": "[2020 MAMA]",
  "srcYear": 2020,
@@ -21,7 +21,7 @@
  "facts": {
   "acts": 28,
   "videos": 29,
-  "views": 111885105
+  "views": 111885835
  },
  "meta": {
   "artists": 28,
@@ -115,7 +115,7 @@
    "day": 1,
    "order": null,
    "gorder": 5,
-   "views": 6353356,
+   "views": 6353415,
    "stage": "On The Borderline",
    "focus": "",
    "key": "enhypen",
@@ -123,7 +123,7 @@
     {
      "id": "AoyhFtZBAz4",
      "title": "[2020 MAMA] ENHYPEN_Into the I-LAND(Piano Ver.) + Walk the Line + Given-Taken | Mnet 201206 방송",
-     "views": 6353356,
+     "views": 6353415,
      "dur": "",
      "full": true
     }
@@ -135,7 +135,7 @@
    "day": 1,
    "order": null,
    "gorder": 6,
-   "views": 543926,
+   "views": 543929,
    "stage": "Heaven And Hell",
    "focus": "",
    "key": "cravity",
@@ -143,7 +143,7 @@
     {
      "id": "ihaKIiuatfg",
      "title": "[2020 MAMA] CRAVITY_Break all the Rules + DRAMARAMA + Shoot Out | Mnet 201206 방송",
-     "views": 543926,
+     "views": 543929,
      "dur": "",
      "full": true
     }
@@ -155,7 +155,7 @@
    "day": 1,
    "order": null,
    "gorder": 7,
-   "views": 1409350,
+   "views": 1409370,
    "stage": "",
    "focus": "",
    "key": "monstax",
@@ -163,7 +163,7 @@
     {
      "id": "mIDhYkn9bZo",
      "title": "[2020 MAMA] MONSTA X_Love Killa | Mnet 201206 방송",
-     "views": 1409350,
+     "views": 1409370,
      "dur": "",
      "full": true
     }
@@ -175,7 +175,7 @@
    "day": 1,
    "order": null,
    "gorder": 8,
-   "views": 2031782,
+   "views": 2031783,
    "stage": "Total Eclipse",
    "focus": "",
    "key": "ohmygirl",
@@ -183,7 +183,7 @@
     {
      "id": "RI3iuB_Iyl0",
      "title": "[2020 MAMA] OH MY GIRL_Nonstop | Mnet 201206 방송",
-     "views": 2031782,
+     "views": 2031783,
      "dur": "",
      "full": true
     }
@@ -255,7 +255,7 @@
    "day": 1,
    "order": null,
    "gorder": 12,
-   "views": 6555468,
+   "views": 6555509,
    "stage": "",
    "focus": "",
    "key": "ateez",
@@ -263,7 +263,7 @@
     {
      "id": "tQJIszK1EOo",
      "title": "[2020 MAMA] ATEEZ_Dona Eis Requiem(INCEPTION + Answer) | Mnet 201206 방송",
-     "views": 6555468,
+     "views": 6555509,
      "dur": "",
      "full": true
     }
@@ -275,7 +275,7 @@
    "day": 1,
    "order": null,
    "gorder": 13,
-   "views": 6009494,
+   "views": 6009884,
    "stage": "Triangular Fight with THE BOYZ (Juyeon), ATEEZ (San), Stray Kids (Hyunjin)",
    "focus": "",
    "key": "theboyzxateezxstraykids",
@@ -283,7 +283,7 @@
     {
      "id": "3FAHOyL0sog",
      "title": "[2020 MAMA] THE BOYZ X ATEEZ X Stray Kids_Triangular Fight | Mnet 201206 방송",
-     "views": 6009494,
+     "views": 6009884,
      "dur": "",
      "full": true
     }
@@ -362,7 +362,7 @@
    "day": 1,
    "order": null,
    "gorder": 17,
-   "views": 8472027,
+   "views": 8472084,
    "stage": "One-REELER",
    "focus": "",
    "key": "izone",
@@ -370,7 +370,7 @@
     {
      "id": "eQPDSegzu9E",
      "title": "[2020 MAMA] IZ*ONE_Panorama | Mnet 201206 방송",
-     "views": 8472027,
+     "views": 8472084,
      "dur": "",
      "full": true
     }
@@ -442,7 +442,7 @@
    "day": 1,
    "order": null,
    "gorder": 21,
-   "views": 2036831,
+   "views": 2036845,
    "stage": "",
    "focus": "",
    "key": "wayv",
@@ -450,7 +450,7 @@
     {
      "id": "9vOyXgdjJ0E",
      "title": "[2020 MAMA] WayV_Turn Back Time (超时空 回) | Mnet 201206 방송",
-     "views": 2036831,
+     "views": 2036845,
      "dur": "",
      "full": true
     }
@@ -482,7 +482,7 @@
    "day": 1,
    "order": null,
    "gorder": 23,
-   "views": 4803357,
+   "views": 4803388,
    "stage": "",
    "focus": "",
    "key": "nct127",
@@ -490,7 +490,7 @@
     {
      "id": "cq9S6virKEA",
      "title": "[2020 MAMA] NCT 127_Kick It (英雄) | Mnet 201206 방송",
-     "views": 4803357,
+     "views": 4803388,
      "dur": "",
      "full": true
     }
@@ -542,7 +542,7 @@
    "day": 1,
    "order": null,
    "gorder": 26,
-   "views": 2770286,
+   "views": 2770289,
    "stage": "BoA 20th Anniversary Special with (G)I-DLE (Soyeon), OH MY GIRL (YooA), IZ*ONE (Kwon Eun-bi, Lee Chae-yeon, Choi Ye-na, Kim Chae-won)",
    "focus": "",
    "key": "winteraespaxgidlexyooaxizone",
@@ -550,7 +550,7 @@
     {
      "id": "CLYZ_prE97g",
      "title": "WINTER/(G)I-DLE/YooA/IZ*ONE_ID; Peace B+ListenToMyHeart+Tree+Atlantis Princess | Mnet 201206 방송",
-     "views": 2770286,
+     "views": 2770289,
      "dur": "",
      "full": true
     }
@@ -582,7 +582,7 @@
    "day": 1,
    "order": null,
    "gorder": 28,
-   "views": 2798694,
+   "views": 2798805,
    "stage": "On & On",
    "focus": "",
    "key": "bts",
@@ -590,7 +590,7 @@
     {
      "id": "petkdl26Coc",
      "title": "(ENG→KOR) 방탄소년단(BTS) - ON [2020MAMA | 댓글 번역해드립니다]",
-     "views": 2798694,
+     "views": 2798805,
      "dur": "",
      "full": true
     }
