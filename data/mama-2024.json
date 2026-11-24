@@ -1,6 +1,6 @@
 {
- "asOf": "25 Nov, 02:59 KST",
- "captured": 1795543184,
+ "asOf": "25 Nov, 04:07 KST",
+ "captured": 1795547266,
  "source": "Kanal YouTube Mnet (Mnet K-POP) — unggahan panggung resmi [#2024MAMA] (Shorts, kompilasi, behind, countdown & fancam tidak dihitung); viewCount real via API terbuka Return YouTube Dislike API per 24 Nov 2026",
  "srcTag": "[#2024MAMA]",
  "srcYear": 2024,
@@ -30,7 +30,7 @@
  "facts": {
   "acts": 29,
   "videos": 33,
-  "views": 336881607
+  "views": 336899034
  },
  "meta": {
   "artists": 29,
@@ -44,7 +44,7 @@
    "day": 1,
    "order": null,
    "gorder": 1,
-   "views": 6044940,
+   "views": 6045363,
    "stage": "Opening Sequence with TWS, ILLIT, RIIZE",
    "focus": "",
    "key": "twsillitriize",
@@ -59,14 +59,14 @@
     {
      "id": "1QV4sZnPgXE",
      "title": "[#2024MAMA] RIIZE (라이즈) - Kick It (원곡：NCT 127) | Mnet 241122 방송",
-     "views": 2229681,
+     "views": 2229734,
      "dur": "1:40",
      "full": false
     },
     {
      "id": "OsDsyOtFtX4",
      "title": "[#2024MAMA] 아일릿(ILLIT) - Heart Shaker (원곡：TWICE(트와이스)) | Mnet 241122 방송",
-     "views": 2685905,
+     "views": 2686275,
      "dur": "",
      "full": false
     }
@@ -78,7 +78,7 @@
    "day": 1,
    "order": null,
    "gorder": 2,
-   "views": 426905,
+   "views": 426923,
    "stage": "Would You Like To Posse?",
    "focus": "",
    "key": "youngposse",
@@ -86,7 +86,7 @@
     {
      "id": "LRDfOBGEG-o",
      "title": "[#2024MAMA] YOUNG POSSE (영파씨) - ATE THAT + Loading Freestyle + XXL | Mnet 241122 방송",
-     "views": 426905,
+     "views": 426923,
      "dur": "",
      "full": true
     }
@@ -98,7 +98,7 @@
    "day": 1,
    "order": null,
    "gorder": 3,
-   "views": 23651512,
+   "views": 23652946,
    "stage": "Touchdown",
    "focus": "",
    "key": "katseye",
@@ -106,7 +106,7 @@
     {
      "id": "I8erREJ08p8",
      "title": "[#2024MAMA] KATSEYE (캣츠아이) - Debut + Touch | Mnet 241122 방송",
-     "views": 23651512,
+     "views": 23652946,
      "dur": "",
      "full": true
     }
@@ -138,7 +138,7 @@
    "day": 1,
    "order": null,
    "gorder": 5,
-   "views": 4885455,
+   "views": 4885817,
    "stage": "ILLusion IT",
    "focus": "",
    "key": "illit",
@@ -146,7 +146,7 @@
     {
      "id": "IiMSmriHe4I",
      "title": "[#2024MAMA] 아일릿(ILLIT) - Magnetic + Cherish (My Love) | Mnet 241122 방송",
-     "views": 4885455,
+     "views": 4885817,
      "dur": "",
      "full": true
     }
@@ -158,7 +158,7 @@
    "day": 1,
    "order": null,
    "gorder": 6,
-   "views": 2105116,
+   "views": 2105228,
    "stage": "The Destined SunRIIZE",
    "focus": "",
    "key": "riize",
@@ -166,7 +166,7 @@
     {
      "id": "s2A-_rhynAY",
      "title": "[#2024MAMA] RIIZE (라이즈) - Get A Guitar + Boom Boom Bass | Mnet 241122 방송",
-     "views": 2105116,
+     "views": 2105228,
      "dur": "",
      "full": true
     }
@@ -198,7 +198,7 @@
    "day": 2,
    "order": null,
    "gorder": 8,
-   "views": 2875074,
+   "views": 2875127,
    "stage": "What Is Real?",
    "focus": "",
    "key": "yeonjun",
@@ -206,7 +206,7 @@
     {
      "id": "hXPpqsFIGJw",
      "title": "[#2024MAMA] 연준 (YEONJUN) - GGUM | Mnet 241122 방송",
-     "views": 2875074,
+     "views": 2875127,
      "dur": "",
      "full": true
     }
@@ -238,7 +238,7 @@
    "day": 2,
    "order": null,
    "gorder": 10,
-   "views": 5560276,
+   "views": 5560503,
    "stage": "Nice Night Serenade",
    "focus": "",
    "key": "boynextdoor",
@@ -246,7 +246,7 @@
     {
      "id": "pSltSPRWkXc",
      "title": "[#2024MAMA] BOYNEXTDOOR (보이넥스트도어) - Nice Guy (MAMA ver.) + Earth, Wind & Fire | Mnet 241122 방송",
-     "views": 5560276,
+     "views": 5560503,
      "dur": "",
      "full": true
     }
@@ -258,7 +258,7 @@
    "day": 2,
    "order": null,
    "gorder": 11,
-   "views": 1992072,
+   "views": 1992138,
    "stage": "Toenze",
    "focus": "",
    "key": "toenze",
@@ -266,7 +266,7 @@
     {
      "id": "62qfQJabN8g",
      "title": "[#2024MAMA] 자체발광 TOENZE (범규, 휴닝카이 X 제이 X 김태래, 한유진) - 왼손잡이 (MAMA ver.) | Mnet 241122 방송",
-     "views": 1992072,
+     "views": 1992138,
      "dur": "",
      "full": true
     }
@@ -278,7 +278,7 @@
    "day": 2,
    "order": null,
    "gorder": 12,
-   "views": 4594855,
+   "views": 4595112,
    "stage": "Who Dat Girl?",
    "focus": "",
    "key": "izna",
@@ -286,7 +286,7 @@
     {
      "id": "XeFlHMxOhQo",
      "title": "[#2024MAMA] izna (이즈나) - FINAL LOVE SONG + IWALY + DRIP + FAKE IT + IZNA + TIMEBOMB | Mnet 241122 방송",
-     "views": 4594855,
+     "views": 4595112,
      "dur": "",
      "full": true
     }
@@ -298,7 +298,7 @@
    "day": 2,
    "order": null,
    "gorder": 13,
-   "views": 396052,
+   "views": 396063,
    "stage": "Cross The Line with PLAVE",
    "focus": "",
    "key": "leeyoungji",
@@ -306,7 +306,7 @@
     {
      "id": "K2pyE6XnBuU",
      "title": "[#2024MAMA] E JIAH X LEE YOUNG JI X PLAVE - CTL(Cross the Line) + Small Girl | Mnet 241122 방송",
-     "views": 396052,
+     "views": 396063,
      "dur": "",
      "full": true
     }
@@ -318,7 +318,7 @@
    "day": 2,
    "order": null,
    "gorder": 14,
-   "views": 627306,
+   "views": 627320,
    "stage": "",
    "focus": "",
    "key": "plave",
@@ -326,7 +326,7 @@
     {
      "id": "c7xl0hlSbSU",
      "title": "[#2024MAMA] PLAVE (플레이브) - WAY 4 LUV | Mnet 241122 방송",
-     "views": 627306,
+     "views": 627320,
      "dur": "",
      "full": true
     }
@@ -338,7 +338,7 @@
    "day": 2,
    "order": null,
    "gorder": 15,
-   "views": 6641469,
+   "views": 6641919,
    "stage": "Guardians Of The Sun",
    "focus": "",
    "key": "ive",
@@ -346,7 +346,7 @@
     {
      "id": "lfos88tJmew",
      "title": "[#2024MAMA] IVE (아이브) - Accendio + 해야 (HEYA) | Mnet 241122 방송",
-     "views": 6641469,
+     "views": 6641919,
      "dur": "",
      "full": true
     }
@@ -358,7 +358,7 @@
    "day": 2,
    "order": null,
    "gorder": 16,
-   "views": 7413420,
+   "views": 7413930,
    "stage": "They Dream",
    "focus": "",
    "key": "enhypen",
@@ -366,7 +366,7 @@
     {
      "id": "Zy53TwDsGJ4",
      "title": "[#2024MAMA] ENHYPEN - XO(Short ver.) + Brought The Heat Back(MAMA ver.)+Daydream | Mnet 241122 방송",
-     "views": 7413420,
+     "views": 7413930,
      "dur": "",
      "full": true
     }
@@ -378,7 +378,7 @@
    "day": 2,
    "order": null,
    "gorder": 17,
-   "views": 6264475,
+   "views": 6264780,
    "stage": "TREASURE.exe",
    "focus": "treasure",
    "key": "treasure",
@@ -386,7 +386,7 @@
     {
      "id": "62q9vtyvbRg",
      "title": "[#2024MAMA] TREASURE (트레저) - INTRO + KING KONG + RUN | Mnet 241122 방송",
-     "views": 5656329,
+     "views": 5656629,
      "dur": "",
      "full": true
     },
@@ -400,7 +400,7 @@
     {
      "id": "7_9srcVOAZU",
      "title": "[#2024MAMA] TREASURE (트레저) - INTRO + KING KONG | Mnet 241122 방송",
-     "views": 303320,
+     "views": 303325,
      "dur": "",
      "full": false
     }
@@ -412,7 +412,7 @@
    "day": 2,
    "order": null,
    "gorder": 18,
-   "views": 2608355,
+   "views": 2608423,
    "stage": "Savior",
    "focus": "",
    "key": "tomorrowxtogether",
@@ -420,7 +420,7 @@
     {
      "id": "bVH8gRPDOxc",
      "title": "[#2024MAMA] 투모로우바이투게더 (TOMORROW X TOGETHER) - Deja Vu + Over The Moon | Mnet 241122 방송",
-     "views": 2608355,
+     "views": 2608423,
      "dur": "",
      "full": true
     }
@@ -432,7 +432,7 @@
    "day": 2,
    "order": null,
    "gorder": 19,
-   "views": 27556843,
+   "views": 27556946,
    "stage": "Random Game!",
    "focus": "",
    "key": "rosbrunomars",
@@ -440,7 +440,7 @@
     {
      "id": "dgGqD28J6aQ",
      "title": "[#2024MAMA] ROSÉ (로제), Bruno Mars - APT. | Mnet 241122 방송",
-     "views": 27556843,
+     "views": 27556946,
      "dur": "",
      "full": true
     }
@@ -452,7 +452,7 @@
    "day": 3,
    "order": null,
    "gorder": 20,
-   "views": 1599647,
+   "views": 1599677,
    "stage": "Revolution: Change The View",
    "focus": "",
    "key": "ini",
@@ -460,7 +460,7 @@
     {
      "id": "WGmUXcmfWw8",
      "title": "[#2024MAMA] INI (아이엔아이) - LOUD + WMDA(Where My Drums At) | Mnet 241123 방송",
-     "views": 1599647,
+     "views": 1599677,
      "dur": "",
      "full": true
     }
@@ -472,7 +472,7 @@
    "day": 3,
    "order": null,
    "gorder": 21,
-   "views": 1758291,
+   "views": 1758317,
    "stage": "BIBIdi Bobbidi BAM",
    "focus": "",
    "key": "bibi",
@@ -480,7 +480,7 @@
     {
      "id": "8krJjoMyrqo",
      "title": "[#2024MAMA] 비비(BIBI) - 밤양갱 (MAMA ver.) | Mnet 241123 방송",
-     "views": 1758291,
+     "views": 1758317,
      "dur": "",
      "full": true
     }
@@ -492,7 +492,7 @@
    "day": 3,
    "order": null,
    "gorder": 22,
-   "views": 5832264,
+   "views": 5832364,
    "stage": "Shake Sum Body",
    "focus": "",
    "key": "meovv",
@@ -500,7 +500,7 @@
     {
      "id": "a6E-6XX5gHs",
      "title": "[#2024MAMA] MEOVV (미야오) - MEOW + BODY | Mnet 241123 방송",
-     "views": 5832264,
+     "views": 5832364,
      "dur": "",
      "full": true
     }
@@ -512,7 +512,7 @@
    "day": 3,
    "order": null,
    "gorder": 23,
-   "views": 2912950,
+   "views": 2913023,
    "stage": "Kill The Romeo",
    "focus": "",
    "key": "zerobaseone",
@@ -520,7 +520,7 @@
     {
      "id": "zsSwNkqFQnM",
      "title": "[#2024MAMA] ZEROBASEONE (제로베이스원) - KILL THE ROMEO + GOOD SO BAD | Mnet 241123 방송",
-     "views": 2912950,
+     "views": 2913023,
      "dur": "",
      "full": true
     }
@@ -532,7 +532,7 @@
    "day": 3,
    "order": null,
    "gorder": 24,
-   "views": 7301244,
+   "views": 7301443,
    "stage": "Breaking News: The Shout",
    "focus": "",
    "key": "gidle",
@@ -540,7 +540,7 @@
     {
      "id": "H0WnO1Hq2xk",
      "title": "[#2024MAMA] (여자)아이들 ((G)I-DLE)-Super Lady (MAMA ver.)+나는 아픈 건 딱 질색이니까 (MAMA ver.) | Mnet 241123 방송",
-     "views": 7301244,
+     "views": 7301443,
      "dur": "",
      "full": true
     }
@@ -552,7 +552,7 @@
    "day": 3,
    "order": null,
    "gorder": 25,
-   "views": 9783599,
+   "views": 9783759,
    "stage": "Go Back",
    "focus": "",
    "key": "byeonwooseok",
@@ -560,7 +560,7 @@
     {
      "id": "7NbxfrnnWOk",
      "title": "[#2024MAMA] 변우석 (BYEON WOO SEOK) - 소나기 (MAMA ver.) | Mnet 241123 방송",
-     "views": 9783599,
+     "views": 9783759,
      "dur": "",
      "full": true
     }
@@ -572,7 +572,7 @@
    "day": 3,
    "order": null,
    "gorder": 26,
-   "views": 80392887,
+   "views": 80396493,
    "stage": "Übermensch with BIGBANG (Daesung, Taeyang)",
    "focus": "",
    "key": "gdragon",
@@ -580,7 +580,7 @@
     {
      "id": "Ox29z5Nf1Uk",
      "title": "[#2024MAMA] G-DRAGON - 무제(Untitled, 2014)+POWER+HOME SWEET HOME+뱅뱅뱅+FANTASTIC BABY | Mnet 241123 방송",
-     "views": 80392887,
+     "views": 80396493,
      "dur": "",
      "full": true
     }
@@ -592,7 +592,7 @@
    "day": 3,
    "order": null,
    "gorder": 27,
-   "views": 95672828,
+   "views": 95680499,
    "stage": "Übermensch",
    "focus": "",
    "key": "bigbang",
@@ -600,7 +600,7 @@
     {
      "id": "EQsYfiPR9uM",
      "title": "[#2024MAMA] BIGBANG (빅뱅) - 뱅뱅뱅 (BANG BANG BANG) + FANTASTIC BABY | Mnet 241123 방송",
-     "views": 95672828,
+     "views": 95680499,
      "dur": "",
      "full": true
     }
@@ -612,7 +612,7 @@
    "day": 3,
    "order": null,
    "gorder": 28,
-   "views": 16157057,
+   "views": 16157747,
    "stage": "The Multiverse Awakes: Another I",
    "focus": "",
    "key": "aespa",
@@ -620,7 +620,7 @@
     {
      "id": "_LyRdiHwyFA",
      "title": "[#2024MAMA] aespa-Bored!+Spark+Dopamine+UP+Supernova(MAMA ver.)+Whiplash(MAMA ver.) | Mnet 241123 방송",
-     "views": 16157057,
+     "views": 16157747,
      "dur": "",
      "full": true
     }
@@ -632,7 +632,7 @@
    "day": 3,
    "order": null,
    "gorder": 29,
-   "views": 9412877,
+   "views": 9413336,
    "stage": "The Real Maestro: Right Here",
    "focus": "",
    "key": "seventeen",
@@ -640,7 +640,7 @@
     {
      "id": "J21keFquCM8",
      "title": "[#2024MAMA] 세븐틴 (SEVENTEEN) - MAESTRO + Ash + LOVE, MONEY, FAME (Feat. DJ Khaled) | Mnet 241123 방송",
-     "views": 9412877,
+     "views": 9413336,
      "dur": "",
      "full": true
     }
