@@ -1,6 +1,6 @@
 {
- "asOf": "25 Nov, 05:10 KST",
- "captured": 1795551023,
+ "asOf": "25 Nov, 06:06 KST",
+ "captured": 1795554361,
  "source": "Kanal YouTube Mnet (Mnet K-POP) — unggahan panggung resmi [2021 MAMA] (Shorts, kompilasi, behind, countdown & fancam tidak dihitung); viewCount real via API terbuka Return YouTube Dislike API per 24 Nov 2026",
  "srcTag": "[2021 MAMA]",
  "srcYear": 2021,
@@ -23,7 +23,7 @@
  "facts": {
   "acts": 20,
   "videos": 20,
-  "views": 67732507
+  "views": 67732650
  },
  "meta": {
   "artists": 20,
@@ -37,7 +37,7 @@
    "day": 1,
    "order": 1,
    "gorder": 1,
-   "views": 7509904,
+   "views": 7509940,
    "stage": "BlooM The Sound with Stray Kids (Hyunjin), TOMORROW X TOGETHER (Yeonjun), ITZY (Yeji), ENHYPEN (Heeseung), ATEEZ (Wooyoung), aespa (Karina)",
    "focus": "",
    "key": "hyunjinyeonjunyejiheeseungwooyoungkarina",
@@ -45,7 +45,7 @@
     {
      "id": "pZQiHUKZ9aQ",
      "title": "[2021 MAMA] HYUNJIN / YEONJUN / YEJI / HEESEUNG / WOOYOUNG / KARINA - Opening Perf. | Mnet 211211 방송",
-     "views": 7509904,
+     "views": 7509940,
      "dur": "",
      "full": true
     }
@@ -117,7 +117,7 @@
    "day": 1,
    "order": 5,
    "gorder": 5,
-   "views": 1488999,
+   "views": 1489011,
    "stage": "",
    "focus": "",
    "key": "jo1",
@@ -125,7 +125,7 @@
     {
      "id": "2GAa-9CVSbc",
      "title": "[2021 MAMA] JO1 - 僕らの季節 | Mnet 211211 방송",
-     "views": 1488999,
+     "views": 1489011,
      "dur": "",
      "full": true
     }
@@ -277,7 +277,7 @@
    "day": 1,
    "order": 13,
    "gorder": 13,
-   "views": 4949766,
+   "views": 4949800,
    "stage": "Stray Kids World Domination",
    "focus": "",
    "key": "straykids",
@@ -285,7 +285,7 @@
     {
      "id": "P0dRKB3n16E",
      "title": "[2021 MAMA] Stray Kids - CHEESE | Mnet 211211 방송",
-     "views": 4949766,
+     "views": 4949800,
      "dur": "",
      "full": true
     }
@@ -297,7 +297,7 @@
    "day": 1,
    "order": 17,
    "gorder": 14,
-   "views": 2219840,
+   "views": 2219852,
    "stage": "Dipping in a Dream",
    "focus": "",
    "key": "nctdream",
@@ -305,7 +305,7 @@
     {
      "id": "2nRqRAlSXFM",
      "title": "[2021 MAMA] NCT DREAM - Hot Sauce (MAMA ver.) | Mnet 211211 방송",
-     "views": 2219840,
+     "views": 2219852,
      "dur": "",
      "full": true
     }
@@ -317,7 +317,7 @@
    "day": 1,
    "order": 18,
    "gorder": 15,
-   "views": 13930495,
+   "views": 13930512,
    "stage": "1 = 111 (I Miss You)",
    "focus": "",
    "key": "wannaone",
@@ -325,7 +325,7 @@
     {
      "id": "-OBNH4V1Gv4",
      "title": "[2021 MAMA] Wanna One - Energetic + Burn It Up | Mnet 211211 방송",
-     "views": 13930495,
+     "views": 13930512,
      "dur": "",
      "full": true
     }
@@ -337,7 +337,7 @@
    "day": 1,
    "order": 19,
    "gorder": 16,
-   "views": 6194241,
+   "views": 6194242,
    "stage": "Oh My Gosh! We Are On Another Level",
    "focus": "",
    "key": "aespa",
@@ -345,7 +345,7 @@
     {
      "id": "AATk0KprW-8",
      "title": "[2021 MAMA] aespa - Savage | Mnet 211211 방송",
-     "views": 6194241,
+     "views": 6194242,
      "dur": "",
      "full": true
     }
@@ -377,7 +377,7 @@
    "day": 1,
    "order": 21,
    "gorder": 18,
-   "views": 1943703,
+   "views": 1943721,
    "stage": "Eternal Love",
    "focus": "",
    "key": "nct127",
@@ -385,7 +385,7 @@
     {
      "id": "LqREocAq0To",
      "title": "[2021 MAMA] NCT 127 - Favorite (Vampire) | Mnet 211211 방송",
-     "views": 1943703,
+     "views": 1943721,
      "dur": "",
      "full": true
     }
@@ -397,7 +397,7 @@
    "day": 1,
    "order": null,
    "gorder": 19,
-   "views": 3772575,
+   "views": 3772588,
    "stage": "",
    "focus": "",
    "key": "streetwomanfighter",
@@ -405,7 +405,7 @@
     {
      "id": "GTURER3p_d4",
      "title": "[2021 MAMA] STREET WOMAN FIGHTER | Mnet 211211 방송",
-     "views": 3772575,
+     "views": 3772588,
      "dur": "",
      "full": true
     }
