@@ -31,8 +31,8 @@
      "best": null
     }
    },
-   "chartDate": "2026-11-24",
-   "updated": 1795536916,
+   "chartDate": "2026-11-25",
+   "updated": 1795561519,
    "lastError": null
   },
   "billboard_global_excl_us": {
@@ -65,8 +65,8 @@
      "best": null
     }
    },
-   "updated": 1795536918,
-   "chartDate": "2026-11-24",
+   "updated": 1795561521,
+   "chartDate": "2026-11-25",
    "lastError": null
   },
   "spotify_global_200": {
@@ -82,10 +82,10 @@
      "best": null
     }
    },
-   "chartDate": "2026-11-22",
-   "updated": 1795536920,
+   "chartDate": "2026-11-23",
+   "updated": 1795561523,
    "lastError": null
   }
  },
- "updated": 1795557976
+ "updated": 1795561523
 }
