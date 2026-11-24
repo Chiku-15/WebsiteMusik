@@ -1,6 +1,6 @@
 {
- "asOf": "25 Nov, 01:14 KST",
- "captured": 1795536870,
+ "asOf": "25 Nov, 01:24 KST",
+ "captured": 1795537462,
  "source": "Kanal YouTube Mnet (Mnet K-POP) — unggahan panggung resmi [2021 MAMA] (Shorts, kompilasi, behind, countdown & fancam tidak dihitung); viewCount real via API terbuka Return YouTube Dislike API per 24 Nov 2026",
  "srcTag": "[2021 MAMA]",
  "srcYear": 2021,
@@ -23,7 +23,7 @@
  "facts": {
   "acts": 20,
   "videos": 20,
-  "views": 67731128
+  "views": 67731210
  },
  "meta": {
   "artists": 20,
@@ -37,7 +37,7 @@
    "day": 1,
    "order": 1,
    "gorder": 1,
-   "views": 7509627,
+   "views": 7509637,
    "stage": "BlooM The Sound with Stray Kids (Hyunjin), TOMORROW X TOGETHER (Yeonjun), ITZY (Yeji), ENHYPEN (Heeseung), ATEEZ (Wooyoung), aespa (Karina)",
    "focus": "",
    "key": "hyunjinyeonjunyejiheeseungwooyoungkarina",
@@ -45,7 +45,7 @@
     {
      "id": "pZQiHUKZ9aQ",
      "title": "[2021 MAMA] HYUNJIN / YEONJUN / YEJI / HEESEUNG / WOOYOUNG / KARINA - Opening Perf. | Mnet 211211 방송",
-     "views": 7509627,
+     "views": 7509637,
      "dur": "",
      "full": true
     }
@@ -77,7 +77,7 @@
    "day": 1,
    "order": 3,
    "gorder": 3,
-   "views": 1334667,
+   "views": 1334664,
    "stage": "One Dream",
    "focus": "",
    "key": "ini",
@@ -85,7 +85,7 @@
     {
      "id": "vuvII4hn8oQ",
      "title": "[2021 MAMA] INI - Rocketeer | Mnet 211211 방송",
-     "views": 1334667,
+     "views": 1334664,
      "dur": "",
      "full": true
     }
@@ -97,7 +97,7 @@
    "day": 1,
    "order": 4,
    "gorder": 4,
-   "views": 1031682,
+   "views": 1031681,
    "stage": "One Dream with INI (Kimura Masaya), JO1 (Kawashiri Ren)",
    "focus": "",
    "key": "kimuramasayainikawashirirenjo1",
@@ -105,7 +105,7 @@
     {
      "id": "a0DORHmq5Os",
      "title": "[2021 MAMA] INI(아이엔아이) + JO1(제이오원) -  One Dream (Rocketeer + 僕らの季節) | Mnet 211211 방송",
-     "views": 1031682,
+     "views": 1031681,
      "dur": "",
      "full": true
     }
@@ -137,7 +137,7 @@
    "day": 1,
    "order": 6,
    "gorder": 6,
-   "views": 478134,
+   "views": 478174,
    "stage": "Mission: Be A Good Kitty",
    "focus": "",
    "key": "itzy",
@@ -145,7 +145,7 @@
     {
      "id": "hKYID89dGd0",
      "title": "(ENG→KOR) “뭔 말을 해야 되냐, 이건… 걍… 오졌어” ITZY(있지) - LOCO + 마. 피. 아. In the morning [2021 MAMA 댓글 번역]",
-     "views": 478134,
+     "views": 478174,
      "dur": "",
      "full": true
     }
@@ -157,7 +157,7 @@
    "day": 1,
    "order": 7,
    "gorder": 7,
-   "views": 199112,
+   "views": 199113,
    "stage": "Sailing into the Autumn",
    "focus": "",
    "key": "jannabi",
@@ -165,7 +165,7 @@
     {
      "id": "-z_Q5rzD4Wk",
      "title": "[2021 MAMA]JANNABI-A thought on an autumn night+I Know Where The Rainbow has Fallen | Mnet 211211 방송",
-     "views": 199112,
+     "views": 199113,
      "dur": "",
      "full": true
     }
@@ -177,7 +177,7 @@
    "day": 1,
    "order": 8,
    "gorder": 8,
-   "views": 490592,
+   "views": 490591,
    "stage": "Shout Out If Hip Hop",
    "focus": "",
    "key": "gwangiljoxgaeko",
@@ -185,7 +185,7 @@
     {
      "id": "RkjHU14q-Sw",
      "title": "[2021 MAMA] Gwang-il Jo X Gaeko - Waterbomb + GARION (MAMA ver.) | Mnet 211211 방송",
-     "views": 490592,
+     "views": 490591,
      "dur": "",
      "full": true
     }
@@ -197,7 +197,7 @@
    "day": 1,
    "order": 9,
    "gorder": 9,
-   "views": 1293667,
+   "views": 1293664,
    "stage": "",
    "focus": "",
    "key": "showmethemoney10",
@@ -205,7 +205,7 @@
     {
      "id": "8CvfzgoT5Rc",
      "title": "[2021 MAMA] SHOW ME THE MONEY 10TH - Resume +82 (MAMA ver.) | Mnet 211211 방송",
-     "views": 1293667,
+     "views": 1293664,
      "dur": "",
      "full": true
     }
@@ -217,7 +217,7 @@
    "day": 1,
    "order": 10,
    "gorder": 10,
-   "views": 3593612,
+   "views": 3593623,
    "stage": "Welcome to Universe",
    "focus": "",
    "key": "nctu",
@@ -225,7 +225,7 @@
     {
      "id": "eBOiX1RcKGA",
      "title": "[2021 MAMA] NCT U - Universe (Let's Play Ball) | Mnet 211211 방송",
-     "views": 3593612,
+     "views": 3593623,
      "dur": "",
      "full": true
     }
@@ -237,7 +237,7 @@
    "day": 1,
    "order": 11,
    "gorder": 11,
-   "views": 2405847,
+   "views": 2405843,
    "stage": "The Real Journey Begins",
    "focus": "",
    "key": "ateez",
@@ -245,7 +245,7 @@
     {
      "id": "IPWU_e5VX48",
      "title": "[2021 MAMA] ATEEZ - The Real (Heung ver.) | Mnet 211211 방송",
-     "views": 2405847,
+     "views": 2405843,
      "dur": "",
      "full": true
     }
@@ -317,7 +317,7 @@
    "day": 1,
    "order": 18,
    "gorder": 15,
-   "views": 13930133,
+   "views": 13930149,
    "stage": "1 = 111 (I Miss You)",
    "focus": "",
    "key": "wannaone",
@@ -325,7 +325,7 @@
     {
      "id": "-OBNH4V1Gv4",
      "title": "[2021 MAMA] Wanna One - Energetic + Burn It Up | Mnet 211211 방송",
-     "views": 13930133,
+     "views": 13930149,
      "dur": "",
      "full": true
     }
@@ -377,7 +377,7 @@
    "day": 1,
    "order": 21,
    "gorder": 18,
-   "views": 1943665,
+   "views": 1943681,
    "stage": "Eternal Love",
    "focus": "",
    "key": "nct127",
@@ -385,7 +385,7 @@
     {
      "id": "LqREocAq0To",
      "title": "[2021 MAMA] NCT 127 - Favorite (Vampire) | Mnet 211211 방송",
-     "views": 1943665,
+     "views": 1943681,
      "dur": "",
      "full": true
     }
