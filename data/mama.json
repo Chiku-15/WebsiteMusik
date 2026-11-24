@@ -1,12 +1,12 @@
 {
- "asOf": "25 Nov, 00:12 KST",
- "captured": 1795533176,
- "source": "Kanal YouTube Mnet — unggahan panggung [#2026MAMA] (Shorts tidak dihitung); urutan naik panggung Hari 1 mengikuti judul & urutan lagu unggahan Mnet (‘스트릿 월드 파이터 : 디렉터스 워 X BABYMONSTER - A MUSIC INTERSTELLAR’, DOCKING COMPLETE naik duluan) — full stage itu dikreditkan Mnet ke Street World Fighter lebih dulu, jadi dihitung di kartu SWF; kartu izna = seluruh video panggung ‘GIRLS NEVER STOP’ (KiiiKiii digabung ke sini — Mnet tidak mengunggah video terpisah untuknya; klip ‘갑자기’-nya I.O.I tetap kartu sendiri)",
+ "asOf": "23 Nov, 23:17 KST",
+ "captured": 1795443422,
+ "source": "Kanal YouTube Mnet — unggahan panggung [#2026MAMA] (Shorts tidak dihitung); urutan naik panggung Hari 1 mengikuti judul & urutan lagu unggahan Mnet (‘스트릿 월드 파이터 : 디렉터스 워 X BABYMONSTER - A MUSIC INTERSTELLAR’, DOCKING COMPLETE naik duluan) — full stage itu dikreditkan Mnet ke Street World Fighter lebih dulu, jadi dihitung di kartu SWF; kartu ‘izna x KiiiKiii’ = seluruh video panggung ‘GIRLS NEVER STOP’ (KiiiKiii digabung ke sini — Mnet tidak mengunggah video terpisah untuknya; klip ‘갑자기’-nya I.O.I tetap kartu sendiri); label versi per lagu (MAMA Ver./Band Ver./Korean Ver. dll) dibaca dari judul asli unggahan Mnet",
  "venue": "Kyocera Dome Osaka · 20–21 November 2026",
  "facts": {
   "acts": 26,
   "videos": 71,
-  "views": 81259607
+  "views": 71898622
  },
  "days": [
   {
@@ -25,16 +25,20 @@
    "day": 1,
    "order": 2,
    "gorder": 2,
-   "views": 5653994,
+   "views": 4970377,
    "stage": "A MUSIC INTERSTELLAR",
    "focus": "babymonster",
    "clips": [
     {
      "id": "iIaw6HvS09Y",
      "title": "DESERVE + 춤(CHOOM)",
-     "views": 5653994,
+     "views": 4970377,
      "dur": "5:32",
-     "full": false
+     "full": false,
+     "vers": {
+      "DESERVE": "MAMA Ver.",
+      "춤(CHOOM)": "MAMA Ver."
+     }
     }
    ]
   },
@@ -44,21 +48,21 @@
    "day": 1,
    "order": 1,
    "gorder": 1,
-   "views": 3525641,
+   "views": 3390320,
    "stage": "A MUSIC INTERSTELLAR with BABYMONSTER",
    "focus": "",
    "clips": [
     {
      "id": "3JvKNtTN3jk",
      "title": "Full stage · ‘A MUSIC INTERSTELLAR’",
-     "views": 3355063,
+     "views": 3245036,
      "dur": "8:19",
      "full": true
     },
     {
      "id": "7IzRrfKEfpw",
      "title": "DOCKING COMPLETE",
-     "views": 170578,
+     "views": 145284,
      "dur": "2:42",
      "full": false
     }
@@ -70,28 +74,32 @@
    "day": 1,
    "order": 3,
    "gorder": 3,
-   "views": 1807761,
+   "views": 1690476,
    "stage": "NEW STAR WARS",
    "focus": "",
    "clips": [
     {
      "id": "2UitQkvkNqI",
      "title": "Full stage · ‘NEW STAR WARS’",
-     "views": 1178619,
+     "views": 1111014,
      "dur": "9:10",
      "full": true
     },
     {
      "id": "0lJNbLrUecg",
-     "title": "Full stage · ‘NEW STAR WARS’",
-     "views": 323012,
+     "title": "Bananas + HOOK + 타! + SUN KISS",
+     "views": 312431,
      "dur": "7:00",
-     "full": false
+     "full": false,
+     "vers": {
+      "Bananas": "MAMA Ver.",
+      "SUN KISS": "MAMA Ver."
+     }
     },
     {
      "id": "zWcqximR6T0",
      "title": "That That",
-     "views": 306130,
+     "views": 267031,
      "dur": "2:11",
      "full": false
     }
@@ -103,30 +111,36 @@
    "day": 1,
    "order": 4,
    "gorder": 4,
-   "views": 4747694,
+   "views": 4355195,
    "stage": "Here we are",
    "focus": "",
    "clips": [
     {
      "id": "XW0jCabK8vU",
      "title": "With + LOVE ATTACK",
-     "views": 3845576,
+     "views": 3551482,
      "dur": "6:15",
      "full": true
     },
     {
      "id": "FzC51U9aB4s",
      "title": "With",
-     "views": 310122,
+     "views": 299577,
      "dur": "2:52",
-     "full": false
+     "full": false,
+     "vers": {
+      "With": "MAMA Ver."
+     }
     },
     {
      "id": "Nja097GTVXE",
      "title": "LOVE ATTACK",
-     "views": 591996,
+     "views": 504136,
      "dur": "3:23",
-     "full": false
+     "full": false,
+     "vers": {
+      "LOVE ATTACK": "MAMA Ver."
+     }
     }
    ]
   },
@@ -136,28 +150,28 @@
    "day": 1,
    "order": 5,
    "gorder": 5,
-   "views": 2266241,
+   "views": 1515250,
    "stage": "少年BEAST",
    "focus": "",
    "clips": [
     {
      "id": "TKwLRxhesnQ",
      "title": "Full stage · ‘少年BEAST’",
-     "views": 813473,
+     "views": 678084,
      "dur": "6:50",
      "full": true
     },
     {
      "id": "mfzws4hBQ5Q",
      "title": "Diamond Hour + Raw Flame",
-     "views": 634475,
+     "views": 372436,
      "dur": "4:00",
      "full": false
     },
     {
      "id": "USErbT-TpMs",
      "title": "BORN DIRE",
-     "views": 818293,
+     "views": 464730,
      "dur": "2:50",
      "full": false
     }
@@ -169,30 +183,36 @@
    "day": 1,
    "order": 6,
    "gorder": 6,
-   "views": 3607623,
+   "views": 3288013,
    "stage": "ICONIC FORCE",
    "focus": "",
    "clips": [
     {
      "id": "9KPXhIiRn2U",
      "title": "ICONIC HEART + RUDE!",
-     "views": 3145116,
+     "views": 2893941,
      "dur": "6:28",
      "full": true
     },
     {
      "id": "i6bW_HTcYeM",
      "title": "ICONIC HEART",
-     "views": 157123,
+     "views": 117782,
      "dur": "3:32",
-     "full": false
+     "full": false,
+     "vers": {
+      "ICONIC HEART": "Korean Ver."
+     }
     },
     {
      "id": "sLYoWIWTZ8U",
      "title": "RUDE!",
-     "views": 305384,
+     "views": 276290,
      "dur": "2:52",
-     "full": false
+     "full": false,
+     "vers": {
+      "RUDE!": "MAMA Ver."
+     }
     }
    ]
   },
@@ -202,16 +222,20 @@
    "day": 1,
    "order": 7,
    "gorder": 7,
-   "views": 227312,
+   "views": 209171,
    "stage": "FULL COUNT",
    "focus": "",
    "clips": [
     {
      "id": "7x1ANdAOjIY",
      "title": "You Know What To Do + All 4 U",
-     "views": 227312,
+     "views": 209171,
      "dur": "5:01",
-     "full": false
+     "full": false,
+     "vers": {
+      "You Know What To Do": "MAMA Ver.",
+      "All 4 U": "MAMA Ver."
+     }
     }
    ]
   },
@@ -221,30 +245,34 @@
    "day": 1,
    "order": 8,
    "gorder": 8,
-   "views": 5316861,
+   "views": 4845016,
    "stage": "SE.A.L : Secret Of Agent Love",
    "focus": "",
    "clips": [
     {
      "id": "a7xzBj-vYQ8",
      "title": "Full stage · ‘SE.A.L : Secret Of Agent Love’",
-     "views": 4638746,
+     "views": 4252121,
      "dur": "5:54",
      "full": true
     },
     {
      "id": "_IX6zWGr9gk",
      "title": "It′s Me",
-     "views": 499544,
+     "views": 422324,
      "dur": "2:01",
-     "full": false
+     "full": false,
+     "vers": {
+      "It′s Me": "MAMA Ver."
+     }
     },
     {
      "id": "26Jb6BZ2ga4",
      "title": "D.B : SECRET AGENT + 체포하겠어",
-     "views": 178571,
+     "views": 170571,
      "dur": "3:53",
-     "full": false
+     "full": false,
+     "vers": {}
     }
    ]
   },
@@ -254,30 +282,36 @@
    "day": 1,
    "order": 9,
    "gorder": 9,
-   "views": 766632,
+   "views": 716789,
    "stage": "I(愛) SPY",
    "focus": "",
    "clips": [
     {
      "id": "f5zeVTLO9sA",
      "title": "Everglow + I SPY",
-     "views": 588542,
+     "views": 549870,
      "dur": "6:34",
      "full": true
     },
     {
      "id": "f0BiLdY8LDE",
      "title": "Everglow",
-     "views": 66135,
+     "views": 63193,
      "dur": "3:47",
-     "full": false
+     "full": false,
+     "vers": {
+      "Everglow": "MAMA Ver."
+     }
     },
     {
      "id": "NwgEZfm9VFs",
      "title": "I SPY",
-     "views": 111955,
+     "views": 103726,
      "dur": "2:45",
-     "full": false
+     "full": false,
+     "vers": {
+      "I SPY": "MAMA Ver."
+     }
     }
    ]
   },
@@ -287,35 +321,35 @@
    "day": 1,
    "order": 10,
    "gorder": 10,
-   "views": 1968255,
+   "views": 1837615,
    "stage": "MUTANTS’ PARTY with ZEROBASEONE (Kim Tae-rae), CORTIS (Martin, Seonghyeon), ALLDAY PROJECT (Woochan), Hearts2Hearts (Yuha), WOODZ",
    "focus": "",
    "clips": [
     {
      "id": "fyBnlSRxySg",
      "title": "내 낡은 서랍 속의 바다 + 왼손잡이",
-     "views": 652729,
+     "views": 568110,
      "dur": "10:56",
      "full": true
     },
     {
      "id": "BEOkuAZwfXg",
      "title": "내 낡은 서랍 속의 바다",
-     "views": 135579,
+     "views": 131227,
      "dur": "7:17",
      "full": false
     },
     {
      "id": "FELp5S31uJU",
      "title": "왼손잡이",
-     "views": 1064159,
+     "views": 1025692,
      "dur": "3:39",
      "full": false
     },
     {
      "id": "BmmpLVVcpZ0",
      "title": "내 낡은 서랍 속의 바다 + 왼손잡이 · 4K",
-     "views": 115788,
+     "views": 112586,
      "dur": "10:56",
      "full": false
     }
@@ -327,35 +361,42 @@
    "day": 1,
    "order": 11,
    "gorder": 11,
-   "views": 2525364,
+   "views": 2184824,
    "stage": "BACK TO THE REAL",
    "focus": "treasure",
    "clips": [
     {
      "id": "3D8IjUemw1c",
      "title": "Full stage · ‘BACK TO THE REAL’",
-     "views": 1596809,
+     "views": 1325686,
      "dur": "6:30",
      "full": true
     },
     {
      "id": "5jnLmnb7dZk",
      "title": "IF I",
-     "views": 97200,
+     "views": 92524,
      "dur": "2:51",
-     "full": false
+     "full": false,
+     "vers": {
+      "IF I": "MAMA Ver."
+     }
     },
     {
      "id": "G0jizVgFNIM",
      "title": "FREE YØUR MIND + SHOCK",
-     "views": 151884,
+     "views": 144639,
      "dur": "3:40",
-     "full": false
+     "full": false,
+     "vers": {
+      "FREE YØUR MIND": "Band Ver.",
+      "SHOCK": "Band Ver."
+     }
     },
     {
      "id": "mYjA50Wy-Nc",
      "title": "Full stage · ‘BACK TO THE REAL’ · 4K",
-     "views": 679471,
+     "views": 621975,
      "dur": "6:31",
      "full": false
     }
@@ -367,16 +408,19 @@
    "day": 1,
    "order": 12,
    "gorder": 12,
-   "views": 880467,
+   "views": 791392,
    "stage": "STILL THE BADDEST",
    "focus": "",
    "clips": [
     {
      "id": "_a3wgovmNc8",
      "title": "CRASH",
-     "views": 880467,
+     "views": 791392,
      "dur": "3:11",
-     "full": false
+     "full": false,
+     "vers": {
+      "CRASH": "MAMA Ver."
+     }
     }
    ]
   },
@@ -386,30 +430,38 @@
    "day": 1,
    "order": 13,
    "gorder": 13,
-   "views": 7966913,
+   "views": 7054296,
    "stage": "STILL THE BADDEST with ALLDAY PROJECT (Annie, Bailey, Youngseo)",
    "focus": "",
    "clips": [
     {
      "id": "_Kfx4L0p3SI",
      "title": "Full stage · ‘STILL THE BADDEST’",
-     "views": 3505927,
+     "views": 3112329,
      "dur": "10:47",
      "full": true
     },
     {
      "id": "bLzWombcRLU",
      "title": "SAY IT TO MY FACE + ICONIC",
-     "views": 918271,
+     "views": 829136,
      "dur": "3:39",
-     "full": false
+     "full": false,
+     "vers": {
+      "SAY IT TO MY FACE": "MAMA Ver.",
+      "ICONIC": "MAMA Ver."
+     }
     },
     {
      "id": "4Y_tDLBs8Pw",
      "title": "Fire + 내가 제일 잘 나가",
-     "views": 3542715,
+     "views": 3112831,
      "dur": "3:33",
-     "full": false
+     "full": false,
+     "vers": {
+      "Fire": "MAMA Ver.",
+      "내가 제일 잘 나가": "MAMA Ver."
+     }
     }
    ]
   },
@@ -419,42 +471,42 @@
    "day": 1,
    "order": 14,
    "gorder": 14,
-   "views": 4612000,
+   "views": 4189928,
    "stage": "PARADISE OF DUNE",
    "focus": "",
    "clips": [
     {
      "id": "n9iu72mjil0",
      "title": "Full stage · ‘PARADISE OF DUNE’",
-     "views": 2762282,
+     "views": 2505421,
      "dur": "11:33",
      "full": true
     },
     {
      "id": "mYuGfSa1E6A",
      "title": "I Want You",
-     "views": 313557,
+     "views": 286618,
      "dur": "4:32",
      "full": false
     },
     {
      "id": "glURXZmyTI8",
      "title": "Big Girls Don't Cry + Knife",
-     "views": 529092,
+     "views": 474662,
      "dur": "4:00",
      "full": false
     },
     {
      "id": "rBbQ32y7Xm0",
      "title": "Bloody Paradise",
-     "views": 516637,
+     "views": 471348,
      "dur": "3:02",
      "full": false
     },
     {
      "id": "BaDslhYJRp4",
      "title": "Full stage · ‘PARADISE OF DUNE’ · 4K",
-     "views": 490432,
+     "views": 451879,
      "dur": "11:34",
      "full": false
     }
@@ -466,63 +518,74 @@
    "day": 2,
    "order": 1,
    "gorder": 15,
-   "views": 606709,
+   "views": 521377,
    "stage": "우리는 지금 신세계로 간다 (僕らは今、新世界へ)",
    "focus": "",
    "clips": [
     {
      "id": "YIMaI1j6l-8",
      "title": "Full stage · ‘우리는 지금 신세계로 간다 (僕らは今、新世界へ)’",
-     "views": 354800,
+     "views": 310149,
      "dur": "5:09",
      "full": true
     },
     {
      "id": "2c62JSYxXnA",
      "title": "新世界(SHINSEKAI) + KO1KEYZ",
-     "views": 89504,
+     "views": 80610,
      "dur": "3:06",
-     "full": false
+     "full": false,
+     "vers": {
+      "新世界(SHINSEKAI)": "Korean ver.",
+      "KO1KEYZ": "Korean ver."
+     }
     },
     {
      "id": "7zAjKMijlWU",
      "title": "White Love",
-     "views": 162405,
+     "views": 130618,
      "dur": "1:58",
-     "full": false
+     "full": false,
+     "vers": {
+      "White Love": "Korean ver."
+     }
     }
    ]
   },
   {
-   "name": "izna",
+   "name": "izna x KiiiKiii",
    "ko": "이즈나",
    "day": 2,
    "order": 2,
    "gorder": 16,
-   "views": 1916336,
+   "views": 1776657,
    "stage": "GIRLS NEVER STOP with KiiiKiii, I.O.I (Nayoung, Yoojung, Somi)",
    "focus": "",
    "clips": [
     {
      "id": "Zg8RGFW3sr0",
      "title": "Full stage · ‘GIRLS NEVER STOP’",
-     "views": 1336673,
+     "views": 1244344,
      "dur": "11:27",
      "full": true
     },
     {
      "id": "6E0VuaxUoQE",
      "title": "Bad Girl Good Girl + The Boys + 라비앙로즈(La Vie en Rose)",
-     "views": 238354,
+     "views": 219037,
      "dur": "2:17",
      "full": false
     },
     {
      "id": "w3Tbt_CMvXs",
      "title": "404 (New Era) + METRONOME",
-     "views": 341309,
+     "views": 313276,
      "dur": "4:34",
-     "full": false
+     "full": false,
+     "vers": {
+      "404 (New Era)": "MAMA Ver.",
+      "METRONOME": "MAMA Ver."
+     }
     }
    ]
   },
@@ -532,14 +595,14 @@
    "day": 2,
    "order": 3,
    "gorder": 17,
-   "views": 628200,
+   "views": 555941,
    "stage": "GIRLS NEVER STOP with izna, KiiiKiii",
    "focus": "",
    "clips": [
     {
      "id": "ZIgbTMs1eX0",
      "title": "갑자기",
-     "views": 628200,
+     "views": 555941,
      "dur": "4:26",
      "full": false
     }
@@ -551,16 +614,19 @@
    "day": 2,
    "order": 4,
    "gorder": 18,
-   "views": 722163,
+   "views": 634841,
    "stage": "개와 늑대의 시간",
    "focus": "",
    "clips": [
     {
      "id": "RsEfO9HD1-A",
      "title": "Good Boy",
-     "views": 722163,
+     "views": 634841,
      "dur": "3:39",
-     "full": false
+     "full": false,
+     "vers": {
+      "Good Boy": "MAMA Ver."
+     }
     }
    ]
   },
@@ -570,28 +636,28 @@
    "day": 2,
    "order": 5,
    "gorder": 19,
-   "views": 4585606,
+   "views": 4047107,
    "stage": "MAMA:CORTIS about to TNT",
    "focus": "",
    "clips": [
     {
      "id": "ust4rA6wK9E",
      "title": "REDRED + TNT",
-     "views": 4047893,
+     "views": 3615956,
      "dur": "6:15",
      "full": true
     },
     {
      "id": "E6enZitPATw",
      "title": "REDRED",
-     "views": 356730,
+     "views": 285624,
      "dur": "3:00",
      "full": false
     },
     {
      "id": "37sl4AGWO9Q",
      "title": "TNT",
-     "views": 180983,
+     "views": 145527,
      "dur": "3:14",
      "full": false
     }
@@ -603,30 +669,37 @@
    "day": 2,
    "order": 6,
    "gorder": 20,
-   "views": 2915578,
+   "views": 2684825,
    "stage": "I'M ANYONE",
    "focus": "",
    "clips": [
     {
      "id": "XlDMWVqYfqg",
      "title": "Full stage · ‘I'M ANYONE’",
-     "views": 2671841,
+     "views": 2462809,
      "dur": "5:29",
      "full": true
     },
     {
      "id": "1XFI-qTSt_c",
      "title": "POP! (Intro) + BABY ANGEL",
-     "views": 133033,
+     "views": 119394,
      "dur": "3:24",
-     "full": false
+     "full": false,
+     "vers": {
+      "POP! (Intro)": "MAMA Ver.",
+      "BABY ANGEL": "MAMA Ver."
+     }
     },
     {
      "id": "MA3IESn9Dqo",
      "title": "ABCD",
-     "views": 110704,
+     "views": 102622,
      "dur": "2:06",
-     "full": false
+     "full": false,
+     "vers": {
+      "ABCD": "MAMA Ver."
+     }
     }
    ]
   },
@@ -636,28 +709,28 @@
    "day": 2,
    "order": 7,
    "gorder": 21,
-   "views": 354601,
+   "views": 323913,
    "stage": "The Next Course",
    "focus": "",
    "clips": [
     {
      "id": "2_VEINOSqtE",
      "title": "Full stage · ‘The Next Course’",
-     "views": 255758,
+     "views": 233332,
      "dur": "7:36",
      "full": true
     },
     {
      "id": "O6qTamopoMI",
      "title": "TOP 5",
-     "views": 54334,
+     "views": 49212,
      "dur": "3:14",
      "full": false
     },
     {
      "id": "Rf0sUnTXr34",
-     "title": "Full stage · ‘The Next Course’",
-     "views": 44509,
+     "title": "RUN (with 다이나믹 듀오) + UNDEAD + The Next Course",
+     "views": 41369,
      "dur": "4:22",
      "full": false
     }
@@ -669,21 +742,21 @@
    "day": 2,
    "order": 8,
    "gorder": 22,
-   "views": 557898,
+   "views": 501310,
    "stage": "HI MY WORLD, BYE MY LOVE with HWASA",
    "focus": "",
    "clips": [
     {
      "id": "dRMoSstqGqw",
      "title": "Full stage · ‘HI MY WORLD, BYE MY LOVE’",
-     "views": 441858,
+     "views": 401827,
      "dur": "10:36",
      "full": true
     },
     {
      "id": "b-ivUp5KmrU",
      "title": "Come into my world!",
-     "views": 116040,
+     "views": 99483,
      "dur": "4:27",
      "full": false
     }
@@ -695,14 +768,14 @@
    "day": 2,
    "order": 9,
    "gorder": 23,
-   "views": 1296796,
+   "views": 1043786,
    "stage": "HI MY WORLD, BYE MY LOVE",
    "focus": "",
    "clips": [
     {
      "id": "vvJIhvxkAjo",
      "title": "So Cute + Good Goodbye",
-     "views": 1296796,
+     "views": 1043786,
      "dur": "6:09",
      "full": false
     }
@@ -714,35 +787,41 @@
    "day": 2,
    "order": 10,
    "gorder": 24,
-   "views": 4598207,
+   "views": 3980419,
    "stage": "MY WORLD, MY RULES",
    "focus": "",
    "clips": [
     {
      "id": "o0MlNWgDjaM",
      "title": "Saki + SPAGHETTI",
-     "views": 3282806,
+     "views": 2827006,
      "dur": "7:20",
      "full": true
     },
     {
      "id": "sOh8cxcu820",
      "title": "Saki",
-     "views": 187434,
+     "views": 169902,
      "dur": "4:00",
-     "full": false
+     "full": false,
+     "vers": {
+      "Saki": "MAMA Ver."
+     }
     },
     {
      "id": "Yq8rkM9PR_c",
      "title": "SPAGHETTI",
-     "views": 432210,
+     "views": 389774,
      "dur": "3:20",
-     "full": false
+     "full": false,
+     "vers": {
+      "SPAGHETTI": "MAMA Ver."
+     }
     },
     {
      "id": "6vUEG2jpUnM",
      "title": "Saki + SPAGHETTI · 4K",
-     "views": 695757,
+     "views": 593737,
      "dur": "7:25",
      "full": false
     }
@@ -754,28 +833,28 @@
    "day": 2,
    "order": 11,
    "gorder": 25,
-   "views": 3506451,
+   "views": 3079243,
    "stage": "IVE thrIVE",
    "focus": "",
    "clips": [
     {
      "id": "oRA3eTWh5Jk",
      "title": "Full stage · ‘IVE thrIVE’",
-     "views": 2870555,
+     "views": 2511368,
      "dur": "6:13",
      "full": true
     },
     {
      "id": "wX93GGEMwgI",
      "title": "SNAKESKIN + BLACKHOLE",
-     "views": 218043,
+     "views": 203319,
      "dur": "4:10",
      "full": false
     },
     {
      "id": "Luov2TyDRKo",
      "title": "BANG BANG",
-     "views": 417853,
+     "views": 364556,
      "dur": "2:04",
      "full": false
     }
@@ -787,42 +866,42 @@
    "day": 2,
    "order": 12,
    "gorder": 26,
-   "views": 13698304,
+   "views": 11710541,
    "stage": "WOW, BiiiG COSMOS!",
    "focus": "",
    "clips": [
     {
      "id": "f0-Oq0kh298",
      "title": "Full stage · ‘WOW, BiiiG COSMOS!’",
-     "views": 5941337,
+     "views": 5303802,
      "dur": "16:17",
      "full": true
     },
     {
      "id": "FGBnglnOBsE",
      "title": "BAD + LIVE FAST DIE SLOW",
-     "views": 183844,
+     "views": 173426,
      "dur": "5:58",
      "full": false
     },
     {
      "id": "FHl9ST9GaKE",
      "title": "TIME COSMOS MEDLEY + 기립 (GiiiRIP)",
-     "views": 2325869,
+     "views": 1808166,
      "dur": "5:43",
      "full": false
     },
     {
      "id": "WLhXrEjMAZE",
      "title": "BiiiG",
-     "views": 1724614,
+     "views": 1458070,
      "dur": "4:11",
      "full": false
     },
     {
      "id": "z0I62-DgHDE",
      "title": "Full stage · ‘WOW, BiiiG COSMOS!’ · 4K",
-     "views": 3522640,
+     "views": 2967077,
      "dur": "16:17",
      "full": false
     }
@@ -833,11 +912,11 @@
   {
    "name": "KiiiKiii",
    "hosts": [
-    "izna",
+    "izna x KiiiKiii",
     "I.O.I"
    ],
    "stage": "GIRLS NEVER STOP",
-   "note": "ikut tampil di seluruh video panggung 'GIRLS NEVER STOP' — Mnet tidak mengunggah video terpisah untuknya, seluruh views-nya dihitung di kartu izna"
+   "note": "ikut tampil di seluruh video panggung 'GIRLS NEVER STOP' — Mnet tidak mengunggah video terpisah untuknya, seluruh views-nya dihitung di kartu izna x KiiiKiii"
   }
  ]
 }
