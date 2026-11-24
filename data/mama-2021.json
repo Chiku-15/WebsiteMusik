@@ -1,0 +1,435 @@
+{
+ "asOf": "24 Nov 2026",
+ "captured": 1795453512,
+ "source": "Kanal YouTube Mnet (Mnet K-POP) — unggahan panggung resmi [2021 MAMA] (Shorts, kompilasi, behind, countdown & fancam tidak dihitung); viewCount real via API terbuka Return YouTube Dislike API per 24 Nov 2026",
+ "srcTag": "[2021 MAMA]",
+ "srcYear": 2021,
+ "venue": "CJ ENM Contents World, Paju, South Korea — diumumkan (konferensi pers global 16 Nov 2021) sebagai acara offline dengan penonton terbatas sesuai pedoman pencegahan penyakit pemerintah, tanpa lokasi cabang negara lain; disiarkan langsung dari Korea Selatan via Mnet & kanal CJ E&M serta daring via YouTube (Mnet K-POP, Mnet TV, M2, KCON). Tema edisi: \"Make Some Noise\" (host: Lee Hyori).",
+ "dateText": "11 Desember 2021",
+ "days": [
+  {
+   "label": "11 Des 2021",
+   "date": "2021-12-11"
+  }
+ ],
+ "note": "Kiri ke kanan: urutan naik panggung menurut tabel penghibur Wikipedia · tinggi &amp; ukuran bintang: views (skala linear) · tekan bintang/nama untuk lompat ke kartu artisnya. MAMA 2021 digelar di CJ ENM Contents World, Paju, 11 Desember 2021, dengan tema edisi <b>‘Make Some Noise’</b> (host Lee Hyori) — satu hari, tanpa pembatas Hari 1 | Hari 2. <b>TREASURE tidak tampil</b> di MAMA 2021 (hanya nominasi Worldwide Fans’ Choice Top 10), BABYMONSTER belum debut — jadi tidak ada bintang berwarna pada edisi ini. Panggung spesial yang terdokumentasi: pembukaan dancer HYUNJIN/YEONJUN/YEJI/HEESEUNG/WOOYOUNG/KARINA ‘BlooM The Sound’, <b>reunion Wanna One</b> ‘1 = 111 (I Miss You)’ (Energetic + Burn It Up) dan STREET WOMAN FIGHTER. <b>Ed Sheeran</b> tampil (pre-recorded ‘Permission to Challenge’) tapi tidak punya unggahan resmi di Mnet K-POP, <b>Kep1er</b> menarik diri sebelum acara — keduanya tidak ada di chart. Panggung ITZY memakai unggahan ulang resmi seri “(ENG→KOR)” karena unggahan aslinya sudah dihapus dari YouTube.",
+ "orderSource": "https://en.wikipedia.org/wiki/2021_Mnet_Asian_Music_Awards#Performers",
+ "sources": [
+  "https://en.wikipedia.org/wiki/2021_Mnet_Asian_Music_Awards",
+  "https://www.youtube.com/@Mnet",
+  "https://noembed.com/embed?url=https://www.youtube.com/watch?v=pZQiHUKZ9aQ",
+  "https://returnyoutubedislikeapi.com/votes?videoId=pZQiHUKZ9aQ"
+ ],
+ "facts": {
+  "acts": 20,
+  "videos": 20,
+  "views": 67717609
+ },
+ "meta": {
+  "artists": 20,
+  "perfs": 20,
+  "guests": 0
+ },
+ "acts": [
+  {
+   "name": "HYUNJIN / YEONJUN / YEJI / HEESEUNG / WOOYOUNG / KARINA",
+   "ko": "",
+   "day": 1,
+   "order": 1,
+   "gorder": 1,
+   "views": 7507919,
+   "stage": "BlooM The Sound",
+   "focus": "",
+   "key": "hyunjinyeonjunyejiheeseungwooyoungkarina",
+   "clips": [
+    {
+     "id": "pZQiHUKZ9aQ",
+     "title": "[2021 MAMA] HYUNJIN / YEONJUN / YEJI / HEESEUNG / WOOYOUNG / KARINA - Opening Perf. | Mnet 211211 방송",
+     "views": 7507919,
+     "dur": "",
+     "full": true
+    }
+   ]
+  },
+  {
+   "name": "Brave Girls",
+   "ko": "",
+   "day": 1,
+   "order": 2,
+   "gorder": 2,
+   "views": 1479223,
+   "stage": "Wind of Wish",
+   "focus": "",
+   "key": "bravegirls",
+   "clips": [
+    {
+     "id": "j27yh2SpmXU",
+     "title": "[2021 MAMA] Brave Girls - Chi Mat Ba Ram + Rollin' | Mnet 211211 방송",
+     "views": 1479223,
+     "dur": "",
+     "full": true
+    }
+   ]
+  },
+  {
+   "name": "INI",
+   "ko": "아이엔아이",
+   "day": 1,
+   "order": 3,
+   "gorder": 3,
+   "views": 1334602,
+   "stage": "One Dream",
+   "focus": "",
+   "key": "ini",
+   "clips": [
+    {
+     "id": "vuvII4hn8oQ",
+     "title": "[2021 MAMA] INI - Rocketeer | Mnet 211211 방송",
+     "views": 1334602,
+     "dur": "",
+     "full": true
+    }
+   ]
+  },
+  {
+   "name": "Kimura Masaya (INI), Kawashiri Ren (JO1)",
+   "ko": "",
+   "day": 1,
+   "order": 4,
+   "gorder": 4,
+   "views": 1031658,
+   "stage": "One Dream",
+   "focus": "",
+   "key": "kimuramasayainikawashirirenjo1",
+   "clips": [
+    {
+     "id": "a0DORHmq5Os",
+     "title": "[2021 MAMA] INI(아이엔아이) + JO1(제이오원) -  One Dream (Rocketeer + 僕らの季節) | Mnet 211211 방송",
+     "views": 1031658,
+     "dur": "",
+     "full": true
+    }
+   ]
+  },
+  {
+   "name": "JO1",
+   "ko": "제이오원",
+   "day": 1,
+   "order": 5,
+   "gorder": 5,
+   "views": 1488920,
+   "stage": "",
+   "focus": "",
+   "key": "jo1",
+   "clips": [
+    {
+     "id": "2GAa-9CVSbc",
+     "title": "[2021 MAMA] JO1 - 僕らの季節 | Mnet 211211 방송",
+     "views": 1488920,
+     "dur": "",
+     "full": true
+    }
+   ]
+  },
+  {
+   "name": "ITZY",
+   "ko": "있지",
+   "day": 1,
+   "order": 6,
+   "gorder": 6,
+   "views": 477483,
+   "stage": "Mission: Be A Good Kitty",
+   "focus": "",
+   "key": "itzy",
+   "clips": [
+    {
+     "id": "hKYID89dGd0",
+     "title": "(ENG→KOR) “뭔 말을 해야 되냐, 이건… 걍… 오졌어” ITZY(있지) - LOCO + 마. 피. 아. In the morning [2021 MAMA 댓글 번역]",
+     "views": 477483,
+     "dur": "",
+     "full": true
+    }
+   ]
+  },
+  {
+   "name": "JANNABI",
+   "ko": "",
+   "day": 1,
+   "order": 7,
+   "gorder": 7,
+   "views": 198959,
+   "stage": "Sailing into the Autumn",
+   "focus": "",
+   "key": "jannabi",
+   "clips": [
+    {
+     "id": "-z_Q5rzD4Wk",
+     "title": "[2021 MAMA]JANNABI-A thought on an autumn night+I Know Where The Rainbow has Fallen | Mnet 211211 방송",
+     "views": 198959,
+     "dur": "",
+     "full": true
+    }
+   ]
+  },
+  {
+   "name": "Gwang-il Jo X Gaeko",
+   "ko": "",
+   "day": 1,
+   "order": 8,
+   "gorder": 8,
+   "views": 490576,
+   "stage": "Shout Out If Hip Hop",
+   "focus": "",
+   "key": "gwangiljoxgaeko",
+   "clips": [
+    {
+     "id": "RkjHU14q-Sw",
+     "title": "[2021 MAMA] Gwang-il Jo X Gaeko - Waterbomb + GARION (MAMA ver.) | Mnet 211211 방송",
+     "views": 490576,
+     "dur": "",
+     "full": true
+    }
+   ]
+  },
+  {
+   "name": "Show Me the Money 10",
+   "ko": "",
+   "day": 1,
+   "order": 9,
+   "gorder": 9,
+   "views": 1293426,
+   "stage": "",
+   "focus": "",
+   "key": "showmethemoney10",
+   "clips": [
+    {
+     "id": "8CvfzgoT5Rc",
+     "title": "[2021 MAMA] SHOW ME THE MONEY 10TH - Resume +82 (MAMA ver.) | Mnet 211211 방송",
+     "views": 1293426,
+     "dur": "",
+     "full": true
+    }
+   ]
+  },
+  {
+   "name": "NCT U",
+   "ko": "",
+   "day": 1,
+   "order": 10,
+   "gorder": 10,
+   "views": 3593222,
+   "stage": "Welcome to Universe",
+   "focus": "",
+   "key": "nctu",
+   "clips": [
+    {
+     "id": "eBOiX1RcKGA",
+     "title": "[2021 MAMA] NCT U - Universe (Let's Play Ball) | Mnet 211211 방송",
+     "views": 3593222,
+     "dur": "",
+     "full": true
+    }
+   ]
+  },
+  {
+   "name": "ATEEZ",
+   "ko": "",
+   "day": 1,
+   "order": 11,
+   "gorder": 11,
+   "views": 2405246,
+   "stage": "The Real Journey Begins",
+   "focus": "",
+   "key": "ateez",
+   "clips": [
+    {
+     "id": "IPWU_e5VX48",
+     "title": "[2021 MAMA] ATEEZ - The Real (Heung ver.) | Mnet 211211 방송",
+     "views": 2405246,
+     "dur": "",
+     "full": true
+    }
+   ]
+  },
+  {
+   "name": "TOMORROW X TOGETHER",
+   "ko": "",
+   "day": 1,
+   "order": 12,
+   "gorder": 12,
+   "views": 2730858,
+   "stage": "Break All Myself",
+   "focus": "",
+   "key": "tomorrowxtogether",
+   "clips": [
+    {
+     "id": "Sm56PnFNmqY",
+     "title": "[2021 MAMA] TOMORROW X TOGETHER - Frost | Mnet 211211 방송",
+     "views": 2730858,
+     "dur": "",
+     "full": true
+    }
+   ]
+  },
+  {
+   "name": "Stray Kids",
+   "ko": "",
+   "day": 1,
+   "order": 13,
+   "gorder": 13,
+   "views": 4947951,
+   "stage": "Stray Kids World Domination",
+   "focus": "",
+   "key": "straykids",
+   "clips": [
+    {
+     "id": "P0dRKB3n16E",
+     "title": "[2021 MAMA] Stray Kids - CHEESE | Mnet 211211 방송",
+     "views": 4947951,
+     "dur": "",
+     "full": true
+    }
+   ]
+  },
+  {
+   "name": "NCT DREAM",
+   "ko": "",
+   "day": 1,
+   "order": 17,
+   "gorder": 14,
+   "views": 2219703,
+   "stage": "Dipping in a Dream",
+   "focus": "",
+   "key": "nctdream",
+   "clips": [
+    {
+     "id": "2nRqRAlSXFM",
+     "title": "[2021 MAMA] NCT DREAM - Hot Sauce (MAMA ver.) | Mnet 211211 방송",
+     "views": 2219703,
+     "dur": "",
+     "full": true
+    }
+   ]
+  },
+  {
+   "name": "Wanna One",
+   "ko": "워너원",
+   "day": 1,
+   "order": 18,
+   "gorder": 15,
+   "views": 13925141,
+   "stage": "1 = 111 (I Miss You)",
+   "focus": "",
+   "key": "wannaone",
+   "clips": [
+    {
+     "id": "-OBNH4V1Gv4",
+     "title": "[2021 MAMA] Wanna One - Energetic + Burn It Up | Mnet 211211 방송",
+     "views": 13925141,
+     "dur": "",
+     "full": true
+    }
+   ]
+  },
+  {
+   "name": "aespa",
+   "ko": "",
+   "day": 1,
+   "order": 19,
+   "gorder": 16,
+   "views": 6194028,
+   "stage": "Oh My Gosh! We Are On Another Level",
+   "focus": "",
+   "key": "aespa",
+   "clips": [
+    {
+     "id": "AATk0KprW-8",
+     "title": "[2021 MAMA] aespa - Savage | Mnet 211211 방송",
+     "views": 6194028,
+     "dur": "",
+     "full": true
+    }
+   ]
+  },
+  {
+   "name": "ENHYPEN",
+   "ko": "",
+   "day": 1,
+   "order": 20,
+   "gorder": 17,
+   "views": 4358815,
+   "stage": "Carnival to Dilemma",
+   "focus": "",
+   "key": "enhypen",
+   "clips": [
+    {
+     "id": "iT4oZSOC5aI",
+     "title": "[2021 MAMA] ENHYPEN - Tamed-Dashed (MAMA ver.) | Mnet 211211 방송",
+     "views": 4358815,
+     "dur": "",
+     "full": true
+    }
+   ]
+  },
+  {
+   "name": "NCT 127",
+   "ko": "",
+   "day": 1,
+   "order": 21,
+   "gorder": 18,
+   "views": 1943376,
+   "stage": "Eternal Love",
+   "focus": "",
+   "key": "nct127",
+   "clips": [
+    {
+     "id": "LqREocAq0To",
+     "title": "[2021 MAMA] NCT 127 - Favorite (Vampire) | Mnet 211211 방송",
+     "views": 1943376,
+     "dur": "",
+     "full": true
+    }
+   ]
+  },
+  {
+   "name": "STREET WOMAN FIGHTER",
+   "ko": "",
+   "day": 1,
+   "order": null,
+   "gorder": 19,
+   "views": 3772429,
+   "stage": "",
+   "focus": "",
+   "key": "streetwomanfighter",
+   "clips": [
+    {
+     "id": "GTURER3p_d4",
+     "title": "[2021 MAMA] STREET WOMAN FIGHTER | Mnet 211211 방송",
+     "views": 3772429,
+     "dur": "",
+     "full": true
+    }
+   ]
+  },
+  {
+   "name": "LEE HYORI X STREET WOMAN FIGHTER",
+   "ko": "",
+   "day": 1,
+   "order": 22,
+   "gorder": 20,
+   "views": 6324074,
+   "stage": "Make Some Noise",
+   "focus": "",
+   "key": "leehyorixstreetwomanfighter",
+   "clips": [
+    {
+     "id": "813-ELGLvBw",
+     "title": "[2021 MAMA] LEE HYORI X STREET WOMAN FIGHTER - DO THE DANCE | Mnet 211211 방송",
+     "views": 6324074,
+     "dur": "",
+     "full": true
+    }
+   ]
+  }
+ ]
+}
