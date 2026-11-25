@@ -1,6 +1,6 @@
 {
- "asOf": "25 Nov, 08:56 KST",
- "captured": 1795564582,
+ "asOf": "25 Nov, 10:25 KST",
+ "captured": 1795569941,
  "source": "Kanal YouTube Mnet (Mnet K-POP) — unggahan panggung resmi [#2023MAMA] (Shorts, kompilasi, behind, countdown & fancam tidak dihitung); viewCount real via API terbuka Return YouTube Dislike API per 24 Nov 2026",
  "srcTag": "[#2023MAMA]",
  "srcYear": 2023,
@@ -28,7 +28,7 @@
  "facts": {
   "acts": 24,
   "videos": 26,
-  "views": 111838408
+  "views": 111840280
  },
  "meta": {
   "artists": 24,
@@ -62,7 +62,7 @@
    "day": 1,
    "order": null,
    "gorder": 2,
-   "views": 393941,
+   "views": 393962,
    "stage": "Future In Our Hands",
    "focus": "",
    "key": "justb",
@@ -70,7 +70,7 @@
     {
      "id": "WR593yzHM7c",
      "title": "[#2023MAMA] JUST B (저스트비) - MEDUSA (MAMA ver.) | Mnet 231128 방송",
-     "views": 393941,
+     "views": 393962,
      "dur": "",
      "full": true
     }
@@ -102,7 +102,7 @@
    "day": 1,
    "order": null,
    "gorder": 4,
-   "views": 1184670,
+   "views": 1184677,
    "stage": "Kep Up The Speed",
    "focus": "",
    "key": "kep1er",
@@ -110,7 +110,7 @@
     {
      "id": "4kudyJ37p6Y",
      "title": "[#2023MAMA] Kep1er (케플러) - Grand Prix (MAMA ver.) | Mnet 231128 방송",
-     "views": 1184670,
+     "views": 1184677,
      "dur": "",
      "full": true
     }
@@ -122,7 +122,7 @@
    "day": 1,
    "order": null,
    "gorder": 5,
-   "views": 7397283,
+   "views": 7397450,
    "stage": "Music Goes Infinity And Beyond with TOMORROW X TOGETHER (Taehyun, Hueningkai), BOYNEXTDOOR (Jaehyun), RIIZE (Anton), ZEROBASEONE (Han Yujin)",
    "focus": "",
    "key": "yoshikixtaehyunhueningkaixjaehyunxantonxhanyujin",
@@ -130,7 +130,7 @@
     {
      "id": "DSW4JxFgeZ4",
      "title": "[#2023MAMA] YOSHIKI X TAEHYUN,HUENINGKAI X JAEHYUN X ANTON X HANYUJIN-Endless Rain | Mnet 231128 방송",
-     "views": 7397283,
+     "views": 7397450,
      "dur": "",
      "full": true
     }
@@ -202,7 +202,7 @@
    "day": 1,
    "order": null,
    "gorder": 9,
-   "views": 4167577,
+   "views": 4167630,
    "stage": "It's MI",
    "focus": "",
    "key": "jeonsomi",
@@ -210,7 +210,7 @@
     {
      "id": "rjUensBTDrs",
      "title": "[#2023MAMA] JEON SOMI (전소미) - The Way + Fast Forward | Mnet 231128 방송",
-     "views": 4167577,
+     "views": 4167630,
      "dur": "",
      "full": true
     }
@@ -222,7 +222,7 @@
    "day": 1,
    "order": null,
    "gorder": 10,
-   "views": 2206646,
+   "views": 2206647,
    "stage": "Dream To Dream",
    "focus": "",
    "key": "dynamicduoxswf2",
@@ -230,7 +230,7 @@
     {
      "id": "ti7pw3B2ErM",
      "title": "[#2023MAMA] Dynamicduo (다이나믹 듀오) X SWF2 (스트릿 우먼 파이터2)  - Smoke | Mnet 231128 방송",
-     "views": 2206646,
+     "views": 2206647,
      "dur": "",
      "full": false
     }
@@ -242,7 +242,7 @@
    "day": 1,
    "order": null,
    "gorder": 11,
-   "views": 11986778,
+   "views": 11986977,
    "stage": "From Eternity Into Mortality",
    "focus": "",
    "key": "enhypen",
@@ -250,7 +250,7 @@
     {
      "id": "jGm6fReUNeI",
      "title": "[#2023MAMA] ENHYPEN (엔하이픈) - Bite Me + Sweet Venom | Mnet 231128 방송",
-     "views": 11986778,
+     "views": 11986977,
      "dur": "",
      "full": true
     }
@@ -262,7 +262,7 @@
    "day": 1,
    "order": null,
    "gorder": 12,
-   "views": 3423376,
+   "views": 3423397,
    "stage": "Where's Happy Ending?",
    "focus": "",
    "key": "tomorrowxtogether",
@@ -270,7 +270,7 @@
     {
      "id": "q_psh1SKvaM",
      "title": "[#2023MAMA] TOMORROW X TOGETHER (투모로우바이투게더)-Sugar Rush Ride + Chasing That Feeling | Mnet 231128 방송",
-     "views": 3423376,
+     "views": 3423397,
      "dur": "",
      "full": true
     }
@@ -282,7 +282,7 @@
    "day": 1,
    "order": null,
    "gorder": 13,
-   "views": 4831371,
+   "views": 4831429,
    "stage": "Eternal Glory Moment with RIIZE",
    "focus": "",
    "key": "tvxqwithriize",
@@ -290,7 +290,7 @@
     {
      "id": "oX55X9aN8a0",
      "title": "[#2023MAMA] TVXQ! (동방신기) - Rising Sun (with RIIZE) | Mnet 231128 방송",
-     "views": 4831371,
+     "views": 4831429,
      "dur": "",
      "full": false
     }
@@ -322,7 +322,7 @@
    "day": 2,
    "order": null,
    "gorder": 15,
-   "views": 628715,
+   "views": 628716,
    "stage": "Master <Piece>",
    "focus": "",
    "key": "el7zup",
@@ -330,7 +330,7 @@
     {
      "id": "vBd9Ejphru4",
      "title": "[#2023MAMA] EL7Z UP (엘즈업) - CHEEKY Intro + SNAP (MAMA ver.) | Mnet 231129 방송",
-     "views": 628715,
+     "views": 628716,
      "dur": "",
      "full": true
     }
@@ -342,7 +342,7 @@
    "day": 2,
    "order": null,
    "gorder": 16,
-   "views": 2271942,
+   "views": 2272025,
    "stage": "Knock On Your Heart",
    "focus": "",
    "key": "boynextdoor",
@@ -350,7 +350,7 @@
     {
      "id": "jVU6QnoSBI8",
      "title": "[#2023MAMA] BOYNEXTDOOR (보이넥스트도어) - One and Only + 뭣 같아 (MAMA ver.) | Mnet 231129 방송",
-     "views": 2271942,
+     "views": 2272025,
      "dur": "",
      "full": true
     }
@@ -362,7 +362,7 @@
    "day": 2,
    "order": null,
    "gorder": 17,
-   "views": 4373645,
+   "views": 4373698,
    "stage": "Goddess Awakened with LE SSERAFIM (Huh Yunjin), Kep1er (Xiaoting), (G)I-DLE (Minnie)",
    "focus": "",
    "key": "huhyunjinxxiaotingxmonikaxbadaxminnie",
@@ -370,7 +370,7 @@
     {
      "id": "lXBrJoBLOQ4",
      "title": "[#2023MAMA] MAMA SUPER STAGE - Goddess Awakened | Mnet 231129 방송",
-     "views": 4373645,
+     "views": 4373698,
      "dur": "",
      "full": true
     }
@@ -382,7 +382,7 @@
    "day": 2,
    "order": null,
    "gorder": 18,
-   "views": 5819319,
+   "views": 5819420,
    "stage": "We All Rise",
    "focus": "",
    "key": "riize",
@@ -390,7 +390,7 @@
     {
      "id": "Bf7JCS6I0ak",
      "title": "[#2023MAMA] RIIZE (라이즈) - Talk Saxy + Siren | Mnet 231129 방송",
-     "views": 5819319,
+     "views": 5819420,
      "dur": "",
      "full": true
     }
@@ -402,7 +402,7 @@
    "day": 2,
    "order": null,
    "gorder": 19,
-   "views": 1690829,
+   "views": 1690836,
    "stage": "Start To Love",
    "focus": "",
    "key": "niziu",
@@ -410,7 +410,7 @@
     {
      "id": "bcTLhOTM7F0",
      "title": "[#2023MAMA] NiziU (니쥬) - HEARTRIS | Mnet 231129 방송",
-     "views": 1690829,
+     "views": 1690836,
      "dur": "",
      "full": true
     }
@@ -422,7 +422,7 @@
    "day": 2,
    "order": null,
    "gorder": 20,
-   "views": 3556715,
+   "views": 3556772,
    "stage": "Because You Saved Me",
    "focus": "",
    "key": "zerobaseone",
@@ -430,7 +430,7 @@
     {
      "id": "NSg-TRbs4c8",
      "title": "[#2023MAMA] ZEROBASEONE (제로베이스원) - In Bloom + Take My Hand + CRUSH (가시) | Mnet 231129 방송",
-     "views": 3556715,
+     "views": 3556772,
      "dur": "",
      "full": true
     }
@@ -442,7 +442,7 @@
    "day": 2,
    "order": null,
    "gorder": 21,
-   "views": 13036527,
+   "views": 13036954,
    "stage": "Revolution On The Street",
    "focus": "",
    "key": "lesserafim",
@@ -450,7 +450,7 @@
     {
      "id": "SPNJgjqqUnI",
      "title": "[#2023MAMA] LE SSERAFIM (르세라핌) - 이브, 프시케 그리고 푸른수염의 아내 (MAMA ver.) | Mnet 231129 방송",
-     "views": 13036527,
+     "views": 13036954,
      "dur": "",
      "full": true
     }
@@ -496,7 +496,7 @@
    "day": 2,
    "order": null,
    "gorder": 23,
-   "views": 15627249,
+   "views": 15627447,
    "stage": "This Is I-dle",
    "focus": "",
    "key": "gidle",
@@ -504,7 +504,7 @@
     {
      "id": "yv8LV7DuPDc",
      "title": "[#2023MAMA] (G)I-DLE ((여자)아이들) - 퀸카 (Queencard) (MAMA ver.) | Mnet 231129 방송",
-     "views": 15627249,
+     "views": 15627447,
      "dur": "",
      "full": true
     }
@@ -516,7 +516,7 @@
    "day": 2,
    "order": null,
    "gorder": 24,
-   "views": 14791662,
+   "views": 14792080,
    "stage": "The Feast In Seventeenth Heaven",
    "focus": "",
    "key": "seventeen",
@@ -524,7 +524,7 @@
     {
      "id": "hF5_wvB4dl0",
      "title": "[#2023MAMA] SEVENTEEN (세븐틴) - 손오공 | Mnet 231129 방송",
-     "views": 14791662,
+     "views": 14792080,
      "dur": "",
      "full": false
     }
