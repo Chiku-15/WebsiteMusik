@@ -128,7 +128,7 @@
   .mama-actname{font-family:Georgia,'Times New Roman',serif;font-style:italic;font-weight:500;font-size:clamp(24px,3.2vw,34px);line-height:1.05;letter-spacing:-.015em;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0}
   .mama-mark{flex:none;align-self:center;width:13px;height:13px;border-radius:50%;background:var(--text);display:inline-block}
   .mama-ko{color:var(--muted);font-size:13.5px;margin-top:4px}
-  .mama-actviews{margin-top:14px;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.mama-actviews{margin-top:14px;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
   .mama-actviews .tv{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:clamp(24px,3vw,32px);font-weight:500;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
   .mama-actviews .tm{color:var(--muted);font-size:12.5px}
   .mama-focustag{position:absolute;top:-9px;right:14px;background:var(--ac);color:#fff;font-size:10px;font-weight:800;letter-spacing:.6px;padding:3px 10px;border-radius:999px}
@@ -167,14 +167,6 @@
   /* variasi badge versi video: klip lagu (transparan gelap) & full stage 4K (amber) */
   .mama-clip .bg.vc{background:rgba(6,10,22,.82);color:#e9edf5}
   .mama-clip .bg.v4{background:#f1b65e;color:#0b1224}
-  /* garis penghubung kolaborasi di grafik & batas hari: SATU WARNA PER PANGGUNG kolab
-   * (inline style, default amber), animasi tergambar saat halaman tampil; membesar saat kursor di atasnya */
-  .mama-collln{fill:none;stroke:#f1b65e;stroke-width:1.6;stroke-opacity:.9;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .8s ease .15s,stroke-width .15s ease,stroke-opacity .15s ease}
-  .mama-chart svg.collab-on .mama-collln{stroke-dashoffset:0}
-  .mama-collln:hover{stroke-opacity:1;stroke-width:2.8}
-  /* legenda panggung kolaborasi di grafik — chip warna + nama panggung */
-  .mama-cleg line{stroke-width:2.6;stroke-linecap:round}
-  .mama-cleg text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10.5px;fill:#cdd6ea;paint-order:stroke;stroke:#0b1224;stroke-width:3.5px;stroke-linejoin:round;letter-spacing:.2px}
   /* bulatan artis tamu — disebut di tagihan panggung kolab tapi tanpa unggahan/views sendiri
    * (mis. KiiiKiii di ‘GIRLS NEVER STOP’): amber kosong putus-putus, bukan bintang penuh */
   .mama-guest,.mama-guestlbl{cursor:help}
@@ -187,7 +179,6 @@
   .mama-daysep{display:flex;align-items:center;gap:14px;margin:28px 0 0;color:var(--muted);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;letter-spacing:.6px;text-transform:uppercase}
   .mama-daysep::before,.mama-daysep::after{content:"";flex:1;height:1px;background:var(--border)}
   @media (max-width:820px){.mama-act{grid-template-columns:1fr;gap:14px}.mama-clips{grid-auto-flow:column;grid-template-columns:none;grid-auto-columns:min(72%,260px);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px}.mama-clip{scroll-snap-align:start}}
-  @media (prefers-reduced-motion:reduce){.mama-collln{transition:none;stroke-dashoffset:0}}
   .mama-segs{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;margin:16px 2px 0}
   /* tombol “kreditkan juga artis featured” — switch kecil gaya situs referensi mama-2026 */
   .mama-feat{display:flex;align-items:center;gap:9px;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:999px;padding:7px 14px;font:700 12.5px var(--font);cursor:pointer;transition:border-color .2s,background .2s,color .2s}
@@ -1781,7 +1772,6 @@ const state = {
   awardsDay: "all",       // filter hari AWARDS: "all" (kedua hari) | "1" | "2"
   awardsSort: "order",    // urutan daftar artis AWARDS: "order" (urutan panggung) | "top" (terbanyak ditonton)
   awardsFeat: false,      // toggle “kreditkan juga artis featured”: views panggung induk kolab ikut dihitung utk artis pendamping
-  awardsLines: (function () { try { return localStorage.getItem("py.awlines") !== "0"; } catch { return true; } })(), // toggle “Garis kolab”: tampil/sembunyi garis berwarna panggung kolaborasi + legenda warna di grafik
   awardsYear: (function () { try { const v = localStorage.getItem("py.awyear"); return v && /^202[0-6]$/.test(v) ? v : "2026"; } catch { return "2026"; } })(), // edisi MAMA yang tampil di AWARDS: "2026" | "2025" | ... | "2020"
   chnPlat: null,          // pilihan dropdown platform di Statistik Channel ("yt"|"spotify")
   chnArt: null,           // pilihan dropdown artis di Statistik Channel (artistId)
@@ -2583,11 +2573,9 @@ function mamaClipVersion(c) {
 /* daftar panggung kolaborasi — SATU entri per panggung (bukan grup rantai): dua artis
  * masuk panggung yang sama kalau tema panggung mereka sama (bagian sebelum " with ")
  * atau salah satu menyebut nama yang lain di bagian "with …" (nama anggota dalam
- * kurung dibuang dulu). Artis bisa ikut lebih dari satu panggung kolaborasi. */
-/* palet warna garis panggung kolaborasi — SATU warna untuk SATU panggung kolab; dipakai di
- * garis & legenda grafik. Warna grup pemantau (BABYMONSTER merah #ff4d6d, TREASURE biru
- * #38bdf8) sengaja tidak dipakai biar garis kolab tidak tertukar dengan bintang grup yang disorot. */
-const MAMA_COLLCOLS = ["#f1b65e", "#4ade80", "#e879f9", "#a78bfa", "#2dd4bf", "#facc15", "#fb7185", "#f97316"];
+ * kurung dibuang dulu). Artis bisa ikut lebih dari satu panggung kolaborasi.
+ * (Fitur garis berwarna & legenda kolab DIHAPUS SELURUHNYA — permintaan user; hasil fungsi
+ * kini hanya dipakai untuk kredit “artis featured” & tooltip “panggung kolab …”.) */
 function mamaCollabStages(acts) {
   const stages = {};
   const ensure = (base) => { const k = base.toLowerCase(); if (!stages[k]) stages[k] = { base: base, members: [] }; return stages[k]; };
@@ -2619,41 +2607,35 @@ function mamaCollabStages(acts) {
     if (s && s.members.indexOf(a) < 0) s.members.push(a);
   });
   return Object.keys(stages).map((k) => stages[k]).filter((s) => s.members.length > 1)
-    .map((s, ci) => {
+    .map((s) => {
       const mem = s.members.slice().sort((x, y) => (x.day - y.day) || (x.order - y.order));
       /* panggung induk (hub): anggota yang tagihan panggungnya sendiri berbunyi "<base> with …" —
-       * garis kolab ditarik DARI artis induk KE tiap artis yang tampil bersama, jadi induknya
-       * (mis. Panic di ‘MUTANTS' PARTY’) selalu titik dengan hubungan terbanyak. */
+       * views panggung induk inilah yang dikreditkan ke artis pendamping saat toggle featured aktif. */
       const hub = mem.find((x) => { const st = String(x.stage || ""); const wi = st.indexOf(" with "); return wi >= 0 && st.slice(0, wi).trim().toLowerCase() === s.base.toLowerCase(); }) || mem[0];
-      return { base: s.base, hub: hub, members: mem, col: MAMA_COLLCOLS[ci % MAMA_COLLCOLS.length] };
+      return { base: s.base, hub: hub, members: mem };
     });
 }
 /* kredit views panggung kolaborasi untuk artis featured — tombol “Kreditkan juga artis
  * featured”: artis yang tampil bersama di panggung kolab (bukan induknya) juga menerima
- * views panggung induk itu (mis. ALLDAY PROJECT + views panggung Panic & CL). */
-function mamaFeatCredit(a, stages) {
-  return stages.reduce((t, s) => {
-    if (!s.hub || s.hub.name === a.name) return t;
-    return s.members.some((x) => x.name === a.name) ? t + s.hub.views : t;
-  }, 0);
-}
-/* blok "panggung kolaborasi" pada kartu artis DIHAPUS (permintaan user: hapus panggung
- * kolaborasi beserta isinya) — info panggung kolab tetap ada di grafik: garis berwarna
- * satu warna per panggung, legenda & tooltip tiap garis/titik. */
+ * views panggung induk itu (mis. ALLDAY PROJECT + views panggung Panic & CL). Kredit
+ * dihitung di renderAwardsPage — dengan pengecualian artis tamu & kartu yang sudah
+ * menampung salinan video panggung induk (mis. BABYMONSTER memegang salinan full stage
+ * ‘A MUSIC INTERSTELLAR’ yang juga di kartu Street World Fighter).
+ * Fitur GARIS kolaborasi di grafik (garis berwarna, legenda, toggle “Garis kolab”)
+ * DIHAPUS SELURUHNYA — permintaan user: hapus panggung kolaborasi beserta seluruh
+ * isi tampilannya; blok “panggung kolaborasi” pada kartu artis juga sudah dihapus. */
 /* chart bintang — x: urutan naik panggung, y: views (skala LINEAR — dropdown Log/Skala Y
  * sudah dihapus karena membuat bingung), r: akar views supaya artis kecil tetap terlihat.
- * Label digeser naik/turun otomatis biar tidak bertumpuk. opts.collab = daftar panggung
- * kolab {base,hub,members,col} → garis BERWARNA (satu warna per panggung, lihat legenda
- * di dalam grafik) DARI panggung induk KE tiap artis yang tampil bersama (induk = titik dgn
- * hubungan terbanyak; bila induk tak ikut filter, fallback polyline); opts.vmap = slug →
- * views efektif (toggle kredit artis featured); opts.featCred = slug → kredit views kolab
- * utk tooltip & label; opts.days = label hari → garis batas Hari 1 | 2. Kanvas tinggi
- * (700px, sebelumnya 440px) supaya bintang & label tidak mepet. */
+ * Label digeser naik/turun otomatis biar tidak bertumpuk. opts.vmap = slug → views efektif
+ * (tanpa toggle: video panggung TERBANYAK saja; dengan toggle: gabungan semua video + kredit
+ * kolab); opts.featCred = slug → kredit views kolab utk tooltip; opts.collabMap = slug →
+ * nama panggung kolab utk tooltip; opts.days = label hari → garis batas Hari 1 | 2. Kanvas
+ * tinggi (700px, sebelumnya 440px) supaya bintang & label tidak mepet. */
 function mamaChartSVG(acts, focCol, opts) {
   opts = opts || {};
   const W = 1080, H = 700, padL = 66, padR = 26, padT = 30, padB = 46;
   const iw = W - padL - padR, ih = H - padT - padB;
-  /* views efektif — saat toggle “kreditkan juga artis featured” aktif, pakai views + kredit panggung kolab */
+  /* views efektif per artis — selalu lewat vmap yang diisi renderAwardsPage */
   const V = (a) => (opts.vmap && opts.vmap[mamaKey(a)] != null) ? opts.vmap[mamaKey(a)] : a.views;
   const maxV = Math.max.apply(null, acts.map((a) => V(a)));
   const top = Math.max(2e6, Math.ceil(maxV / 2e6) * 2e6);
@@ -2685,37 +2667,17 @@ function mamaChartSVG(acts, focCol, opts) {
       const marks = [padL].concat(bnd.map((i) => (X(i - 1) + X(i)) / 2), [W - padR]);
       marks.forEach((mx, k) => {
         if (k > 0 && k < marks.length - 1) g += `<line class="mama-daydiv" x1="${mx.toFixed(1)}" y1="${padT}" x2="${mx.toFixed(1)}" y2="${(padT + ih).toFixed(1)}"/>`;
-        const dl = (opts.days[k - 1] && opts.days[k - 1].label) || "Hari " + k;
-        g += `<text class="mama-daycap" x="${((marks[k - 1] + mx) / 2).toFixed(1)}" y="${padT - 14}" text-anchor="middle">${esc(dl)}</text>`;
+        /* cap label hari hanya untuk segmen k >= 1 — k = 0 tak punya segmen di kirinya
+         * (dulu <text x="NaN">Hari 0</text> ikut tergambar: atribut invalid di ujung kiri chart) */
+        if (k > 0) {
+          const dl = (opts.days[k - 1] && opts.days[k - 1].label) || "Hari " + k;
+          g += `<text class="mama-daycap" x="${((marks[k - 1] + mx) / 2).toFixed(1)}" y="${padT - 14}" text-anchor="middle">${esc(dl)}</text>`;
+        }
       });
     }
   }
-  /* garis penghubung panggung kolaborasi — digambar sebelum bintang supaya berada di bawahnya */
   const slugIdx = {};
   acts.forEach((a, i) => { slugIdx[mamaKey(a)] = i; });
-  /* legenda: kumpulkan panggung kolab yang benar-benar tergambar (kedua ujungnya lolos filter hari) */
-  const legStages = [];
-  (opts.collab || []).forEach((grp) => {
-    /* toggle “Garis kolab” mati → lewati: tidak ada garis berwarna & legenda warna kosong */
-    if (opts.showLines === false) return;
-    /* garis DARI panggung induk KE tiap artis yang tampil bersama — SATU WARNA PER PANGGUNG
-     * kolab (lihat legenda). Bila induk tak ikut filter hari, fallback: polyline antar anggota
-     * yang tampil. Tiap garis punya tooltip: nama panggung + induk + lawan tautnya. */
-    const hub = grp.hub ? slugIdx[mamaKey(grp.hub)] : undefined;
-    const vis = grp.members.map((x) => slugIdx[mamaKey(x)]).filter((i) => i !== undefined && i !== hub);
-    const col = grp.col || "#f1b65e";
-    const lt = `Panggung kolab ‘${esc(grp.base)}’${grp.hub ? ` — induk: ${esc(grp.hub.name)}` : ""}`;
-    let drew = false;
-    if (hub !== undefined && vis.length) {
-      const hx = X(hub).toFixed(1), hy = Y(V(acts[hub])).toFixed(1);
-      vis.forEach((i) => { g += `<line class="mama-collln" pathLength="1" style="stroke:${col}" x1="${hx}" y1="${hy}" x2="${X(i).toFixed(1)}" y2="${Y(V(acts[i])).toFixed(1)}"><title>${lt} ↔ ${esc(acts[i].name)}</title></line>`; });
-      drew = true;
-    } else {
-      const pts = vis.map((i) => `${X(i).toFixed(1)},${Y(V(acts[i])).toFixed(1)}`);
-      if (pts.length >= 2) { g += `<polyline class="mama-collln" pathLength="1" style="stroke:${col}" points="${pts.join(" ")}"><title>${lt}</title></polyline>`; drew = true; }
-    }
-    if (drew) legStages.push({ base: grp.base, col: col, hub: grp.hub ? grp.hub.name : "", members: grp.members.map((x) => x.name) });
-  });
   const placed = [];
   /* kotak semua bintang ikut dihindari label — label tidak boleh menutupi bintang artis lain */
   const starBoxes = acts.map((a, i) => {
@@ -2754,28 +2716,6 @@ function mamaChartSVG(acts, focCol, opts) {
     const gtx = gch.anc === "end" ? gch.x + gl : gch.anc === "middle" ? gch.x + gl / 2 : gch.x;
     g += `<g class="mama-guestlbl"><title>${gttl}</title><text x="${gtx.toFixed(1)}" y="${(gch.y + 12).toFixed(1)}" text-anchor="${gch.anc}">${esc(gu.name)}</text></g>`;
   });
-  /* legenda panggung kolaborasi — chip warna + nama panggung di dalam grafik, kanan atas
-   * (fallback kiri atas bila kanan lebih ramai). Kotak legenda didorong ke `placed` lebih
-   * dulu supaya label artis otomatis menjauh darinya; tooltip legenda = daftar peserta. */
-  if (legStages.length) {
-    const ovl = (b, p) => Math.max(0, Math.min(b.x + b.w, p.x + p.w) - Math.max(b.x, p.x)) * Math.max(0, Math.min(b.y + b.h, p.y + p.h) - Math.max(b.y, p.y));
-    const rows = legStages.map((s) => ({ s: s, w: 22 + s.base.length * 6.2 }));
-    const mw = Math.max.apply(null, rows.map((r) => r.w));
-    const lh = 17;
-    const score = (lx) => rows.reduce((t, r, k) => {
-      const b = { x: lx - 6, y: padT + 10 + k * lh - 9, w: mw + 12, h: 16 };
-      return t + starBoxes.reduce((s2, p, j) => s2 + ovl(b, p), 0) * 3 + placed.reduce((s2, p) => s2 + ovl(b, p), 0);
-    }, 0);
-    const lxR = W - padR - mw - 2, lxL = padL + 10;
-    const lx = score(lxR) <= score(lxL) ? lxR : lxL;
-    rows.forEach((r, k) => {
-      const ly = padT + 10 + k * lh;
-      placed.push({ x: lx - 6, y: ly - 9, w: mw + 12, h: 16 });
-      g += `<g class="mama-cleg"><title>Panggung kolab ‘${esc(r.s.base)}’${r.s.hub ? ` — induk: ${esc(r.s.hub)}` : ""} — peserta: ${esc(r.s.members.join(", "))}</title>` +
-        `<line x1="${lx.toFixed(1)}" y1="${ly.toFixed(1)}" x2="${(lx + 15).toFixed(1)}" y2="${ly.toFixed(1)}" style="stroke:${r.s.col}"/>` +
-        `<text x="${(lx + 20).toFixed(1)}" y="${(ly + 3.5).toFixed(1)}">${esc(r.s.base.length > 34 ? r.s.base.slice(0, 33) + "…" : r.s.base)}</text></g>`;
-    });
-  }
   acts.forEach((a, i) => {
     const x = X(i), y = Y(V(a)), r = R(V(a));
     const foc = !!a.focus;
@@ -2874,22 +2814,36 @@ function renderAwardsPage(sec) {
   const stages = mamaCollabStages(actsAll);
   const collabMap = {};
   stages.forEach((s) => { s.members.forEach((x) => { const k = mamaKey(x); (collabMap[k] = collabMap[k] || []).push(s.base); }); });
-  /* toggle “kreditkan juga artis featured” — artis yang tampil bersama di panggung kolab
-   * (bukan induknya) ikut menerima views panggung induk: tinggi bintang, label, tooltip &
-   * urutan “Terbanyak ditonton” memakai total efektif ini saat toggle aktif. */
+  /* ATURAN VIEWS PER ARTIS (permintaan user):
+   * — toggle “kreditkan juga artis featured” MATI → views artis = VIDEO TERBANYAK saja
+   *   (mis. 3 video dengan 5 jt / 1 jt / 0,5 jt → dihitung 5 jt) — full stage &amp; klip lagu
+   *   menonton penonton yang sama, jadi tidak dijumlahkan;
+   * — toggle AKTIF → GABUNGAN seluruh video artis + views panggung induk kolaborasi (featCred).
+   *   Total efektif ini dipakai di chart, kartu artis &amp; urutan “Terbanyak ditonton”. */
   const feat = !!state.awardsFeat;
+  const maxOwn = (a) => (a.clips || []).reduce((m, c) => Math.max(m, c.views || 0), 0);
   const featCred = {};
   /* artis tamu (mis. KiiiKiii) sudah menerima views video bersama sejak awal — jangan
    * dikredit lagi saat toggle featured aktif, biar tidak dihitung dua kali */
   const guestSlg = {};
   actsAll.forEach((a) => { if (a.guest) guestSlg[mamaKey(a)] = 1; });
+  /* kartu yang sudah menampung SALINAN video panggung induk (mis. BABYMONSTER memegang
+   * full stage ‘A MUSIC INTERSTELLAR’ yang juga di kartu Street World Fighter) tidak
+   * dikredit lagi untuk panggung itu — videonya sudah masuk gabungan miliknya sendiri */
+  const ownIds = {};
+  actsAll.forEach((a) => { const m = {}; (a.clips || []).forEach((c) => { m[c.id] = 1; }); ownIds[mamaKey(a)] = m; });
   stages.forEach((s) => {
     if (!s.hub) return;
-    s.members.forEach((x) => { if (mamaKey(x) !== mamaKey(s.hub) && !guestSlg[mamaKey(x)]) featCred[mamaKey(x)] = (featCred[mamaKey(x)] || 0) + s.hub.views; });
+    s.members.forEach((x) => {
+      const k = mamaKey(x);
+      if (k === mamaKey(s.hub) || guestSlg[k]) return;
+      if ((s.hub.clips || []).some((c) => ownIds[k] && ownIds[k][c.id])) return;
+      featCred[k] = (featCred[k] || 0) + s.hub.views;
+    });
   });
-  const effV = (a) => a.views + (feat ? (featCred[mamaKey(a)] || 0) : 0);
-  const vmap = feat ? {} : null;
-  if (feat) actsAll.forEach((a) => { vmap[mamaKey(a)] = effV(a); });
+  const effV = (a) => feat ? a.views + (featCred[mamaKey(a)] || 0) : maxOwn(a);
+  const vmap = {};
+  actsAll.forEach((a) => { vmap[mamaKey(a)] = effV(a); });
   const listActs = chartActs.slice().sort(state.awardsSort === "top" ? (x, y) => effV(y) - effV(x) : (x, y) => x.gorder - y.gorder);
   /* total video & views memakai facts sumber (71 video / 54,3 jt views Mnet) — views artis
    * tamu KiiiKiii adalah video bersama yang juga dihitung untuk izna, jadi tidak boleh
@@ -2902,9 +2856,7 @@ function renderAwardsPage(sec) {
   const head = pageCloseBar("MAMA", `chart panggung MAMA ${year} — views seluruh video panggung resmi Mnet`, ICO_MEDAL, "#a78bfa");
   const chipD = (k, lbl, n) => `<button type="button" class="mtab${dKey === k ? " active" : ""}" data-awd="${k}" style="--artist-color:#a78bfa">${lbl} <span class="cnt">${n}</span></button>`;
   const chipS = (k, lbl) => `<button type="button" class="mtab${state.awardsSort === k ? " active" : ""}" data-aws="${k}" style="--artist-color:#38bdf8">${lbl}</button>`;
-  const chipFeat = `<button type="button" class="mama-feat${feat ? " on" : ""}" data-awfeat title="Saat aktif, views panggung induk kolaborasi (mis. Panic ‘MUTANTS' PARTY’, CL ‘STILL THE BADDEST’) juga dihitung untuk artis yang tampil bersama di panggung itu — seperti “Also credit featured acts” di situs referensi">Kreditkan juga artis featured <span class="mama-featsw" aria-hidden="true"></span></button>`;
-  /* toggle “Garis kolab” — sembunyikan/tampilkan garis berwarna panggung kolaborasi & legenda warnanya di grafik */
-  const chipLines = `<button type="button" class="mama-feat${state.awardsLines ? " on" : ""}" data-awlines title="Tampilkan atau sembunyikan garis berwarna panggung kolaborasi &amp; legenda warnanya di grafik — kartu artis, angka views &amp; urutan tidak berubah">Garis kolab <span class="mama-featsw" aria-hidden="true"></span></button>`;
+  const chipFeat = `<button type="button" class="mama-feat${feat ? " on" : ""}" data-awfeat title="Aturan views per artis: MATI = artis dihitung dari 1 video panggungnya dengan views terbanyak saja; AKTIF = gabungan seluruh video artis + views panggung induk kolaborasi (mis. Panic ‘MUTANTS' PARTY’, CL ‘STILL THE BADDEST’) untuk artis pendampingnya — seperti “Also credit featured acts” di situs referensi">Kreditkan juga artis featured <span class="mama-featsw" aria-hidden="true"></span></button>`;
   /* dropdown edisi MAMA — MAMA 2020 s.d. 2026; tahun yang berkasnya gagal dimuat (tidak ada
    * di repo) ditandai nonaktif dengan alasan di tooltip */
   const yearOpts = ["2026", "2025", "2024", "2023", "2022", "2021", "2020"].map((k) =>
@@ -2923,12 +2875,12 @@ function renderAwardsPage(sec) {
       <div class="mtabs" style="margin:0"><span class="myear-lab">Edisi</span><select id="mamaYearSel" class="myear" aria-label="Pilih edisi MAMA">${yearOpts}</select></div>
       <div class="mtabs" style="margin:0">${chipD("all", nDays > 2 ? "Semua hari" : "Kedua hari", actsAll.length)}${Array.from({ length: nDays }, (_, k) => chipD(String(k + 1), "Hari " + (k + 1), actsAll.filter((a) => a.day === k + 1).length)).join("")}</div>
       <div class="mtabs" style="margin:0">${chipS("top", "Terbanyak ditonton")}${chipS("order", "Urutan panggung")}</div>
-      ${stages.length ? `<div style="margin:0;display:flex;gap:10px;flex-wrap:wrap;align-items:center">${chipLines}${chipFeat}</div>` : ""}
+      ${stages.length ? `<div style="margin:0;display:flex;gap:10px;flex-wrap:wrap;align-items:center">${chipFeat}</div>` : ""}
     </div>
-    <div class="mama-plate"><div class="mama-chart">${mamaChartSVG(chartActs, focCol, { year: year, collab: stages, collabMap: collabMap, vmap: vmap, guests: m.guests || [], featCred: feat ? featCred : null, showLines: state.awardsLines, days: dKey === "all" ? (m.days || []) : null })}</div></div>
+    <div class="mama-plate"><div class="mama-chart">${mamaChartSVG(chartActs, focCol, { year: year, collabMap: collabMap, vmap: vmap, guests: m.guests || [], featCred: feat ? featCred : null, days: dKey === "all" ? (m.days || []) : null })}</div></div>
     <p class="note" style="margin-top:8px">${m.note ? m.note : (year === "2025"
-      ? `Kiri ke kanan: urutan naik panggung · tinggi &amp; ukuran bintang: views (skala linear) · tekan bintang/nama untuk lompat ke kartu artisnya. Bintang berwarna = grup yang dipantau situs ini — <b>BABYMONSTER tampil dua kali</b> (hari 1 ‘MONSTER\u2019s NIGHT LIVE’, hari 2 ‘KPop Demon Hunters · HUNTR/X’), jadi ada dua bintang merah. <b>Garis berwarna</b> = panggung kolaborasi — <b>satu warna untuk satu panggung kolab</b> (lihat legenda warna di dalam grafik), ditarik dari <b>panggung induk</b> ke tiap artis yang tampil bersama. Edisi 2025 punya 4 panggung kolab: <b>‘WISH to Hearts’</b> (induk NCT WISH ↔ Hearts2Hearts), <b>‘Flip The Coin’</b> (induk TWS ↔ MEOVV), <b>‘HEAR MY ROAR’</b> (induk ALLDAY PROJECT ↔ Felix &amp; Sung Hanbin) dan <b>‘Endlich der Übermensch!’</b> (induk G-DRAGON ↔ Song So-hee). Arahkan kursor ke garis atau legenda untuk melihat pesertanya. Tombol <b>Kreditkan juga artis featured</b>: saat aktif, views panggung induk kolaborasi ikut dihitung untuk artis pendampingnya. Saat “Kedua hari”, garis putus-putus tegak menjadi batas Hari 1 | Hari 2. Bintang ber<strong style="color:#f1b65e">cincin amber putus-putus</strong> = <b>artis tamu</b> tanpa unggahan panggung sendiri: <b>Kim Hye-soo</b> &amp; <b>KYOKA</b> (‘HEAR MY ROAR’), <b>IDID</b> (bersama KickFlip) dan <b>Song So-hee</b> (vokal ‘DRAMA’-nya G-DRAGON) — views-nya dihitung dari video panggung bersama, angka yang sama juga dihitung untuk kartu panggung induknya (total views di atas memakai angka sumber, jadi video bersama tidak dihitung dua kali). Tombol <b>Garis kolab</b> menyembunyikan atau menampilkan garis &amp; legenda warna ini.`
-      : `Kiri ke kanan: urutan naik panggung · tinggi &amp; ukuran bintang: views (skala linear) · tekan bintang/nama untuk lompat ke kartu artisnya. Bintang berwarna = grup yang dipantau situs ini. <b>Garis berwarna</b> = panggung kolaborasi — <b>satu warna untuk satu panggung kolab</b> (lihat legenda warna di dalam grafik), ditarik dari <b>panggung induk</b> ke tiap artis yang tampil bersama — jadi induknya selalu titik dengan garis terbanyak (Panic ‘MUTANTS' PARTY’ terhubung ke 5 artis; ALLDAY PROJECT ikut dua panggung sekaligus, jadi kena garis Panic dan garis CL ‘STILL THE BADDEST’). Arahkan kursor ke garis atau legenda untuk melihat peserta panggungnya. Tombol <b>Kreditkan juga artis featured</b>: saat aktif, views panggung induk kolaborasi ikut dihitung untuk artis pendampingnya — tinggi bintang, label, tooltip &amp; urutan “Terbanyak ditonton” memakai total itu. Saat “Kedua hari”, garis putus-putus tegak menjadi batas antara Hari 1 dan Hari 2, dan daftar Para artis di bawah juga dipisah pembatas hari. Bintang ber<strong style="color:#f1b65e">cincin amber putus-putus</strong> = <b>artis tamu</b> — di edisi ini <b>KiiiKiii</b>: ikut tampil di ‘GIRLS NEVER STOP’ bersama izna &amp; I.O.I tapi Mnet tidak mengunggah video panggung terpisah untuknya, jadi kartunya <b>diberi nama “izna x KiiiKiii”</b> (seluruh views panggung bersama itu — 1,78 jt — dihitung di kartu itu, klip ‘갑자기’-nya I.O.I tetap kartu sendiri) dan KiiiKiii tetap tampak sebagai titik tamu di grafik. Tombol <b>Garis kolab</b> menyembunyikan atau menampilkan garis &amp; legenda warna ini.`)}</p>
+      ? `Kiri ke kanan: urutan naik panggung · tinggi &amp; ukuran bintang: views per artis (skala linear) · tekan bintang/nama untuk lompat ke kartu artisnya. Bintang berwarna = grup yang dipantau situs ini — <b>BABYMONSTER tampil dua kali</b> (hari 1 ‘MONSTER\u2019s NIGHT LIVE’, hari 2 ‘KPop Demon Hunters · HUNTR/X’), jadi ada dua bintang merah. <b>Angka views per artis</b> mengikuti tombol <b>Kreditkan juga artis featured</b>: tanpa toggle, artis dihitung dari <b>1 video panggungnya dengan views terbanyak</b> saja (full stage &amp; klip lagu menonton penonton yang sama, jadi tidak dijumlahkan); dengan toggle, dihitung <b>gabungan seluruh video</b> artis itu <b>+ views panggung induk kolaborasinya</b> untuk artis pendamping — edisi 2025 punya 4 panggung kolab: ‘WISH to Hearts’ (induk NCT WISH ↔ Hearts2Hearts), ‘Flip The Coin’ (TWS ↔ MEOVV), ‘HEAR MY ROAR’ (ALLDAY PROJECT ↔ Felix &amp; Sung Hanbin) dan ‘Endlich der Übermensch!’ (G-DRAGON ↔ Song So-hee). Saat “Kedua hari”, garis putus-putus tegak menjadi batas Hari 1 | Hari 2. Bintang ber<strong style="color:#f1b65e">cincin amber putus-putus</strong> = <b>artis tamu</b> tanpa unggahan panggung sendiri: <b>Kim Hye-soo</b> &amp; <b>KYOKA</b> (‘HEAR MY ROAR’), <b>IDID</b> (bersama KickFlip) dan <b>Song So-hee</b> (vokal ‘DRAMA’-nya G-DRAGON) — views-nya dihitung dari video panggung bersama, angka yang sama juga dihitung untuk kartu panggung induknya (total views di atas memakai angka sumber, jadi video bersama tidak dihitung dua kali).`
+      : `Kiri ke kanan: urutan naik panggung · tinggi &amp; ukuran bintang: views per artis (skala linear) · tekan bintang/nama untuk lompat ke kartu artisnya. Bintang berwarna = grup yang dipantau situs ini. <b>Angka views per artis</b> mengikuti tombol <b>Kreditkan juga artis featured</b>: tanpa toggle, artis dihitung dari <b>1 video panggungnya dengan views terbanyak</b> saja (mis. ada 3 video → yang dihitung views terbesarnya, karena full stage &amp; klip lagu ditonton penonton yang sama); dengan toggle, dihitung <b>gabungan seluruh video</b> artis itu <b>+ views panggung induk kolaborasinya</b> — Panic ‘MUTANTS' PARTY’ untuk Kim Tae-rae (ZEROBASEONE), Martin &amp; Seonghyeon (CORTIS), Woochan (ALLDAY PROJECT), Yuha (Hearts2Hearts) &amp; WOODZ, serta CL ‘STILL THE BADDEST’ untuk ALLDAY PROJECT — tinggi bintang, label, tooltip &amp; urutan “Terbanyak ditonton” memakai total itu. Full stage ‘A MUSIC INTERSTELLAR’ (ditagih Mnet ke Street World Fighter X BABYMONSTER) tampil di kartu Street World Fighter <b>dan</b> kartu BABYMONSTER — satu video yang sama, tidak dihitung dobel di total atas, dan kartu BABYMONSTER tidak lagi menerima kreditnya saat toggle aktif. Saat “Kedua hari”, garis putus-putus tegak menjadi batas antara Hari 1 dan Hari 2, dan daftar Para artis di bawah juga dipisah pembatas hari. Bintang ber<strong style="color:#f1b65e">cincin amber putus-putus</strong> = <b>artis tamu</b> — di edisi ini <b>KiiiKiii</b>: ikut tampil di ‘GIRLS NEVER STOP’ bersama izna &amp; I.O.I tapi Mnet tidak mengunggah video panggung terpisah untuknya, jadi kartunya <b>diberi nama “izna x KiiiKiii”</b> (seluruh views panggung bersama itu dihitung di kartu itu, klip ‘갑자기’-nya I.O.I tetap kartu sendiri) dan KiiiKiii tetap tampak sebagai titik tamu di grafik.`)}</p>
     <div class="mama-acts">
       <div class="hsect"><h2><span class="sic" style="--c:#a78bfa"><svg viewBox="0 0 24 24"><path d="${ICO_MEDAL}"/></svg></span>Para artis</h2><span class="sub">${state.awardsSort === "top" ? "terbanyak ditonton dulu" : "urutan panggung"} · ${dKey === "all" ? "kedua hari" : "Hari " + dKey}</span></div>
       ${listActs.map((a, i) => {
@@ -2949,7 +2901,7 @@ function renderAwardsPage(sec) {
               ${a.ko ? `<div class="mama-ko" lang="ko">${esc(a.ko)}</div>` : ""}
             </div>
           </div>
-          <div class="mama-actviews"><span class="tv"${feat && cr > 0 ? ` title="termasuk +${fmtExact(cr)} views panggung kolaborasi (artis featured)"` : ""}>${fmtExact(feat ? effV(a) : a.views)}</span><span class="tm">views${feat && cr > 0 ? ` · termasuk +${fmtCompact(cr)} panggung kolab` : ""} · ${a.clips.length} video · Hari ${a.day}${a.order != null ? ` · panggung ke-${a.order}` : ""}</span></div>
+          <div class="mama-actviews"><span class="tv"${feat && cr > 0 ? ` title="termasuk +${fmtExact(cr)} views panggung kolaborasi (artis featured)"` : feat ? ` title="gabungan ${a.clips.length} video panggung"` : ` title="video panggung dengan views terbanyak"`}>${fmtExact(effV(a))}</span><span class="tm">views${feat ? ` · gabungan ${a.clips.length} video${feat && cr > 0 ? ` · termasuk +${fmtCompact(cr)} panggung kolab` : ""}` : ` · 1 video terbanyak dari ${a.clips.length} video`} · Hari ${a.day}${a.order != null ? ` · panggung ke-${a.order}` : ""}</span></div>
           ${a.stage ? `<div class="mama-stage">Tema panggung <b>‘${esc(a.stage)}’</b></div>` : ""}
           ${a.guest && a.gnote ? `<div class="mama-gnote">${esc(a.gnote)}</div>` : ""}
           ${mamaSongs(a).length ? `<ol class="mama-setlist">${mamaSongs(a).map((s) => { const mt = mamaSongMeta(a, s); const lbl = [mt.ver, mt.dur].filter(Boolean).join(" · "); return `<li class="song">${esc(s)}${lbl ? `<span class="sms">${esc(lbl)}</span>` : ""}</li>`; }).join("")}</ol>` : ""}
@@ -2961,12 +2913,9 @@ function renderAwardsPage(sec) {
     <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
       <button class="mtab" data-gomenu="tro" style="--artist-color:#f59e0b">Trofi &amp; Penghargaan — hasil MAMA ${year} &amp; music show →</button>
     </div>
-    <p class="note" style="margin-top:14px">Sumber: kanal YouTube <b>Mnet</b> — unggahan panggung ${esc(m.srcTag || "resmi MAMA")} (Shorts, kompilasi &amp; behind tidak dihitung). Total artis menjumlahkan semua videonya: unggahan full stage dan klip per lagu masing-masing dihitung; panggung yang dibagi beberapa artis dihitung untuk artis yang dikreditkan Mnet lebih dulu. Angka views <b>diperbarui otomatis</b> oleh kolektor tiap jam (YouTube Data API) — snapshot terakhir per ${esc(m.asOf || "–")}. Nama panggung, urutan naik panggung &amp; daftar videonya tetap dikurasi manual di <b>${esc(mamaFile)}</b>${year === "2026" ? "; ringkasan awal per artis dirangkum dari mama-2026.mirekapps.com" : ""}.</p>
+    <p class="note" style="margin-top:14px">Sumber: kanal YouTube <b>Mnet</b> — unggahan panggung ${esc(m.srcTag || "resmi MAMA")} (Shorts, kompilasi &amp; behind tidak dihitung). Angka per artis mengikuti tombol <b>Kreditkan juga artis featured</b>: tanpa toggle artis dihitung dari <b>1 video dengan views terbanyak</b> saja, dengan toggle dari <b>gabungan seluruh videonya</b> (+ panggung kolab untuk artis pendamping); panggung yang dibagi beberapa artis dihitung untuk artis yang dikreditkan Mnet lebih dulu, dan salinan video bersama tidak dihitung dobel di total atas. Angka views <b>diperbarui otomatis</b> oleh kolektor tiap jam (YouTube Data API) — snapshot terakhir per ${esc(m.asOf || "–")}. Nama panggung, urutan naik panggung &amp; daftar videonya tetap dikurasi manual di <b>${esc(mamaFile)}</b>${year === "2026" ? "; ringkasan awal per artis dirangkum dari mama-2026.mirekapps.com" : ""}.</p>
   </section>`;
   bindPageClose(sec);
-  /* garis kolaborasi “tergambar” — kelas collab-on menyusul satu frame biar transisi dash jalan */
-  const svgCollab = sec.querySelector(".mama-chart svg");
-  if (svgCollab) requestAnimationFrame(() => requestAnimationFrame(() => svgCollab.classList.add("collab-on")));
   const rerender = () => { const y = window.scrollY; renderAll(); window.scrollTo(0, y); };
   sec.querySelectorAll("[data-awd]").forEach((b) => b.addEventListener("click", () => { state.awardsDay = b.dataset.awd; rerender(); }));
   /* dropdown edisi MAMA — muat berkas tahunnya bila belum ada di memori, lalu render ulang */
@@ -2980,8 +2929,6 @@ function renderAwardsPage(sec) {
   });
   sec.querySelectorAll("[data-aws]").forEach((b) => b.addEventListener("click", () => { state.awardsSort = b.dataset.aws; rerender(); }));
   sec.querySelectorAll("[data-awfeat]").forEach((b) => b.addEventListener("click", () => { state.awardsFeat = !state.awardsFeat; rerender(); }));
-  /* toggle “Garis kolab” — simpan pilihan di localStorage (py.awlines) lalu render ulang */
-  sec.querySelectorAll("[data-awlines]").forEach((b) => b.addEventListener("click", () => { state.awardsLines = !state.awardsLines; try { localStorage.setItem("py.awlines", state.awardsLines ? "1" : "0"); } catch {} rerender(); }));
   sec.querySelectorAll("[data-gomenu]").forEach((b) => b.addEventListener("click", () => menuGo(b.dataset.gomenu)));
   sec.querySelectorAll("[data-jump]").forEach((el) => el.addEventListener("click", () => {
     const t = document.getElementById("mamaact-" + el.dataset.jump);
