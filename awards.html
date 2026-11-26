@@ -1955,6 +1955,18 @@ function drawSpark30(canvas) {
   }, "spark-" + plat + "-" + id);
 }
 
+/* fetch fleksibel: coba beberapa lokasi berurutan (folder data/ dulu, lalu akar repo) —
+ * aman kalau file kurasi (career.json / circle.json) salah tempat saat diunggah manual */
+async function fetchAny(paths, bust) {
+  for (const p of paths) {
+    try {
+      const r = await fetch(p + bust);
+      if (r.ok) return await r.json();
+    } catch (e) {}
+  }
+  return null;
+}
+
 async function loadData() {
   const bust = "?v=" + Date.now();
   const [cfg, vids, chans, meta, ms, memb, trofi, jadwal, spPop, social, charts, chHist, news, anoms, mama, mamaPrev] = await Promise.all([

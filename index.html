@@ -1961,6 +1961,18 @@ function drawSpark30(canvas) {
   }, "spark-" + plat + "-" + id);
 }
 
+/* fetch fleksibel: coba beberapa lokasi berurutan (folder data/ dulu, lalu akar repo) —
+ * aman kalau file kurasi (career.json / circle.json) salah tempat saat diunggah manual */
+async function fetchAny(paths, bust) {
+  for (const p of paths) {
+    try {
+      const r = await fetch(p + bust);
+      if (r.ok) return await r.json();
+    } catch (e) {}
+  }
+  return null;
+}
+
 async function loadData() {
   const bust = "?v=" + Date.now();
   const [cfg, vids, chans, meta, ms, memb, trofi, jadwal, spPop, social, charts, chHist, news, anoms, mama, mamaPrev, career, circle] = await Promise.all([
@@ -1980,8 +1992,8 @@ async function loadData() {
     fetch("data/anomalies.json" + bust).then((r) => r.json()).catch(() => null),
     fetch("data/mama.json" + bust).then((r) => r.json()).catch(() => null),
     fetch("data/mama-2025.json" + bust).then((r) => r.json()).catch(() => null),
-    fetch("data/career.json" + bust).then((r) => r.json()).catch(() => null),
-    fetch("data/circle.json" + bust).then((r) => r.json()).catch(() => null),
+    fetchAny(["data/career.json", "career.json"], bust),
+    fetchAny(["data/circle.json", "circle.json"], bust),
   ]);
   state.config = cfg; state.videos = vids; state.channels = chans; state.meta = meta;
   state.career = career; state.circle = circle;
@@ -7616,7 +7628,7 @@ function renderStatPage(sec) {
   const career = (state.career && state.career.artists) ? state.career.artists[artId] : null;
   const circle = (state.circle && state.circle.artists) ? state.circle.artists[artId] : null;
   if (!career && !circle) {
-    sec.innerHTML = head + `<div class="banner" style="margin-top:16px">Data stats karier belum bisa dimuat — periksa koneksi lalu muat ulang halaman.</div>`;
+    sec.innerHTML = head + `<div class="banner" style="margin-top:16px">Data stats karier belum bisa dimuat — cek koneksi, atau pastikan <b>career.json</b> &amp; <b>circle.json</b> sudah diunggah ke folder <b>data/</b> di repo (bukan akar repo), lalu muat ulang halaman.</div>`;
     bindPageClose(sec);
     return;
   }

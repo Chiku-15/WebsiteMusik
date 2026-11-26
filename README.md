@@ -66,6 +66,8 @@ GitHub Pages menayangkan index.html — tombol YouTube/Spotify di header bergant
 
 ## Struktur file
 
+> **Letak file penting** (perbaikan 26 Nov 2026 — halaman Stats kosong gara-gara `circle.json` salah tempat): file situs (`index.html`, `awards.html`), `README.md`, `config.json` & kolektor (`collect*.js`) berada di **akar repo**; **SEMUA file data JSON — termasuk `career.json` & `circle.json` — wajib di dalam folder `data/`** karena situs mem-fetch `data/<nama>.json` (sekarang ada fallback ke akar repo, tapi tempat yang benar tetap `data/`); folder `.github/` hanya berisi workflow Actions (`workflows/collect.yml`) — jangan menaruh data di sana.
+
 | File | Fungsi |
 | --- | --- |
 | `index.html` | Situs (satu file, tanpa build) — YouTube & Spotify |
