@@ -1,40 +1,92 @@
 {
-  "_info": "Kartu milestone karier BABYMONSTER & TREASURE (gaya fan-stat baechella). Kartu YT & SPOTIFY dihitung LIVE dari data kolektor situs (data/channels.json & data/spotify-artists.json) — angka di file ini hanya dipakai utk kartu yang tidak direkam kolektor. srs = sumber. Terakhir direviu 25 Nov 2026.",
-  "updated": "2026-11-25",
+  "_info": "Kartu milestone karier BABYMONSTER, TREASURE, dan gabungan 'all' (gaya fan-stat baechella). Semua artis kini memakai SET KARTU IDENTIK (10 kartu). Kartu yt/subs/sp/follow/spark/ig/trophy dihitung LIVE dari data kolektor situs (data/channels.json, data/spotify-artists.json, data/social.json, data/trofi.json) — angka 'big' di file ini hanya dipakai untuk kartu kurasi yang tidak direkam kolektor (disc/mic/chart). srs = sumber. Direviu 26 Nov 2026.",
+  "updated": "2026-11-26",
   "artists": {
     "babymonster": {
       "cards": [
         { "icon": "yt", "label": "Views YouTube", "sub": "kanal resmi · direkam live situs",
           "src": "data live situs (YouTube Data API, kolektor per jam)" },
+        { "icon": "subs", "label": "Subscriber YouTube", "sub": "kanal resmi · direkam live situs",
+          "src": "data live situs (YouTube Data API, kolektor per jam)" },
         { "icon": "sp", "label": "Stream Spotify", "sub": "semua lagu · direkam live situs",
           "src": "data live situs (kworb/Spotify Charts, kolektor)" },
-        { "icon": "note", "label": "Stream YT Music", "big": "7,44 mlr+", "sub": "audiens bulanan 95,9 jt",
-          "src": "kurasi fan-stat baechella (Updated Nov 2026)" },
-        { "icon": "disc", "label": "Penjualan Album Circle", "big": "3,59 jt+", "sub": "4 album (Korea) · lihat rincian di bawah",
+        { "icon": "follow", "label": "Follower Spotify", "sub": "profil resmi Spotify · direkam live situs",
+          "src": "data live situs (Spotify Web API/stats.fm, kolektor)" },
+        { "icon": "spark", "label": "Pendengar Bulanan Spotify", "sub": "audiens unik bulan berjalan · live",
+          "src": "data live situs (kolektor Spotify)" },
+        { "icon": "ig", "label": "Pengikut Instagram", "sub": "akun resmi · rekaman situs",
+          "src": "data/social.json (override manual — IG memblokir IP server GitHub)" },
+        { "icon": "disc", "label": "Penjualan Album Circle", "big": "3,59 jt+", "sub": "4 album (Korea) · lihat rincian di tab Pembaruan album",
           "src": "Circle Chart — kurasi fan-tracking, per Okt 2026" },
         { "icon": "mic", "label": "Penonton Konser", "big": "858 rb+", "sub": "47/52 kota · 86 show (tur dunia & fan concert)",
           "src": "kurasi fan-stat baechella (Updated Nov 2026); Kyocera Dome 2 hari = 90 rb penonton (Sep 2026, media)" },
         { "icon": "chart", "label": "Billboard Global 200", "big": "#33", "sub": "puncak tertinggi: SHEESH (Mei 2024) · DRIP debut #149 di Billboard 200 AS (album)",
-          "src": "data/chart-history.json situs (Wikipedia/Billboard, terverifikasi 14 Nov 2026)" }
+          "src": "data/chart-history.json situs (Wikipedia/Billboard, terverifikasi 14 Nov 2026)" },
+        { "icon": "trophy", "label": "Trofi & Penghargaan", "sub": "menang acara musik + penghargaan besar · dihitung live dari trofi.json",
+          "src": "data/trofi.json situs (reviu penuh 16 Nov 2026 vs Wikipedia/YG resmi)" }
       ],
-      "topNote": "Top 5 M/Vs dihitung live dari seluruh video kanal yang dipantau situs; Top 5 Spotify dari seluruh lagu terpantau."
+      "certs": [
+        { "title": "춤 (CHOOM)", "type": "Digital single", "detail": "KMCA 2× Platinum + Platinum (Nemo)", "big": "750K+ tersertifikasi",
+          "src": "KMCA (Korea Music Content Association) — kurasi fan-stat baechella, Nov 2026" },
+        { "title": "DRIP", "type": "Album", "detail": "KMCA Platinum + 2× Platinum (Nemo)", "big": "750K+ tersertifikasi",
+          "src": "KMCA — kurasi fan-stat baechella, Nov 2026" },
+        { "title": "BABYMONS7ER", "type": "Mini album", "detail": "KMCA Platinum + 2× Platinum (Nemo/Tag)", "big": "750K+ tersertifikasi",
+          "src": "KMCA — kurasi fan-stat baechella, Nov 2026" },
+        { "title": "WE GO UP", "type": "Mini album", "detail": "KMCA 2× Platinum (500K) · RIAJ Gold (100K)", "big": "600K+ tersertifikasi",
+          "src": "KMCA + RIAJ (Jepang) — kurasi fan-stat baechella, Nov 2026" }
+      ],
+      "topNote": "Semua angka di atas nyata: kartu YouTube, Spotify, Instagram & trofi dihitung live dari data pemantauan situs; kartu Circle/konser/Billboard dari kurasi bersumber (sumber tertera di tiap kartu)."
     },
     "treasure": {
       "cards": [
         { "icon": "yt", "label": "Views YouTube", "sub": "kanal resmi · direkam live situs",
           "src": "data live situs (YouTube Data API, kolektor per jam)" },
+        { "icon": "subs", "label": "Subscriber YouTube", "sub": "kanal resmi · direkam live situs",
+          "src": "data live situs (YouTube Data API, kolektor per jam)" },
         { "icon": "sp", "label": "Stream Spotify", "sub": "semua lagu · direkam live situs",
           "src": "data live situs (kworb/Spotify Charts, kolektor)" },
-        { "icon": "disc", "label": "Penjualan Album Circle", "big": "7,65 jt+", "sub": "10 album Korea · lihat rincian di bawah",
+        { "icon": "follow", "label": "Follower Spotify", "sub": "profil resmi Spotify · direkam live situs",
+          "src": "data live situs (Spotify Web API/stats.fm, kolektor)" },
+        { "icon": "spark", "label": "Pendengar Bulanan Spotify", "sub": "audiens unik bulan berjalan · live",
+          "src": "data live situs (kolektor Spotify)" },
+        { "icon": "ig", "label": "Pengikut Instagram", "sub": "akun resmi · rekaman situs",
+          "src": "data/social.json (override manual — IG memblokir IP server GitHub)" },
+        { "icon": "disc", "label": "Penjualan Album Circle", "big": "7,65 jt+", "sub": "10 album Korea · lihat rincian di tab Pembaruan album",
           "src": "Circle Chart — kurasi koreansalestwt.blogspot.com (7.653.463, ditarik 25 Nov 2026)" },
         { "icon": "mic", "label": "Penonton Konser", "big": "1 jt+", "sub": "kumulatif konser solo di JEPANG saja (Mei 2025) · tur PULSE ON 2025-26 ±376,5 rb penonton (fan tracking)",
           "src": "YG Entertainment resmi (ygfamily.com 20 Mei 2025); PULSE ON per fan-tracking ygfactsbackup" },
         { "icon": "chart", "label": "Billboard Global 200", "big": "#169", "sub": "puncak tertinggi: DARARI (Mar 2022) · entri pertama grup: JIKJIN (Feb 2022)",
           "src": "data/chart-history.json situs (Wikipedia/Billboard, terverifikasi 14 Nov 2026)" },
-        { "icon": "spark", "label": "Pendengar Bulanan Spotify", "sub": "direkam live situs",
-          "src": "data live situs (kolektor Spotify)" }
+        { "icon": "trophy", "label": "Trofi & Penghargaan", "sub": "menang acara musik + penghargaan besar · dihitung live dari trofi.json",
+          "src": "data/trofi.json situs (reviu penuh 16 Nov 2026 vs Wikipedia/YG resmi)" }
       ],
-      "topNote": "Top 5 M/Vs dihitung live dari seluruh video kanal yang dipantau situs; Top 5 Spotify dari seluruh lagu terpantau."
+      "certs": [],
+      "topNote": "Semua angka di atas nyata: kartu YouTube, Spotify, Instagram & trofi dihitung live dari data pemantauan situs; kartu Circle/konser/Billboard dari kurasi bersumber (sumber tertera di tiap kartu)."
+    },
+    "all": {
+      "cards": [
+        { "icon": "yt", "label": "Views YouTube", "sub": "gabungan 2 kanal resmi · direkam live situs",
+          "src": "penjumlahan data live situs (YouTube Data API, kolektor per jam)" },
+        { "icon": "subs", "label": "Subscriber YouTube", "sub": "gabungan 2 kanal resmi · direkam live situs",
+          "src": "penjumlahan data live situs (YouTube Data API, kolektor per jam)" },
+        { "icon": "sp", "label": "Stream Spotify", "sub": "gabungan semua lagu kedua grup · live",
+          "src": "penjumlahan data live situs (kworb/Spotify Charts, kolektor)" },
+        { "icon": "follow", "label": "Follower Spotify", "sub": "gabungan 2 profil resmi · live",
+          "src": "penjumlahan data live situs (Spotify Web API/stats.fm, kolektor)" },
+        { "icon": "spark", "label": "Pendengar Bulanan Spotify", "sub": "penjumlahan audiens kedua grup (± karena ada kemungkinan tumpang tindih pendengar)",
+          "src": "penjumlahan data live situs (kolektor Spotify) — jumlah gabungan, bukan audiens unik" },
+        { "icon": "ig", "label": "Pengikut Instagram", "sub": "gabungan 2 akun resmi · rekaman situs",
+          "src": "penjumlahan data/social.json (override manual — IG memblokir IP server GitHub)" },
+        { "icon": "disc", "label": "Penjualan Album Circle", "big": "11,24 jt+", "sub": "14 album Korea gabungan · lihat rincian di tab Pembaruan album",
+          "src": "penjumlahan kurasi Circle Chart kedua grup (BM per Okt 2026 · TREASURE ditarik 25 Nov 2026)" },
+        { "icon": "mic", "label": "Penonton Konser", "big": "1,86 jt+", "sub": "gabungan tur & fan concert kedua grup",
+          "src": "penjumlahan kurasi: baechella (BM, Nov 2026) + YG resmi & fan-tracking (TREASURE)" },
+        { "icon": "chart", "label": "Billboard Global 200", "big": "#33", "sub": "puncak gabungan: SHEESH — BABYMONSTER (Mei 2024) · rekor TREASURE: DARARI #169 (Mar 2022)",
+          "src": "data/chart-history.json situs (Wikipedia/Billboard, terverifikasi 14 Nov 2026) — diambil yang tertinggi" },
+        { "icon": "trophy", "label": "Trofi & Penghargaan", "sub": "menang acara musik + penghargaan besar kedua grup · live",
+          "src": "penjumlahan data/trofi.json situs (reviu penuh 16 Nov 2026 vs Wikipedia/YG resmi)" }
+      ],
+      "topNote": "Mode gabungan menjumlahkan angka kedua grup (kecuali Billboard Global 200 — diambil puncak tertinggi). Pendengar bulanan gabungan berlabel ± karena dua audiens bisa tumpang tindih; selain itu semua angka dihitung live dari data pemantauan situs atau dari kurasi bersumber."
     }
   }
 }
