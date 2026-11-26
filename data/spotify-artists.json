@@ -4,12 +4,12 @@
   "name": "BABYMONSTER",
   "spotifyId": "1SIocsqdEefUTE6XKGUiVS",
   "color": "#ff4d6d",
-  "image": "https://image-cdn-ak.spotifycdn.com/image/ab676161000051747eed59dfba0a93af631a6654",
-  "monthlyListeners": 7938566,
-  "mlDelta": 5553,
+  "image": "https://image-cdn-fa.spotifycdn.com/image/ab676161000051747eed59dfba0a93af631a6654",
+  "monthlyListeners": 7725784,
+  "mlDelta": -48564,
   "followers": 9459627,
-  "totalStreams": 2591793195,
-  "dailyStreams": 3064604,
+  "totalStreams": 2616255227,
+  "dailyStreams": 3047733,
   "trackCount": 43,
   "history": [
    {
@@ -286,6 +286,13 @@
     "total": 2591793195,
     "daily": 3064604,
     "ml": 7938566
+   },
+   {
+    "t": 1795703710,
+    "total": 2616255227,
+    "daily": 3047733,
+    "ml": 7725784,
+    "f": 9459627
    }
   ],
   "openUrl": "https://open.spotify.com/artist/1SIocsqdEefUTE6XKGUiVS"
@@ -295,13 +302,14 @@
   "name": "TREASURE",
   "spotifyId": "3KonOYiLsU53m4yT7gNotP",
   "color": "#38bdf8",
-  "image": "https://image-cdn-ak.spotifycdn.com/image/ab67616100005174946efd7262fe76ff1f08e776",
-  "monthlyListeners": 1885365,
+  "image": "https://image-cdn-fa.spotifycdn.com/image/ab67616100005174946efd7262fe76ff1f08e776",
+  "monthlyListeners": 1900000,
   "mlDelta": null,
+  "mlApprox": true,
   "followers": 3955050,
-  "totalStreams": 1734438692,
-  "dailyStreams": 847628,
-  "trackCount": 160,
+  "totalStreams": 1741838113,
+  "dailyStreams": 662553,
+  "trackCount": 161,
   "history": [
    {
     "t": 1597464000,
@@ -849,6 +857,13 @@
     "total": 1734438692,
     "daily": 847628,
     "ml": 1885365
+   },
+   {
+    "t": 1795703718,
+    "total": 1741838113,
+    "daily": 662553,
+    "ml": 1900000,
+    "f": 3955050
    }
   ],
   "openUrl": "https://open.spotify.com/artist/3KonOYiLsU53m4yT7gNotP"
