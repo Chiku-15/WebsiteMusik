@@ -1,0 +1,40 @@
+{
+  "_info": "Kartu milestone karier BABYMONSTER & TREASURE (gaya fan-stat baechella). Kartu YT & SPOTIFY dihitung LIVE dari data kolektor situs (data/channels.json & data/spotify-artists.json) — angka di file ini hanya dipakai utk kartu yang tidak direkam kolektor. srs = sumber. Terakhir direviu 25 Nov 2026.",
+  "updated": "2026-11-25",
+  "artists": {
+    "babymonster": {
+      "cards": [
+        { "icon": "yt", "label": "Views YouTube", "sub": "kanal resmi · direkam live situs",
+          "src": "data live situs (YouTube Data API, kolektor per jam)" },
+        { "icon": "sp", "label": "Stream Spotify", "sub": "semua lagu · direkam live situs",
+          "src": "data live situs (kworb/Spotify Charts, kolektor)" },
+        { "icon": "note", "label": "Stream YT Music", "big": "7,44 mlr+", "sub": "audiens bulanan 95,9 jt",
+          "src": "kurasi fan-stat baechella (Updated Nov 2026)" },
+        { "icon": "disc", "label": "Penjualan Album Circle", "big": "3,59 jt+", "sub": "4 album (Korea) · lihat rincian di bawah",
+          "src": "Circle Chart — kurasi fan-tracking, per Okt 2026" },
+        { "icon": "mic", "label": "Penonton Konser", "big": "858 rb+", "sub": "47/52 kota · 86 show (tur dunia & fan concert)",
+          "src": "kurasi fan-stat baechella (Updated Nov 2026); Kyocera Dome 2 hari = 90 rb penonton (Sep 2026, media)" },
+        { "icon": "chart", "label": "Billboard Global 200", "big": "#33", "sub": "puncak tertinggi: SHEESH (Mei 2024) · DRIP debut #149 di Billboard 200 AS (album)",
+          "src": "data/chart-history.json situs (Wikipedia/Billboard, terverifikasi 14 Nov 2026)" }
+      ],
+      "topNote": "Top 5 M/Vs dihitung live dari seluruh video kanal yang dipantau situs; Top 5 Spotify dari seluruh lagu terpantau."
+    },
+    "treasure": {
+      "cards": [
+        { "icon": "yt", "label": "Views YouTube", "sub": "kanal resmi · direkam live situs",
+          "src": "data live situs (YouTube Data API, kolektor per jam)" },
+        { "icon": "sp", "label": "Stream Spotify", "sub": "semua lagu · direkam live situs",
+          "src": "data live situs (kworb/Spotify Charts, kolektor)" },
+        { "icon": "disc", "label": "Penjualan Album Circle", "big": "7,65 jt+", "sub": "10 album Korea · lihat rincian di bawah",
+          "src": "Circle Chart — kurasi koreansalestwt.blogspot.com (7.653.463, ditarik 25 Nov 2026)" },
+        { "icon": "mic", "label": "Penonton Konser", "big": "1 jt+", "sub": "kumulatif konser solo di JEPANG saja (Mei 2025) · tur PULSE ON 2025-26 ±376,5 rb penonton (fan tracking)",
+          "src": "YG Entertainment resmi (ygfamily.com 20 Mei 2025); PULSE ON per fan-tracking ygfactsbackup" },
+        { "icon": "chart", "label": "Billboard Global 200", "big": "#169", "sub": "puncak tertinggi: DARARI (Mar 2022) · entri pertama grup: JIKJIN (Feb 2022)",
+          "src": "data/chart-history.json situs (Wikipedia/Billboard, terverifikasi 14 Nov 2026)" },
+        { "icon": "spark", "label": "Pendengar Bulanan Spotify", "sub": "direkam live situs",
+          "src": "data live situs (kolektor Spotify)" }
+      ],
+      "topNote": "Top 5 M/Vs dihitung live dari seluruh video kanal yang dipantau situs; Top 5 Spotify dari seluruh lagu terpantau."
+    }
+  }
+}
