@@ -73,6 +73,16 @@ jobs:
         # Rate-limit internal: sosial 6 jam, Billboard 12 jam, chart Korea 6 jam, berita 1 jam.
         continue-on-error: true
 
+      - name: Kumpulkan views YT Music & Live Stage (tab Stats Karier)
+        id: mus
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: node collect_music.js
+        # Memperbarui data/ytmusic.json & data/livestage.json dari id video resmi yang
+        # tersimpan di file itu (±50 video, ~1-2 unit kuota per run). Kalau API gagal,
+        # fallback ke data/videos.json; bila keduanya gagal, snapshot lama tetap dipakai.
+        continue-on-error: true
+
       - name: Simpan data ke repo
         id: simpan
         if: always()
