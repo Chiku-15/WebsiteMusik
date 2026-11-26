@@ -2250,10 +2250,12 @@ function openAwards() {
   renderAll();
   window.scrollTo(0, 0);
 }
-/* ---------- HALAMAN STATS — milestone karier & penjualan album Circle (gaya fan-stat baechella) ----------
- * Dua versi artis (BABYMONSTER & TREASURE). Kartu YouTube & Spotify dihitung LIVE dari data
- * kolektor situs; kartu lain dari data/career.json; seksi “Pembaruan Album” dari data/circle.json
- * (chart bulanan Circle, semua angka nyata). */
+/* ---------- HALAMAN STATS — milestone karier & pembaruan album/pendengar (gaya fan-stat baechella) ----------
+ * Dropdown tiga pilihan: BABYMONSTER, TREASURE, dan Semua artis (gabungan BM + TREASURE).
+ * 10 kartu identik per pilihan; kartu YouTube/Spotify/Instagram/trofi dihitung LIVE dari data
+ * kolektor situs; kartu lain dari data/career.json; 9 tab (Top 10 M/V, Top 10 Spotify, Top 10
+ * Performance, rekor chart, trofi, sertifikasi, konser & tur, Pembaruan album Circle, Pembaruan
+ * pendengar per bulan) — semua angka nyata. */
 function openStat() {
   state.retTo = "ber";   // navigasi header = asal ✕ kembali ke BERANDA
   state.statOpen = true;
@@ -2278,7 +2280,7 @@ function openStat() {
 function featDefs(isSp) {
   return [
     ["chn", "#ef4444", ICO_STATS, "Statistik Channel", "subscriber · views · pendengar bulanan — dropdown YouTube &amp; Spotify"],
-    ["stat", "#ff4d6d", ICO_GRID, "Stats Karier", "milestone karier &amp; penjualan album Circle per bulan — versi BABYMONSTER &amp; TREASURE"],
+    ["stat", "#ff4d6d", ICO_GRID, "Stats Karier", "dropdown BM · TREASURE · gabungan — 10 kartu karier &amp; 9 tampilan: Top 10, rekor chart, trofi, sertifikasi, album &amp; pendengar"],
     ["bul", "#06b6d4", ICO_CAL, "Rekap 12 bulan", "view YouTube &amp; pendengar Spotify Januari–Desember per tahun"],
     ["heat", hmAccent(state.platform), HM_ICO, "Peta panas harian", "view/stream baru tiap hari dalam setahun · bisa per artis"],
     ["rec", "#ffb02e", ICO_TROPHY, "Rekor &amp; Fakta", "rekor sepanjang situs berjalan — tercepat &amp; terbesar"],
@@ -3769,6 +3771,21 @@ const PLAT_STYLE = {
   weverse: { label: "Weverse", tag: "WV", color: "#6a78ff" },
   youtube: { label: "YouTube", tag: "YT", color: "#ff4d4d" },
   spotify: { label: "Spotify", tag: "SP", color: "#1ed760" },
+  applemusic: { label: "Apple Music", tag: "AM", color: "#fa2d48" },
+  facebook: { label: "Facebook", tag: "FB", color: "#1877f2" },
+};
+/* Akun resmi yang angkanya TIDAK direkam kolektor (platform tidak menyediakan via web
+ * publik / tidak dikumpulkan situs) — kartu tautan, URL diverifikasi 26 Nov 2026:
+ * Apple Music via iTunes Search API resmi, Facebook dari halaman resmi artis. */
+const SNS_STATIC = {
+  babymonster: {
+    applemusic: { handle: "BABYMONSTER", url: "https://music.apple.com/id/artist/babymonster/1715981813" },
+    facebook: { handle: "BABYMONSTER.ygofficial", url: "https://www.facebook.com/BABYMONSTER.ygofficial" },
+  },
+  treasure: {
+    applemusic: { handle: "TREASURE", url: "https://music.apple.com/id/artist/treasure/1526319335" },
+    facebook: { handle: "OfficialTreasure", url: "https://www.facebook.com/OfficialTreasure" },
+  },
 };
 const SRC_BADGE = { api: "persis", html: "persis", meta: "aprox", nitter: "mirror", jina: "aprox", manual: "manual" };
 const RE_BM = /babymonster|베이비몬스터|monstiez/i;
@@ -3814,6 +3831,15 @@ function socCardHTML(key, acc, opts = {}) {
   const st = PLAT_STYLE[key] || { label: key, tag: "?", color: "#6a78ff" };
   const handle = acc && acc.handle ? "@" + acc.handle : "";
   const url = acc && acc.url ? `<a class="soclink" href="${esc(acc.url)}" target="_blank" rel="noopener" title="${esc(handle || acc.url)}">${handle ? esc(handle) + " ↗" : "buka ↗"}</a>` : "";
+  if (key === "applemusic" || key === "facebook") {
+    /* kartu tautan — angka pengikut platform ini tidak direkam kolektor situs */
+    return `<div class="soccard" style="--pc:${st.color}">
+      <div class="sochead"><span class="plattag" style="--pc:${st.color}">${st.tag}</span><b>${st.label}</b></div>
+      <div class="socval na">profil resmi</div>
+      ${acc && acc.url ? `<a class="socbtn" href="${esc(acc.url)}" target="_blank" rel="noopener">Buka ${st.label} ↗</a>` : ""}
+      <div class="socnote">Akun resmi di ${st.label} — angka pengikutnya tidak direkam kolektor situs (belum ada sumber web publik yang stabil), kartu ini tautan ke profil resmi${handle ? " " + esc(handle) : ""}.</div>
+    </div>`;
+  }
   if (key === "weverse") {
     const last = acc && socLast(acc.history);
     /* Weverse tidak mempublikasikan follower via web — kalau ada titik dari
@@ -3873,12 +3899,20 @@ function renderSocialPage(sec) {
     const nRec = [ytSub != null, spArt && spArt.followers != null,
       ...["instagram", "twitter", "tiktok"].map((k) => !!(rec[k] && socLast(rec[k].history) && socLast(rec[k].history).f != null))]
       .filter(Boolean).length;
-    if (ytSub) cards.push(socCardHTML("youtube", { url: `https://www.youtube.com/${a.handle}`, handle: (a.handle || "").replace(/^@/, ""), history: [{ t: ch.history[ch.history.length - 1].t, f: ytSub, src: "api" }] }));
-    if (spArt && spArt.followers) cards.push(socCardHTML("spotify", { url: `https://open.spotify.com/artist/${a.spotify_id}`, history: [{ t: state.sp.updated || Math.floor(Date.now() / 1000), f: spArt.followers, src: "api" }] }));
-    for (const key of ["instagram", "twitter", "tiktok", "weverse"]) {
-      if (rec[key]) cards.push(socCardHTML(key, rec[key]));
+    /* urutan grid ala baechella: X · YouTube · Instagram · TikTok · Spotify · Apple Music · Weverse · Facebook (8 akun) */
+    const stc = SNS_STATIC[a.id] || {};
+    for (const key of ["twitter", "youtube", "instagram", "tiktok", "spotify", "applemusic", "weverse", "facebook"]) {
+      if (key === "youtube") {
+        if (ytSub) cards.push(socCardHTML("youtube", { url: `https://www.youtube.com/${a.handle}`, handle: (a.handle || "").replace(/^@/, ""), history: [{ t: ch.history[ch.history.length - 1].t, f: ytSub, src: "api" }] }));
+      } else if (key === "spotify") {
+        if (spArt && spArt.followers) cards.push(socCardHTML("spotify", { url: `https://open.spotify.com/artist/${a.spotify_id}`, history: [{ t: state.sp.updated || Math.floor(Date.now() / 1000), f: spArt.followers, src: "api" }] }));
+      } else if (key === "applemusic" || key === "facebook") {
+        if (stc[key]) cards.push(socCardHTML(key, stc[key]));
+      } else if (rec[key]) {
+        cards.push(socCardHTML(key, rec[key]));
+      }
     }
-    return `<section class="socartist">${featSectHead(a.color, ICO_PEOPLE, esc(a.name), "akun resmi · dikumpulkan otomatis tiap ±6 jam")}
+    return `<section class="socartist">${featSectHead(a.color, ICO_PEOPLE, esc(a.name), "8 akun resmi · subscriber &amp; pengikut direkam otomatis tiap ±6 jam — Apple Music &amp; Facebook kartu tautan")}
       ${cards.length ? `<div class="socgrid">${cards.join("")}</div>
       <div class="socsum"><span>YouTube <b>${ytSub ? fmtCompact(ytSub) : "–"}</b> subscriber</span><span>Spotify <b>${spArt && spArt.followers ? fmtCompact(spArt.followers) : "–"}</b> followers</span><span>terekam <b>${NF.format(nRec)}/5</b> platform bernomor${nRec === 5 ? " · semua lengkap" : ""}</span></div>` : `<div class="banner">Belum ada akun terekam untuk artis ini.</div>`}
     </section>`;
@@ -7606,27 +7640,54 @@ function renderDuelPage(sec) {
 }
 
 /* ===================== HALAMAN STATS KARIER (Stats) =====================
- * Milestone karier BABYMONSTER & TREASURE (gaya fan-stat baechella) + Top 5 M/V YouTube
- * + Top 5 Spotify + panel "Pembaruan album (per bulan)" dari Circle Chart. Kartu YouTube/
- * Spotify dihitung LIVE dari data kolektor situs; kartu lain dari data/career.json;
- * panel album dari data/circle.json (angka bulanan nyata; bulan tanpa catatan = “—”). */
+ * Dropdown tiga pilihan (BABYMONSTER / TREASURE / Semua artis = gabungan) + 10 kartu identik
+ * + 9 tab gaya baechella: Top 10 M/V YouTube, Top 10 Spotify, Top 10 Performance, rekor chart,
+ * trofi, sertifikasi, konser & tur, Pembaruan album (Circle) + Pembaruan pendengar (per bulan).
+ * Kartu yt/subs/sp/follow/spark/ig/trophy dihitung LIVE dari data kolektor situs; kartu
+ * lain dari data/career.json; panel album dari data/circle.json; panel pendengar dari
+ * data/spotify-artists.json (angka bulanan nyata; bulan tanpa catatan = “—”). */
 function statLiveVal(icon, artId) {
-  const ch = (state.channels || {})[artId];
-  const h = (ch && ch.history) || [];
-  const last = h.length ? h[h.length - 1] : null;
-  const sp = spArtistOf(artId);
-  if (icon === "yt") return last && last.v != null ? fmtExact(last.v) : "–";
-  if (icon === "sp") return sp && sp.totalStreams != null ? fmtExact(sp.totalStreams) : "–";
-  if (icon === "spark") return sp && sp.monthlyListeners != null ? fmtExact(sp.monthlyListeners) + (sp.mlApprox ? " <span class=\"cellno\">±</span>" : "") : "–";
+  /* mode "all" = gabungan BABYMONSTER + TREASURE (dijumlahkan) */
+  const ids = artId === "all" ? ["babymonster", "treasure"] : [artId];
+  const sumBy = (f) => { let n = 0, ok = false; ids.forEach((id) => { const v = f(id); if (v != null) { ok = true; n += v; } }); return ok ? n : null; };
+  if (icon === "yt") { const n = sumBy((id) => { const ch = (state.channels || {})[id]; const h = (ch && ch.history) || []; const last = h.length ? h[h.length - 1] : null; return last && last.v != null ? last.v : null; }); return n != null ? fmtExact(n) : "–"; }
+  if (icon === "subs") { const n = sumBy((id) => { const ch = (state.channels || {})[id]; const h = (ch && ch.history) || []; const last = h.length ? h[h.length - 1] : null; return last && last.s != null ? last.s : null; }); return n != null ? fmtExact(n) : "–"; }
+  if (icon === "sp") { const n = sumBy((id) => { const sp = spArtistOf(id); return sp && sp.totalStreams != null ? sp.totalStreams : null; }); return n != null ? fmtExact(n) : "–"; }
+  if (icon === "follow") { const n = sumBy((id) => { const sp = spArtistOf(id); return sp && sp.followers != null ? sp.followers : null; }); return n != null ? fmtExact(n) : "–"; }
+  if (icon === "spark") {
+    const parts = ids.map((id) => spArtistOf(id)).filter((s) => s && s.monthlyListeners != null);
+    return parts.length ? fmtExact(parts.reduce((a, s) => a + s.monthlyListeners, 0)) + (artId === "all" || parts.some((s) => s.mlApprox) ? " <span class=\"cellno\">±</span>" : "") : "–";
+  }
+  if (icon === "ig") {
+    const n = sumBy((id) => { const rec = state.social && state.social.artists && state.social.artists[id]; const last = rec && rec.instagram && socLast(rec.instagram.history); return last && last.f != null ? last.f : null; });
+    return n != null ? fmtExact(n) : "–";
+  }
+  if (icon === "trophy") {
+    const n = sumBy((id) => { const g = state.trofi && state.trofi.groups && state.trofi.groups[id]; if (!g) return null; return (g.wins || []).length + (g.awards || []).filter((a) => a.result === "win").length; });
+    return n != null ? NF.format(n) : "–";
+  }
   return null; // kartu statis → pakai big dari career.json
 }
 function renderStatPage(sec) {
-  const head = pageCloseBar("Stats Karier", "milestone karier &amp; pembaruan penjualan album Circle — versi BABYMONSTER &amp; TREASURE, semua angka nyata dengan sumber", ICO_GRID, "#ff4d6d");
-  const artId = state.statArt === "treasure" ? "treasure" : "babymonster";
-  const art = artistOf(artId) || {};
-  const acol = art.color || (artId === "babymonster" ? "#ff4d6d" : "#38bdf8");
+  const head = pageCloseBar("Stats Karier", "milestone karier &amp; pembaruan album/pendengar — dropdown BABYMONSTER · TREASURE · Semua artis, semua angka nyata dengan sumber", ICO_GRID, "#ff4d6d");
+  const artId = ["treasure", "all"].includes(state.statArt) ? state.statArt : "babymonster";
+  const ids = artId === "all" ? ["babymonster", "treasure"] : [artId];
+  const art = artId === "all" ? { id: "all", name: "Semua artis", color: "#8b5cf6" } : (artistOf(artId) || {});
+  const acol = art.color || (artId === "babymonster" ? "#ff4d6d" : artId === "treasure" ? "#38bdf8" : "#8b5cf6");
   const career = (state.career && state.career.artists) ? state.career.artists[artId] : null;
-  const circle = (state.circle && state.circle.artists) ? state.circle.artists[artId] : null;
+  /* circle.json: mode "all" = gabungan album BM + TREASURE */
+  let circle = null;
+  if (state.circle && state.circle.artists) {
+    if (artId === "all") {
+      const ca = state.circle.artists.babymonster, ct = state.circle.artists.treasure;
+      if (ca && ct) circle = {
+        albums: (ca.albums || []).map((x) => ({ ...x, _art: "BABYMONSTER" }))
+          .concat((ct.albums || []).map((x) => ({ ...x, _art: "TREASURE" }))),
+        grandTotal: (ca.grandTotal || 0) + (ct.grandTotal || 0),
+        grandTotalLabel: "Penjumlahan total kumulatif kedua grup (kurasi Circle Chart per grup — sumber di tooltip tiap baris).",
+      };
+    } else circle = state.circle.artists[artId];
+  }
   if (!career && !circle) {
     sec.innerHTML = head + `<div class="banner" style="margin-top:16px">Data stats karier belum bisa dimuat — cek koneksi, atau pastikan <b>career.json</b> &amp; <b>circle.json</b> sudah diunggah ke folder <b>data/</b> di repo (bukan akar repo), lalu muat ulang halaman.</div>`;
     bindPageClose(sec);
@@ -7636,20 +7697,26 @@ function renderStatPage(sec) {
   const mLabel = (m) => MF.format(new Date(m + "-01T00:00:00"));
   const gfmt = (n) => (n > 0 ? "+" : n < 0 ? "−" : "") + NF.format(Math.abs(n));
   const grpPill = (name, color) => `<span class="hlgrp" style="--gc:${esc(color || "#6a78ff")}"><i></i>${esc(name || "–")}</span>`;
-  /* badge revisi data + pilih artis */
+  /* badge revisi data + dropdown pilih artis (BABYMONSTER / TREASURE / Semua artis) */
   const updB = state.career && state.career.updated ? `<span class="st-badge" title="Tanggal revisi terakhir data/career.json">Direviu ${esc(fmtDate(state.career.updated))}</span>` : "";
-  const artPill = (id) => { const a = artistOf(id) || {}; const on = id === artId;
-    return `<button class="mtab${on ? " active" : ""}" data-statart="${id}" style="--artist-color:${esc(a.color || "#6a78ff")}" aria-pressed="${on}">${esc(a.name || id.toUpperCase())}</button>`; };
-  const artPills = `<div class="mtabs" style="margin:0">${artPill("babymonster")}${artPill("treasure")}</div>`;
+  const artSel = `<select id="statArtSel" class="myear" style="color:${esc(acol)};border-color:color-mix(in srgb,${esc(acol)} 45%,transparent);font-weight:800" title="Pilih artis: BABYMONSTER, TREASURE, atau gabungan keduanya" aria-label="Pilih artis">
+    <option value="babymonster"${artId === "babymonster" ? " selected" : ""}>BABYMONSTER</option>
+    <option value="treasure"${artId === "treasure" ? " selected" : ""}>TREASURE</option>
+    <option value="all"${artId === "all" ? " selected" : ""}>Semua artis (gabungan)</option>
+  </select>`;
   /* kartu milestone karier */
   const STICO = {
     yt: ["#ff0033", "M21.58 7.19a2.5 2.5 0 0 0-1.76-1.77C18.25 5 12 5 12 5s-6.25 0-7.82.42A2.5 2.5 0 0 0 2.42 7.19 26.2 26.2 0 0 0 2 12a26.2 26.2 0 0 0 .42 4.81 2.5 2.5 0 0 0 1.76 1.77C5.75 19 12 19 12 19s6.25 0 7.82-.42a2.5 2.5 0 0 0 1.76-1.77A26.2 26.2 0 0 0 22 12a26.2 26.2 0 0 0-.42-4.81zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"],
     sp: ["#1ed760", "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.59 14.42a.75.75 0 0 1-1.03.25c-2.82-1.73-6.37-2.12-10.55-1.16a.75.75 0 1 1-.33-1.46c4.53-1.04 8.43-.59 11.56 1.34.36.22.47.68.35 1.03zm1.22-2.94a.94.94 0 0 1-1.29.31c-3.23-1.99-8.15-2.56-11.96-1.4a.94.94 0 1 1-.55-1.79c4.36-1.32 9.78-.68 13.48 1.6.45.27.59.85.32 1.28zm.11-3.05c-3.87-2.3-10.26-2.51-13.96-1.39a1.13 1.13 0 0 1-.65-2.16c4.24-1.29 11.3-1.04 15.76 1.61a1.13 1.13 0 0 1-1.15 1.94z"],
+    subs: ["#38bdf8", "M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"],
+    follow: ["#f472b6", "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"],
+    ig: ["#E1306C", "M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4A5.8 5.8 0 0 1 16.2 22H7.8A5.8 5.8 0 0 1 2 16.2V7.8A5.8 5.8 0 0 1 7.8 2m-.2 2A3.6 3.6 0 0 0 4 7.6v8.8C4 18.39 5.61 20 7.6 20h8.8a3.6 3.6 0 0 0 3.6-3.6V7.6C20 5.61 18.39 4 16.4 4H7.6m9.65 1.5a1.25 1.25 0 1 1 0 2.5 1.25 1.25 0 0 1 0-2.5M12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10m0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"],
     note: ["#a78bfa", "M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"],
     disc: ["#f472b6", ICO_DISC],
     mic: ["#f97316", "M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"],
     chart: ["#38bdf8", ICO_RANK],
     spark: ["#22c55e", "M12 3a9 9 0 0 0-9 9v7a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1H5v-1a7 7 0 0 1 14 0v1h-3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7a9 9 0 0 0-9-9z"],
+    trophy: ["#f59e0b", ICO_TROPHY],
   };
   const cardsHTML = career && career.cards ? career.cards.map((c) => {
     const ico = STICO[c.icon] || STICO.chart;
@@ -7662,34 +7729,113 @@ function renderStatPage(sec) {
       ${c.src ? `<div class="src" title="${esc(c.src)}">Sumber: ${esc(c.src)}</div>` : ""}
     </div>`;
   }).join("") : "";
-  /* tab: Top 5 M/V | Top 5 Spotify | Pembaruan album */
+  /* tab gaya baechella — 8 statistik + 1 tab pembaruan pendengar (per bulan) = 9 tab */
   const tabBtn = (k, t) => `<button class="mtab${state.statTab === k ? " active" : ""}" data-stattab="${k}" style="--artist-color:${esc(acol)}" aria-pressed="${state.statTab === k}">${t}</button>`;
-  const tabRow = `<div class="chiprow" style="margin:12px 0 0">${tabBtn("mv", "Top 5 M/V (YouTube)")}${tabBtn("sp", "Top 5 Spotify")}${tabBtn("album", "Pembaruan album (Circle)")}</div>`;
+  const tabRow = `<div class="chiprow" style="margin:12px 0 0">${tabBtn("mv", "Top 10 M/V (YouTube)")}${tabBtn("sp", "Top 10 Spotify")}${tabBtn("perf", "Top 10 Performance")}${tabBtn("chart", "Rekor chart")}${tabBtn("trofi", "Trofi &amp; penghargaan")}${tabBtn("cert", "Sertifikasi")}${tabBtn("tour", "Konser &amp; tur")}${tabBtn("album", "Pembaruan album (Circle)")}${tabBtn("ml", "Pembaruan pendengar (per bulan)")}</div>`;
+  if (!["mv", "sp", "perf", "chart", "trofi", "cert", "tour", "album", "ml"].includes(state.statTab)) state.statTab = "mv";
   let tabBody = "";
   if (state.statTab === "mv") {
-    const vids = allVideosFlat().filter((v) => v.channel === artId && lastV(v) > 0).sort((a, b) => lastV(b) - lastV(a)).slice(0, 5);
-    tabBody = vids.length ? `<div class="ppwrap">` + vids.map((v, i) => `
-      <div class="ber-hlrow" data-id="${esc(v.id)}" style="--hc:${esc(acol)}" tabindex="0" role="button" aria-label="Buka grafik ${esc(rowTitleOf(v, v.art || art))}">
+    const vids = allVideosFlat().filter((v) => ids.includes(v.channel) && lastV(v) > 0).sort((a, b) => lastV(b) - lastV(a)).slice(0, 10);
+    tabBody = vids.length ? `<div class="ppwrap">` + vids.map((v, i) => {
+      const va = artistOf(v.channel) || art;
+      return `
+      <div class="ber-hlrow" data-id="${esc(v.id)}" style="--hc:${esc(acol)}" tabindex="0" role="button" aria-label="Buka grafik ${esc(rowTitleOf(v, v.art || va))}">
         <span class="hlrank">${i + 1}</span>
         <img src="https://i.ytimg.com/vi/${esc(v.id)}/mqdefault.jpg" alt="" loading="lazy">
-        <div class="hlmain"><b>${esc(rowTitleOf(v, v.art || art))}</b>${grpPill(art.name, acol)}</div>
+        <div class="hlmain"><b>${esc(rowTitleOf(v, v.art || va))}</b>${grpPill(va.name, va.color)}</div>
         <span class="hlval">${fmtCompact(lastV(v))} views</span>
-      </div>`).join("") + `</div>` : `<div class="banner">Belum ada video yang terekam untuk artis ini.</div>`;
+      </div>`;
+    }).join("") + `</div>` : `<div class="banner">Belum ada video yang terekam untuk pilihan ini.</div>`;
   } else if (state.statTab === "sp") {
     const spLoaded = !!state.sp.tracks;
-    const trks = spLoaded ? Object.values(state.sp.tracks || {}).filter((t) => t.artistId === artId).sort((a, b) => spTrackTotal(b) - spTrackTotal(a)).slice(0, 5) : [];
+    const trks = spLoaded ? Object.values(state.sp.tracks || {}).filter((t) => ids.includes(t.artistId)).sort((a, b) => spTrackTotal(b) - spTrackTotal(a)).slice(0, 10) : [];
     tabBody = !spLoaded ? `<div class="banner">Data Spotify sedang dimuat — tunggu sesaat atau buka lagi halaman ini.</div>`
       : trks.length ? `<div class="ppwrap">` + trks.map((t, i) => {
         const ar = spArtistOf(t.artistId) || {};
+        const va = artistOf(t.artistId) || art;
         return `
       <div class="ber-hlrow" data-spk="${esc(t.key)}" style="--hc:${esc(acol)}" tabindex="0" role="button" aria-label="Buka grafik ${esc(t.name)}">
         <span class="hlrank">${i + 1}</span>
         ${t.cover ? `<img src="${esc(t.cover)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : `<div class="hlph">♪</div>`}
-        <div class="hlmain"><b>${esc(t.name)}</b>${grpPill(ar.name, acol)}</div>
+        <div class="hlmain"><b>${esc(t.name)}</b>${grpPill(ar.name || va.name, va.color)}</div>
         <span class="hlval">${fmtCompact(spTrackTotal(t))} stream</span>
       </div>`;
-      }).join("") + `</div>` : `<div class="banner">Belum ada lagu Spotify terpantau untuk artis ini.</div>`;
-  } else {
+      }).join("") + `</div>` : `<div class="banner">Belum ada lagu Spotify terpantau untuk pilihan ini.</div>`;
+  } else if (state.statTab === "perf") {
+    const vids = allVideosFlat().filter((v) => ids.includes(v.channel) && (v.category === "dance_performance" || v.category === "dance_practice") && lastV(v) > 0).sort((a, b) => lastV(b) - lastV(a)).slice(0, 10);
+    tabBody = vids.length ? `<div class="ppwrap">` + vids.map((v, i) => {
+      const va = artistOf(v.channel) || art;
+      const cat = v.category === "dance_practice" ? "Dance Practice" : "Performance";
+      return `
+      <div class="ber-hlrow" data-id="${esc(v.id)}" style="--hc:${esc(acol)}" tabindex="0" role="button" aria-label="Buka grafik ${esc(rowTitleOf(v, v.art || va))}">
+        <span class="hlrank">${i + 1}</span>
+        <img src="https://i.ytimg.com/vi/${esc(v.id)}/mqdefault.jpg" alt="" loading="lazy">
+        <div class="hlmain"><b>${esc(rowTitleOf(v, v.art || va))}</b>${grpPill(va.name, va.color)}</div>
+        <span class="hlval">${fmtCompact(lastV(v))} views <span class="sub" style="font-size:11px">· ${cat}</span></span>
+      </div>`;
+    }).join("") + `</div>` + `<p class="note">Top 10 video performa lagu sendiri yang dipantau situs (Dance Performance / Performance Video / Dance Practice) — tanpa MV, dihitung live dari data/videos.json.</p>` : `<div class="banner">Belum ada video performa yang terekam untuk pilihan ini.</div>`;
+  } else if (state.statTab === "chart") {
+    const rows = ids.map((id) => (((state.chartHist && state.chartHist.artists) || {})[id] || []).map((r) => ({ ...r, _ar: artistOf(id) || art }))).flat();
+    tabBody = rows.length ? `<div class="ppwrap">` + rows.sort((a, b) => ((chaRankNum(a) ?? 999) - (chaRankNum(b) ?? 999)) || (b.date || "").localeCompare(a.date || "")).map((r, i) => `
+      <div class="st-alrow" style="--ac:${esc(r._ar.color || acol)}" title="${esc(r.src || "")}">
+        <span class="st-alnum">${String(i + 1).padStart(2, "0")}</span>
+        <div class="st-almain"><b>${esc(r.song)}</b><span>${esc(r.chart)} · ${esc(r.metric || "puncak")}${r.date ? " · " + esc(r.date) : ""}</span></div>
+        <div class="st-alval"><b>${esc(r.value || "–")}</b><span class="sub">${esc(r._ar.name || "")}</span></div>
+      </div>`).join("") + `</div>` + `<p class="note">Rekor pencapaian chart terverifikasi dari data/chart-history.json (Wikipedia/Billboard/kurasi) — diurut dari posisi terbaik. Histori lengkap per lagu ada di halaman “Peringkat Chart”.</p>` : `<div class="banner">data/chart-history.json belum termuat.</div>`;
+  } else if (state.statTab === "trofi") {
+    const tg = state.trofi && state.trofi.groups;
+    const gser = ids.map((id) => ({ id, g: tg ? tg[id] : null, ar: artistOf(id) || art })).filter((x) => x.g);
+    if (!gser.length) tabBody = `<div class="banner">data/trofi.json belum termuat.</div>`;
+    else {
+      const sum = (f) => gser.reduce((acc, x) => acc + f(x.g), 0);
+      const nWin = sum((g) => (g.wins || []).length);
+      const nAwd = sum((g) => (g.awards || []).filter((a) => a.result === "win").length);
+      const nNom = sum((g) => (g.awards || []).filter((a) => a.result && a.result !== "win").length);
+      const nHot = sum((g) => (g.hotstage || []).length + (g.fanvote || []).length);
+      const winRows = gser.map((x) => (x.g.wins || []).map((w) => `
+      <div class="st-alrow" style="--ac:${esc(x.ar.color || acol)}" title="${esc(w.src || "")}">
+        <span class="st-alnum">${esc(String(w.date || "").slice(0, 4))}</span>
+        <div class="st-almain"><b>${esc(w.song || "–")}</b><span>${esc(w.show || "")}${w.date ? " · " + esc(fmtDate(w.date)) : ""}${w.note ? " — " + esc(w.note) : ""}${artId === "all" ? " · " + esc(x.ar.name || "") : ""}</span></div>
+        <div class="st-alval"><b>MENANG</b><span class="sub">acara musik</span></div>
+      </div>`).join("")).join("");
+      const awdRows = gser.map((x) => (x.g.awards || []).filter((a) => a.result === "win").map((a) => `
+      <div class="st-alrow" style="--ac:${esc(x.ar.color || acol)}" title="${esc(a.src || "")}">
+        <span class="st-alnum">${esc(String(a.date || "").slice(0, 4))}</span>
+        <div class="st-almain"><b>${esc(a.name || "–")}</b><span>${esc(a.cat || "")}${a.date ? " · " + esc(fmtDate(a.date)) : ""}${artId === "all" ? " · " + esc(x.ar.name || "") : ""}</span></div>
+        <div class="st-alval"><b>MENANG</b><span class="sub">penghargaan besar</span></div>
+      </div>`).join("")).join("");
+      tabBody = `
+      <div>
+        <div class="st-mchips" style="--ac:${esc(acol)}">${[["Menang acara musik", nWin], ["Penghargaan besar", nAwd], ["Nominasi besar", nNom], ["Hot Stage / fan vote", nHot]].map(([t, n]) => `<span class="st-mchip on" style="cursor:default">${esc(t)}: <b>${n}</b></span>`).join("")}</div>
+        <div class="st-mtitle" style="margin-top:14px">Daftar kemenangan acara musik</div>
+        <div class="st-als">${winRows || `<div class="banner">Belum ada kemenangan acara musik.</div>`}</div>
+        <div class="st-mtitle" style="margin-top:14px">Penghargaan besar</div>
+        <div class="ppwrap" style="max-height:420px">${awdRows || `<div class="banner">Belum ada penghargaan besar.</div>`}</div>
+        <p class="note">Dihitung live dari data/trofi.json (reviu penuh 16 Nov 2026 vs Wikipedia &amp; pengumuman resmi YG) — daftar lengkap per penghargaan &amp; nominasi ada di halaman “Trofi &amp; Penghargaan”.</p>
+      </div>`;
+    }
+  } else if (state.statTab === "cert") {
+    const certs = career && career.certs;
+    tabBody = certs && certs.length ? `<div class="ppwrap">` + certs.map((c, i) => `
+      <div class="st-alrow" style="--ac:${esc(acol)}" title="${esc(c.src || "")}">
+        <span class="st-alnum">${String(i + 1).padStart(2, "0")}</span>
+        <div class="st-almain"><b>${esc(c.title)}</b><span>${esc(c.type || "Rilisan")} · ${esc(c.detail || "")}</span></div>
+        <div class="st-alval"><b>${esc(c.big || "tersertifikasi")}</b><span class="sub">KMCA / RIAJ</span></div>
+      </div>`).join("") + `</div>` + `<p class="note">Sertifikasi resmi dari <b>KMCA</b> (Korea Music Content Association — Korea) &amp; <b>RIAJ</b> (Recof - RIAJ, Jepang); kurasi fan-stat baechella, Nov 2026 — Platinum KMCA = 250 rb kopi per format, RIAJ Gold = 100 rb. Sertifikasi lagu &amp; streaming masuk hitungan “tersertifikasi” di kartu kanan.</p>` : `<div class="banner">Belum ada sertifikasi resmi yang tercatat untuk ${esc(art.name || "artis ini")} — akan ditambahkan begitu ada pengumuman resmi KMCA (Korea) / RIAJ (Jepang).</div>`;
+  } else if (state.statTab === "tour") {
+    const evs = ((state.jadwal && state.jadwal.events) || []).filter((e) => artId === "all" || e.group === artId || e.group === "both").slice().sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+    const today = new Date().toISOString().slice(0, 10);
+    tabBody = evs.length ? `<div class="ppwrap">` + evs.map((e, i) => {
+      const ga = e.group === "both" ? { name: "BM + TREASURE", color: "#8b5cf6" } : (artistOf(e.group) || art);
+      const fut = (e.date || "") >= today;
+      return `
+      <div class="st-alrow" style="--ac:${esc(ga.color || acol)}${fut ? "" : ";opacity:.55"}" title="${esc(e.venue || "")}">
+        <span class="st-alnum">${esc(fmtDate(e.date))}</span>
+        <div class="st-almain"><b>${esc(e.title || "–")}</b><span>${esc(e.venue || "")}${e.group === "both" ? " · " + esc(ga.name || "") : ""}</span></div>
+        <div class="st-alval"><b style="font-size:12px">${fut ? "AKAN DATANG" : "SELESAI"}</b><span class="sub">${esc(e.type === "tour" ? "tur/konser" : "acara")}</span></div>
+      </div>`;
+    }).join("") + `</div>` + `<p class="note">Tur, konser &amp; acara dari data/jadwal.json (kurasi manual — tambah baris di file itu untuk memperbarui daftar). Baris pudar = tanggal sudah lewat.</p>` : `<div class="banner">Belum ada tur/acara tercatat untuk pilihan ini di data/jadwal.json.</div>`;
+  } else if (state.statTab === "album") {
     const albums = circle ? circle.albums.slice() : [];
     if (!albums.length) tabBody = `<div class="banner">Data circle.json belum termuat — panel pembaruan album tidak tersedia.</div>`;
     else {
@@ -7730,7 +7876,7 @@ function renderStatPage(sec) {
         const gh = g != null ? `<span class="st-gain st-algain">↑ ${gfmt(g)} bulan ini</span>` : `<span class="st-gain st-algain zero" title="Tidak tercatat di Top 100 bulanan Circle bulan ini">—</span>`;
         return `<div class="st-alrow" style="--ac:${esc(acol)}"${a.totalNote ? ` title="${esc(a.totalNote)}"` : ""}>
           <span class="st-alnum">${String(i + 1).padStart(2, "0")}</span>
-          <div class="st-almain"><b>${esc(a.title)}</b><span>${esc(a.type || "Album")} · rilis ${esc(fmtDate(a.date))}</span></div>
+          <div class="st-almain"><b>${esc(a.title)}</b><span>${esc(a._art ? a._art + " · " : "")}${esc(a.type || "Album")} · rilis ${esc(fmtDate(a.date))}</span></div>
           <div class="st-alval"><b>${a.total != null ? fmtExact(a.total) : "–"}</b><span class="sub">Total kopi</span>${gh}</div>
         </div>`;
       }).join("");
@@ -7753,19 +7899,104 @@ function renderStatPage(sec) {
         <p class="note">Angka bulanan = penjualan fisik bulan itu menurut <b>chart bulanan Circle</b> (circlechart.kr — semua format CD/Nemo/KiT dijumlah; hanya bulan ketika album masuk Top 100 bulanan, bulan lain tampil “—”). Panah ←/→ dan chip bulan hanya melompat antar bulan yang berdata. Total kumulatif mengikuti kurasi yang dicantumkan di bawah angkanya — rincian sumber tiap album ada di tooltip barisnya (data/circle.json situs).</p>
       </div>`;
     }
+  } else {
+    /* Pembaruan pendengar (per bulan) — mirror panel album, sumber data/spotify-artists.json */
+    const series = ids.map((id) => {
+      const s = spArtistOf(id);
+      const byM = {};
+      for (const p of (s && s.history) || []) {
+        if (p.ml == null) continue;
+        const d = new Date(p.t * 1000);
+        const key = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+        if (!byM[key] || p.t >= byM[key].t) byM[key] = p;
+      }
+      return { id, name: (s && s.name) || id, byM };
+    });
+    const months = [];
+    series.forEach((s) => Object.keys(s.byM).forEach((m) => { if (!months.includes(m)) months.push(m); }));
+    months.sort();
+    if (!months.length) {
+      tabBody = `<div class="banner">Riwayat pendengar bulanan belum terekam — jalankan sekali workflow “Kumpulkan data” (kolektor Spotify), lalu muat ulang halaman.</div>`;
+    } else {
+      const years = [];
+      months.forEach((m) => { const y = m.slice(0, 4); if (!years.includes(y)) years.push(y); });
+      let ySel = state.statYear && years.includes(state.statYear) ? state.statYear : years[years.length - 1];
+      const yMonths = months.filter((m) => m.slice(0, 4) === ySel);
+      let mSel = state.statMonth && yMonths.includes(ySel + "-" + String(state.statMonth).padStart(2, "0"))
+        ? state.statMonth
+        : Number(yMonths[yMonths.length - 1].slice(5, 7));
+      const mKey = ySel + "-" + String(mSel).padStart(2, "0");
+      const idx = months.indexOf(mKey);
+      const prevM = idx > 0 ? months[idx - 1] : null;
+      const nextM = idx >= 0 && idx < months.length - 1 ? months[idx + 1] : null;
+      const yearPills = years.map((y) => `<button class="mtab${y === ySel ? " active" : ""}" data-styear="${y}" style="--artist-color:${esc(acol)}" aria-pressed="${y === ySel}">${y}</button>`).join("");
+      const monthOpts = yMonths.map((m) => `<option value="${Number(m.slice(5, 7))}"${m === mKey ? " selected" : ""}>${mLabel(m)}</option>`).join("");
+      const chips = [];
+      for (let mo = 1; mo <= 12; mo++) {
+        const key = ySel + "-" + String(mo).padStart(2, "0");
+        const has = yMonths.includes(key);
+        chips.push(`<button class="st-mchip${mo === mSel ? " on" : ""}" data-stmchip="${mo}"${has ? "" : " disabled"} aria-pressed="${mo === mSel}">${esc(SMF.format(new Date(key + "-01T00:00:00")).toUpperCase())}</button>`);
+      }
+      const mlOf = (s, m) => (s.byM[m] && s.byM[m].ml != null) ? s.byM[m].ml : null;
+      const estOf = (s, m) => !!(s.byM[m] && (s.byM[m].est || s.byM[m].seed));
+      const tot = series.reduce((acc, s) => acc + (mlOf(s, mKey) || 0), 0);
+      const hasTot = series.some((s) => mlOf(s, mKey) != null);
+      const prevTot = prevM ? series.reduce((acc, s) => acc + (mlOf(s, prevM) || 0), 0) : null;
+      const hasPrev = prevM ? series.some((s) => mlOf(s, prevM) != null) : false;
+      const gain = hasTot && hasPrev ? tot - prevTot : null;
+      const gainPill = gain != null && gain !== 0
+        ? `<span class="st-gain">${gain > 0 ? "↑" : "↓"} ${gfmt(gain)} vs ${prevM ? esc(mLabel(prevM)) : "bulan lalu"}</span>`
+        : `<span class="st-gain zero">tidak ada perubahan tercatat</span>`;
+      const totalBox = `<div class="st-total" style="--ac:${esc(acol)}">
+        <div class="tl">Pendengar bulanan${artId === "all" ? " gabungan (± tumpang tindih)" : ""}</div>
+        <div class="tv">${hasTot ? fmtExact(tot) : "–"}${hasTot && artId === "all" ? ` <span class="cellno">±</span>` : ""}</div>
+        <div class="trow">${gainPill}<span class="st-nalb">${months.length} bulan terekam</span></div>
+      </div>`;
+      const rows = series.map((s) => {
+        const v = mlOf(s, mKey), pv = prevM ? mlOf(s, prevM) : null;
+        const d = (v != null && pv != null) ? v - pv : null;
+        const ar = artistOf(s.id) || {};
+        const gh = d != null && d !== 0
+          ? `<span class="st-gain st-algain">${d > 0 ? "↑" : "↓"} ${gfmt(d)} vs bulan lalu</span>`
+          : `<span class="st-gain st-algain zero">—</span>`;
+        return `<div class="st-alrow" style="--ac:${esc(ar.color || acol)}">
+          <span class="st-alnum">♪</span>
+          <div class="st-almain"><b>${esc(s.name)}</b><span>pendengar bulanan akhir ${esc(mLabel(mKey))}${estOf(s, mKey) ? " · titik estimasi" : ""}</span></div>
+          <div class="st-alval"><b>${v != null ? fmtExact(v) : "–"}${v != null && estOf(s, mKey) ? ` <span class="cellno">±</span>` : ""}</b><span class="sub">pendengar/bln</span>${gh}</div>
+        </div>`;
+      }).join("");
+      tabBody = `
+      <div>
+        <span class="st-mlabel">Spotify · pendengar bulanan</span>
+        <div class="st-mtitle">Pembaruan pendengar (per bulan)</div>
+        <div class="st-mrow">
+          <div class="mtabs" style="margin:0">${yearPills}</div>
+          <div class="st-mnav" style="margin-left:auto">
+            ${prevM ? `<button class="st-arr" data-stmgo="${prevM}" style="--ac:${esc(acol)}" title="Bulan berdata sebelumnya" aria-label="Bulan berdata sebelumnya">←</button>` : `<button class="st-arr" disabled aria-label="Tidak ada bulan sebelumnya">←</button>`}
+            <select id="statMonthSel" class="myear" style="color:${esc(acol)};border-color:color-mix(in srgb,${esc(acol)} 45%,transparent);background-image:url(&quot;data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='${esc(acol.replace("#", "%23"))}' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E&quot;)" aria-label="Pilih bulan">${monthOpts}</select>
+            ${nextM ? `<button class="st-arr" data-stmgo="${nextM}" style="--ac:${esc(acol)}" title="Bulan berdata berikutnya" aria-label="Bulan berdata berikutnya">→</button>` : `<button class="st-arr" disabled aria-label="Tidak ada bulan berikutnya">→</button>`}
+          </div>
+        </div>
+        <div class="st-mchips" style="--ac:${esc(acol)}">${chips.join("")}</div>
+        ${totalBox}
+        <div class="st-als">${rows}</div>
+        <p class="note">Angka = pendengar bulanan Spotify (audiens unik) pada titik perekaman terakhir bulan itu — dari data/spotify-artists.json, direkam kolektor per jam. Titik sebelum kolektor berjalan adalah hasil interpolasi antar jangkar dan ditandai <span class="cellno">±</span>. Mode gabungan menjumlahkan kedua artis sehingga bisa melebihi audiens unik sesungguhnya (ada pendengar yang sama).</p>
+      </div>`;
+    }
   }
   const topNote = career && career.topNote ? `<p class="note">${esc(career.topNote)}</p>` : "";
   sec.innerHTML = head + `
   <section style="margin-top:16px">
-    <div class="st-top">${artPills}${updB}</div>
-    ${career && career.cards ? featSectHead(acol, ICO_GRID, "Milestone karier " + esc(art.name || ""), "kartu YouTube &amp; Spotify dihitung LIVE dari data pemantauan situs — kartu lain dari kurasi bersumber") + `<div class="st-grid">${cardsHTML}</div>` + topNote : ""}
-    ${featSectHead(acol, ICO_RANK, "Peringkat &amp; pembaruan album", esc(art.name || "") + " — tiga tampilan: video terbesar, lagu terbesar, penjualan album bulanan")}
+    <div class="st-top">${artSel}${updB}</div>
+    ${career && career.cards ? featSectHead(acol, ICO_GRID, artId === "all" ? "Milestone karier gabungan (BM + TREASURE)" : "Milestone karier " + esc(art.name || ""), "10 kartu per pilihan — YouTube, Spotify, Instagram &amp; trofi dihitung LIVE dari data pemantauan situs; kartu lain dari kurasi bersumber") + `<div class="st-grid">${cardsHTML}</div>` + topNote : ""}
+    ${featSectHead(acol, ICO_RANK, "Peringkat &amp; pembaruan", esc(art.name || "") + " — 9 tampilan: Top 10 M/V, Top 10 Spotify, Top 10 Performance, rekor chart, trofi, sertifikasi, konser &amp; tur, album Circle, pendengar bulanan")}
     ${tabRow}
     <div style="margin-top:14px">${tabBody}</div>
   </section>`;
   bindPageClose(sec);
   /* binding kontrol */
-  sec.querySelectorAll("[data-statart]").forEach((b) => b.addEventListener("click", () => { state.statArt = b.dataset.statart; state.statYear = null; state.statMonth = null; renderAll(); }));
+  const asel = $("#statArtSel");
+  if (asel) asel.addEventListener("change", () => { state.statArt = asel.value; state.statYear = null; state.statMonth = null; renderAll(); });
   sec.querySelectorAll("[data-stattab]").forEach((b) => b.addEventListener("click", () => { state.statTab = b.dataset.stattab; renderAll(); }));
   sec.querySelectorAll("[data-styear]").forEach((b) => b.addEventListener("click", () => { state.statYear = b.dataset.styear; state.statMonth = null; renderAll(); }));
   sec.querySelectorAll("[data-stmgo]").forEach((b) => b.addEventListener("click", () => { const m = b.dataset.stmgo; if (m && /^\d{4}-\d{2}$/.test(m)) { state.statYear = m.slice(0, 4); state.statMonth = Number(m.slice(5, 7)); renderAll(); } }));

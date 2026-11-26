@@ -3736,6 +3736,21 @@ const PLAT_STYLE = {
   weverse: { label: "Weverse", tag: "WV", color: "#6a78ff" },
   youtube: { label: "YouTube", tag: "YT", color: "#ff4d4d" },
   spotify: { label: "Spotify", tag: "SP", color: "#1ed760" },
+  applemusic: { label: "Apple Music", tag: "AM", color: "#fa2d48" },
+  facebook: { label: "Facebook", tag: "FB", color: "#1877f2" },
+};
+/* Akun resmi yang angkanya TIDAK direkam kolektor (platform tidak menyediakan via web
+ * publik / tidak dikumpulkan situs) — kartu tautan, URL diverifikasi 26 Nov 2026:
+ * Apple Music via iTunes Search API resmi, Facebook dari halaman resmi artis. */
+const SNS_STATIC = {
+  babymonster: {
+    applemusic: { handle: "BABYMONSTER", url: "https://music.apple.com/id/artist/babymonster/1715981813" },
+    facebook: { handle: "BABYMONSTER.ygofficial", url: "https://www.facebook.com/BABYMONSTER.ygofficial" },
+  },
+  treasure: {
+    applemusic: { handle: "TREASURE", url: "https://music.apple.com/id/artist/treasure/1526319335" },
+    facebook: { handle: "OfficialTreasure", url: "https://www.facebook.com/OfficialTreasure" },
+  },
 };
 const SRC_BADGE = { api: "persis", html: "persis", meta: "aprox", nitter: "mirror", jina: "aprox", manual: "manual" };
 const RE_BM = /babymonster|베이비몬스터|monstiez/i;
@@ -3781,6 +3796,15 @@ function socCardHTML(key, acc, opts = {}) {
   const st = PLAT_STYLE[key] || { label: key, tag: "?", color: "#6a78ff" };
   const handle = acc && acc.handle ? "@" + acc.handle : "";
   const url = acc && acc.url ? `<a class="soclink" href="${esc(acc.url)}" target="_blank" rel="noopener" title="${esc(handle || acc.url)}">${handle ? esc(handle) + " ↗" : "buka ↗"}</a>` : "";
+  if (key === "applemusic" || key === "facebook") {
+    /* kartu tautan — angka pengikut platform ini tidak direkam kolektor situs */
+    return `<div class="soccard" style="--pc:${st.color}">
+      <div class="sochead"><span class="plattag" style="--pc:${st.color}">${st.tag}</span><b>${st.label}</b></div>
+      <div class="socval na">profil resmi</div>
+      ${acc && acc.url ? `<a class="socbtn" href="${esc(acc.url)}" target="_blank" rel="noopener">Buka ${st.label} ↗</a>` : ""}
+      <div class="socnote">Akun resmi di ${st.label} — angka pengikutnya tidak direkam kolektor situs (belum ada sumber web publik yang stabil), kartu ini tautan ke profil resmi${handle ? " " + esc(handle) : ""}.</div>
+    </div>`;
+  }
   if (key === "weverse") {
     const last = acc && socLast(acc.history);
     /* Weverse tidak mempublikasikan follower via web — kalau ada titik dari
@@ -3840,12 +3864,20 @@ function renderSocialPage(sec) {
     const nRec = [ytSub != null, spArt && spArt.followers != null,
       ...["instagram", "twitter", "tiktok"].map((k) => !!(rec[k] && socLast(rec[k].history) && socLast(rec[k].history).f != null))]
       .filter(Boolean).length;
-    if (ytSub) cards.push(socCardHTML("youtube", { url: `https://www.youtube.com/${a.handle}`, handle: (a.handle || "").replace(/^@/, ""), history: [{ t: ch.history[ch.history.length - 1].t, f: ytSub, src: "api" }] }));
-    if (spArt && spArt.followers) cards.push(socCardHTML("spotify", { url: `https://open.spotify.com/artist/${a.spotify_id}`, history: [{ t: state.sp.updated || Math.floor(Date.now() / 1000), f: spArt.followers, src: "api" }] }));
-    for (const key of ["instagram", "twitter", "tiktok", "weverse"]) {
-      if (rec[key]) cards.push(socCardHTML(key, rec[key]));
+    /* urutan grid ala baechella: X · YouTube · Instagram · TikTok · Spotify · Apple Music · Weverse · Facebook (8 akun) */
+    const stc = SNS_STATIC[a.id] || {};
+    for (const key of ["twitter", "youtube", "instagram", "tiktok", "spotify", "applemusic", "weverse", "facebook"]) {
+      if (key === "youtube") {
+        if (ytSub) cards.push(socCardHTML("youtube", { url: `https://www.youtube.com/${a.handle}`, handle: (a.handle || "").replace(/^@/, ""), history: [{ t: ch.history[ch.history.length - 1].t, f: ytSub, src: "api" }] }));
+      } else if (key === "spotify") {
+        if (spArt && spArt.followers) cards.push(socCardHTML("spotify", { url: `https://open.spotify.com/artist/${a.spotify_id}`, history: [{ t: state.sp.updated || Math.floor(Date.now() / 1000), f: spArt.followers, src: "api" }] }));
+      } else if (key === "applemusic" || key === "facebook") {
+        if (stc[key]) cards.push(socCardHTML(key, stc[key]));
+      } else if (rec[key]) {
+        cards.push(socCardHTML(key, rec[key]));
+      }
     }
-    return `<section class="socartist">${featSectHead(a.color, ICO_PEOPLE, esc(a.name), "akun resmi · dikumpulkan otomatis tiap ±6 jam")}
+    return `<section class="socartist">${featSectHead(a.color, ICO_PEOPLE, esc(a.name), "8 akun resmi · subscriber &amp; pengikut direkam otomatis tiap ±6 jam — Apple Music &amp; Facebook kartu tautan")}
       ${cards.length ? `<div class="socgrid">${cards.join("")}</div>
       <div class="socsum"><span>YouTube <b>${ytSub ? fmtCompact(ytSub) : "–"}</b> subscriber</span><span>Spotify <b>${spArt && spArt.followers ? fmtCompact(spArt.followers) : "–"}</b> followers</span><span>terekam <b>${NF.format(nRec)}/5</b> platform bernomor${nRec === 5 ? " · semua lengkap" : ""}</span></div>` : `<div class="banner">Belum ada akun terekam untuk artis ini.</div>`}
     </section>`;
