@@ -1,10 +1,10 @@
 {
- "_info": "Angka MINGGU PERTAMA setelah rilis (total kumulatif sejak MV/lagu tayang) — semua angka nyata dari sumber publik: laporan resmi YG Entertainment (yg-life.com, ygfamily.com), media (Korea Herald, Soompi, NextShark, Korea JoongAng Daily) dan rekap penghitung komunitas di X (@bmspotiify, @TEUMEonSpotify, @treasurecharts_, @koreansales_twt) serta Facebook resmi artis. Field 'window' = jendela waktu PERSIS seperti yang dilaporkan sumbernya (sebagian 7 hari penuh, sebagian lebih pendek). Lagu tanpa laporan minggu pertama dari sumber publik sengaja tidak dimasukkan — tidak ada angka karangan. Array 'jam24' = referensi angka 24 jam pertama (tidak dipakai papan).",
- "updated": "2026-11-26",
+ "_info": "Angka MINGGU PERTAMA setelah rilis (total kumulatif pada hari ke-±7 sejak MV/lagu tayang) — semua angka nyata dari sumber publik: laporan resmi YG Entertainment (yg-life.com, ygfamily.com), media (Korea Herald, Soompi, Chosun, Korea JoongAng Daily) dan rekap akun statistik komunitas di X (@treasurecharts_, @teureals, @BaemonN_ewss, @bmspotiify) serta Facebook resmi artis. Field 'window' = jendela waktu PERSIS seperti yang dilaporkan sumbernya; papan hanya memuat baris dengan jendela sekitar 1 minggu (6–8 hari atau 'minggu pertama') supaya perbandingannya adil — MV/lagu yang baru punya laporan jendela lebih pendek (mis. 50 jt dalam 4 hari) sengaja tidak dimasukkan, dan lagu tanpa laporan minggu pertama dari sumber publik juga tidak dimasukkan — tidak ada angka karangan. Array 'jam24' = referensi angka 24 jam pertama (tidak dipakai papan).",
+ "updated": "2026-11-27",
  "youtube": [
   {
    "artist": "babymonster",
-   "song": "SHEEESH",
+   "song": "SHEESH",
    "video": "2wA_b6YHjqQ",
    "release": "2024-03-31",
    "views": 80000000,
@@ -19,24 +19,6 @@
    "views": 50000000,
    "window": "minggu pertama (±7 hari)",
    "src": "YG Entertainment via ygfamily.com (8 Jun 2026): 'Surpasses 50 Million Views Just a Week After Release'"
-  },
-  {
-   "artist": "babymonster",
-   "song": "WE GO UP",
-   "video": "wlHwjkYpSr0",
-   "release": "2025-10-10",
-   "views": 50000000,
-   "window": "4 hari pertama",
-   "src": "YG Entertainment via yg-life.com (16 Okt 2025): 50 jt dalam 4 hari; 30 jt dalam 3 hari pertama"
-  },
-  {
-   "artist": "babymonster",
-   "song": "BATTER UP",
-   "video": "olDWm2veCrM",
-   "release": "2023-11-26",
-   "views": 50000000,
-   "window": "4 hari pertama",
-   "src": "YG Entertainment via ygfamily.com (20 Jan 2024): MV debut tercepat capai 50 jt (4 hari); NextShark: 50 jt dalam 4 hari 8 jam (1 Des 2023)"
   },
   {
    "artist": "treasure",
@@ -77,58 +59,42 @@
  ],
  "spotify": [
   {
-   "artist": "babymonster",
-   "name": "WE GO UP (EP)",
-   "release": "2025-10-10",
-   "streams": 20746628,
-   "window": "minggu pertama",
-   "src": "Rekap Spotify Counter komunitas (Nov 2025) — debut album minggu pertama terbesar gen-5 grup wanita 2025"
-  },
-  {
    "artist": "treasure",
-   "name": "REBOOT",
-   "release": "2023-09-16",
-   "streams": 19705719,
+   "name": "IF I",
+   "release": "2026-06-01",
+   "streams": 6841362,
    "window": "minggu pertama",
-   "src": "@TEUMEonSpotify (X): debut album minggu pertama terbesar TREASURE"
+   "src": "@treasurecharts_ (X, 8 Jun 2026): 'received 6,841,362 streams in its first week on Spotify' — debut lagu minggu pertama terbesar TREASURE"
   },
   {
    "artist": "babymonster",
-   "name": "춤 (CHOOM) (EP)",
-   "release": "2026-05-04",
-   "streams": 17516554,
-   "window": "minggu pertama",
-   "src": "Rekap komunitas (Reddit r/kpopthoughts) — debut mingguan album terbesar gen-5 grup wanita 2026"
+   "name": "DESERVE",
+   "release": "2026-10-23",
+   "streams": 6300000,
+   "window": "minggu pertama (±, dilaporkan 6,3 jt)",
+   "src": "@BaemonN_ewss (X, 31 Okt 2026): 'Most streamed BABYMONSTER digital single in the first week — DESERVE with 6.3M streams'; rekap harian @bmspotiify: hari 1-7 988.988 / 925.652 / 857.152 / 965.142 / ± / 887.964 / 846.747"
   },
   {
    "artist": "treasure",
-   "name": "THE SECOND STEP : CHAPTER ONE",
-   "release": "2022-02-15",
-   "streams": 10208872,
+   "name": "KING KONG",
+   "release": "2024-05-28",
+   "streams": 4255279,
    "window": "minggu pertama",
-   "src": "@TEUMEonSpotify (X): peringkat #2 debut album minggu pertama TREASURE"
+   "src": "@treasurecharts_ (X, 8 Jun 2026): debut minggu pertama lagu terbesar ke-2 TREASURE sebelum dilampaui IF I — 'surpassing KING KONG (4,255,279)'"
   },
   {
    "artist": "treasure",
-   "name": "LOVE PULSE",
-   "release": "2025",
-   "streams": 7386509,
+   "name": "SHOCK",
+   "release": "2026-11-02",
+   "streams": 2146010,
    "window": "minggu pertama",
-   "src": "@TEUMEonSpotify (X): debut album ke-5 terbesar TREASURE, melampaui PLEASURE (±7,1 jt)"
-  },
-  {
-   "artist": "babymonster",
-   "name": "DRIP (album)",
-   "release": "2024-11-01",
-   "streams": 5089018,
-   "window": "±20 jam pertama",
-   "src": "World Music Awards (X) & Reddit r/BABYMONSTER: 5.089.018 stream dalam 20 jam pertama penghitungan"
+   "src": "@teureals (X): '[SHOCK] SPOTIFY UPDATE … 1st week: 2,146,010'"
   }
  ],
  "jam24": [
   {
    "artist": "babymonster",
-   "song": "SHEEESH",
+   "song": "SHEESH",
    "views": 24411874,
    "window": "24 jam pertama",
    "src": "Facebook resmi BABYMONSTER/YG: 24.411.874 views — terbanyak MV K-pop 2024 dalam 24 jam"

@@ -1,143 +1,356 @@
 {
- "_info": "Top lagu di YouTube Music — total views GABUNGAN seluruh versi video resmi lagu di YouTube (YouTube Music memutar video resmi lagu, jadi jumlah views seluruh versinya adalah proksi putaran lagu). Semua angka dipindai langsung dari halaman YouTube pada 26 Nov 2026. FIELD id = video YouTube resmi masing-masing versi (kanal BABYMONSTER/TREASURE/Mnet K-POP/THE FIRST TAKE/it's Live — id diverifikasi judul+kanal+views 26 Nov 2026). Kolektor GitHub Actions (collect_music.js) memperbarui views tiap id otomatis per jam via YouTube Data API videos.list (±1 unit/run) — data 26 Nov 2026 tidak lagi snapshot manual.",
- "updated": "2026-11-26",
- "captured": "2026-11-26",
+ "_info": "Top lagu di YouTube Music — total views GABUNGAN seluruh versi video resmi lagu di YouTube (YouTube Music memutar video resmi lagu, jadi jumlah views seluruh versinya adalah proksi putaran lagu). FIELD id = video YouTube resmi masing-masing versi (kanal BABYMONSTER/TREASURE/Mnet K-POP/THE FIRST TAKE/it's Live — judul + kanal tiap id diverifikasi lewat oEmbed YouTube saat dimasukkan). Kolektor GitHub Actions (collect_music.js) memperbarui views tiap id otomatis per jam via YouTube Data API videos.list. Aturan versi: M/V + video performa resmi (performance/exclusive/special, termasuk debut special) + THE FIRST TAKE + Band LIVE (it's Live) + panggung comeback/debut Mnet + versi Japanese M/V; video praktik dansa, making film & unggahan non-resmi tidak dihitung.",
+ "updated": "2026-11-27",
+ "captured": "2026-11-27",
  "rule": "M/V + video performa resmi + THE FIRST TAKE + Band LIVE (it's Live) + panggung comeback/debut Mnet (1 video) + versi Japanese M/V",
  "artists": {
   "babymonster": {
    "songs": [
     {
      "song": "DRIP",
-     "views": 739313623,
+     "views": 739144489,
      "n": 4,
      "parts": [
       {
        "title": "M/V",
-       "views": 424667931,
+       "views": 424593870,
        "id": "Zp-Jhuhq0bQ"
       },
       {
        "title": "Performance Video",
-       "views": 215705854,
+       "views": 215651877,
        "id": "cxhqqpVk65Q"
       },
       {
        "title": "Special Performance Video",
-       "views": 27210374,
+       "views": 27208547,
        "id": "IApenpQjcuI"
       },
       {
        "title": "THE FIRST TAKE",
-       "views": 71729464,
+       "views": 71690195,
        "id": "06mCrMgv0zY"
       }
      ]
     },
     {
      "song": "SHEESH",
-     "views": 710349282,
+     "views": 710298753,
      "n": 5,
      "parts": [
       {
        "title": "M/V",
-       "views": 427180668,
+       "views": 427152466,
        "id": "2wA_b6YHjqQ"
       },
       {
        "title": "Performance Video",
-       "views": 241093430,
+       "views": 241076824,
        "id": "kOanBE5Wg24"
       },
       {
        "title": "THE FIRST TAKE",
-       "views": 10287766,
+       "views": 10283707,
        "id": "O99aP4AvEF8"
       },
       {
        "title": "Band LIVE (it's Live)",
-       "views": 20688019,
+       "views": 20686856,
        "id": "FpOzMBwjSK0"
       },
       {
        "title": "Panggung debut Mnet M COUNTDOWN",
-       "views": 11099399,
+       "views": 11098900,
        "id": "DJN7Jr4FPeA"
       }
      ]
     },
     {
      "song": "WE GO UP",
-     "views": 458422665,
+     "views": 458355036,
      "n": 4,
      "parts": [
       {
        "title": "M/V",
-       "views": 230586789,
+       "views": 230562872,
        "id": "wlHwjkYpSr0"
       },
       {
        "title": "Exclusive Performance Video",
-       "views": 204061675,
+       "views": 204024606,
        "id": "o9V8HrgJgIg"
       },
       {
        "title": "THE FIRST TAKE",
-       "views": 16290651,
+       "views": 16285358,
        "id": "a0bc6Ownyt0"
       },
       {
        "title": "Panggung comeback Mnet M COUNTDOWN",
-       "views": 7483550,
+       "views": 7482200,
        "id": "9gh7Lt7tdj8"
       }
      ]
     },
     {
      "song": "FOREVER",
-     "views": 372647614,
+     "views": 372609859,
      "n": 4,
      "parts": [
       {
        "title": "M/V",
-       "views": 273239665,
+       "views": 273210823,
        "id": "eJCHKjt0MPw"
       },
       {
        "title": "Dance Performance Video",
-       "views": 77722884,
+       "views": 77715998,
        "id": "tDt7X6coxvs"
       },
       {
        "title": "Band LIVE (it's Live)",
-       "views": 16645468,
+       "views": 16643590,
        "id": "TQfC0xdpiw4"
       },
       {
        "title": "Panggung comeback Mnet M COUNTDOWN",
-       "views": 5039597,
+       "views": 5039448,
        "id": "AER_w-8HUMQ"
       }
      ]
     },
     {
      "song": "HOT SAUCE",
-     "views": 212673101,
+     "views": 212650784,
      "n": 3,
      "parts": [
       {
        "title": "M/V",
-       "views": 181269502,
+       "views": 181248792,
        "id": "xn8mQqz2xmM"
       },
       {
        "title": "Performance Video (M/V White ver.)",
-       "views": 27211961,
+       "views": 27210931,
        "id": "4iw45qO3OsE"
       },
       {
        "title": "Panggung comeback Mnet M COUNTDOWN",
-       "views": 4191638,
+       "views": 4191061,
        "id": "QQQLDjLufNo"
+      }
+     ]
+    },
+    {
+     "song": "BATTER UP",
+     "views": 438837485,
+     "n": 2,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 354637016,
+       "id": "olDWm2veCrM"
+      },
+      {
+       "title": "Dance Performance (Debut Special)",
+       "views": 84200469,
+       "id": "B17yoLxkbPA"
+      }
+     ]
+    },
+    {
+     "song": "Stuck In The Middle",
+     "views": 142406832,
+     "n": 1,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 142406832,
+       "id": "GsV1i0QHi-o"
+      }
+     ]
+    },
+    {
+     "song": "CLIK CLAK",
+     "views": 255294624,
+     "n": 3,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 138609313,
+       "id": "o0oW3lPoOXM"
+      },
+      {
+       "title": "Dance Performance Video",
+       "views": 85507898,
+       "id": "frV8cZ_yA_4"
+      },
+      {
+       "title": "Special Performance Video",
+       "views": 31177413,
+       "id": "B1gDCOTpDzA"
+      }
+     ]
+    },
+    {
+     "song": "Love In My Heart",
+     "views": 90412864,
+     "n": 1,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 90412864,
+       "id": "1kXLsrun51s"
+      }
+     ]
+    },
+    {
+     "song": "Really Like You",
+     "views": 135735081,
+     "n": 1,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 135735081,
+       "id": "XShaIZs7J7M"
+      }
+     ]
+    },
+    {
+     "song": "PSYCHO",
+     "views": 333187511,
+     "n": 2,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 236610743,
+       "id": "yd_uG3TtREs"
+      },
+      {
+       "title": "Dance Performance Video",
+       "views": 96576768,
+       "id": "yAXnEHFKKaY"
+      }
+     ]
+    },
+    {
+     "song": "SUPA DUPA LUV",
+     "views": 86175902,
+     "n": 1,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 86175902,
+       "id": "SbdOIdg2McI"
+      }
+     ]
+    },
+    {
+     "song": "춤 (CHOOM)",
+     "views": 313843574,
+     "n": 2,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 213020748,
+       "id": "x3eqqoZPV_E"
+      },
+      {
+       "title": "Dance Performance Video",
+       "views": 100822826,
+       "id": "wqSHogLRtJI"
+      }
+     ]
+    },
+    {
+     "song": "SUGAR HONEY ICE TEA",
+     "views": 226794634,
+     "n": 2,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 153572725,
+       "id": "naoGk-Zjc1s"
+      },
+      {
+       "title": "Dance Performance Video",
+       "views": 73221909,
+       "id": "SsuCimm5BIU"
+      }
+     ]
+    },
+    {
+     "song": "I LIKE IT",
+     "views": 106194005,
+     "n": 1,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 106194005,
+       "id": "9cS2wv6AfHk"
+      }
+     ]
+    },
+    {
+     "song": "MOON",
+     "views": 134406797,
+     "n": 2,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 93484662,
+       "id": "xXZwZ0DolJc"
+      },
+      {
+       "title": "Dance Performance Video",
+       "views": 40922135,
+       "id": "LYbHsAsj6i8"
+      }
+     ]
+    },
+    {
+     "song": "DESERVE",
+     "views": 122850897,
+     "n": 1,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 122850897,
+       "id": "oC6brLXQe4I"
+      }
+     ]
+    },
+    {
+     "song": "LIKE THAT",
+     "views": 311353393,
+     "n": 2,
+     "parts": [
+      {
+       "title": "Exclusive Performance Video",
+       "views": 258127829,
+       "id": "M8r3x4Re8-I"
+      },
+      {
+       "title": "Dance Performance Video",
+       "views": 53225564,
+       "id": "gnJOBNz1q0A"
+      }
+     ]
+    },
+    {
+     "song": "BILLIONAIRE",
+     "views": 239308119,
+     "n": 2,
+     "parts": [
+      {
+       "title": "Exclusive Performance Video",
+       "views": 165141589,
+       "id": "Gz_yRl6703c"
+      },
+      {
+       "title": "Dance Performance Video",
+       "views": 74166530,
+       "id": "MN2RlOy8y8k"
       }
      ]
     }
@@ -147,111 +360,350 @@
    "songs": [
     {
      "song": "직진 (JIKJIN)",
-     "views": 178738309,
+     "views": 178733462,
      "n": 3,
      "parts": [
       {
        "title": "M/V",
-       "views": 155852972,
+       "views": 155848779,
        "id": "ZJaKdBBzUYk"
       },
       {
        "title": "Dance Performance Video",
-       "views": 18688591,
+       "views": 18688002,
        "id": "Q5SIYzCRRv4"
       },
       {
        "title": "Panggung comeback Mnet M COUNTDOWN",
-       "views": 4196746,
+       "views": 4196681,
        "id": "fyioZj6Acf0"
       }
      ]
     },
     {
      "song": "BOY",
-     "views": 135536976,
+     "views": 135535250,
      "n": 2,
      "parts": [
       {
        "title": "M/V",
-       "views": 130041571,
+       "views": 130039889,
        "id": "JSAfPh1A25E"
       },
       {
        "title": "Special Performance Video",
-       "views": 5495405,
+       "views": 5495361,
        "id": "EKHd0OgwabY"
       }
      ]
     },
     {
      "song": "사랑해 (I LOVE YOU)",
-     "views": 135504463,
+     "views": 135501958,
      "n": 3,
      "parts": [
       {
        "title": "M/V",
-       "views": 122398720,
+       "views": 122396449,
        "id": "_hFarg-Obuc"
       },
       {
        "title": "Special Performance Video",
-       "views": 8589879,
+       "views": 8589690,
        "id": "g2i5hKKMaS0"
       },
       {
        "title": "M/V versi Japanese",
-       "views": 4515864,
+       "views": 4515819,
        "id": "oLstWoMF4Pc"
       }
      ]
     },
     {
      "song": "HELLO",
-     "views": 109410765,
+     "views": 109407505,
      "n": 4,
      "parts": [
       {
        "title": "M/V",
-       "views": 97348377,
+       "views": 97345471,
        "id": "aPd9exmH17o"
       },
       {
        "title": "Special Performance Video",
-       "views": 5908689,
+       "views": 5908471,
        "id": "nDhIZIGz0xo"
       },
       {
        "title": "Panggung comeback Mnet M COUNTDOWN",
-       "views": 3755812,
+       "views": 3755733,
        "id": "Y-D5r7U7nUs"
       },
       {
        "title": "M/V versi Japanese",
-       "views": 2397887,
+       "views": 2397830,
        "id": "v3SQVaG7ej0"
       }
      ]
     },
     {
      "song": "음 (MMM)",
-     "views": 90772700,
+     "views": 90771017,
      "n": 3,
      "parts": [
       {
        "title": "M/V",
-       "views": 72859523,
+       "views": 72858175,
        "id": "RjbNMogQw8s"
       },
       {
        "title": "Dance Performance Video (SPACE SET ver.)",
-       "views": 9061268,
+       "views": 9061174,
        "id": "GCPK6u39ZK0"
       },
       {
        "title": "Dance Performance Video (HALLOWEEN ver.)",
-       "views": 8851909,
+       "views": 8851668,
        "id": "HBzzYDSDI-U"
+      }
+     ]
+    },
+    {
+     "song": "MY TREASURE",
+     "views": 55001850,
+     "n": 1,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 55001850,
+       "id": "p9LLoijPQfg"
+      }
+     ]
+    },
+    {
+     "song": "BEAUTIFUL",
+     "views": 32468938,
+     "n": 1,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 32468938,
+       "id": "UKXeico0yeI"
+      }
+     ]
+    },
+    {
+     "song": "VolKno",
+     "views": 26607559,
+     "n": 1,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 26607559,
+       "id": "Dbs3l_ZJR6o"
+      }
+     ]
+    },
+    {
+     "song": "MOVE (T5)",
+     "views": 71136347,
+     "n": 1,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 71136347,
+       "id": "IR8gXjm507Y"
+      }
+     ]
+    },
+    {
+     "song": "BONA BONA",
+     "views": 75975278,
+     "n": 1,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 75975278,
+       "id": "gxeyC1cPJsA"
+      }
+     ]
+    },
+    {
+     "song": "KING KONG",
+     "views": 78559864,
+     "n": 2,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 68500278,
+       "id": "RiLdxgHYzU8"
+      },
+      {
+       "title": "Dance Performance Video",
+       "views": 10059586,
+       "id": "GC0FRaUlsNQ"
+      }
+     ]
+    },
+    {
+     "song": "LAST NIGHT",
+     "views": 82875105,
+     "n": 2,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 63850036,
+       "id": "eBrvBlnhR9c"
+      },
+      {
+       "title": "Dance Performance Video",
+       "views": 19025069,
+       "id": "1662wSi7nes"
+      }
+     ]
+    },
+    {
+     "song": "YELLOW",
+     "views": 109618351,
+     "n": 2,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 82921787,
+       "id": "R55VGD7aYUI"
+      },
+      {
+       "title": "Dance Performance Video",
+       "views": 26696564,
+       "id": "bQN4aoknQg4"
+      }
+     ]
+    },
+    {
+     "song": "PARADISE",
+     "views": 107706990,
+     "n": 2,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 78272415,
+       "id": "gZNQs3jA7aE"
+      },
+      {
+       "title": "Dance Performance Video",
+       "views": 29434575,
+       "id": "9v32bIz4WGs"
+      }
+     ]
+    },
+    {
+     "song": "EVERYTHING",
+     "views": 33369412,
+     "n": 1,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 33369412,
+       "id": "KcW1_wI6rsc"
+      }
+     ]
+    },
+    {
+     "song": "IF I",
+     "views": 169515032,
+     "n": 2,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 126913521,
+       "id": "QERKD90hG98"
+      },
+      {
+       "title": "Dance Performance Video",
+       "views": 42601511,
+       "id": "WL5PnZkZ7oM"
+      }
+     ]
+    },
+    {
+     "song": "난리나 (NALLY-NA) (HYUNHAYO)",
+     "views": 87114311,
+     "n": 2,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 58035136,
+       "id": "GCedXwbwMfQ"
+      },
+      {
+       "title": "Dance Performance Video",
+       "views": 29079175,
+       "id": "vW-FVdrv_8Q"
+      }
+     ]
+    },
+    {
+     "song": "SHOCK",
+     "views": 112525601,
+     "n": 1,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 112525601,
+       "id": "u_hpZueWI9g"
+      }
+     ]
+    },
+    {
+     "song": "B.O.M.B (kaboom ver.)",
+     "views": 84714442,
+     "n": 2,
+     "parts": [
+      {
+       "title": "Dance Performance Video",
+       "views": 48867378,
+       "id": "uxmzwbGpH30"
+      },
+      {
+       "title": "Dance Performance Video",
+       "views": 35847064,
+       "id": "ehOVBOAtxU4"
+      }
+     ]
+    },
+    {
+     "song": "DANGER",
+     "views": 30823608,
+     "n": 1,
+     "parts": [
+      {
+       "title": "Dance Performance Video",
+       "views": 30823608,
+       "id": "DIxRlfHq9Fo"
+      }
+     ]
+    },
+    {
+     "song": "NOW FOREVER",
+     "views": 32395505,
+     "n": 1,
+     "parts": [
+      {
+       "title": "Dance Performance Video",
+       "views": 32395505,
+       "id": "-3NRu9GB8zs"
+      }
+     ]
+    },
+    {
+     "song": "DARARI (REMIX)",
+     "views": 65412474,
+     "n": 1,
+     "parts": [
+      {
+       "title": "Exclusive Performance Video",
+       "views": 65412474,
+       "id": "4bBczzrciP0"
       }
      ]
     }
