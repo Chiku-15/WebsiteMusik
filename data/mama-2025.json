@@ -1,6 +1,6 @@
 {
- "asOf": "27 Nov, 05:14 KST",
- "captured": 1795724046,
+ "asOf": "27 Nov, 07:02 KST",
+ "captured": 1795730529,
  "source": "Kanal YouTube Mnet — unggahan panggung [#2025MAMA] (Shorts tidak dihitung); ringkasan total per artis mengikuti mama-2025.mirekapps.com",
  "venue": "Kai Tak Stadium, Hong Kong · 28–29 November 2025",
  "days": [
@@ -16,7 +16,7 @@
  "facts": {
   "acts": 29,
   "videos": 71,
-  "views": 224952253
+  "views": 224969571
  },
  "meta": {
   "artists": 30,
@@ -50,7 +50,7 @@
    "day": 1,
    "order": 2,
    "gorder": 2,
-   "views": 4597158,
+   "views": 4597286,
    "stage": "WISH to Hearts with Hearts2Hearts",
    "focus": "",
    "key": "nctwish",
@@ -58,14 +58,14 @@
     {
      "id": "flZpm8Iub_Y",
      "title": "FOCUS (MAMA ver.) + COLOR (MAMA ver.)",
-     "views": 3999632,
+     "views": 3999747,
      "dur": "9:15",
      "full": false
     },
     {
      "id": "KCuy-e66o9E",
      "title": "WISH to Hearts",
-     "views": 271642,
+     "views": 271655,
      "dur": "1:39",
      "full": false
     },
@@ -84,7 +84,7 @@
    "day": 1,
    "order": 3,
    "gorder": 3,
-   "views": 1383604,
+   "views": 1383607,
    "stage": "WISH to Hearts",
    "focus": "",
    "key": "hearts2hearts",
@@ -92,7 +92,7 @@
     {
      "id": "Og_rtpHBcSw",
      "title": "Full stage · ‘WISH to Hearts’",
-     "views": 1383604,
+     "views": 1383607,
      "dur": "3:38",
      "full": true
     }
@@ -104,7 +104,7 @@
    "day": 1,
    "order": 4,
    "gorder": 4,
-   "views": 2642520,
+   "views": 2642549,
    "stage": "Flip The Coin with MEOVV",
    "focus": "",
    "key": "tws",
@@ -112,14 +112,14 @@
     {
      "id": "Q3AOPTTW71s",
      "title": "Full stage · ‘Flip The Coin’",
-     "views": 2040160,
+     "views": 2040188,
      "dur": "9:29",
      "full": true
     },
     {
      "id": "lOW9Q7cRMr0",
      "title": "OVERDRIVE (Mad Water ver.)",
-     "views": 602360,
+     "views": 602361,
      "dur": "4:53",
      "full": false
     }
@@ -131,7 +131,7 @@
    "day": 1,
    "order": 5,
    "gorder": 5,
-   "views": 2261923,
+   "views": 2262050,
    "stage": "Flip The Coin",
    "focus": "",
    "key": "meovv",
@@ -139,7 +139,7 @@
     {
      "id": "BAhjxc07dhc",
      "title": "Full stage · ‘Flip The Coin’",
-     "views": 2261923,
+     "views": 2262050,
      "dur": "4:30",
      "full": true
     }
@@ -151,7 +151,7 @@
    "day": 1,
    "order": 6,
    "gorder": 6,
-   "views": 21763202,
+   "views": 21764832,
    "stage": "MONSTER’s NIGHT LIVE",
    "focus": "babymonster",
    "key": "babymonster",
@@ -159,21 +159,21 @@
     {
      "id": "IOd0oJUIE8o",
      "title": "Full stage · ‘MONSTER’s NIGHT LIVE’",
-     "views": 16943778,
+     "views": 16945214,
      "dur": "6:25",
      "full": true
     },
     {
      "id": "ssZU8I9jutA",
      "title": "WE GO UP (MAMA ver.)",
-     "views": 3207072,
+     "views": 3207121,
      "dur": "4:09",
      "full": false
     },
     {
      "id": "NZN5cPEHUL0",
      "title": "DRIP (MAMA ver.)",
-     "views": 1612352,
+     "views": 1612497,
      "dur": "2:15",
      "full": false
     }
@@ -185,7 +185,7 @@
    "day": 1,
    "order": 7,
    "gorder": 7,
-   "views": 3015769,
+   "views": 3015816,
    "stage": "FIRST ACT : FORMULA",
    "focus": "",
    "key": "alphadriveone",
@@ -193,7 +193,7 @@
     {
      "id": "XnmanhwL-Xg",
      "title": "Full stage · ‘FIRST ACT : FORMULA’",
-     "views": 3015769,
+     "views": 3015816,
      "dur": "9:00",
      "full": true
     }
@@ -205,7 +205,7 @@
    "day": 1,
    "order": 8,
    "gorder": 8,
-   "views": 2912836,
+   "views": 2912953,
    "stage": "Mnet Movie Awards",
    "focus": "",
    "key": "boynextdoor",
@@ -213,28 +213,28 @@
     {
      "id": "lOqtvT1BK5I",
      "title": "Hollywood Action",
-     "views": 1428420,
+     "views": 1428490,
      "dur": "3:55",
      "full": false
     },
     {
      "id": "8cYG11S2cDQ",
      "title": "Full stage · ‘Mnet Movie Awards’",
-     "views": 1097247,
+     "views": 1097290,
      "dur": "9:48",
      "full": true
     },
     {
      "id": "uYbnlakz_Ok",
      "title": "123-78 + Live In Paris + I Feel Good + IF I SAY,I LOVE YOU",
-     "views": 224142,
+     "views": 224145,
      "dur": "5:48",
      "full": false
     },
     {
      "id": "hNj7CDYW_PQ",
      "title": "Full stage · ‘Mnet Movie Awards’ · 4K",
-     "views": 163027,
+     "views": 163028,
      "dur": "9:52",
      "full": true
     }
@@ -266,7 +266,7 @@
    "day": 1,
    "order": 10,
    "gorder": 10,
-   "views": 3251347,
+   "views": 3251469,
    "stage": "MAMA PALOOZA : TRAZY MODE",
    "focus": "treasure",
    "key": "treasure",
@@ -274,21 +274,21 @@
     {
      "id": "N6cd4MTKhJo",
      "title": "2025 Free + PARADISE (REMIX) + I WANT YOUR LOVE (Band ver.)",
-     "views": 2701469,
+     "views": 2701562,
      "dur": "7:43",
      "full": false
     },
     {
      "id": "VSbIe-dt4XA",
      "title": "2025 Free + PARADISE (REMIX)",
-     "views": 223305,
+     "views": 223314,
      "dur": "4:43",
      "full": false
     },
     {
      "id": "QVyqB2YFP70",
      "title": "I WANT YOUR LOVE (BAND ver.)",
-     "views": 326573,
+     "views": 326593,
      "dur": "2:55",
      "full": false
     }
@@ -300,7 +300,7 @@
    "day": 1,
    "order": 11,
    "gorder": 11,
-   "views": 2712128,
+   "views": 2712206,
    "stage": "Look at me now",
    "focus": "",
    "key": "idle",
@@ -308,7 +308,7 @@
     {
      "id": "deLly6KW97A",
      "title": "Full stage · ‘Look at me now’",
-     "views": 2712128,
+     "views": 2712206,
      "dur": "5:24",
      "full": true
     }
@@ -320,7 +320,7 @@
    "day": 1,
    "order": 12,
    "gorder": 12,
-   "views": 6013374,
+   "views": 6013693,
    "stage": "Super Junior, Assemble",
    "focus": "",
    "key": "superjunior",
@@ -328,28 +328,28 @@
     {
      "id": "F60JbMPB3x0",
      "title": "Full stage · ‘Super Junior, Assemble’",
-     "views": 2209580,
+     "views": 2209687,
      "dur": "11:25",
      "full": true
     },
     {
      "id": "G9ZSHXW1rZA",
      "title": "Express Mode",
-     "views": 173424,
+     "views": 173433,
      "dur": "3:48",
      "full": false
     },
     {
      "id": "7S73KVP8nEs",
      "title": "Mr. Simple + 미인아 (BONAMANA)",
-     "views": 384026,
+     "views": 384072,
      "dur": "4:01",
      "full": false
     },
     {
      "id": "cJ5RWZl9_lk",
      "title": "쏘리 쏘리 (Sorry, Sorry)",
-     "views": 2211916,
+     "views": 2212073,
      "dur": "3:34",
      "full": false
     },
@@ -368,7 +368,7 @@
    "day": 1,
    "order": 13,
    "gorder": 13,
-   "views": 4516248,
+   "views": 4516470,
    "stage": "revIVE me",
    "focus": "",
    "key": "ive",
@@ -376,14 +376,14 @@
     {
      "id": "YfIdbId3bVE",
      "title": "Full stage · ‘revIVE me’",
-     "views": 3696491,
+     "views": 3696700,
      "dur": "8:00",
      "full": true
     },
     {
      "id": "Z7ed5nmLwCk",
      "title": "XOXZ",
-     "views": 352845,
+     "views": 352858,
      "dur": "3:55",
      "full": false
     },
@@ -402,7 +402,7 @@
    "day": 1,
    "order": 14,
    "gorder": 14,
-   "views": 5499490,
+   "views": 5499871,
    "stage": "Crimson Broken",
    "focus": "",
    "key": "enhypen",
@@ -410,14 +410,14 @@
     {
      "id": "MPC44YCoDKU",
      "title": "No Doubt + Bad Desire",
-     "views": 4969892,
+     "views": 4970272,
      "dur": "8:08",
      "full": false
     },
     {
      "id": "_48-0KYIfOI",
      "title": "No Doubt",
-     "views": 333468,
+     "views": 333469,
      "dur": "3:39",
      "full": false
     },
@@ -436,7 +436,7 @@
    "day": 2,
    "order": 1,
    "gorder": 15,
-   "views": 4404541,
+   "views": 4404706,
    "stage": "HEAR MY ROAR with Stray Kids, ZEROBASEONE",
    "focus": "",
    "key": "alldayproject",
@@ -451,14 +451,14 @@
     {
      "id": "UbBMBPv2OJQ",
      "title": "FAMOUS (MAMA ver.)",
-     "views": 3943932,
+     "views": 3944093,
      "dur": "4:02",
      "full": false
     },
     {
      "id": "yUUBs8BV5OU",
      "title": "Full stage · ‘HEAR MY ROAR’ · 4K",
-     "views": 201463,
+     "views": 201467,
      "dur": "10:50",
      "full": true
     }
@@ -470,7 +470,7 @@
    "day": 2,
    "order": 1,
    "gorder": 15.5,
-   "views": 758620,
+   "views": 758644,
    "stage": "HEAR MY ROAR",
    "focus": "",
    "guest": true,
@@ -487,14 +487,14 @@
     {
      "id": "tVcUcumtoxQ",
      "title": "HEAR MY ROAR",
-     "views": 298011,
+     "views": 298031,
      "dur": "3:02",
      "full": false
     },
     {
      "id": "yUUBs8BV5OU",
      "title": "HEAR MY ROAR + BAD BOY + FAMOUS (MAMA ver.) · 4K",
-     "views": 201463,
+     "views": 201467,
      "dur": "10:50",
      "full": false
     }
@@ -506,7 +506,7 @@
    "day": 2,
    "order": 1,
    "gorder": 15.5,
-   "views": 1724248,
+   "views": 1724288,
    "stage": "HEAR MY ROAR",
    "focus": "",
    "guest": true,
@@ -523,14 +523,14 @@
     {
      "id": "p0oDIIarW4M",
      "title": "BAD BOY",
-     "views": 1263639,
+     "views": 1263675,
      "dur": "3:20",
      "full": false
     },
     {
      "id": "yUUBs8BV5OU",
      "title": "HEAR MY ROAR + BAD BOY + FAMOUS (MAMA ver.) · 4K",
-     "views": 201463,
+     "views": 201467,
      "dur": "10:50",
      "full": false
     }
@@ -542,7 +542,7 @@
    "day": 2,
    "order": 2,
    "gorder": 16,
-   "views": 298011,
+   "views": 298031,
    "stage": "HEAR MY ROAR · Felix",
    "focus": "",
    "key": "straykids",
@@ -550,7 +550,7 @@
     {
      "id": "tVcUcumtoxQ",
      "title": "Full stage · ‘HEAR MY ROAR · Felix’",
-     "views": 298011,
+     "views": 298031,
      "dur": "3:02",
      "full": true
     }
@@ -562,7 +562,7 @@
    "day": 2,
    "order": 3,
    "gorder": 17,
-   "views": 1263639,
+   "views": 1263675,
    "stage": "HEAR MY ROAR · Sung Hanbin",
    "focus": "",
    "key": "zerobaseone",
@@ -570,7 +570,7 @@
     {
      "id": "p0oDIIarW4M",
      "title": "Full stage · ‘HEAR MY ROAR · Sung Hanbin’",
-     "views": 1263639,
+     "views": 1263675,
      "dur": "3:20",
      "full": true
     }
@@ -582,7 +582,7 @@
    "day": 2,
    "order": 4,
    "gorder": 18,
-   "views": 746473,
+   "views": 746508,
    "stage": "고백은 타이밍이라고들 하지만··· 같은 타이밍에 이러는 건 아닌 거 같습니다. with IDID",
    "focus": "",
    "key": "kickflip",
@@ -590,21 +590,21 @@
     {
      "id": "QFZsbuBKl04",
      "title": "Full stage · ‘고백은 타이밍이라고들 하지만··· 같은 타이밍에 이러는 건 아닌 거 같습니다.’",
-     "views": 377871,
+     "views": 377898,
      "dur": "7:45",
      "full": true
     },
     {
      "id": "vb65mKovg0E",
      "title": "PUSH BACK (MAMA ver.) + 처음 불러보는 노래 (2025 MAMA ver.)",
-     "views": 89232,
+     "views": 89233,
      "dur": "5:58",
      "full": false
     },
     {
      "id": "7wpIkt9exhw",
      "title": "상남자 (Boy In Luv) (원곡：방탄소년단)",
-     "views": 279370,
+     "views": 279377,
      "dur": "1:33",
      "full": false
     }
@@ -616,7 +616,7 @@
    "day": 2,
    "order": 4,
    "gorder": 18.5,
-   "views": 746473,
+   "views": 746508,
    "stage": "고백은 타이밍이라고들 하지만··· 같은 타이밍에 이러는 건 아닌 거 같습니다.",
    "focus": "",
    "guest": true,
@@ -626,21 +626,21 @@
     {
      "id": "QFZsbuBKl04",
      "title": "PUSH BACK (MAMA ver.) + 처음 불러보는 노래 (2025 MAMA ver.) + 상남자 (Boy In Luv) (원곡：방탄소년단)",
-     "views": 377871,
+     "views": 377898,
      "dur": "7:45",
      "full": false
     },
     {
      "id": "vb65mKovg0E",
      "title": "PUSH BACK (MAMA ver.) + 처음 불러보는 노래 (2025 MAMA ver.)",
-     "views": 89232,
+     "views": 89233,
      "dur": "5:58",
      "full": false
     },
     {
      "id": "7wpIkt9exhw",
      "title": "상남자 (Boy In Luv) (원곡：방탄소년단)",
-     "views": 279370,
+     "views": 279377,
      "dur": "1:33",
      "full": false
     }
@@ -652,7 +652,7 @@
    "day": 2,
    "order": 5,
    "gorder": 19,
-   "views": 22392921,
+   "views": 22394943,
    "stage": "MADE BY CORTIS",
    "focus": "",
    "key": "cortis",
@@ -660,21 +660,21 @@
     {
      "id": "koED8KSXfeo",
      "title": "Full stage · ‘MADE BY CORTIS’",
-     "views": 21294104,
+     "views": 21296103,
      "dur": "5:16",
      "full": true
     },
     {
      "id": "GLI164Dueic",
      "title": "GO!",
-     "views": 670003,
+     "views": 670004,
      "dur": "3:01",
      "full": false
     },
     {
      "id": "QYehZxCii_w",
      "title": "FaSHioN",
-     "views": 428814,
+     "views": 428836,
      "dur": "2:09",
      "full": false
     }
@@ -686,7 +686,7 @@
    "day": 2,
    "order": 6,
    "gorder": 20,
-   "views": 1023771,
+   "views": 1023777,
    "stage": "Together we're glowin'",
    "focus": "",
    "key": "ahnhyoseop",
@@ -694,14 +694,14 @@
     {
      "id": "2rUaggw_zL4",
      "title": "Full stage · Jinu's Lament",
-     "views": 921536,
+     "views": 921532,
      "dur": "2:14",
      "full": true
     },
     {
      "id": "LZcHkWKsW1Q",
      "title": "Full stage · Jinu's Lament · 4K",
-     "views": 102235,
+     "views": 102245,
      "dur": "2:13",
      "full": true
     }
@@ -713,7 +713,7 @@
    "day": 2,
    "order": 7,
    "gorder": 21,
-   "views": 86154146,
+   "views": 86162005,
    "stage": "KPop Demon Hunters · HUNTR/X (Pharita, Ahyeon, Rora)",
    "focus": "babymonster",
    "key": "babymonster-2",
@@ -721,21 +721,21 @@
     {
      "id": "3cVroylPpvg",
      "title": "Full stage · ‘KPop Demon Hunters · HUNTR/X (Pharita, Ahyeon, Rora)’",
-     "views": 49677730,
+     "views": 49682508,
      "dur": "4:16",
      "full": true
     },
     {
      "id": "dYAL9gTfsAE",
      "title": "Full stage · ‘KPop Demon Hunters · HUNTR/X (Pharita, Ahyeon, Rora)’ · 4K",
-     "views": 9903426,
+     "views": 9904254,
      "dur": "4:16",
      "full": true
     },
     {
      "id": "1TYYOw-815A",
      "title": "Golden",
-     "views": 26572990,
+     "views": 26575243,
      "dur": "3:21",
      "full": false
     }
@@ -747,7 +747,7 @@
    "day": 2,
    "order": 8,
    "gorder": 22,
-   "views": 910576,
+   "views": 910574,
    "stage": "Fortissimo Jo.1",
    "focus": "",
    "key": "jo1",
@@ -755,7 +755,7 @@
     {
      "id": "ejhXf-hV_L8",
      "title": "Full stage · ‘Fortissimo Jo.1’",
-     "views": 910576,
+     "views": 910574,
      "dur": "6:05",
      "full": true
     }
@@ -767,7 +767,7 @@
    "day": 2,
    "order": 9,
    "gorder": 23,
-   "views": 1627212,
+   "views": 1627247,
    "stage": "Not Just Pretty : Awakening",
    "focus": "",
    "key": "izna",
@@ -775,7 +775,7 @@
     {
      "id": "BzDkNJT2O98",
      "title": "Full stage · ‘Not Just Pretty : Awakening’",
-     "views": 1627212,
+     "views": 1627247,
      "dur": "5:25",
      "full": true
     }
@@ -787,7 +787,7 @@
    "day": 2,
    "order": 10,
    "gorder": 24,
-   "views": 2034786,
+   "views": 2034832,
    "stage": "1000 Stormy nights behind the FAME",
    "focus": "",
    "key": "riize",
@@ -795,21 +795,21 @@
     {
      "id": "589t8-cM0M0",
      "title": "Full stage · ‘1000 Stormy nights behind the FAME’",
-     "views": 1558607,
+     "views": 1558631,
      "dur": "8:19",
      "full": true
     },
     {
      "id": "mzyr267zEZU",
      "title": "Bag Bad Back (2025 MAMA ver.)",
-     "views": 104359,
+     "views": 104360,
      "dur": "3:52",
      "full": false
     },
     {
      "id": "xtCxkbT5uKo",
      "title": "Fame",
-     "views": 371820,
+     "views": 371841,
      "dur": "4:18",
      "full": false
     }
@@ -821,7 +821,7 @@
    "day": 2,
    "order": 11,
    "gorder": 25,
-   "views": 1894930,
+   "views": 1895023,
    "stage": "The Last Stranger",
    "focus": "",
    "key": "tomorrowxtogether",
@@ -829,14 +829,14 @@
     {
      "id": "uKkRUQRa_uQ",
      "title": "Full stage · ‘The Last Stranger’",
-     "views": 1671842,
+     "views": 1671928,
      "dur": "5:12",
      "full": true
     },
     {
      "id": "rTlaPzeEAHw",
      "title": "Full stage · ‘The Last Stranger’ · 4K",
-     "views": 223088,
+     "views": 223095,
      "dur": "5:13",
      "full": true
     }
@@ -848,7 +848,7 @@
    "day": 2,
    "order": 12,
    "gorder": 26,
-   "views": 6645235,
+   "views": 6645534,
    "stage": "MAD MUSES : Fury of Steel",
    "focus": "",
    "key": "aespa",
@@ -856,7 +856,7 @@
     {
      "id": "rMGjA5W_Qwg",
      "title": "Full stage · ‘MAD MUSES : Fury of Steel’",
-     "views": 5508539,
+     "views": 5508778,
      "dur": "9:04",
      "full": true
     },
@@ -870,7 +870,7 @@
     {
      "id": "3sh08pOuXmk",
      "title": "Rich Man",
-     "views": 858601,
+     "views": 858661,
      "dur": "4:17",
      "full": false
     }
@@ -882,7 +882,7 @@
    "day": 2,
    "order": 13,
    "gorder": 27,
-   "views": 15089724,
+   "views": 15091801,
    "stage": "The K-POP CHAMPION",
    "focus": "",
    "key": "straykids-2",
@@ -890,35 +890,35 @@
     {
      "id": "zRYTFhPxiyA",
      "title": "Full stage · ‘The K-POP CHAMPION’",
-     "views": 11551179,
+     "views": 11553066,
      "dur": "13:30",
      "full": true
     },
     {
      "id": "KuK1jAp4GpY",
      "title": "CREED + Chk Chk Boom",
-     "views": 398067,
+     "views": 398075,
      "dur": "4:33",
      "full": false
     },
     {
      "id": "jPuUndmzHwc",
      "title": "신선놀음",
-     "views": 538094,
+     "views": 538104,
      "dur": "4:03",
      "full": false
     },
     {
      "id": "nGWxOykm86Y",
      "title": "CEREMONY (Hip Hip Version)",
-     "views": 705438,
+     "views": 705511,
      "dur": "4:49",
      "full": false
     },
     {
      "id": "AJVVSNxZ9E0",
      "title": "Full stage · ‘The K-POP CHAMPION’ · 4K",
-     "views": 1896946,
+     "views": 1897045,
      "dur": "13:33",
      "full": true
     }
@@ -930,7 +930,7 @@
    "day": 2,
    "order": 14,
    "gorder": 28,
-   "views": 16137555,
+   "views": 16138891,
    "stage": "Endlich der Übermensch! with Song So-hee",
    "focus": "",
    "key": "gdragon",
@@ -938,21 +938,21 @@
     {
      "id": "vHJ6QLccpdo",
      "title": "Full stage · ‘Endlich der Übermensch!’",
-     "views": 4745904,
+     "views": 4746132,
      "dur": "15:20",
      "full": true
     },
     {
      "id": "Etg-1VnRsoE",
      "title": "DRAMA (feat. 송소희)",
-     "views": 605054,
+     "views": 605083,
      "dur": "3:57",
      "full": false
     },
     {
      "id": "izzWfvhrLxY",
      "title": "Heartbreaker",
-     "views": 9624645,
+     "views": 9625724,
      "dur": "6:32",
      "full": false
     },
@@ -971,7 +971,7 @@
    "day": 2,
    "order": 14,
    "gorder": 28.5,
-   "views": 5350958,
+   "views": 5351215,
    "stage": "Endlich der Übermensch!",
    "focus": "",
    "guest": true,
@@ -981,14 +981,14 @@
     {
      "id": "vHJ6QLccpdo",
      "title": "DRAMA (feat. 송소희) + Heartbreaker + 무제(無題) (Untitled, 2025)",
-     "views": 4745904,
+     "views": 4746132,
      "dur": "15:20",
      "full": false
     },
     {
      "id": "Etg-1VnRsoE",
      "title": "DRAMA (feat. 송소희)",
-     "views": 605054,
+     "views": 605083,
      "dur": "3:57",
      "full": false
     }
@@ -1000,7 +1000,7 @@
    "day": 2,
    "order": 15,
    "gorder": 29,
-   "views": 1718622,
+   "views": 1718710,
    "stage": "追尋花影 (Chase the Bloom)",
    "focus": "",
    "key": "zerobaseone-2",
@@ -1008,28 +1008,28 @@
     {
      "id": "3ncHksa6s7Y",
      "title": "Full stage · ‘追尋花影 (Chase the Bloom)’",
-     "views": 1014894,
+     "views": 1014911,
      "dur": "10:56",
      "full": true
     },
     {
      "id": "iKCXmv8u2Ro",
      "title": "Doctor! Doctor!",
-     "views": 205656,
+     "views": 205658,
      "dur": "6:08",
      "full": false
     },
     {
      "id": "W3coK8TMk-E",
      "title": "ICONIK",
-     "views": 207781,
+     "views": 207803,
      "dur": "4:49",
      "full": false
     },
     {
      "id": "1dkuofkvfkQ",
      "title": "Full stage · ‘追尋花影 (Chase the Bloom)’ · 4K",
-     "views": 290291,
+     "views": 290338,
      "dur": "10:56",
      "full": true
     }
