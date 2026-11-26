@@ -1,6 +1,6 @@
 {
- "asOf": "26 Nov, 13:10 KST",
- "captured": 1795666239,
+ "asOf": "26 Nov, 14:23 KST",
+ "captured": 1795670632,
  "source": "Kanal YouTube Mnet (Mnet K-POP) — unggahan panggung resmi [2022 MAMA] (Shorts, kompilasi, behind, countdown & fancam tidak dihitung); viewCount real via API terbuka Return YouTube Dislike API per 24 Nov 2026",
  "srcTag": "[2022 MAMA]",
  "srcYear": 2022,
@@ -32,7 +32,7 @@
  "facts": {
   "acts": 31,
   "videos": 31,
-  "views": 190033946
+  "views": 190035808
  },
  "meta": {
   "artists": 31,
@@ -46,7 +46,7 @@
    "day": 1,
    "order": null,
    "gorder": 1,
-   "views": 8527668,
+   "views": 8527749,
    "stage": "The New Passion",
    "focus": "",
    "key": "jeonsomixleejunglee",
@@ -54,7 +54,7 @@
     {
      "id": "Sj4nIQSHnQo",
      "title": "[2022 MAMA] JEON SOMI X LEEJUNG LEE - Worldwide Fans' Choice 후보곡 | Mnet 221129 방송",
-     "views": 8527668,
+     "views": 8527749,
      "dur": "",
      "full": true
     }
@@ -66,7 +66,7 @@
    "day": 1,
    "order": null,
    "gorder": 2,
-   "views": 8632133,
+   "views": 8632176,
    "stage": "Downside Up",
    "focus": "",
    "key": "nmixx",
@@ -74,7 +74,7 @@
     {
      "id": "zoAMs5mGX1w",
      "title": "[2022 MAMA] NMIXX - DICE | Mnet 221129 방송",
-     "views": 8632133,
+     "views": 8632176,
      "dur": "",
      "full": false
     }
@@ -86,7 +86,7 @@
    "day": 1,
    "order": null,
    "gorder": 3,
-   "views": 168756,
+   "views": 168755,
    "stage": "The Final Destination",
    "focus": "",
    "key": "dkz",
@@ -94,7 +94,7 @@
     {
      "id": "2rPLGhb22l4",
      "title": "[2022 MAMA] DKZ - Uh-Heung | Mnet 221129 방송",
-     "views": 168756,
+     "views": 168755,
      "dur": "",
      "full": true
     }
@@ -106,7 +106,7 @@
    "day": 1,
    "order": null,
    "gorder": 4,
-   "views": 332052,
+   "views": 332051,
    "stage": "Two Women",
    "focus": "",
    "key": "hyolyn",
@@ -114,7 +114,7 @@
     {
      "id": "2ZrrEhnzDFg",
      "title": "[2022 MAMA] HYOLYN - Layin' Low | Mnet 221129 방송",
-     "views": 332052,
+     "views": 332051,
      "dur": "",
      "full": true
     }
@@ -126,7 +126,7 @@
    "day": 1,
    "order": null,
    "gorder": 5,
-   "views": 9658752,
+   "views": 9658817,
    "stage": "",
    "focus": "",
    "key": "bibi",
@@ -134,7 +134,7 @@
     {
      "id": "RyKcxGpoWrA",
      "title": "[2022 MAMA] BIBI - BIBI Vengeance | Mnet 221129 방송",
-     "views": 9658752,
+     "views": 9658817,
      "dur": "",
      "full": true
     }
@@ -166,7 +166,7 @@
    "day": 1,
    "order": null,
    "gorder": 7,
-   "views": 1937741,
+   "views": 1937765,
    "stage": "I Am, I Wish, I Will",
    "focus": "",
    "key": "jo1",
@@ -174,7 +174,7 @@
     {
      "id": "sN_O04_I1RE",
      "title": "[2022 MAMA] JO1 - SuperCali (MAMA ver.) | Mnet 221129 방송",
-     "views": 1937741,
+     "views": 1937765,
      "dur": "",
      "full": true
     }
@@ -186,7 +186,7 @@
    "day": 1,
    "order": null,
    "gorder": 8,
-   "views": 9968663,
+   "views": 9968744,
    "stage": "Dear You Who Wish for My Fall",
    "focus": "",
    "key": "lesserafim",
@@ -194,7 +194,7 @@
     {
      "id": "3-ozQBLitio",
      "title": "[2022 MAMA] LE SSERAFIM - ANTIFRAGILE | Mnet 221129 방송",
-     "views": 9968663,
+     "views": 9968744,
      "dur": "",
      "full": false
     }
@@ -206,7 +206,7 @@
    "day": 1,
    "order": null,
    "gorder": 9,
-   "views": 2181990,
+   "views": 2182015,
    "stage": "The Girls WaDaDa to Dream",
    "focus": "",
    "key": "kep1er",
@@ -214,7 +214,7 @@
     {
      "id": "VOkNmq1lW5A",
      "title": "[2022 MAMA] Kep1er - THE GIRLS | Mnet 221129 방송",
-     "views": 2181990,
+     "views": 2182015,
      "dur": "",
      "full": false
     }
@@ -246,7 +246,7 @@
    "day": 1,
    "order": null,
    "gorder": 11,
-   "views": 30141744,
+   "views": 30141975,
    "stage": "LINNK the Next Generation with IVE, KEP1ER, NMIXX, LE SSERAFIM, NEWJEANS",
    "focus": "",
    "key": "ivekep1ernmixxlesserafimnewjeans",
@@ -254,7 +254,7 @@
     {
      "id": "IJks7TIDfnk",
      "title": "[2022 MAMA] IVE&Kep1er&NMIXX&LESSERAFIM&NewJeans-ELEVEN+WADADA+O.O+FEARLESS+Hypeboy | Mnet 221129 방송",
-     "views": 30141744,
+     "views": 30141975,
      "dur": "",
      "full": true
     }
@@ -266,7 +266,7 @@
    "day": 1,
    "order": null,
    "gorder": 12,
-   "views": 2370954,
+   "views": 2370955,
    "stage": "Goodbye Romeo",
    "focus": "",
    "key": "tomorrowxtogether",
@@ -274,7 +274,7 @@
     {
      "id": "A5oahlZG3l8",
      "title": "[2022 MAMA] TOMORROW X TOGETHER - Good Boy Gone Bad | Mnet 221129 방송",
-     "views": 2370954,
+     "views": 2370955,
      "dur": "",
      "full": false
     }
@@ -286,7 +286,7 @@
    "day": 1,
    "order": null,
    "gorder": 13,
-   "views": 12537943,
+   "views": 12538067,
    "stage": "Kara Is Back",
    "focus": "",
    "key": "kara",
@@ -294,7 +294,7 @@
     {
      "id": "2g3voeqIJpM",
      "title": "[2022 MAMA] KARA - Lupin + STEP + Mister | Mnet 221129 방송",
-     "views": 12537943,
+     "views": 12538067,
      "dur": "",
      "full": false
     }
@@ -306,7 +306,7 @@
    "day": 1,
    "order": null,
    "gorder": 14,
-   "views": 22021641,
+   "views": 22021975,
    "stage": "Do You Want to Be Oddinary?",
    "focus": "",
    "key": "straykids",
@@ -314,7 +314,7 @@
     {
      "id": "0QKhAdN-keY",
      "title": "[2022 MAMA] Stray Kids - Venom + MANIAC (MAMA ver.) | Mnet 221129 방송",
-     "views": 22021641,
+     "views": 22021975,
      "dur": "",
      "full": true
     }
@@ -366,7 +366,7 @@
    "day": 2,
    "order": null,
    "gorder": 17,
-   "views": 271171,
+   "views": 271175,
    "stage": "Fly High",
    "focus": "",
    "key": "tempest",
@@ -374,7 +374,7 @@
     {
      "id": "K3y_-pmX7Ps",
      "title": "[2022 MAMA] TEMPEST - Dragon (飛上) (MAMA ver.) | Mnet 221130 방송",
-     "views": 271171,
+     "views": 271175,
      "dur": "",
      "full": true
     }
@@ -386,7 +386,7 @@
    "day": 2,
    "order": null,
    "gorder": 18,
-   "views": 8829944,
+   "views": 8830193,
    "stage": "NewFriends",
    "focus": "",
    "key": "newjeans",
@@ -394,7 +394,7 @@
     {
      "id": "joTrsDAj8Yw",
      "title": "[2022 MAMA] NewJeans - Cookie+Attention+Hurt+Hype boy (MAMA ver.) | Mnet 221130 방송",
-     "views": 8829944,
+     "views": 8830193,
      "dur": "",
      "full": false
     }
@@ -406,7 +406,7 @@
    "day": 2,
    "order": null,
    "gorder": 19,
-   "views": 2562642,
+   "views": 2562668,
    "stage": "Manifesto: 革命",
    "focus": "",
    "key": "enhypen",
@@ -414,7 +414,7 @@
     {
      "id": "DyrBaDjDN9o",
      "title": "[2022 MAMA] ENHYPEN - WALK THE LINE+Future Perfect (Pass the MIC) | Mnet 221130 방송",
-     "views": 2562642,
+     "views": 2562668,
      "dur": "",
      "full": false
     }
@@ -426,7 +426,7 @@
    "day": 2,
    "order": null,
    "gorder": 20,
-   "views": 6984059,
+   "views": 6984090,
    "stage": "God Is Alive",
    "focus": "",
    "key": "ive",
@@ -434,7 +434,7 @@
     {
      "id": "weqhhjkXSWc",
      "title": "[2022 MAMA] IVE - LOVE DIVE+After LIKE | Mnet 221130 방송",
-     "views": 6984059,
+     "views": 6984090,
      "dur": "",
      "full": false
     }
@@ -466,7 +466,7 @@
    "day": 2,
    "order": null,
    "gorder": 22,
-   "views": 1829778,
+   "views": 1829783,
    "stage": "",
    "focus": "",
    "key": "niziu",
@@ -474,7 +474,7 @@
     {
      "id": "uvTcO5bv2J0",
      "title": "[2022 MAMA] NiziU - CLAP CLAP | Mnet 221130 방송",
-     "views": 1829778,
+     "views": 1829783,
      "dur": "",
      "full": true
     }
@@ -506,7 +506,7 @@
    "day": 2,
    "order": null,
    "gorder": 24,
-   "views": 11890634,
+   "views": 11890754,
    "stage": "We Don't Need Way Back",
    "focus": "treasure",
    "key": "treasure",
@@ -514,7 +514,7 @@
     {
      "id": "kR98d_VHG-M",
      "title": "[2022 MAMA] TREASURE - VolKno+JIKJIN+HELLO | Mnet 221130 방송",
-     "views": 11890634,
+     "views": 11890754,
      "dur": "",
      "full": true
     }
@@ -546,7 +546,7 @@
    "day": 2,
    "order": null,
    "gorder": 26,
-   "views": 88334,
+   "views": 88336,
    "stage": "",
    "focus": "",
    "key": "jaurim",
@@ -554,7 +554,7 @@
     {
      "id": "rBuELtQdgJk",
      "title": "[2022 MAMA] JAURIM - Hahaha song | Mnet 221130 방송",
-     "views": 88334,
+     "views": 88336,
      "dur": "",
      "full": true
     }
@@ -566,7 +566,7 @@
    "day": 2,
    "order": null,
    "gorder": 27,
-   "views": 15586803,
+   "views": 15586900,
    "stage": "",
    "focus": "",
    "key": "gidle",
@@ -574,7 +574,7 @@
     {
      "id": "DBvpYum2zeg",
      "title": "[2022 MAMA] (G)I-DLE - MY BAG | Mnet 221130 방송",
-     "views": 15586803,
+     "views": 15586900,
      "dur": "",
      "full": false
     }
@@ -586,7 +586,7 @@
    "day": 2,
    "order": null,
    "gorder": 28,
-   "views": 3773070,
+   "views": 3773091,
    "stage": "Birth of a Queen",
    "focus": "",
    "key": "itzy",
@@ -594,7 +594,7 @@
     {
      "id": "eP1Gir92qdA",
      "title": "[2022 MAMA] ITZY - THE BIRTH +Cheshire | Mnet 221130 방송",
-     "views": 3773070,
+     "views": 3773091,
      "dur": "",
      "full": false
     }
@@ -606,7 +606,7 @@
    "day": 2,
    "order": null,
    "gorder": 29,
-   "views": 759441,
+   "views": 759446,
    "stage": "Good, Bye",
    "focus": "",
    "key": "limyoungwoongxmonika",
@@ -614,7 +614,7 @@
     {
      "id": "CtDtSfBdZgg",
      "title": "[2022 MAMA] Lim Young Woong X Monika - Our Blues, Our Life | Mnet 221130 방송",
-     "views": 759441,
+     "views": 759446,
      "dur": "",
      "full": false
     }
@@ -626,7 +626,7 @@
    "day": 2,
    "order": null,
    "gorder": 30,
-   "views": 3071094,
+   "views": 3071121,
    "stage": "Freakout",
    "focus": "",
    "key": "zicoxsmf",
@@ -634,7 +634,7 @@
     {
      "id": "bj2YnbKot0g",
      "title": "[2022 MAMA] ZICO X SMF - New Thing | Mnet 221130 방송",
-     "views": 3071094,
+     "views": 3071121,
      "dur": "",
      "full": false
     }
@@ -646,7 +646,7 @@
    "day": 2,
    "order": null,
    "gorder": 31,
-   "views": 13598512,
+   "views": 13598780,
    "stage": "I'm Your Hope",
    "focus": "",
    "key": "jhope",
@@ -654,7 +654,7 @@
     {
      "id": "8ZyVl-a8hXk",
      "title": "[2022 MAMA] j-hope - MORE + Arson | Mnet 221130 방송",
-     "views": 13598512,
+     "views": 13598780,
      "dur": "",
      "full": false
     }
