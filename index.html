@@ -167,6 +167,15 @@
   /* variasi badge versi video: klip lagu (transparan gelap) & full stage 4K (amber) */
   .mama-clip .bg.vc{background:rgba(6,10,22,.82);color:#e9edf5}
   .mama-clip .bg.v4{background:#f1b65e;color:#0b1224}
+  /* garis penghubung kolaborasi di grafik & batas hari: SATU WARNA PER PANGGUNG kolab
+   * (inline style, default amber), animasi tergambar saat halaman tampil; membesar saat kursor di atasnya.
+   * Dikendalikan dropdown “Garis kolab” (Tampilkan/Sembunyikan) di baris tombol di atas grafik */
+  .mama-collln{fill:none;stroke:#f1b65e;stroke-width:1.6;stroke-opacity:.9;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .8s ease .15s,stroke-width .15s ease,stroke-opacity .15s ease}
+  .mama-chart svg.collab-on .mama-collln{stroke-dashoffset:0}
+  .mama-collln:hover{stroke-opacity:1;stroke-width:2.8}
+  /* legenda panggung kolaborasi di grafik — chip warna + nama panggung */
+  .mama-cleg line{stroke-width:2.6;stroke-linecap:round}
+  .mama-cleg text{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:10.5px;fill:#cdd6ea;paint-order:stroke;stroke:#0b1224;stroke-width:3.5px;stroke-linejoin:round;letter-spacing:.2px}
   /* bulatan artis tamu — disebut di tagihan panggung kolab tapi tanpa unggahan/views sendiri
    * (mis. KiiiKiii di ‘GIRLS NEVER STOP’): amber kosong putus-putus, bukan bintang penuh */
   .mama-guest,.mama-guestlbl{cursor:help}
@@ -179,6 +188,7 @@
   .mama-daysep{display:flex;align-items:center;gap:14px;margin:28px 0 0;color:var(--muted);font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:11px;letter-spacing:.6px;text-transform:uppercase}
   .mama-daysep::before,.mama-daysep::after{content:"";flex:1;height:1px;background:var(--border)}
   @media (max-width:820px){.mama-act{grid-template-columns:1fr;gap:14px}.mama-clips{grid-auto-flow:column;grid-template-columns:none;grid-auto-columns:min(72%,260px);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:6px}.mama-clip{scroll-snap-align:start}}
+  @media (prefers-reduced-motion:reduce){.mama-collln{transition:none;stroke-dashoffset:0}}
   .mama-segs{display:flex;gap:10px 14px;flex-wrap:wrap;align-items:center;margin:16px 2px 0}
   /* tombol “kreditkan juga artis featured” — switch kecil gaya situs referensi mama-2026 */
   .mama-feat{display:flex;align-items:center;gap:9px;background:var(--card);color:var(--text);border:1px solid var(--border);border-radius:999px;padding:7px 14px;font:700 12.5px var(--font);cursor:pointer;transition:border-color .2s,background .2s,color .2s}
@@ -189,6 +199,55 @@
   .mama-feat.on .mama-featsw{background:#f1b65e}
   .mama-feat.on .mama-featsw::after{transform:translateX(13px)}
   .mtabs .cnt{background:var(--chip);border-radius:999px;padding:2px 8px;font-size:10.5px;margin-left:2px}
+  /* ---------- halaman STATS KARIER — milestone & pembaruan album Circle (gaya fan-stat baechella) ---------- */
+  .tab.statstab{color:#ff7a95;font-weight:800;position:relative}
+  .tab.statstab:hover{color:#ff9fb1}
+  .tab.statstab.active{background:linear-gradient(135deg,#ff4d6d,#ff8a3d);color:#fff;box-shadow:0 4px 14px rgba(255,77,109,.35)}
+  .st-top{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .st-badge{margin-left:auto;background:color-mix(in srgb,#f1b65e 14%,var(--card));color:#f1b65e;border:1px solid rgba(241,182,94,.4);border-radius:999px;padding:6px 13px;font:800 10.5px var(--font);letter-spacing:.9px;text-transform:uppercase}
+  .st-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}
+  .st-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px 12px;display:flex;flex-direction:column;gap:6px;min-width:0}
+  .st-card .k{display:flex;align-items:center;gap:8px;color:var(--muted);font:800 10.5px var(--font);letter-spacing:1.1px;text-transform:uppercase}
+  .st-card .k .sic{width:26px;height:26px;border-radius:8px;flex:none}
+  .st-card .v{font-size:25px;font-weight:800;letter-spacing:.2px;font-variant-numeric:tabular-nums;line-height:1.15}
+  .st-card .d{color:var(--muted);font-size:11.5px;line-height:1.45}
+  .st-card .src{color:var(--muted);opacity:.78;font-size:10px;line-height:1.45;border-top:1px dashed var(--border);padding-top:6px;margin-top:auto}
+  @media (max-width:980px){.st-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  @media (max-width:560px){.st-grid{grid-template-columns:1fr}}
+  .st-mlabel{color:var(--muted);font:800 10.5px var(--font);letter-spacing:1.6px;text-transform:uppercase}
+  .st-mtitle{font-size:24px;font-weight:800;letter-spacing:.2px;margin-top:3px}
+  .st-mrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  .st-mnav{display:flex;gap:6px;align-items:center}
+  .st-arr{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;width:34px;height:34px;font-size:14px;cursor:pointer;transition:.15s;display:grid;place-items:center}
+  .st-arr:hover:not(:disabled){border-color:color-mix(in srgb,var(--ac,#ff4d6d) 55%,var(--border))}
+  .st-arr:disabled{opacity:.35;cursor:default}
+  .st-mchips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .st-mchip{position:relative;border:1px solid var(--border);background:var(--card);color:var(--muted);font:700 11px var(--font);letter-spacing:.6px;padding:7px 12px;border-radius:999px;cursor:pointer;transition:.15s}
+  .st-mchip:hover:not(:disabled):not(.on){border-color:color-mix(in srgb,var(--ac,#ff4d6d) 55%,var(--border));color:var(--text)}
+  .st-mchip:disabled{opacity:.32;cursor:default}
+  .st-mchip.on{color:#fff;border-color:transparent;background:var(--ac,#ff4d6d)}
+  .st-mchip.deb::after{content:"";position:absolute;top:3px;right:3px;width:5px;height:5px;border-radius:50%;background:var(--ac,#ff4d6d)}
+  .st-mchip.deb.on::after{background:#fff}
+  .st-mleg{margin:8px 2px 0;color:var(--muted);font-size:11px;display:flex;align-items:center;gap:6px}
+  .st-mleg i{width:7px;height:7px;border-radius:50%;background:var(--ac,#ff4d6d);display:inline-block;flex:none}
+  .st-total{margin-top:14px;border-radius:16px;padding:18px 20px;background:linear-gradient(120deg,color-mix(in srgb,var(--ac,#ff4d6d) 24%,var(--card)),color-mix(in srgb,var(--ac,#ff4d6d) 7%,var(--card)));border:1px solid color-mix(in srgb,var(--ac,#ff4d6d) 42%,var(--border))}
+  .st-total .tl{color:var(--muted);font:800 10.5px var(--font);letter-spacing:1.3px;text-transform:uppercase}
+  .st-total .tv{font-size:36px;font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;margin-top:4px}
+  .st-total .trow{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+  .st-gain{background:color-mix(in srgb,#22c55e 15%,var(--card));color:#4ade80;border:1px solid rgba(34,197,94,.4);border-radius:999px;padding:5px 12px;font:800 12px var(--font);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .st-gain.zero{background:var(--card);color:var(--muted);border-color:var(--border)}
+  .st-nalb{background:var(--card);border:1px solid var(--border);border-radius:999px;padding:5px 12px;color:var(--muted);font:800 11px var(--font);letter-spacing:.5px;text-transform:uppercase;white-space:nowrap}
+  .st-als{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+  .st-alrow{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px}
+  .st-alnum{flex:none;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;font:800 12.5px var(--font);color:#fff;background:linear-gradient(135deg,var(--ac,#ff4d6d),color-mix(in srgb,var(--ac,#ff4d6d) 55%,#0a0d16))}
+  .st-almain{flex:1;min-width:0}
+  .st-almain b{display:block;font-size:14.5px;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .st-almain span{display:block;color:var(--muted);font-size:11.5px;margin-top:2px}
+  .st-alval{flex:none;text-align:right}
+  .st-alval b{display:block;font-size:17px;font-variant-numeric:tabular-nums}
+  .st-alval .sub{display:block;color:var(--muted);font:800 9.5px var(--font);letter-spacing:1px;text-transform:uppercase;margin-top:1px}
+  .st-alval .st-algain{margin-top:5px;display:inline-block;font-size:11px;padding:4px 10px}
+  @media (max-width:560px){.st-total .tv{font-size:28px}.st-alval b{font-size:15px}.st-mtitle{font-size:20px}}
   /* dropdown edisi MAMA (2020-2026) — gaya senada pil .mtab dengan aksen amber */
   .myear{appearance:none;-webkit-appearance:none;background:var(--card);color:#f1b65e;border:1px solid rgba(241,182,94,.45);border-radius:999px;padding:7px 30px 7px 15px;font:700 13px/1.3 var(--font);cursor:pointer;outline:none;transition:border-color .2s,background .2s;background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23f1b65e' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
   .myear:hover,.myear:focus{border-color:rgba(241,182,94,.85);background-color:color-mix(in srgb,#f1b65e 12%,var(--card))}
@@ -1326,6 +1385,7 @@
     <button class="tab berandatab" id="berandaTab" title="Buka halaman BERANDA — garis besar seluruh situs dalam satu halaman" style="flex:none">Beranda</button>
     <button class="tab fiturtab" id="fiturTab" title="Buka halaman Semua Fitur — peta seluruh fitur situs dalam bentuk kartu" style="flex:none">Fitur</button>
     <button class="tab awardstab" id="awardsTab" title="Buka halaman MAMA — chart panggung MAMA 2020–2026 (views seluruh video panggung resmi Mnet)" style="flex:none">MAMA</button>
+    <button class="tab statstab" id="statTab" title="Buka halaman STATS — milestone karier BABYMONSTER &amp; TREASURE + pembaruan penjualan album Circle" style="flex:none">Stats</button>
     <button class="tab bantuantab" id="bantuanTab" title="Buka halaman Bantuan — cara kerja situs, sumber data &amp; arti tanda" style="flex:none">Bantuan</button>
     <div class="spacer"></div>
     <div class="hbtns">
@@ -1772,6 +1832,12 @@ const state = {
   awardsDay: "all",       // filter hari AWARDS: "all" (kedua hari) | "1" | "2"
   awardsSort: "order",    // urutan daftar artis AWARDS: "order" (urutan panggung) | "top" (terbanyak ditonton)
   awardsFeat: false,      // toggle “kreditkan juga artis featured”: views panggung induk kolab ikut dihitung utk artis pendamping
+  awardsLines: (function () { try { return localStorage.getItem("py.awlines") !== "0"; } catch { return true; } })(), // dropdown “Garis kolab” — TAMPIL (default) atau SEMBUNYI garis berwarna panggung kolaborasi + legenda warna di grafik
+  statOpen: false,        // halaman STATS — milestone karier BM & TREASURE + pembaruan penjualan album Circle
+  statArt: "babymonster", // artis aktif halaman STATS: "babymonster" | "treasure"
+  statTab: "mv",          // tab STATS: "mv" (Top 5 M/Vs) | "sp" (Top 5 Spotify) | "album" (Pembaruan Album Circle)
+  statYear: null,         // tahun terpilih di Pembaruan Album (null = tahun bulan terbaru yang berdata)
+  statMonth: null,        // bulan terpilih 1-12 (null = bulan terbaru yang berdata)
   awardsYear: (function () { try { const v = localStorage.getItem("py.awyear"); return v && /^202[0-6]$/.test(v) ? v : "2026"; } catch { return "2026"; } })(), // edisi MAMA yang tampil di AWARDS: "2026" | "2025" | ... | "2020"
   chnPlat: null,          // pilihan dropdown platform di Statistik Channel ("yt"|"spotify")
   chnArt: null,           // pilihan dropdown artis di Statistik Channel (artistId)
@@ -1897,7 +1963,7 @@ function drawSpark30(canvas) {
 
 async function loadData() {
   const bust = "?v=" + Date.now();
-  const [cfg, vids, chans, meta, ms, memb, trofi, jadwal, spPop, social, charts, chHist, news, anoms, mama, mamaPrev] = await Promise.all([
+  const [cfg, vids, chans, meta, ms, memb, trofi, jadwal, spPop, social, charts, chHist, news, anoms, mama, mamaPrev, career, circle] = await Promise.all([
     fetch("config.json" + bust).then((r) => r.json()),
     fetch("data/videos.json" + bust).then((r) => r.json()).catch(() => ({})),
     fetch("data/channels.json" + bust).then((r) => r.json()).catch(() => ({})),
@@ -1914,8 +1980,11 @@ async function loadData() {
     fetch("data/anomalies.json" + bust).then((r) => r.json()).catch(() => null),
     fetch("data/mama.json" + bust).then((r) => r.json()).catch(() => null),
     fetch("data/mama-2025.json" + bust).then((r) => r.json()).catch(() => null),
+    fetch("data/career.json" + bust).then((r) => r.json()).catch(() => null),
+    fetch("data/circle.json" + bust).then((r) => r.json()).catch(() => null),
   ]);
   state.config = cfg; state.videos = vids; state.channels = chans; state.meta = meta;
+  state.career = career; state.circle = circle;
   state.milestones = ms.videos || {};
   state.members = memb; state.trofi = trofi; state.jadwal = jadwal; state.spPop = spPop;
   state.social = social; state.charts = charts; state.chartHist = chHist; state.news = news; state.anoms = anoms; state.mama = mama;
@@ -1957,7 +2026,7 @@ function bindPageClose(sec) {
     state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
     state.chnOpen = false; state.quiOpen = false; state.fiturOpen = false; state.bantuanOpen = false; state.spWrapOpen = false;
     state.xplatOpen = false; state.rilOpen = false;
-    state.duelOpen = false; state.papanOpen = false;
+    state.duelOpen = false; state.papanOpen = false; state.statOpen = false;
     state.awardsOpen = false;
     if (ret === "fitur") state.fiturOpen = true;
     else if (ret === "bantuan") state.bantuanOpen = true;
@@ -2075,7 +2144,8 @@ function menuGo(k) {
     state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
     state.chnOpen = false; state.quiOpen = false; state.spWrapOpen = false;
     state.xplatOpen = false; state.rilOpen = false;
-    state.duelOpen = false; state.papanOpen = false;
+    state.duelOpen = false; state.papanOpen = false; state.statOpen = false;
+    if (k === "stat") { openStat(); }
     if (k === "rec") { state.recOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
     else if (k === "cal") { state.calOpen = true; state.calView = state.platform === "spotify" ? "spotify" : "yt"; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
     else if (k === "tro") { state.troOpen = true; if (state.view !== "home") state.view = "home"; renderAll(); window.scrollTo(0, 0); }
@@ -2112,7 +2182,7 @@ function openBeranda() {
   state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
   state.chnOpen = false; state.quiOpen = false; state.spWrapOpen = false; state.spAlbumOpen = false;
   state.xplatOpen = false; state.rilOpen = false;
-  state.duelOpen = false; state.papanOpen = false;
+  state.duelOpen = false; state.papanOpen = false; state.statOpen = false;
   if (state.view !== "home") state.view = "home";
   renderAll();
   window.scrollTo(0, 0);
@@ -2128,7 +2198,7 @@ function openFitur() {
   state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
   state.chnOpen = false; state.quiOpen = false; state.spWrapOpen = false; state.spAlbumOpen = false;
   state.xplatOpen = false; state.rilOpen = false;
-  state.duelOpen = false; state.papanOpen = false;
+  state.duelOpen = false; state.papanOpen = false; state.statOpen = false;
   state.bantuanOpen = false;
   if (state.view !== "home") state.view = "home";
   renderAll();
@@ -2145,7 +2215,7 @@ function openBantuan() {
   state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
   state.chnOpen = false; state.quiOpen = false; state.spWrapOpen = false; state.spAlbumOpen = false;
   state.xplatOpen = false; state.rilOpen = false;
-  state.duelOpen = false; state.papanOpen = false;
+  state.duelOpen = false; state.papanOpen = false; state.statOpen = false;
   state.fiturOpen = false;
   if (state.view !== "home") state.view = "home";
   renderAll();
@@ -2168,12 +2238,35 @@ function openAwards() {
   renderAll();
   window.scrollTo(0, 0);
 }
+/* ---------- HALAMAN STATS — milestone karier & penjualan album Circle (gaya fan-stat baechella) ----------
+ * Dua versi artis (BABYMONSTER & TREASURE). Kartu YouTube & Spotify dihitung LIVE dari data
+ * kolektor situs; kartu lain dari data/career.json; seksi “Pembaruan Album” dari data/circle.json
+ * (chart bulanan Circle, semua angka nyata). */
+function openStat() {
+  state.retTo = "ber";   // navigasi header = asal ✕ kembali ke BERANDA
+  state.statOpen = true;
+  state.berOpen = false;
+  state.fiturOpen = false;
+  state.bantuanOpen = false;
+  state.awardsOpen = false;
+  state.recOpen = false; state.calOpen = false; state.memOpen = false;
+  state.troOpen = false; state.schOpen = false;
+  state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false;
+  state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
+  state.chnOpen = false; state.quiOpen = false; state.spWrapOpen = false; state.spAlbumOpen = false;
+  state.xplatOpen = false; state.rilOpen = false;
+  state.duelOpen = false; state.papanOpen = false;
+  if (state.view !== "home") state.view = "home";
+  if (!state.sp.tracks && !state.sp.error) { renderAll(); loadSpData().then(renderAll); } else renderAll();
+  window.scrollTo(0, 0);
+}
 /* ---------- definisi SELURUH kartu fitur situs ----------
  * Dipakai bersama: halaman SEMUA FITUR (20 kartu) & seksi "jelajahi fitur pilihan"
  * di BERANDA (subset terpilih — sisanya dibuka lewat halaman Fitur di header). */
 function featDefs(isSp) {
   return [
     ["chn", "#ef4444", ICO_STATS, "Statistik Channel", "subscriber · views · pendengar bulanan — dropdown YouTube &amp; Spotify"],
+    ["stat", "#ff4d6d", ICO_GRID, "Stats Karier", "milestone karier &amp; penjualan album Circle per bulan — versi BABYMONSTER &amp; TREASURE"],
     ["bul", "#06b6d4", ICO_CAL, "Rekap 12 bulan", "view YouTube &amp; pendengar Spotify Januari–Desember per tahun"],
     ["heat", hmAccent(state.platform), HM_ICO, "Peta panas harian", "view/stream baru tiap hari dalam setahun · bisa per artis"],
     ["rec", "#ffb02e", ICO_TROPHY, "Rekor &amp; Fakta", "rekor sepanjang situs berjalan — tercepat &amp; terbesar"],
@@ -2574,8 +2667,8 @@ function mamaClipVersion(c) {
  * masuk panggung yang sama kalau tema panggung mereka sama (bagian sebelum " with ")
  * atau salah satu menyebut nama yang lain di bagian "with …" (nama anggota dalam
  * kurung dibuang dulu). Artis bisa ikut lebih dari satu panggung kolaborasi.
- * (Fitur garis berwarna & legenda kolab DIHAPUS SELURUHNYA — permintaan user; hasil fungsi
- * kini hanya dipakai untuk kredit “artis featured” & tooltip “panggung kolab …”.) */
+ * (Fitur garis berwarna & legenda kolab DIPULIHKAN 25 Nov 2026 lewat dropdown “Garis kolab” —
+ * hasil fungsi dipakai untuk garis+legenda, kredit “artis featured” & tooltip “panggung kolab …”.) */
 function mamaCollabStages(acts) {
   const stages = {};
   const ensure = (base) => { const k = base.toLowerCase(); if (!stages[k]) stages[k] = { base: base, members: [] }; return stages[k]; };
@@ -2621,9 +2714,10 @@ function mamaCollabStages(acts) {
  * dihitung di renderAwardsPage — dengan pengecualian artis tamu & kartu yang sudah
  * menampung salinan video panggung induk (mis. BABYMONSTER memegang salinan full stage
  * ‘A MUSIC INTERSTELLAR’ yang juga di kartu Street World Fighter).
- * Fitur GARIS kolaborasi di grafik (garis berwarna, legenda, toggle “Garis kolab”)
- * DIHAPUS SELURUHNYA — permintaan user: hapus panggung kolaborasi beserta seluruh
- * isi tampilannya; blok “panggung kolaborasi” pada kartu artis juga sudah dihapus. */
+ * Fitur GARIS kolaborasi di grafik (garis berwarna + legenda) KEMBALI — permintaan user
+ * (2026-11-25): garis kolab dipulihkan dan kini dikendalikan DROPDOWN “Garis kolab”
+ * (Tampilkan/Sembunyikan, tersimpan di localStorage py.awlines); blok “panggung kolaborasi”
+ * pada kartu artis tetap dihapus. */
 /* chart bintang — x: urutan naik panggung, y: views (skala LINEAR — dropdown Log/Skala Y
  * sudah dihapus karena membuat bingung), r: akar views supaya artis kecil tetap terlihat.
  * Label digeser naik/turun otomatis biar tidak bertumpuk. opts.vmap = slug → views efektif
@@ -2678,6 +2772,29 @@ function mamaChartSVG(acts, focCol, opts) {
   }
   const slugIdx = {};
   acts.forEach((a, i) => { slugIdx[mamaKey(a)] = i; });
+  /* garis penghubung panggung kolaborasi — digambar sebelum bintang supaya berada di bawahnya.
+   * Dropdown “Garis kolab” SEMBUNYI → seluruh blok dilewati: tidak ada garis & tidak ada legenda */
+  const legStages = [];
+  (opts.collab || []).forEach((grp) => {
+    if (opts.showLines === false) return;
+    /* garis DARI panggung induk KE tiap artis yang tampil bersama — SATU WARNA PER PANGGUNG
+     * kolab (lihat legenda). Bila induk tak ikut filter hari, fallback: polyline antar anggota
+     * yang tampil. Tiap garis punya tooltip: nama panggung + induk + lawan tautnya. */
+    const hub = grp.hub ? slugIdx[mamaKey(grp.hub)] : undefined;
+    const vis = grp.members.map((x) => slugIdx[mamaKey(x)]).filter((i) => i !== undefined && i !== hub);
+    const col = grp.col || "#f1b65e";
+    const lt = `Panggung kolab ‘${esc(grp.base)}’${grp.hub ? ` — induk: ${esc(grp.hub.name)}` : ""}`;
+    let drew = false;
+    if (hub !== undefined && vis.length) {
+      const hx = X(hub).toFixed(1), hy = Y(V(acts[hub])).toFixed(1);
+      vis.forEach((i) => { g += `<line class="mama-collln" pathLength="1" style="stroke:${col}" x1="${hx}" y1="${hy}" x2="${X(i).toFixed(1)}" y2="${Y(V(acts[i])).toFixed(1)}"><title>${lt} ↔ ${esc(acts[i].name)}</title></line>`; });
+      drew = true;
+    } else {
+      const pts = vis.map((i) => `${X(i).toFixed(1)},${Y(V(acts[i])).toFixed(1)}`);
+      if (pts.length >= 2) { g += `<polyline class="mama-collln" pathLength="1" style="stroke:${col}" points="${pts.join(" ")}"><title>${lt}</title></polyline>`; drew = true; }
+    }
+    if (drew) legStages.push({ base: grp.base, col: col, hub: grp.hub ? grp.hub.name : "", members: grp.members.map((x) => x.name) });
+  });
   const placed = [];
   /* kotak semua bintang ikut dihindari label — label tidak boleh menutupi bintang artis lain */
   const starBoxes = acts.map((a, i) => {
@@ -2716,6 +2833,28 @@ function mamaChartSVG(acts, focCol, opts) {
     const gtx = gch.anc === "end" ? gch.x + gl : gch.anc === "middle" ? gch.x + gl / 2 : gch.x;
     g += `<g class="mama-guestlbl"><title>${gttl}</title><text x="${gtx.toFixed(1)}" y="${(gch.y + 12).toFixed(1)}" text-anchor="${gch.anc}">${esc(gu.name)}</text></g>`;
   });
+  /* legenda panggung kolaborasi — chip warna + nama panggung di dalam grafik, kanan atas
+   * (fallback kiri atas bila kanan lebih ramai). Kotak legenda didorong ke `placed` lebih
+   * dulu supaya label artis otomatis menjauh darinya; tooltip legenda = daftar peserta. */
+  if (legStages.length) {
+    const ovl = (b, p) => Math.max(0, Math.min(b.x + b.w, p.x + p.w) - Math.max(b.x, p.x)) * Math.max(0, Math.min(b.y + b.h, p.y + p.h) - Math.max(b.y, p.y));
+    const rows = legStages.map((s) => ({ s: s, w: 22 + s.base.length * 6.2 }));
+    const mw = Math.max.apply(null, rows.map((r) => r.w));
+    const lh = 17;
+    const score = (lx) => rows.reduce((t, r, k) => {
+      const b = { x: lx - 6, y: padT + 10 + k * lh - 9, w: mw + 12, h: 16 };
+      return t + starBoxes.reduce((s2, p, j) => s2 + ovl(b, p), 0) * 3 + placed.reduce((s2, p) => s2 + ovl(b, p), 0);
+    }, 0);
+    const lxR = W - padR - mw - 2, lxL = padL + 10;
+    const lx = score(lxR) <= score(lxL) ? lxR : lxL;
+    rows.forEach((r, k) => {
+      const ly = padT + 10 + k * lh;
+      placed.push({ x: lx - 6, y: ly - 9, w: mw + 12, h: 16 });
+      g += `<g class="mama-cleg"><title>Panggung kolab ‘${esc(r.s.base)}’${r.s.hub ? ` — induk: ${esc(r.s.hub)}` : ""} — peserta: ${esc(r.s.members.join(", "))}</title>` +
+        `<line x1="${lx.toFixed(1)}" y1="${ly.toFixed(1)}" x2="${(lx + 15).toFixed(1)}" y2="${ly.toFixed(1)}" style="stroke:${r.s.col}"/>` +
+        `<text x="${(lx + 20).toFixed(1)}" y="${(ly + 3.5).toFixed(1)}">${esc(r.s.base.length > 34 ? r.s.base.slice(0, 33) + "…" : r.s.base)}</text></g>`;
+    });
+  }
   acts.forEach((a, i) => {
     const x = X(i), y = Y(V(a)), r = R(V(a));
     const foc = !!a.focus;
@@ -2857,6 +2996,8 @@ function renderAwardsPage(sec) {
   const chipD = (k, lbl, n) => `<button type="button" class="mtab${dKey === k ? " active" : ""}" data-awd="${k}" style="--artist-color:#a78bfa">${lbl} <span class="cnt">${n}</span></button>`;
   const chipS = (k, lbl) => `<button type="button" class="mtab${state.awardsSort === k ? " active" : ""}" data-aws="${k}" style="--artist-color:#38bdf8">${lbl}</button>`;
   const chipFeat = `<button type="button" class="mama-feat${feat ? " on" : ""}" data-awfeat title="Aturan views per artis: MATI = artis dihitung dari 1 video panggungnya dengan views terbanyak saja; AKTIF = gabungan seluruh video artis + views panggung induk kolaborasi (mis. Panic ‘MUTANTS' PARTY’, CL ‘STILL THE BADDEST’) untuk artis pendampingnya — seperti “Also credit featured acts” di situs referensi">Kreditkan juga artis featured <span class="mama-featsw" aria-hidden="true"></span></button>`;
+  /* dropdown “Garis kolab” — menyalakan/mematikan garis berwarna panggung kolaborasi & legenda warnanya di grafik */
+  const linesOpts = `<option value="1"${state.awardsLines ? " selected" : ""}>Tampilkan</option><option value="0"${state.awardsLines ? "" : " selected"}>Sembunyikan</option>`;
   /* dropdown edisi MAMA — MAMA 2020 s.d. 2026; tahun yang berkasnya gagal dimuat (tidak ada
    * di repo) ditandai nonaktif dengan alasan di tooltip */
   const yearOpts = ["2026", "2025", "2024", "2023", "2022", "2021", "2020"].map((k) =>
@@ -2875,12 +3016,12 @@ function renderAwardsPage(sec) {
       <div class="mtabs" style="margin:0"><span class="myear-lab">Edisi</span><select id="mamaYearSel" class="myear" aria-label="Pilih edisi MAMA">${yearOpts}</select></div>
       <div class="mtabs" style="margin:0">${chipD("all", nDays > 2 ? "Semua hari" : "Kedua hari", actsAll.length)}${Array.from({ length: nDays }, (_, k) => chipD(String(k + 1), "Hari " + (k + 1), actsAll.filter((a) => a.day === k + 1).length)).join("")}</div>
       <div class="mtabs" style="margin:0">${chipS("top", "Terbanyak ditonton")}${chipS("order", "Urutan panggung")}</div>
-      ${stages.length ? `<div style="margin:0;display:flex;gap:10px;flex-wrap:wrap;align-items:center">${chipFeat}</div>` : ""}
+      ${stages.length ? `<div style="margin:0;display:flex;gap:10px;flex-wrap:wrap;align-items:center"><div class="mtabs" style="margin:0"><span class="myear-lab">Garis kolab</span><select id="mamaLinesSel" class="myear" aria-label="Tampilkan atau sembunyikan garis berwarna panggung kolaborasi &amp; legenda warnanya" title="Menyalakan/mematikan garis berwarna panggung kolaborasi &amp; legenda warnanya di grafik — kartu artis, angka views &amp; urutan tidak berubah">${linesOpts}</select></div>${chipFeat}</div>` : ""}
     </div>
-    <div class="mama-plate"><div class="mama-chart">${mamaChartSVG(chartActs, focCol, { year: year, collabMap: collabMap, vmap: vmap, guests: m.guests || [], featCred: feat ? featCred : null, days: dKey === "all" ? (m.days || []) : null })}</div></div>
+    <div class="mama-plate"><div class="mama-chart">${mamaChartSVG(chartActs, focCol, { year: year, collab: stages, showLines: state.awardsLines, collabMap: collabMap, vmap: vmap, guests: m.guests || [], featCred: feat ? featCred : null, days: dKey === "all" ? (m.days || []) : null })}</div></div>
     <p class="note" style="margin-top:8px">${m.note ? m.note : (year === "2025"
-      ? `Kiri ke kanan: urutan naik panggung · tinggi &amp; ukuran bintang: views per artis (skala linear) · tekan bintang/nama untuk lompat ke kartu artisnya. Bintang berwarna = grup yang dipantau situs ini — <b>BABYMONSTER tampil dua kali</b> (hari 1 ‘MONSTER\u2019s NIGHT LIVE’, hari 2 ‘KPop Demon Hunters · HUNTR/X’), jadi ada dua bintang merah. <b>Angka views per artis</b> mengikuti tombol <b>Kreditkan juga artis featured</b>: tanpa toggle, artis dihitung dari <b>1 video panggungnya dengan views terbanyak</b> saja (full stage &amp; klip lagu menonton penonton yang sama, jadi tidak dijumlahkan); dengan toggle, dihitung <b>gabungan seluruh video</b> artis itu <b>+ views panggung induk kolaborasinya</b> untuk artis pendamping — edisi 2025 punya 4 panggung kolab: ‘WISH to Hearts’ (induk NCT WISH ↔ Hearts2Hearts), ‘Flip The Coin’ (TWS ↔ MEOVV), ‘HEAR MY ROAR’ (ALLDAY PROJECT ↔ Felix &amp; Sung Hanbin) dan ‘Endlich der Übermensch!’ (G-DRAGON ↔ Song So-hee). Saat “Kedua hari”, garis putus-putus tegak menjadi batas Hari 1 | Hari 2. Bintang ber<strong style="color:#f1b65e">cincin amber putus-putus</strong> = <b>artis tamu</b> tanpa unggahan panggung sendiri: <b>Kim Hye-soo</b> &amp; <b>KYOKA</b> (‘HEAR MY ROAR’), <b>IDID</b> (bersama KickFlip) dan <b>Song So-hee</b> (vokal ‘DRAMA’-nya G-DRAGON) — views-nya dihitung dari video panggung bersama, angka yang sama juga dihitung untuk kartu panggung induknya (total views di atas memakai angka sumber, jadi video bersama tidak dihitung dua kali).`
-      : `Kiri ke kanan: urutan naik panggung · tinggi &amp; ukuran bintang: views per artis (skala linear) · tekan bintang/nama untuk lompat ke kartu artisnya. Bintang berwarna = grup yang dipantau situs ini. <b>Angka views per artis</b> mengikuti tombol <b>Kreditkan juga artis featured</b>: tanpa toggle, artis dihitung dari <b>1 video panggungnya dengan views terbanyak</b> saja (mis. ada 3 video → yang dihitung views terbesarnya, karena full stage &amp; klip lagu ditonton penonton yang sama); dengan toggle, dihitung <b>gabungan seluruh video</b> artis itu <b>+ views panggung induk kolaborasinya</b> — Panic ‘MUTANTS' PARTY’ untuk Kim Tae-rae (ZEROBASEONE), Martin &amp; Seonghyeon (CORTIS), Woochan (ALLDAY PROJECT), Yuha (Hearts2Hearts) &amp; WOODZ, serta CL ‘STILL THE BADDEST’ untuk ALLDAY PROJECT — tinggi bintang, label, tooltip &amp; urutan “Terbanyak ditonton” memakai total itu. Full stage ‘A MUSIC INTERSTELLAR’ (ditagih Mnet ke Street World Fighter X BABYMONSTER) tampil di kartu Street World Fighter <b>dan</b> kartu BABYMONSTER — satu video yang sama, tidak dihitung dobel di total atas, dan kartu BABYMONSTER tidak lagi menerima kreditnya saat toggle aktif. Saat “Kedua hari”, garis putus-putus tegak menjadi batas antara Hari 1 dan Hari 2, dan daftar Para artis di bawah juga dipisah pembatas hari. Bintang ber<strong style="color:#f1b65e">cincin amber putus-putus</strong> = <b>artis tamu</b> — di edisi ini <b>KiiiKiii</b>: ikut tampil di ‘GIRLS NEVER STOP’ bersama izna &amp; I.O.I tapi Mnet tidak mengunggah video panggung terpisah untuknya, jadi kartunya <b>diberi nama “izna x KiiiKiii”</b> (seluruh views panggung bersama itu dihitung di kartu itu, klip ‘갑자기’-nya I.O.I tetap kartu sendiri) dan KiiiKiii tetap tampak sebagai titik tamu di grafik.`)}</p>
+      ? `Kiri ke kanan: urutan naik panggung · tinggi &amp; ukuran bintang: views per artis (skala linear) · tekan bintang/nama untuk lompat ke kartu artisnya. Bintang berwarna = grup yang dipantau situs ini — <b>BABYMONSTER tampil dua kali</b> (hari 1 ‘MONSTER\u2019s NIGHT LIVE’, hari 2 ‘KPop Demon Hunters · HUNTR/X’), jadi ada dua bintang merah. <b>Angka views per artis</b> mengikuti tombol <b>Kreditkan juga artis featured</b>: tanpa toggle, artis dihitung dari <b>1 video panggungnya dengan views terbanyak</b> saja (full stage &amp; klip lagu menonton penonton yang sama, jadi tidak dijumlahkan); dengan toggle, dihitung <b>gabungan seluruh video</b> artis itu <b>+ views panggung induk kolaborasinya</b> untuk artis pendamping — edisi 2025 punya 4 panggung kolab: ‘WISH to Hearts’ (induk NCT WISH ↔ Hearts2Hearts), ‘Flip The Coin’ (TWS ↔ MEOVV), ‘HEAR MY ROAR’ (ALLDAY PROJECT ↔ Felix &amp; Sung Hanbin) dan ‘Endlich der Übermensch!’ (G-DRAGON ↔ Song So-hee). Arahkan kursor ke garis atau legenda untuk melihat pesertanya. Dropdown <b>Garis kolab</b> di atas grafik menyalakan/mematikan garis &amp; legenda warna ini. Saat “Kedua hari”, garis putus-putus tegak menjadi batas Hari 1 | Hari 2. Bintang ber<strong style="color:#f1b65e">cincin amber putus-putus</strong> = <b>artis tamu</b> tanpa unggahan panggung sendiri: <b>Kim Hye-soo</b> &amp; <b>KYOKA</b> (‘HEAR MY ROAR’), <b>IDID</b> (bersama KickFlip) dan <b>Song So-hee</b> (vokal ‘DRAMA’-nya G-DRAGON) — views-nya dihitung dari video panggung bersama, angka yang sama juga dihitung untuk kartu panggung induknya (total views di atas memakai angka sumber, jadi video bersama tidak dihitung dua kali).`
+      : `Kiri ke kanan: urutan naik panggung · tinggi &amp; ukuran bintang: views per artis (skala linear) · tekan bintang/nama untuk lompat ke kartu artisnya. Bintang berwarna = grup yang dipantau situs ini. <b>Angka views per artis</b> mengikuti tombol <b>Kreditkan juga artis featured</b>: tanpa toggle, artis dihitung dari <b>1 video panggungnya dengan views terbanyak</b> saja (mis. ada 3 video → yang dihitung views terbesarnya, karena full stage &amp; klip lagu ditonton penonton yang sama); dengan toggle, dihitung <b>gabungan seluruh video</b> artis itu <b>+ views panggung induk kolaborasinya</b> — Panic ‘MUTANTS' PARTY’ untuk Kim Tae-rae (ZEROBASEONE), Martin &amp; Seonghyeon (CORTIS), Woochan (ALLDAY PROJECT), Yuha (Hearts2Hearts) &amp; WOODZ, serta CL ‘STILL THE BADDEST’ untuk ALLDAY PROJECT — tinggi bintang, label, tooltip &amp; urutan “Terbanyak ditonton” memakai total itu. Full stage ‘A MUSIC INTERSTELLAR’ (ditagih Mnet ke Street World Fighter X BABYMONSTER) tampil di kartu Street World Fighter <b>dan</b> kartu BABYMONSTER — satu video yang sama, tidak dihitung dobel di total atas, dan kartu BABYMONSTER tidak lagi menerima kreditnya saat toggle aktif. Saat “Kedua hari”, garis putus-putus tegak menjadi batas antara Hari 1 dan Hari 2, dan daftar Para artis di bawah juga dipisah pembatas hari. Dropdown <b>Garis kolab</b> di atas grafik menyalakan/mematikan garis berwarna panggung kolaborasi &amp; legenda warnanya — kartu artis, angka views &amp; urutan tidak berubah. Bintang ber<strong style="color:#f1b65e">cincin amber putus-putus</strong> = <b>artis tamu</b> — di edisi ini <b>KiiiKiii</b>: ikut tampil di ‘GIRLS NEVER STOP’ bersama izna &amp; I.O.I tapi Mnet tidak mengunggah video panggung terpisah untuknya, jadi kartunya <b>diberi nama “izna x KiiiKiii”</b> (seluruh views panggung bersama itu dihitung di kartu itu, klip ‘갑자기’-nya I.O.I tetap kartu sendiri) dan KiiiKiii tetap tampak sebagai titik tamu di grafik.`)}</p>
     <div class="mama-acts">
       <div class="hsect"><h2><span class="sic" style="--c:#a78bfa"><svg viewBox="0 0 24 24"><path d="${ICO_MEDAL}"/></svg></span>Para artis</h2><span class="sub">${state.awardsSort === "top" ? "terbanyak ditonton dulu" : "urutan panggung"} · ${dKey === "all" ? "kedua hari" : "Hari " + dKey}</span></div>
       ${listActs.map((a, i) => {
@@ -2916,6 +3057,10 @@ function renderAwardsPage(sec) {
     <p class="note" style="margin-top:14px">Sumber: kanal YouTube <b>Mnet</b> — unggahan panggung ${esc(m.srcTag || "resmi MAMA")} (Shorts, kompilasi &amp; behind tidak dihitung). Angka per artis mengikuti tombol <b>Kreditkan juga artis featured</b>: tanpa toggle artis dihitung dari <b>1 video dengan views terbanyak</b> saja, dengan toggle dari <b>gabungan seluruh videonya</b> (+ panggung kolab untuk artis pendamping); panggung yang dibagi beberapa artis dihitung untuk artis yang dikreditkan Mnet lebih dulu, dan salinan video bersama tidak dihitung dobel di total atas. Angka views <b>diperbarui otomatis</b> oleh kolektor tiap jam (YouTube Data API) — snapshot terakhir per ${esc(m.asOf || "–")}. Nama panggung, urutan naik panggung &amp; daftar videonya tetap dikurasi manual di <b>${esc(mamaFile)}</b>${year === "2026" ? "; ringkasan awal per artis dirangkum dari mama-2026.mirekapps.com" : ""}.</p>
   </section>`;
   bindPageClose(sec);
+  /* garis kolaborasi “tergambar” — kelas collab-on menyusul satu frame biar transisi dash jalan.
+   * Dropdown SEMBUNYI → kelas tidak dipasang, garis (yang memang tidak digambar) tetap hilang. */
+  const svgCollab = sec.querySelector(".mama-chart svg");
+  if (svgCollab && state.awardsLines) requestAnimationFrame(() => requestAnimationFrame(() => svgCollab.classList.add("collab-on")));
   const rerender = () => { const y = window.scrollY; renderAll(); window.scrollTo(0, y); };
   sec.querySelectorAll("[data-awd]").forEach((b) => b.addEventListener("click", () => { state.awardsDay = b.dataset.awd; rerender(); }));
   /* dropdown edisi MAMA — muat berkas tahunnya bila belum ada di memori, lalu render ulang */
@@ -2929,6 +3074,9 @@ function renderAwardsPage(sec) {
   });
   sec.querySelectorAll("[data-aws]").forEach((b) => b.addEventListener("click", () => { state.awardsSort = b.dataset.aws; rerender(); }));
   sec.querySelectorAll("[data-awfeat]").forEach((b) => b.addEventListener("click", () => { state.awardsFeat = !state.awardsFeat; rerender(); }));
+  /* dropdown “Garis kolab” — simpan pilihan di localStorage (py.awlines) lalu render ulang */
+  const lsel = $("#mamaLinesSel");
+  if (lsel) lsel.addEventListener("change", () => { state.awardsLines = lsel.value === "1"; try { localStorage.setItem("py.awlines", state.awardsLines ? "1" : "0"); } catch {} rerender(); });
   sec.querySelectorAll("[data-gomenu]").forEach((b) => b.addEventListener("click", () => menuGo(b.dataset.gomenu)));
   sec.querySelectorAll("[data-jump]").forEach((el) => el.addEventListener("click", () => {
     const t = document.getElementById("mamaact-" + el.dataset.jump);
@@ -6229,19 +6377,24 @@ function renderTabs() {
     aw.classList.toggle("active", !!state.awardsOpen);
     aw.onclick = () => { location.href = "awards.html"; }; // halaman MAMA (awards.html) kini berkas terpisah
   }
+  const stt = $("#statTab");
+  if (stt) {
+    stt.classList.toggle("active", !!state.statOpen);
+    stt.onclick = () => openStat();
+  }
 }
 
 async function setPlatform(p) {
   const same = state.platform === p;
   /* halaman khusus terbuka? menekan tab platform = kembali ke beranda bersih */
-  const anyPage = state.berOpen || state.fiturOpen || state.bantuanOpen || state.awardsOpen || state.spWrapOpen || state.recOpen || state.calOpen || state.memOpen || state.troOpen || state.schOpen || state.socOpen || state.chaOpen || state.disOpen || state.bruOpen || state.tmlOpen || state.heatOpen || state.bulOpen || state.chnOpen || state.quiOpen || state.spAlbumOpen || state.xplatOpen || state.rilOpen || state.duelOpen || state.papanOpen;
+  const anyPage = state.berOpen || state.fiturOpen || state.bantuanOpen || state.awardsOpen || state.statOpen || state.spWrapOpen || state.recOpen || state.calOpen || state.memOpen || state.troOpen || state.schOpen || state.socOpen || state.chaOpen || state.disOpen || state.bruOpen || state.tmlOpen || state.heatOpen || state.bulOpen || state.chnOpen || state.quiOpen || state.spAlbumOpen || state.xplatOpen || state.rilOpen || state.duelOpen || state.papanOpen;
   if (same && state.view === "home" && !anyPage) return;   // sudah di beranda platform ini
   state.view = "home";                          // menekan tab platform = masuk beranda
   state.berOpen = false;                        // …sekaligus menutup halaman BERANDA bila terbuka
   state.spWrapOpen = false;                     // …sekaligus menutup halaman Wrapped bila terbuka
   state.recOpen = false; state.calOpen = false; state.memOpen = false; state.troOpen = false; state.schOpen = false; state.spAlbumOpen = false;
   state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false; state.tmlOpen = false; state.heatOpen = false; state.bulOpen = false;
-  state.chnOpen = false; state.quiOpen = false; state.fiturOpen = false; state.bantuanOpen = false; state.awardsOpen = false; state.xplatOpen = false; state.rilOpen = false; state.duelOpen = false; state.papanOpen = false;   // halaman khusus kembali punya tombol ✕ — tab header tetap bisa menutup semua halaman
+  state.chnOpen = false; state.quiOpen = false; state.fiturOpen = false; state.bantuanOpen = false; state.awardsOpen = false; state.xplatOpen = false; state.rilOpen = false; state.duelOpen = false; state.papanOpen = false; state.statOpen = false;   // halaman khusus kembali punya tombol ✕ — tab header tetap bisa menutup semua halaman
   if (!same) {
     state.platform = p;
     if (p === "spotify" && !state.sp.tracks && !state.sp.error) {
@@ -6293,7 +6446,7 @@ function setView(v) {
   state.recOpen = false; state.calOpen = false; state.memOpen = false; state.troOpen = false; state.schOpen = false; state.spAlbumOpen = false;
   state.socOpen = false; state.chaOpen = false; state.disOpen = false; state.bruOpen = false; state.tmlOpen = false;
   state.heatOpen = false; state.bulOpen = false;
-  state.chnOpen = false; state.quiOpen = false; state.fiturOpen = false; state.bantuanOpen = false; state.awardsOpen = false; state.xplatOpen = false; state.rilOpen = false; state.duelOpen = false; state.papanOpen = false;   // halaman khusus kembali punya tombol ✕ — tab header tetap bisa menutup semua halaman
+  state.chnOpen = false; state.quiOpen = false; state.fiturOpen = false; state.bantuanOpen = false; state.awardsOpen = false; state.xplatOpen = false; state.rilOpen = false; state.duelOpen = false; state.papanOpen = false; state.statOpen = false;   // halaman khusus kembali punya tombol ✕ — tab header tetap bisa menutup semua halaman
   state.spQuery = "";   // kosongkan pencarian Spotify saat pindah halaman
   if (v !== "home") { state.artist = v; state.msTab = "table"; }
   renderAll();
@@ -7438,6 +7591,185 @@ function renderDuelPage(sec) {
     <p class="note">Badge <b>UNGGUL</b> berarti angkanya lebih besar SAAT HALAMAN DIBUKA — kategori pertumbuhan membandingkan delta 30 hari (logika sama dengan Grafik silang platform: titik rekam terdekat vs ~30 hari lalu). Situs ini memantau dua grup sekaligus, jadi perbandingan ini adil dalam arti pakai sumber &amp; rentang waktu yang sama; jumlah kategori bisa bertambah mengikuti data yang terekam.</p>
   </section>`;
   bindPageClose(sec);
+}
+
+/* ===================== HALAMAN STATS KARIER (Stats) =====================
+ * Milestone karier BABYMONSTER & TREASURE (gaya fan-stat baechella) + Top 5 M/V YouTube
+ * + Top 5 Spotify + panel "Pembaruan album (per bulan)" dari Circle Chart. Kartu YouTube/
+ * Spotify dihitung LIVE dari data kolektor situs; kartu lain dari data/career.json;
+ * panel album dari data/circle.json (angka bulanan nyata; bulan tanpa catatan = “—”). */
+function statLiveVal(icon, artId) {
+  const ch = (state.channels || {})[artId];
+  const h = (ch && ch.history) || [];
+  const last = h.length ? h[h.length - 1] : null;
+  const sp = spArtistOf(artId);
+  if (icon === "yt") return last && last.v != null ? fmtExact(last.v) : "–";
+  if (icon === "sp") return sp && sp.totalStreams != null ? fmtExact(sp.totalStreams) : "–";
+  if (icon === "spark") return sp && sp.monthlyListeners != null ? fmtExact(sp.monthlyListeners) + (sp.mlApprox ? " <span class=\"cellno\">±</span>" : "") : "–";
+  return null; // kartu statis → pakai big dari career.json
+}
+function renderStatPage(sec) {
+  const head = pageCloseBar("Stats Karier", "milestone karier &amp; pembaruan penjualan album Circle — versi BABYMONSTER &amp; TREASURE, semua angka nyata dengan sumber", ICO_GRID, "#ff4d6d");
+  const artId = state.statArt === "treasure" ? "treasure" : "babymonster";
+  const art = artistOf(artId) || {};
+  const acol = art.color || (artId === "babymonster" ? "#ff4d6d" : "#38bdf8");
+  const career = (state.career && state.career.artists) ? state.career.artists[artId] : null;
+  const circle = (state.circle && state.circle.artists) ? state.circle.artists[artId] : null;
+  if (!career && !circle) {
+    sec.innerHTML = head + `<div class="banner" style="margin-top:16px">Data stats karier belum bisa dimuat — periksa koneksi lalu muat ulang halaman.</div>`;
+    bindPageClose(sec);
+    return;
+  }
+  const SMF = new Intl.DateTimeFormat("id-ID", { month: "short" });
+  const mLabel = (m) => MF.format(new Date(m + "-01T00:00:00"));
+  const gfmt = (n) => (n > 0 ? "+" : n < 0 ? "−" : "") + NF.format(Math.abs(n));
+  const grpPill = (name, color) => `<span class="hlgrp" style="--gc:${esc(color || "#6a78ff")}"><i></i>${esc(name || "–")}</span>`;
+  /* badge revisi data + pilih artis */
+  const updB = state.career && state.career.updated ? `<span class="st-badge" title="Tanggal revisi terakhir data/career.json">Direviu ${esc(fmtDate(state.career.updated))}</span>` : "";
+  const artPill = (id) => { const a = artistOf(id) || {}; const on = id === artId;
+    return `<button class="mtab${on ? " active" : ""}" data-statart="${id}" style="--artist-color:${esc(a.color || "#6a78ff")}" aria-pressed="${on}">${esc(a.name || id.toUpperCase())}</button>`; };
+  const artPills = `<div class="mtabs" style="margin:0">${artPill("babymonster")}${artPill("treasure")}</div>`;
+  /* kartu milestone karier */
+  const STICO = {
+    yt: ["#ff0033", "M21.58 7.19a2.5 2.5 0 0 0-1.76-1.77C18.25 5 12 5 12 5s-6.25 0-7.82.42A2.5 2.5 0 0 0 2.42 7.19 26.2 26.2 0 0 0 2 12a26.2 26.2 0 0 0 .42 4.81 2.5 2.5 0 0 0 1.76 1.77C5.75 19 12 19 12 19s6.25 0 7.82-.42a2.5 2.5 0 0 0 1.76-1.77A26.2 26.2 0 0 0 22 12a26.2 26.2 0 0 0-.42-4.81zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"],
+    sp: ["#1ed760", "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.59 14.42a.75.75 0 0 1-1.03.25c-2.82-1.73-6.37-2.12-10.55-1.16a.75.75 0 1 1-.33-1.46c4.53-1.04 8.43-.59 11.56 1.34.36.22.47.68.35 1.03zm1.22-2.94a.94.94 0 0 1-1.29.31c-3.23-1.99-8.15-2.56-11.96-1.4a.94.94 0 1 1-.55-1.79c4.36-1.32 9.78-.68 13.48 1.6.45.27.59.85.32 1.28zm.11-3.05c-3.87-2.3-10.26-2.51-13.96-1.39a1.13 1.13 0 0 1-.65-2.16c4.24-1.29 11.3-1.04 15.76 1.61a1.13 1.13 0 0 1-1.15 1.94z"],
+    note: ["#a78bfa", "M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"],
+    disc: ["#f472b6", ICO_DISC],
+    mic: ["#f97316", "M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"],
+    chart: ["#38bdf8", ICO_RANK],
+    spark: ["#22c55e", "M12 3a9 9 0 0 0-9 9v7a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1H5v-1a7 7 0 0 1 14 0v1h-3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7a9 9 0 0 0-9-9z"],
+  };
+  const cardsHTML = career && career.cards ? career.cards.map((c) => {
+    const ico = STICO[c.icon] || STICO.chart;
+    const live = statLiveVal(c.icon, artId);
+    const big = live != null ? live : (c.big != null ? esc(c.big) : "–");
+    return `<div class="st-card">
+      <div class="k"><span class="sic" style="--c:${ico[0]}"><svg viewBox="0 0 24 24"><path d="${ico[1]}"/></svg></span>${esc(c.label)}</div>
+      <div class="v">${big}</div>
+      ${c.sub ? `<div class="d">${esc(c.sub)}</div>` : ""}
+      ${c.src ? `<div class="src" title="${esc(c.src)}">Sumber: ${esc(c.src)}</div>` : ""}
+    </div>`;
+  }).join("") : "";
+  /* tab: Top 5 M/V | Top 5 Spotify | Pembaruan album */
+  const tabBtn = (k, t) => `<button class="mtab${state.statTab === k ? " active" : ""}" data-stattab="${k}" style="--artist-color:${esc(acol)}" aria-pressed="${state.statTab === k}">${t}</button>`;
+  const tabRow = `<div class="chiprow" style="margin:12px 0 0">${tabBtn("mv", "Top 5 M/V (YouTube)")}${tabBtn("sp", "Top 5 Spotify")}${tabBtn("album", "Pembaruan album (Circle)")}</div>`;
+  let tabBody = "";
+  if (state.statTab === "mv") {
+    const vids = allVideosFlat().filter((v) => v.channel === artId && lastV(v) > 0).sort((a, b) => lastV(b) - lastV(a)).slice(0, 5);
+    tabBody = vids.length ? `<div class="ppwrap">` + vids.map((v, i) => `
+      <div class="ber-hlrow" data-id="${esc(v.id)}" style="--hc:${esc(acol)}" tabindex="0" role="button" aria-label="Buka grafik ${esc(rowTitleOf(v, v.art || art))}">
+        <span class="hlrank">${i + 1}</span>
+        <img src="https://i.ytimg.com/vi/${esc(v.id)}/mqdefault.jpg" alt="" loading="lazy">
+        <div class="hlmain"><b>${esc(rowTitleOf(v, v.art || art))}</b>${grpPill(art.name, acol)}</div>
+        <span class="hlval">${fmtCompact(lastV(v))} views</span>
+      </div>`).join("") + `</div>` : `<div class="banner">Belum ada video yang terekam untuk artis ini.</div>`;
+  } else if (state.statTab === "sp") {
+    const spLoaded = !!state.sp.tracks;
+    const trks = spLoaded ? Object.values(state.sp.tracks || {}).filter((t) => t.artistId === artId).sort((a, b) => spTrackTotal(b) - spTrackTotal(a)).slice(0, 5) : [];
+    tabBody = !spLoaded ? `<div class="banner">Data Spotify sedang dimuat — tunggu sesaat atau buka lagi halaman ini.</div>`
+      : trks.length ? `<div class="ppwrap">` + trks.map((t, i) => {
+        const ar = spArtistOf(t.artistId) || {};
+        return `
+      <div class="ber-hlrow" data-spk="${esc(t.key)}" style="--hc:${esc(acol)}" tabindex="0" role="button" aria-label="Buka grafik ${esc(t.name)}">
+        <span class="hlrank">${i + 1}</span>
+        ${t.cover ? `<img src="${esc(t.cover)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : `<div class="hlph">♪</div>`}
+        <div class="hlmain"><b>${esc(t.name)}</b>${grpPill(ar.name, acol)}</div>
+        <span class="hlval">${fmtCompact(spTrackTotal(t))} stream</span>
+      </div>`;
+      }).join("") + `</div>` : `<div class="banner">Belum ada lagu Spotify terpantau untuk artis ini.</div>`;
+  } else {
+    const albums = circle ? circle.albums.slice() : [];
+    if (!albums.length) tabBody = `<div class="banner">Data circle.json belum termuat — panel pembaruan album tidak tersedia.</div>`;
+    else {
+      /* daftar bulan berdata (YYYY-MM unik, urut naik) + tahun-tahunnya */
+      const months = [];
+      albums.forEach((a) => Object.keys(a.monthly || {}).forEach((m) => { if (!months.includes(m)) months.push(m); }));
+      months.sort();
+      const years = [];
+      months.forEach((m) => { const y = m.slice(0, 4); if (!years.includes(y)) years.push(y); });
+      let ySel = state.statYear && years.includes(state.statYear) ? state.statYear : years[years.length - 1];
+      const yMonths = months.filter((m) => m.slice(0, 4) === ySel);
+      let mSel = state.statMonth && yMonths.includes(ySel + "-" + String(state.statMonth).padStart(2, "0"))
+        ? state.statMonth
+        : Number(yMonths[yMonths.length - 1].slice(5, 7));
+      const mKey = ySel + "-" + String(mSel).padStart(2, "0");
+      const idx = months.indexOf(mKey);
+      const prevM = idx > 0 ? months[idx - 1] : null;
+      const nextM = idx >= 0 && idx < months.length - 1 ? months[idx + 1] : null;
+      const yearPills = years.map((y) => `<button class="mtab${y === ySel ? " active" : ""}" data-styear="${y}" style="--artist-color:${esc(acol)}" aria-pressed="${y === ySel}">${y}</button>`).join("");
+      const monthOpts = yMonths.map((m) => `<option value="${Number(m.slice(5, 7))}"${m === mKey ? " selected" : ""}>${mLabel(m)}</option>`).join("");
+      const chips = [];
+      for (let mo = 1; mo <= 12; mo++) {
+        const key = ySel + "-" + String(mo).padStart(2, "0");
+        const has = yMonths.includes(key);
+        const deb = albums.some((a) => (a.date || "").slice(0, 7) === key);
+        chips.push(`<button class="st-mchip${mo === mSel ? " on" : ""}${deb ? " deb" : ""}" data-stmchip="${mo}"${has ? "" : " disabled"} aria-pressed="${mo === mSel}">${esc(SMF.format(new Date(key + "-01T00:00:00")).toUpperCase())}</button>`);
+      }
+      const gain = albums.reduce((s, a) => s + (a.monthly && a.monthly[mKey] != null ? a.monthly[mKey] : 0), 0);
+      const gainPill = gain > 0 ? `<span class="st-gain">↑ ${gfmt(gain)} di ${esc(mLabel(mKey))}</span>` : `<span class="st-gain zero">tidak ada penjualan tercatat bulan ini</span>`;
+      const totalBox = `<div class="st-total" style="--ac:${esc(acol)}">
+        <div class="tl">Total penjualan kumulatif</div>
+        <div class="tv">${circle.grandTotal != null ? fmtExact(circle.grandTotal) : "–"}</div>
+        <div class="trow">${gainPill}<span class="st-nalb">${albums.length} album rilis</span></div>
+        ${circle.grandTotalLabel ? `<div class="d" style="margin-top:8px;color:var(--muted);font-size:11.5px;line-height:1.5">${esc(circle.grandTotalLabel)}</div>` : ""}
+      </div>`;
+      const alRows = albums.slice().sort((a, b) => (b.total || 0) - (a.total || 0)).map((a, i) => {
+        const g = a.monthly && a.monthly[mKey] != null ? a.monthly[mKey] : null;
+        const gh = g != null ? `<span class="st-gain st-algain">↑ ${gfmt(g)} bulan ini</span>` : `<span class="st-gain st-algain zero" title="Tidak tercatat di Top 100 bulanan Circle bulan ini">—</span>`;
+        return `<div class="st-alrow" style="--ac:${esc(acol)}"${a.totalNote ? ` title="${esc(a.totalNote)}"` : ""}>
+          <span class="st-alnum">${String(i + 1).padStart(2, "0")}</span>
+          <div class="st-almain"><b>${esc(a.title)}</b><span>${esc(a.type || "Album")} · rilis ${esc(fmtDate(a.date))}</span></div>
+          <div class="st-alval"><b>${a.total != null ? fmtExact(a.total) : "–"}</b><span class="sub">Total kopi</span>${gh}</div>
+        </div>`;
+      }).join("");
+      tabBody = `
+      <div>
+        <span class="st-mlabel">Circle Chart · Korea Selatan</span>
+        <div class="st-mtitle">Pembaruan album (per bulan)</div>
+        <div class="st-mrow">
+          <div class="mtabs" style="margin:0">${yearPills}</div>
+          <div class="st-mnav" style="margin-left:auto">
+            ${prevM ? `<button class="st-arr" data-stmgo="${prevM}" style="--ac:${esc(acol)}" title="Bulan berdata sebelumnya" aria-label="Bulan berdata sebelumnya">←</button>` : `<button class="st-arr" disabled aria-label="Tidak ada bulan sebelumnya">←</button>`}
+            <select id="statMonthSel" class="myear" style="color:${esc(acol)};border-color:color-mix(in srgb,${esc(acol)} 45%,transparent);background-image:url(&quot;data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='${esc(acol.replace("#", "%23"))}' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E&quot;)" aria-label="Pilih bulan">${monthOpts}</select>
+            ${nextM ? `<button class="st-arr" data-stmgo="${nextM}" style="--ac:${esc(acol)}" title="Bulan berdata berikutnya" aria-label="Bulan berdata berikutnya">→</button>` : `<button class="st-arr" disabled aria-label="Tidak ada bulan berikutnya">→</button>`}
+          </div>
+        </div>
+        <div class="st-mchips" style="--ac:${esc(acol)}">${chips.join("")}</div>
+        <div class="st-mleg" style="--ac:${esc(acol)}"><i></i>titik = bulan debut album</div>
+        ${totalBox}
+        <div class="st-als">${alRows}</div>
+        <p class="note">Angka bulanan = penjualan fisik bulan itu menurut <b>chart bulanan Circle</b> (circlechart.kr — semua format CD/Nemo/KiT dijumlah; hanya bulan ketika album masuk Top 100 bulanan, bulan lain tampil “—”). Panah ←/→ dan chip bulan hanya melompat antar bulan yang berdata. Total kumulatif mengikuti kurasi yang dicantumkan di bawah angkanya — rincian sumber tiap album ada di tooltip barisnya (data/circle.json situs).</p>
+      </div>`;
+    }
+  }
+  const topNote = career && career.topNote ? `<p class="note">${esc(career.topNote)}</p>` : "";
+  sec.innerHTML = head + `
+  <section style="margin-top:16px">
+    <div class="st-top">${artPills}${updB}</div>
+    ${career && career.cards ? featSectHead(acol, ICO_GRID, "Milestone karier " + esc(art.name || ""), "kartu YouTube &amp; Spotify dihitung LIVE dari data pemantauan situs — kartu lain dari kurasi bersumber") + `<div class="st-grid">${cardsHTML}</div>` + topNote : ""}
+    ${featSectHead(acol, ICO_RANK, "Peringkat &amp; pembaruan album", esc(art.name || "") + " — tiga tampilan: video terbesar, lagu terbesar, penjualan album bulanan")}
+    ${tabRow}
+    <div style="margin-top:14px">${tabBody}</div>
+  </section>`;
+  bindPageClose(sec);
+  /* binding kontrol */
+  sec.querySelectorAll("[data-statart]").forEach((b) => b.addEventListener("click", () => { state.statArt = b.dataset.statart; state.statYear = null; state.statMonth = null; renderAll(); }));
+  sec.querySelectorAll("[data-stattab]").forEach((b) => b.addEventListener("click", () => { state.statTab = b.dataset.stattab; renderAll(); }));
+  sec.querySelectorAll("[data-styear]").forEach((b) => b.addEventListener("click", () => { state.statYear = b.dataset.styear; state.statMonth = null; renderAll(); }));
+  sec.querySelectorAll("[data-stmgo]").forEach((b) => b.addEventListener("click", () => { const m = b.dataset.stmgo; if (m && /^\d{4}-\d{2}$/.test(m)) { state.statYear = m.slice(0, 4); state.statMonth = Number(m.slice(5, 7)); renderAll(); } }));
+  sec.querySelectorAll("[data-stmchip]").forEach((b) => b.addEventListener("click", () => { state.statMonth = Number(b.dataset.stmchip); renderAll(); }));
+  const msel = $("#statMonthSel");
+  if (msel) msel.addEventListener("change", () => { state.statMonth = Number(msel.value); renderAll(); });
+  sec.querySelectorAll("[data-id]").forEach((el) => {
+    const go = () => openDetail(el.dataset.id, false);
+    el.addEventListener("click", go);
+    el.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+  });
+  sec.querySelectorAll("[data-spk]").forEach((el) => {
+    const go = () => openSpTrack(el.dataset.spk);
+    el.addEventListener("click", go);
+    el.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+  });
 }
 
 /* ===================== HALAMAN PAPAN PERINGKAT LAGU =====================
@@ -9257,6 +9589,7 @@ function renderSpAll() {
     else if (state.fiturOpen) renderFiturPage(sec); // halaman SEMUA FITUR (header)
     else if (state.bantuanOpen) renderBantuanPage(sec); // halaman BANTUAN (header)
     else if (state.awardsOpen) renderAwardsPage(sec); // halaman AWARDS (header) — panggung MAMA 2026
+    else if (state.statOpen) renderStatPage(sec); // halaman STATS — milestone karier BM & TREASURE
     else if (state.spWrapOpen) renderWrappedPage(sec);
     else if (state.recOpen) renderSpRecords(sec);
     else if (state.calOpen) (state.calView === "yt" ? renderYtCalendar : renderSpCalendar)(sec);
@@ -10623,6 +10956,7 @@ function renderAll() {
     else if (state.fiturOpen) renderFiturPage($("#homeSection"));    // halaman SEMUA FITUR (header)
     else if (state.bantuanOpen) renderBantuanPage($("#homeSection"));  // halaman BANTUAN (header)
     else if (state.awardsOpen) renderAwardsPage($("#homeSection"));  // halaman AWARDS (header) — panggung MAMA 2026
+    else if (state.statOpen) renderStatPage($("#homeSection"));  // halaman STATS — milestone karier BM & TREASURE
     else if (state.recOpen) renderYtRecords($("#homeSection"));       // halaman Rekor & Fakta
     else if (state.calOpen) (state.calView === "spotify" ? renderSpCalendar : renderYtCalendar)($("#homeSection")); // halaman Kalender rilisan
     else if (state.troOpen) renderTrofiPage($("#homeSection"));  // halaman Trofi & Penghargaan

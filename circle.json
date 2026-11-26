@@ -1,0 +1,234 @@
+{
+ "_info": "Penjualan fisik album Korea (Circle Chart) BABYMONSTER & TREASURE. ANGKA BULANAN = penjualan bulan itu persis seperti di chart bulanan Circle (circlechart.kr, API /data/api/chart/album — semua format CD/Nemo/KiT dijumlah, hanya bulan ketika album masuk Top 100 bulanan; bulan lain 'null' = tidak tercatat di Top 100). TOTAL = kumulatif akhir: BM dihitung dari penjumlahan YTD Circle per tahun & disilangkan dengan kurasi fan-tracking (koreansalestwt.blogspot.com; grand total 4 album per kurasi baechella Okt 2026). Single debut BATTER UP tidak masuk daftar (tidak pernah masuk Top 100 bulanan Circle & sumber referensi menghitung 4 album sejak BABYMONS7ER). KOREKSI 26 Nov 2026: (a) bulanan SS1/SS2 TREASURE yang tadinya salinan mentah bulanan CH1/CH2 dipisah sesuai sumber — SS1 = Feb 2022 639.606 (bulan pertama, koreansalestwt) + Mar 2022 149.349; SS2 = Okt 2022 559.325 (bulan pertama) + Nov 2022 7.735; entri Jan/Mar-2023 tetap di album CH (album katalog TREASURE memang masuk chart bulan comeback HELLO). (b) bulan 2026-10 BABYMONSTER untuk DRIP (+1.169) & WE GO UP (+1.336) diisi dari kurasi fan-tracking baechella-2027.vercel.app (Updated Nov 2026; total kenaian Okt 2026 = +2.505 — BABYMONS7ER & CHOOM tidak tercatat bulan itu).",
+ "updated": "2026-11-26",
+ "chartWeek": "pekan 46-2026 (8-14 Nov 2026)",
+ "artists": {
+  "babymonster": {
+   "grandTotal": 3598423,
+   "grandTotalLabel": "per Okt 2026 — kurasi fan-tracking baechella (4 album)",
+   "albums": [
+    {
+     "id": "babymons7er",
+     "title": "BABYMONS7ER",
+     "type": "Mini Album 1",
+     "date": "2024-04-01",
+     "total": 848479,
+     "totalNote": "Jumlah YTD Circle: CD 2024 255.212 + Nemo 2024 511.725 + Nemo 2025 55.420 + Nemo 2026 26.122; snapshot koreansales 846.155",
+     "monthly": {
+      "2024-04": 471525,
+      "2024-05": 117129,
+      "2024-06": 37606,
+      "2024-07": 65486,
+      "2024-08": 34600,
+      "2024-09": 28187,
+      "2025-01": 4974,
+      "2025-02": 6810,
+      "2025-03": 11118,
+      "2025-04": 8922,
+      "2025-06": 4777,
+      "2026-01": 5063,
+      "2026-02": 4775,
+      "2026-09": 5775
+     }
+    },
+    {
+     "id": "drip",
+     "title": "DRIP",
+     "type": "Album Penuh 1",
+     "date": "2024-11-08",
+     "total": 1088276,
+     "totalNote": "Total kurasi fan-tracking per Okt 2026; jumlah YTD Circle s.d. pekan 46-2026: 1.080.073 (CD 331.013+103.695+36.421, Nemo 504.529+86.471+17.944); bulan 2026-10 (+1.169) dari kurasi baechella (fan-tracking)",
+     "monthly": {
+      "2024-11": 799375,
+      "2024-12": 36167,
+      "2025-01": 37955,
+      "2025-02": 20025,
+      "2025-03": 29815,
+      "2025-04": 15836,
+      "2025-05": 9133,
+      "2025-06": 60518,
+      "2025-07": 7324,
+      "2025-12": 4338,
+      "2026-01": 6256,
+      "2026-02": 6631,
+      "2026-10": 1169
+     }
+    },
+    {
+     "id": "wegoup",
+     "title": "WE GO UP",
+     "type": "Mini Album 2",
+     "date": "2025-10-10",
+     "total": 780060,
+     "totalNote": "Jumlah YTD Circle s.d. pekan 46-2026: CD 2025 660.326 + Nemo 2025 33.331 + CD 2026 86.403; bulan 2026-10 (+1.336) dari kurasi baechella (fan-tracking)",
+     "monthly": {
+      "2025-10": 653759,
+      "2025-11": 19855,
+      "2025-12": 17901,
+      "2026-01": 27163,
+      "2026-02": 19208,
+      "2026-08": 8523,
+      "2026-09": 7414,
+      "2026-10": 1336
+     }
+    },
+    {
+     "id": "choom",
+     "title": "춤 (CHOOM)",
+     "type": "Mini Album 3",
+     "date": "2026-05-04",
+     "total": 867156,
+     "totalNote": "Jumlah YTD Circle s.d. Sep 2026: CD 569.122 + Nemo 298.034 — masih terus bertambah",
+     "monthly": {
+      "2026-05": 742762,
+      "2026-06": 62540,
+      "2026-07": 31083,
+      "2026-08": 14425,
+      "2026-09": 6227
+     }
+    }
+   ]
+  },
+  "treasure": {
+   "grandTotal": 7653463,
+   "grandTotalLabel": "kurasi koreansalestwt.blogspot.com (10 album Korea, ditarik 25 Nov 2026)",
+   "albums": [
+    {
+     "id": "ch1",
+     "title": "THE FIRST STEP : CHAPTER ONE",
+     "type": "Single Album 1",
+     "date": "2020-08-07",
+     "total": 265190,
+     "totalNote": "Total kumulatif kurasi koreansales (Circle) · bulan 2022-02/2022-03 milik SS1 — dikoreksi 26 Nov 2026",
+     "monthly": {
+      "2020-08": 218118,
+      "2020-09": 22590,
+      "2020-10": 3482,
+      "2020-12": 2272,
+      "2023-03": 7765
+     }
+    },
+    {
+     "id": "ch2",
+     "title": "THE FIRST STEP : CHAPTER TWO",
+     "type": "Single Album 2",
+     "date": "2020-09-18",
+     "total": 249274,
+     "totalNote": "Total kumulatif kurasi koreansales (Circle) · bulan 2022-10/2022-11 milik SS2 — dikoreksi 26 Nov 2026",
+     "monthly": {
+      "2020-09": 219314,
+      "2020-10": 18381,
+      "2023-01": 5775,
+      "2023-03": 17609
+     }
+    },
+    {
+     "id": "ch3",
+     "title": "THE FIRST STEP : CHAPTER THREE",
+     "type": "Single Album 3",
+     "date": "2020-11-06",
+     "total": 245651,
+     "totalNote": "Total kumulatif kurasi koreansales (Circle)",
+     "monthly": {
+      "2020-11": 218855,
+      "2020-12": 13279
+     }
+    },
+    {
+     "id": "effect",
+     "title": "THE FIRST STEP : TREASURE EFFECT",
+     "type": "Album Penuh 1",
+     "date": "2021-01-11",
+     "total": 421898,
+     "totalNote": "Total kumulatif kurasi koreansales (Circle)",
+     "monthly": {
+      "2021-01": 294255,
+      "2021-02": 4329,
+      "2022-02": 3650,
+      "2023-03": 9329
+     }
+    },
+    {
+     "id": "ss1",
+     "title": "THE SECOND STEP : CHAPTER ONE",
+     "type": "Mini Album 1",
+     "date": "2022-02-15",
+     "total": 841104,
+     "totalNote": "Total kumulatif kurasi koreansales (Circle) · bulan pertama Feb 2022: 639.606 — koreksi pemisahan bulanan dari CH1 (26 Nov 2026)",
+     "monthly": {
+      "2022-02": 639606,
+      "2022-03": 149349
+     }
+    },
+    {
+     "id": "ss2",
+     "title": "THE SECOND STEP : CHAPTER TWO",
+     "type": "Mini Album 2",
+     "date": "2022-10-05",
+     "total": 666451,
+     "totalNote": "Total kumulatif kurasi koreansales (Circle) · bulan pertama Okt 2022: 559.325 — koreksi pemisahan bulanan dari CH2 (26 Nov 2026)",
+     "monthly": {
+      "2022-10": 559325,
+      "2022-11": 7735
+     }
+    },
+    {
+     "id": "reboot",
+     "title": "REBOOT",
+     "type": "Album Penuh 2",
+     "date": "2023-07-28",
+     "total": 1904388,
+     "totalNote": "Total kumulatif kurasi koreansales (Circle); YTD 2023 Circle 1.655.397 CD + 209.792 Nemo + 16.812 KiT",
+     "monthly": {
+      "2023-07": 1761127,
+      "2023-08": 54920,
+      "2023-09": 27970,
+      "2023-10": 10059,
+      "2023-12": 16518
+     }
+    },
+    {
+     "id": "pleasure",
+     "title": "PLEASURE",
+     "type": "Special Mini Album",
+     "date": "2025-03-07",
+     "total": 805369,
+     "totalNote": "Total kumulatif kurasi koreansales (Circle)",
+     "monthly": {
+      "2025-03": 796505,
+      "2025-04": 6598,
+      "2026-09": 18006
+     }
+    },
+    {
+     "id": "lovepulse",
+     "title": "LOVE PULSE",
+     "type": "Mini Album 3",
+     "date": "2025-09-01",
+     "total": 1176369,
+     "totalNote": "Total kumulatif kurasi koreansales (Circle); YTD Circle 2025 1.148.668 + 2026 23.376",
+     "monthly": {
+      "2025-09": 1080544,
+      "2025-10": 24187,
+      "2025-12": 42414,
+      "2026-05": 25700,
+      "2026-09": 22010
+     }
+    },
+    {
+     "id": "newwav",
+     "title": "NEW WAV",
+     "type": "Mini Album 4",
+     "date": "2026-06-01",
+     "total": 1077769,
+     "totalNote": "Total kumulatif kurasi koreansales (Circle); YTD Circle 2026 CD 1.051.838 + Nemo 26.191",
+     "monthly": {
+      "2026-06": 1030366,
+      "2026-07": 41319,
+      "2026-09": 6298
+     }
+    }
+   ]
+  }
+ }
+}
