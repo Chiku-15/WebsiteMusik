@@ -2,7 +2,7 @@ name: Kumpulkan data (YouTube + Spotify)
 
 on:
   schedule:
-    # Setiap jam (WIB = UTC+7) — supaya grafik "1 hari" di situs bisa menampilkan
+    # Setiap jam (waktu Korea = UTC+9) — supaya grafik "1 hari" di situs bisa menampilkan
     # batang per jam (~24 batang). Kwantitas API YouTube tetap aman: ± 5 unit/run.
     # Menit ke-13 (bukan :00) — di menit :00 antrean GitHub Actions paling padat,
     # run terjadwal sering ditunda/dilewati sehingga grafik per jam bolong.
@@ -36,11 +36,24 @@ jobs:
     steps:
       - name: Ambil kode
         uses: actions/checkout@v4
+        with:
+          # riwayat penuh diperlukan recover_history.js untuk memulihkan titik data riil
+          # yang pernah terekam dari commit-commit lama (lihat langkah berikutnya)
+          fetch-depth: 0
 
       - name: Pasang Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+
+      - name: Pulihkan titik data riil dari riwayat git
+        run: node recover_history.js
+        # Setiap putaran workflow meng-commit data → semua titik nyata yang pernah terekam
+        # tetap ada di riwayat git. Skrip ini menggabungkan kembali titik-titik itu ke file
+        # data saat ini (inkremental via data/.recover-progress.json), sehingga grafik memakai
+        # DATA RIIL selama situs berjalan — bukan kurva estimasi — walau file data pernah
+        # diunggah ulang. Idempoten & tanpa API key.
+        continue-on-error: true
 
       - name: Kumpulkan data YouTube
         id: yt
@@ -100,7 +113,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "Tidak ada perubahan data."
           else
-            git commit -m "data: update $(TZ=Asia/Jakarta date +'%d %b %Y %H:%M WIB')"
+            git commit -m "data: update $(TZ=Asia/Seoul date +'%d %b %Y %H:%M KST')"
             echo "changed=1" >> "$GITHUB_OUTPUT"
           fi
           # Repo bisa saja berubah saat run berjalan (mis. file situs diunggah bersamaan).
