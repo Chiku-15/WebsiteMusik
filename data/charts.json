@@ -15,7 +15,7 @@
     }
    },
    "chartDate": "2026-11-26",
-   "updated": 1795694974,
+   "updated": 1795695121,
    "lastError": null
   },
   "genie_top200": {
@@ -32,7 +32,7 @@
     }
    },
    "chartDate": "2026-11-26",
-   "updated": 1795694981,
+   "updated": 1795695128,
    "lastError": null
   },
   "billboard_global_excl_us": {
@@ -48,7 +48,7 @@
      "best": null
     }
    },
-   "updated": 1795694976,
+   "updated": 1795695123,
    "lastError": null,
    "chartDate": "2026-11-26"
   },
@@ -65,7 +65,7 @@
      "best": null
     }
    },
-   "updated": 1795694984,
+   "updated": 1795695130,
    "chartDate": "2026-11-26",
    "lastError": null
   },
@@ -83,9 +83,9 @@
     }
    },
    "chartDate": "2026-11-24",
-   "updated": 1795694986,
+   "updated": 1795695133,
    "lastError": null
   }
  },
- "updated": 1795694986
+ "updated": 1795695133
 }

@@ -1,6 +1,6 @@
 {
- "asOf": "26 Nov, 21:08 KST",
- "captured": 1795694937,
+ "asOf": "26 Nov, 21:11 KST",
+ "captured": 1795695089,
  "source": "Kanal YouTube Mnet (Mnet K-POP) — unggahan panggung resmi [#2024MAMA] (Shorts, kompilasi, behind, countdown & fancam tidak dihitung); viewCount real via API terbuka Return YouTube Dislike API per 24 Nov 2026",
  "srcTag": "[#2024MAMA]",
  "srcYear": 2024,
@@ -30,7 +30,7 @@
  "facts": {
   "acts": 29,
   "videos": 33,
-  "views": 337382543
+  "views": 337383297
  },
  "meta": {
   "artists": 29,
@@ -44,7 +44,7 @@
    "day": 1,
    "order": null,
    "gorder": 1,
-   "views": 6051006,
+   "views": 6051018,
    "stage": "Opening Sequence with TWS, ILLIT, RIIZE",
    "focus": "",
    "key": "twsillitriize",
@@ -52,14 +52,14 @@
     {
      "id": "WLupFwZ-rXI",
      "title": "[#2024MAMA] TWS (투어스) - Dynamite (원곡：BTS(방탄소년단)) | Mnet 241122 방송",
-     "views": 1130672,
+     "views": 1130679,
      "dur": "2:08",
      "full": false
     },
     {
      "id": "1QV4sZnPgXE",
      "title": "[#2024MAMA] RIIZE (라이즈) - Kick It (원곡：NCT 127) | Mnet 241122 방송",
-     "views": 2230933,
+     "views": 2230938,
      "dur": "1:40",
      "full": false
     },
@@ -198,7 +198,7 @@
    "day": 2,
    "order": null,
    "gorder": 8,
-   "views": 2876241,
+   "views": 2876242,
    "stage": "What Is Real?",
    "focus": "",
    "key": "yeonjun",
@@ -206,7 +206,7 @@
     {
      "id": "hXPpqsFIGJw",
      "title": "[#2024MAMA] 연준 (YEONJUN) - GGUM | Mnet 241122 방송",
-     "views": 2876241,
+     "views": 2876242,
      "dur": "",
      "full": true
     }
@@ -258,7 +258,7 @@
    "day": 2,
    "order": null,
    "gorder": 11,
-   "views": 1994313,
+   "views": 1994318,
    "stage": "Toenze",
    "focus": "",
    "key": "toenze",
@@ -266,7 +266,7 @@
     {
      "id": "62qfQJabN8g",
      "title": "[#2024MAMA] 자체발광 TOENZE (범규, 휴닝카이 X 제이 X 김태래, 한유진) - 왼손잡이 (MAMA ver.) | Mnet 241122 방송",
-     "views": 1994313,
+     "views": 1994318,
      "dur": "",
      "full": true
     }
@@ -338,7 +338,7 @@
    "day": 2,
    "order": null,
    "gorder": 15,
-   "views": 6653715,
+   "views": 6653746,
    "stage": "Guardians Of The Sun",
    "focus": "",
    "key": "ive",
@@ -346,7 +346,7 @@
     {
      "id": "lfos88tJmew",
      "title": "[#2024MAMA] IVE (아이브) - Accendio + 해야 (HEYA) | Mnet 241122 방송",
-     "views": 6653715,
+     "views": 6653746,
      "dur": "",
      "full": true
     }
@@ -378,7 +378,7 @@
    "day": 2,
    "order": null,
    "gorder": 17,
-   "views": 6274222,
+   "views": 6274240,
    "stage": "TREASURE.exe",
    "focus": "treasure",
    "key": "treasure",
@@ -386,7 +386,7 @@
     {
      "id": "62q9vtyvbRg",
      "title": "[#2024MAMA] TREASURE (트레저) - INTRO + KING KONG + RUN | Mnet 241122 방송",
-     "views": 5665878,
+     "views": 5665896,
      "dur": "",
      "full": true
     },
@@ -512,7 +512,7 @@
    "day": 3,
    "order": null,
    "gorder": 23,
-   "views": 2915506,
+   "views": 2915508,
    "stage": "Kill The Romeo",
    "focus": "",
    "key": "zerobaseone",
@@ -520,7 +520,7 @@
     {
      "id": "zsSwNkqFQnM",
      "title": "[#2024MAMA] ZEROBASEONE (제로베이스원) - KILL THE ROMEO + GOOD SO BAD | Mnet 241123 방송",
-     "views": 2915506,
+     "views": 2915508,
      "dur": "",
      "full": true
     }
@@ -532,7 +532,7 @@
    "day": 3,
    "order": null,
    "gorder": 24,
-   "views": 7305431,
+   "views": 7305441,
    "stage": "Breaking News: The Shout",
    "focus": "",
    "key": "gidle",
@@ -540,7 +540,7 @@
     {
      "id": "H0WnO1Hq2xk",
      "title": "[#2024MAMA] (여자)아이들 ((G)I-DLE)-Super Lady (MAMA ver.)+나는 아픈 건 딱 질색이니까 (MAMA ver.) | Mnet 241123 방송",
-     "views": 7305431,
+     "views": 7305441,
      "dur": "",
      "full": true
     }
@@ -592,7 +592,7 @@
    "day": 3,
    "order": null,
    "gorder": 27,
-   "views": 95904816,
+   "views": 95905441,
    "stage": "Übermensch",
    "focus": "",
    "key": "bigbang",
@@ -600,7 +600,7 @@
     {
      "id": "EQsYfiPR9uM",
      "title": "[#2024MAMA] BIGBANG (빅뱅) - 뱅뱅뱅 (BANG BANG BANG) + FANTASTIC BABY | Mnet 241123 방송",
-     "views": 95904816,
+     "views": 95905441,
      "dur": "",
      "full": true
     }
@@ -612,7 +612,7 @@
    "day": 3,
    "order": null,
    "gorder": 28,
-   "views": 16174629,
+   "views": 16174679,
    "stage": "The Multiverse Awakes: Another I",
    "focus": "",
    "key": "aespa",
@@ -620,7 +620,7 @@
     {
      "id": "_LyRdiHwyFA",
      "title": "[#2024MAMA] aespa-Bored!+Spark+Dopamine+UP+Supernova(MAMA ver.)+Whiplash(MAMA ver.) | Mnet 241123 방송",
-     "views": 16174629,
+     "views": 16174679,
      "dur": "",
      "full": true
     }

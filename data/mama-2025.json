@@ -1,6 +1,6 @@
 {
- "asOf": "26 Nov, 21:08 KST",
- "captured": 1795694937,
+ "asOf": "26 Nov, 21:11 KST",
+ "captured": 1795695089,
  "source": "Kanal YouTube Mnet — unggahan panggung [#2025MAMA] (Shorts tidak dihitung); ringkasan total per artis mengikuti mama-2025.mirekapps.com",
  "venue": "Kai Tak Stadium, Hong Kong · 28–29 November 2025",
  "days": [
@@ -16,7 +16,7 @@
  "facts": {
   "acts": 29,
   "videos": 71,
-  "views": 224790613
+  "views": 224791751
  },
  "meta": {
   "artists": 30,
@@ -50,7 +50,7 @@
    "day": 1,
    "order": 2,
    "gorder": 2,
-   "views": 4594439,
+   "views": 4594483,
    "stage": "WISH to Hearts with Hearts2Hearts",
    "focus": "",
    "key": "nctwish",
@@ -58,7 +58,7 @@
     {
      "id": "flZpm8Iub_Y",
      "title": "FOCUS (MAMA ver.) + COLOR (MAMA ver.)",
-     "views": 3997161,
+     "views": 3997205,
      "dur": "9:15",
      "full": false
     },
@@ -84,7 +84,7 @@
    "day": 1,
    "order": 3,
    "gorder": 3,
-   "views": 1382952,
+   "views": 1382957,
    "stage": "WISH to Hearts",
    "focus": "",
    "key": "hearts2hearts",
@@ -92,7 +92,7 @@
     {
      "id": "Og_rtpHBcSw",
      "title": "Full stage · ‘WISH to Hearts’",
-     "views": 1382952,
+     "views": 1382957,
      "dur": "3:38",
      "full": true
     }
@@ -104,7 +104,7 @@
    "day": 1,
    "order": 4,
    "gorder": 4,
-   "views": 2641644,
+   "views": 2641723,
    "stage": "Flip The Coin with MEOVV",
    "focus": "",
    "key": "tws",
@@ -112,14 +112,14 @@
     {
      "id": "Q3AOPTTW71s",
      "title": "Full stage · ‘Flip The Coin’",
-     "views": 2039617,
+     "views": 2039623,
      "dur": "9:29",
      "full": true
     },
     {
      "id": "lOW9Q7cRMr0",
      "title": "OVERDRIVE (Mad Water ver.)",
-     "views": 602027,
+     "views": 602100,
      "dur": "4:53",
      "full": false
     }
@@ -151,7 +151,7 @@
    "day": 1,
    "order": 6,
    "gorder": 6,
-   "views": 21744559,
+   "views": 21744752,
    "stage": "MONSTER’s NIGHT LIVE",
    "focus": "babymonster",
    "key": "babymonster",
@@ -159,7 +159,7 @@
     {
      "id": "IOd0oJUIE8o",
      "title": "Full stage · ‘MONSTER’s NIGHT LIVE’",
-     "views": 16927480,
+     "views": 16927673,
      "dur": "6:25",
      "full": true
     },
@@ -185,7 +185,7 @@
    "day": 1,
    "order": 7,
    "gorder": 7,
-   "views": 3015512,
+   "views": 3015521,
    "stage": "FIRST ACT : FORMULA",
    "focus": "",
    "key": "alphadriveone",
@@ -193,7 +193,7 @@
     {
      "id": "XnmanhwL-Xg",
      "title": "Full stage · ‘FIRST ACT : FORMULA’",
-     "views": 3015512,
+     "views": 3015521,
      "dur": "9:00",
      "full": true
     }
@@ -246,7 +246,7 @@
    "day": 1,
    "order": 9,
    "gorder": 9,
-   "views": 1443447,
+   "views": 1443459,
    "stage": "Moves in the Depth",
    "focus": "",
    "key": "yeonjun",
@@ -254,7 +254,7 @@
     {
      "id": "5cHpboFLpQI",
      "title": "Full stage · ‘Moves in the Depth’",
-     "views": 1443447,
+     "views": 1443459,
      "dur": "4:47",
      "full": true
     }
@@ -266,7 +266,7 @@
    "day": 1,
    "order": 10,
    "gorder": 10,
-   "views": 3249120,
+   "views": 3249151,
    "stage": "MAMA PALOOZA : TRAZY MODE",
    "focus": "treasure",
    "key": "treasure",
@@ -274,7 +274,7 @@
     {
      "id": "N6cd4MTKhJo",
      "title": "2025 Free + PARADISE (REMIX) + I WANT YOUR LOVE (Band ver.)",
-     "views": 2699543,
+     "views": 2699574,
      "dur": "7:43",
      "full": false
     },
@@ -368,7 +368,7 @@
    "day": 1,
    "order": 13,
    "gorder": 13,
-   "views": 4513058,
+   "views": 4513100,
    "stage": "revIVE me",
    "focus": "",
    "key": "ive",
@@ -376,7 +376,7 @@
     {
      "id": "YfIdbId3bVE",
      "title": "Full stage · ‘revIVE me’",
-     "views": 3693473,
+     "views": 3693515,
      "dur": "8:00",
      "full": true
     },
@@ -402,7 +402,7 @@
    "day": 1,
    "order": 14,
    "gorder": 14,
-   "views": 5496275,
+   "views": 5496311,
    "stage": "Crimson Broken",
    "focus": "",
    "key": "enhypen",
@@ -410,7 +410,7 @@
     {
      "id": "MPC44YCoDKU",
      "title": "No Doubt + Bad Desire",
-     "views": 4966774,
+     "views": 4966810,
      "dur": "8:08",
      "full": false
     },
@@ -436,7 +436,7 @@
    "day": 2,
    "order": 1,
    "gorder": 15,
-   "views": 4403189,
+   "views": 4403206,
    "stage": "HEAR MY ROAR with Stray Kids, ZEROBASEONE",
    "focus": "",
    "key": "alldayproject",
@@ -451,7 +451,7 @@
     {
      "id": "UbBMBPv2OJQ",
      "title": "FAMOUS (MAMA ver.)",
-     "views": 3942613,
+     "views": 3942630,
      "dur": "4:02",
      "full": false
     },
@@ -582,7 +582,7 @@
    "day": 2,
    "order": 4,
    "gorder": 18,
-   "views": 746290,
+   "views": 746293,
    "stage": "고백은 타이밍이라고들 하지만··· 같은 타이밍에 이러는 건 아닌 거 같습니다. with IDID",
    "focus": "",
    "key": "kickflip",
@@ -590,7 +590,7 @@
     {
      "id": "QFZsbuBKl04",
      "title": "Full stage · ‘고백은 타이밍이라고들 하지만··· 같은 타이밍에 이러는 건 아닌 거 같습니다.’",
-     "views": 377779,
+     "views": 377782,
      "dur": "7:45",
      "full": true
     },
@@ -616,7 +616,7 @@
    "day": 2,
    "order": 4,
    "gorder": 18.5,
-   "views": 746290,
+   "views": 746293,
    "stage": "고백은 타이밍이라고들 하지만··· 같은 타이밍에 이러는 건 아닌 거 같습니다.",
    "focus": "",
    "guest": true,
@@ -626,7 +626,7 @@
     {
      "id": "QFZsbuBKl04",
      "title": "PUSH BACK (MAMA ver.) + 처음 불러보는 노래 (2025 MAMA ver.) + 상남자 (Boy In Luv) (원곡：방탄소년단)",
-     "views": 377779,
+     "views": 377782,
      "dur": "7:45",
      "full": false
     },
@@ -652,7 +652,7 @@
    "day": 2,
    "order": 5,
    "gorder": 19,
-   "views": 22374315,
+   "views": 22374578,
    "stage": "MADE BY CORTIS",
    "focus": "",
    "key": "cortis",
@@ -660,7 +660,7 @@
     {
      "id": "koED8KSXfeo",
      "title": "Full stage · ‘MADE BY CORTIS’",
-     "views": 21275643,
+     "views": 21275906,
      "dur": "5:16",
      "full": true
     },
@@ -767,7 +767,7 @@
    "day": 2,
    "order": 9,
    "gorder": 23,
-   "views": 1626425,
+   "views": 1626433,
    "stage": "Not Just Pretty : Awakening",
    "focus": "",
    "key": "izna",
@@ -775,7 +775,7 @@
     {
      "id": "BzDkNJT2O98",
      "title": "Full stage · ‘Not Just Pretty : Awakening’",
-     "views": 1626425,
+     "views": 1626433,
      "dur": "5:25",
      "full": true
     }
@@ -848,7 +848,7 @@
    "day": 2,
    "order": 12,
    "gorder": 26,
-   "views": 6642271,
+   "views": 6642288,
    "stage": "MAD MUSES : Fury of Steel",
    "focus": "",
    "key": "aespa",
@@ -856,7 +856,7 @@
     {
      "id": "rMGjA5W_Qwg",
      "title": "Full stage · ‘MAD MUSES : Fury of Steel’",
-     "views": 5505770,
+     "views": 5505786,
      "dur": "9:04",
      "full": true
     },
@@ -870,7 +870,7 @@
     {
      "id": "3sh08pOuXmk",
      "title": "Rich Man",
-     "views": 858477,
+     "views": 858478,
      "dur": "4:17",
      "full": false
     }
@@ -882,7 +882,7 @@
    "day": 2,
    "order": 13,
    "gorder": 27,
-   "views": 15079472,
+   "views": 15079591,
    "stage": "The K-POP CHAMPION",
    "focus": "",
    "key": "straykids-2",
@@ -890,7 +890,7 @@
     {
      "id": "zRYTFhPxiyA",
      "title": "Full stage · ‘The K-POP CHAMPION’",
-     "views": 11541986,
+     "views": 11542103,
      "dur": "13:30",
      "full": true
     },
@@ -911,7 +911,7 @@
     {
      "id": "nGWxOykm86Y",
      "title": "CEREMONY (Hip Hip Version)",
-     "views": 705057,
+     "views": 705059,
      "dur": "4:49",
      "full": false
     },
@@ -930,7 +930,7 @@
    "day": 2,
    "order": 14,
    "gorder": 28,
-   "views": 16114799,
+   "views": 16115054,
    "stage": "Endlich der Übermensch! with Song So-hee",
    "focus": "",
    "key": "gdragon",
@@ -938,7 +938,7 @@
     {
      "id": "vHJ6QLccpdo",
      "title": "Full stage · ‘Endlich der Übermensch!’",
-     "views": 4742385,
+     "views": 4742414,
      "dur": "15:20",
      "full": true
     },
@@ -952,7 +952,7 @@
     {
      "id": "izzWfvhrLxY",
      "title": "Heartbreaker",
-     "views": 9606143,
+     "views": 9606369,
      "dur": "6:32",
      "full": false
     },
@@ -971,7 +971,7 @@
    "day": 2,
    "order": 14,
    "gorder": 28.5,
-   "views": 5347313,
+   "views": 5347342,
    "stage": "Endlich der Übermensch!",
    "focus": "",
    "guest": true,
@@ -981,7 +981,7 @@
     {
      "id": "vHJ6QLccpdo",
      "title": "DRAMA (feat. 송소희) + Heartbreaker + 무제(無題) (Untitled, 2025)",
-     "views": 4742385,
+     "views": 4742414,
      "dur": "15:20",
      "full": false
     },
@@ -1000,7 +1000,7 @@
    "day": 2,
    "order": 15,
    "gorder": 29,
-   "views": 1718074,
+   "views": 1718079,
    "stage": "追尋花影 (Chase the Bloom)",
    "focus": "",
    "key": "zerobaseone-2",
@@ -1008,7 +1008,7 @@
     {
      "id": "3ncHksa6s7Y",
      "title": "Full stage · ‘追尋花影 (Chase the Bloom)’",
-     "views": 1014682,
+     "views": 1014687,
      "dur": "10:56",
      "full": true
     },
