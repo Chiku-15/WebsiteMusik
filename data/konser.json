@@ -74,7 +74,7 @@
      "shows": 32,
      "totalAttendance": 300000,
      "totalSrc": "Raon News 18 Sep 2025: 32 show, 300 ribu penonton (via Wikipedia)",
-     "note": "World tour perdana — Asia + Amerika Utara. Total 300.000 penonton di 32 show.",
+     "note": "Leg Jepang (5 kota, Mar-Apr 2025): 150.000 penonton (Newsen 21 Apr 2025) · leg Asia: 100.000 (Newsen 30 Jun 2025) · leg Amerika Utara: 45.944 tiket / 7 show terlapor / US$5.423.739 (Pollstar Boxscore via TouringAsiaPop di X)",
      "stops": [
       {
        "date": "2025-01-25",
@@ -421,7 +421,7 @@
      "shows": 31,
      "totalAttendance": null,
      "totalSrc": null,
-     "note": "Tur dunia ke-2 & terbesar — termasuk dome Jepang pertama (Kyocera Dome 90 rb penonton). Leg Jepang 11 show memobilisasi 200 rb penonton (Wikipedia).",
+     "note": "Leg Jepang (6 kota, 11 show, Jul-Sep 2026): 200.000 penonton — Chosun/JTBC 24 Sep 2026; Kyocera Dome Osaka 2 hari sendiri 90.000 sold out. Kumulatif Jepang seluruh tur BABYMONSTER mendekati 500 ribu penonton.",
      "stops": [
       {
        "date": "2026-06-26",
@@ -692,8 +692,8 @@
      "type": "tur",
      "period": "12 Nov 2022 – 20 Mei 2023",
      "shows": 40,
-     "totalAttendance": 420000,
-     "totalSrc": "JTBC 22 Mei 2023: 17 kota Asia, 40 show, 420 ribu penonton (via Wikipedia)",
+     "totalAttendance": 425638,
+     "totalSrc": "Billboard Boxscore (transkrip Kpop Wiki): 425.638 penonton / US$40,14 jt — JTBC 22 Mei 2023 menulis 420 ribu (dibulatkan), 40 show",
      "note": "Tur Asia pertama. Leg Jepang (Japan Arena Tour 2022-23) ditutup spesial di Kyocera Dome Osaka — 40.445 tiket terjual (Billboard Boxscore via Touring Data), pertunjukan terbesar TREASURE saat itu.",
      "stops": [
       {
@@ -704,62 +704,211 @@
        "city": "Seoul",
        "country": "Korea Selatan",
        "region": "Korea",
-       "attendance": null,
+       "attendance": 19979,
        "est": false,
-       "src": "Osen 14 Sep 2022: KSPO Dome pertama TREASURE (via Wikipedia)",
-       "note": "Pembuka tur"
+       "src": "Billboard Boxscore — laporan sirkuit Jepang/Asia 2022-23 (transkrip Kpop Wiki)",
+       "note": "2 malam pembuka tur — $1.826.272"
       },
       {
        "date": "2022-11-26",
-       "end": null,
-       "nights": 1,
-       "venue": null,
-       "city": "Jepang (leg arena)",
+       "end": "2022-11-27",
+       "nights": 2,
+       "venue": "Hokkaido Prefectural Sports Center (Kitayell)",
+       "city": "Sapporo",
        "country": "Jepang",
        "region": "Jepang",
-       "attendance": null,
+       "attendance": 21975,
        "est": false,
-       "src": "treasuremaker.fandom — Japan Arena Tour 2022-23: 26 Nov 2022 – 4 Jan 2023",
-       "note": "Leg Jepang dimulai; 10 show di 4 kota"
+       "src": "Billboard Boxscore — laporan sirkuit Jepang/Asia 2022-23 (transkrip Kpop Wiki)",
+       "note": ""
+      },
+      {
+       "date": "2022-12-03",
+       "nights": 1,
+       "venue": "Sun Dome Fukui",
+       "city": "Echizen",
+       "country": "Jepang",
+       "region": "Jepang",
+       "attendance": 16966,
+       "est": false,
+       "src": "Billboard Boxscore — laporan sirkuit Jepang/Asia 2022-23 (transkrip Kpop Wiki)",
+       "note": ""
+      },
+      {
+       "date": "2022-12-06",
+       "end": "2022-12-07",
+       "nights": 2,
+       "venue": "Nippon Gaishi Hall",
+       "city": "Nagoya",
+       "country": "Jepang",
+       "region": "Jepang",
+       "attendance": 38771,
+       "est": false,
+       "src": "Billboard Boxscore — laporan sirkuit Jepang/Asia 2022-23 (transkrip Kpop Wiki)",
+       "note": "$2.917.660"
+      },
+      {
+       "date": "2022-12-17",
+       "end": "2022-12-18",
+       "nights": 2,
+       "venue": "Marine Messe Fukuoka",
+       "city": "Fukuoka",
+       "country": "Jepang",
+       "region": "Jepang",
+       "attendance": 48784,
+       "est": false,
+       "src": "Billboard Boxscore — laporan sirkuit Jepang/Asia 2022-23 (transkrip Kpop Wiki)",
+       "note": ""
+      },
+      {
+       "date": "2022-12-21",
+       "end": "2022-12-25",
+       "nights": 4,
+       "venue": "Kobe Port Island Hall",
+       "city": "Kobe",
+       "country": "Jepang",
+       "region": "Jepang",
+       "attendance": 30000,
+       "est": false,
+       "src": "Billboard Boxscore — laporan sirkuit Jepang/Asia 2022-23 (transkrip Kpop Wiki)",
+       "note": ""
+      },
+      {
+       "date": "2022-12-31",
+       "nights": 1,
+       "venue": "Tokyo Metropolitan Gymnasium",
+       "city": "Tokyo",
+       "country": "Jepang",
+       "region": "Jepang",
+       "attendance": 17932,
+       "est": false,
+       "src": "Billboard Boxscore — laporan sirkuit Jepang/Asia 2022-23 (transkrip Kpop Wiki)",
+       "note": ""
       },
       {
        "date": "2023-01-03",
        "end": "2023-01-04",
        "nights": 2,
-       "venue": "Tokyo Metropolitan Gymnasium",
-       "city": "Tokyo",
+       "venue": "Saitama Super Arena",
+       "city": "Saitama",
        "country": "Jepang",
        "region": "Jepang",
-       "attendance": null,
+       "attendance": 53655,
        "est": false,
-       "src": "treasuremaker.fandom — Japan Arena Tour 2022-23",
-       "note": null
+       "src": "Billboard Boxscore — laporan sirkuit Jepang/Asia 2022-23 (transkrip Kpop Wiki)",
+       "note": ""
       },
       {
        "date": "2023-01-28",
-       "end": null,
-       "nights": 1,
+       "end": "2023-01-29",
+       "nights": 2,
        "venue": "Kyocera Dome Osaka",
        "city": "Osaka",
        "country": "Jepang",
        "region": "Jepang",
-       "attendance": 40445,
+       "attendance": 80890,
        "est": false,
-       "src": "Billboard Boxscore (via Touring Data): 40.445 tiket — record TREASURE saat itu",
-       "note": "SPECIAL in KYOCERA DOME OSAKA (show tunggal)"
+       "src": "Billboard Boxscore — laporan sirkuit Jepang/Asia 2022-23 (transkrip Kpop Wiki)",
+       "note": "2 malam — $6.103.325"
+      },
+      {
+       "date": "2023-03-04",
+       "nights": 1,
+       "venue": "NTSU Arena (Linkou)",
+       "city": "Taoyuan (Taipei)",
+       "country": "Taiwan",
+       "region": "Asia",
+       "attendance": 6228,
+       "est": false,
+       "src": "Billboard Boxscore — laporan sirkuit Jepang/Asia 2022-23 (transkrip Kpop Wiki)",
+       "note": ""
+      },
+      {
+       "date": "2023-03-11",
+       "nights": 1,
+       "venue": "Malawati Stadium",
+       "city": "Shah Alam (Kuala Lumpur)",
+       "country": "Malaysia",
+       "region": "Asia",
+       "attendance": 7564,
+       "est": false,
+       "src": "Billboard Boxscore — laporan sirkuit Jepang/Asia 2022-23 (transkrip Kpop Wiki)",
+       "note": ""
+      },
+      {
+       "date": "2023-03-18",
+       "end": "2023-03-19",
+       "nights": 2,
+       "venue": "ICE BSD City",
+       "city": "Tangerang (Jakarta)",
+       "country": "Indonesia",
+       "region": "Asia",
+       "attendance": 15339,
+       "est": false,
+       "src": "Billboard Boxscore — laporan sirkuit Jepang/Asia 2022-23 (transkrip Kpop Wiki)",
+       "note": ""
+      },
+      {
+       "date": "2023-03-31",
+       "end": "2023-04-02",
+       "nights": 3,
+       "venue": "Impact Arena",
+       "city": "Pak Kret (Bangkok)",
+       "country": "Thailand",
+       "region": "Asia",
+       "attendance": 27414,
+       "est": false,
+       "src": "Billboard Boxscore — laporan sirkuit Jepang/Asia 2022-23 (transkrip Kpop Wiki)",
+       "note": "3 malam"
+      },
+      {
+       "date": "2023-04-08",
+       "nights": 1,
+       "venue": "Singapore Indoor Stadium",
+       "city": "Singapura",
+       "country": "Singapura",
+       "region": "Asia",
+       "attendance": 7293,
+       "est": false,
+       "src": "Billboard Boxscore — laporan sirkuit Jepang/Asia 2022-23 (transkrip Kpop Wiki)",
+       "note": ""
+      },
+      {
+       "date": "2023-04-14",
+       "end": "2023-04-15",
+       "nights": 2,
+       "venue": "SM Mall of Asia Arena",
+       "city": "Manila",
+       "country": "Filipina",
+       "region": "Asia",
+       "attendance": 15760,
+       "est": false,
+       "src": "Billboard Boxscore — laporan sirkuit Jepang/Asia 2022-23 (transkrip Kpop Wiki)",
+       "note": ""
+      },
+      {
+       "date": "2023-04-22",
+       "nights": 1,
+       "venue": "Galaxy Arena",
+       "city": "Makau",
+       "country": "Tiongkok",
+       "region": "Asia",
+       "attendance": 8125,
+       "est": false,
+       "src": "Billboard Boxscore — laporan sirkuit Jepang/Asia 2022-23 (transkrip Kpop Wiki)",
+       "note": ""
       },
       {
        "date": "2023-05-20",
-       "end": null,
        "nights": 1,
-       "venue": null,
-       "city": "Penutup tur Asia",
-       "country": null,
+       "venue": "AsiaWorld-Arena",
+       "city": "Hong Kong",
+       "country": "Hong Kong",
        "region": "Asia",
-       "attendance": null,
+       "attendance": 8963,
        "est": false,
-       "src": "Wikipedia — List of Treasure live performances",
-       "note": null
+       "src": "Billboard Boxscore — laporan sirkuit Jepang/Asia 2022-23 (transkrip Kpop Wiki)",
+       "note": "Penutup tur Asia"
       }
      ]
     },
@@ -891,7 +1040,7 @@
      "shows": 27,
      "totalAttendance": null,
      "totalSrc": null,
-     "note": "Tur ke-3 — pembuka 3 malam KSPO Dome (sold out), leg Jepang 5 kota, lanjut Asia 2026 (Macau dibuka sold out).",
+     "note": "K-Arena Yokohama (5 malam) = venue resmi terlapor tertinggi tur ini (Pollstar). Est. total seluruh tur 376.500 (±, kompilasi komunitas ygfactsbackup) — tur masih berjalan.",
      "stops": [
       {
        "date": "2025-10-10",
@@ -901,10 +1050,10 @@
        "city": "Seoul",
        "country": "Korea Selatan",
        "region": "Korea",
-       "attendance": null,
-       "est": false,
-       "src": "YG (interpark + post resmi): 10–12 Okt, SOLD OUT",
-       "note": "Pembuka tur 3 malam"
+       "attendance": 45000,
+       "est": true,
+       "src": "Perkiraan komunitas ygfactsbackup (X/FB): 3 malam SOLD OUT x kapasitas KSPO Dome",
+       "note": "10-12 Okt 2025 (3 malam, semua sold out)"
       },
       {
        "date": "2025-10-25",
@@ -914,9 +1063,9 @@
        "city": "Tokyo",
        "country": "Jepang",
        "region": "Jepang",
-       "attendance": null,
-       "est": false,
-       "src": "YG (ygfamily.com concert page) + daftar resmi",
+       "attendance": 20000,
+       "est": true,
+       "src": "Perkiraan komunitas ygfactsbackup (X/FB) — 1 malam sold out",
        "note": null
       },
       {
@@ -927,9 +1076,9 @@
        "city": "Nagoya (Aichi)",
        "country": "Jepang",
        "region": "Jepang",
-       "attendance": null,
-       "est": false,
-       "src": "Kpop Wiki — TREASURE Tour 'Pulse On' (jadwal resmi)",
+       "attendance": 51000,
+       "est": true,
+       "src": "Pollstar Boxscore parsial via TouringAsiaPop (X, 1 Okt 2026): 3 show terlapor = 51.000 tiket (rata-rata 17.000) + cocok dgn perkiraan komunitas ygfactsbackup",
        "note": null
       },
       {
@@ -948,14 +1097,14 @@
       {
        "date": null,
        "end": null,
-       "nights": 2,
+       "nights": 5,
        "venue": "K-Arena Yokohama",
        "city": "Yokohama (Kanagawa)",
        "country": "Jepang",
        "region": "Jepang",
-       "attendance": null,
+       "attendance": 87000,
        "est": false,
-       "src": "YG (ygfamily.com concert page)",
+       "src": "Pollstar Boxscore via TouringAsiaPop (X, 1 Okt 2026): 87.000 tiket / 5 malam, 100% sold out, US$8.310.262 (¥1,305 jt)",
        "note": "Tanggal di jadwal resmi (Nov 2025)"
       },
       {

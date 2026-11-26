@@ -1384,7 +1384,7 @@
     </div>
     <button class="tab berandatab" id="berandaTab" title="Buka halaman BERANDA — garis besar seluruh situs dalam satu halaman" style="flex:none">Beranda</button>
     <button class="tab fiturtab" id="fiturTab" title="Buka halaman Semua Fitur — peta seluruh fitur situs dalam bentuk kartu" style="flex:none">Fitur</button>
-    <button class="tab awardstab" id="awardsTab" title="Buka halaman MAMA — chart panggung MAMA 2020–2026 (views seluruh video panggung resmi Mnet)" style="flex:none">MAMA</button>
+    <button class="tab awardstab" id="awardsTab" hidden title="Halaman MAMA tersembunyi — dibuka lewat cara rahasia (klik cepat 5x tab Bantuan)" style="display:none;flex:none">MAMA</button>
     <button class="tab statstab" id="statTab" title="Buka halaman STATS — milestone karier BABYMONSTER &amp; TREASURE + Top 10, YT Music, Shows, konser, live stages, sertifikasi &amp; pembaruan album/pendengar" style="flex:none">Stats</button>
     <button class="tab bantuantab" id="bantuanTab" title="Buka halaman Bantuan — cara kerja situs, sumber data &amp; arti tanda" style="flex:none">Bantuan</button>
     <div class="spacer"></div>
@@ -7655,6 +7655,7 @@ function renderDuelPage(sec) {
 /* ---------- helper tab konser — state UI disimpan di modul (bukan state pusat) supaya
  * pilihan cari/wilayah/urutan tidak hilang saat daftar dirender ulang ---------- */
 const statKonserUI = { q: "", region: "all", sort: "date" };
+const statMlUI = { tab: "album", sort: "streams" };
 function statKonserStops(ids) {
   const kk = (state.konser && state.konser.artists) || null;
   if (!kk) return [];
@@ -7686,6 +7687,15 @@ function statKonserRows(stops) {
       <div class="st-alval"><b>${att}</b><span class="sub">${esc(s._ar.name || "")}</span></div>
     </div>`;
   }).join("");
+}
+function statKonserTotals(ids) {
+  /* total penonton per tur — field totalAttendance/totalSrc di data/konser.json */
+  const kk = (state.konser && state.konser.artists) || null;
+  if (!kk) return [];
+  return ids.map((id) => {
+    const ar = artistOf(id) || { name: id, color: "#8b5cf6" };
+    return ((((kk[id] || {}).tours) || []) || []).filter((t) => t.totalAttendance != null).map((t) => ({ tour: t.name, _ar: ar, att: t.totalAttendance, src: t.totalSrc || "", shows: t.shows || null }));
+  }).flat();
 }
 function statLiveVal(icon, artId) {
   /* mode "all" = gabungan BABYMONSTER + TREASURE (dijumlahkan) */
@@ -7772,7 +7782,7 @@ function renderStatPage(sec) {
   }).join("") : "";
   /* tab gaya baechella — 9 tab: 2 Top 10 + 4 baru (YT Music, Shows, All konser, Live Stages) + sertifikasi + album + pendengar */
   const tabBtn = (k, t) => `<button class="mtab${state.statTab === k ? " active" : ""}" data-stattab="${k}" style="--artist-color:${esc(acol)}" aria-pressed="${state.statTab === k}">${t}</button>`;
-  const tabRow = `<div class="chiprow" style="margin:12px 0 0">${tabBtn("mv", "Top 10 M/V (YouTube)")}${tabBtn("sp", "Top 10 Spotify")}${tabBtn("ytm", "Top 5 YT Music")}${tabBtn("shows", "Top 5 Shows")}${tabBtn("konser", "All konser")}${tabBtn("live", "Top 5 Live Stages")}${tabBtn("cert", "Sertifikasi")}${tabBtn("album", "Pembaruan album (Circle)")}${tabBtn("ml", "Pembaruan pendengar (per bulan)")}</div>`;
+  const tabRow = `<div class="chiprow" style="margin:12px 0 0">${tabBtn("mv", "Top 10 M/V (YouTube)")}${tabBtn("sp", "Top 10 Spotify")}${tabBtn("ytm", "Top 5 YT Music")}${tabBtn("shows", "Top 5 Shows")}${tabBtn("konser", "All konser")}${tabBtn("live", "Top 5 Live Stages")}${tabBtn("cert", "Sertifikasi")}${tabBtn("album", "Pembaruan album (Circle)")}${tabBtn("ml", "Pembaruan pendengar (album & lagu)")}</div>`;
   if (!["mv", "sp", "ytm", "shows", "konser", "live", "cert", "album", "ml"].includes(state.statTab)) state.statTab = "mv";
   let tabBody = "";
   if (state.statTab === "mv") {
@@ -7838,6 +7848,13 @@ function renderStatPage(sec) {
     const cities = new Set(stops.map((s) => s.city).filter(Boolean)).size;
     const tours = new Set(stops.map((s) => s._tour)).size;
     const ropts = ["all", "Korea", "Jepang", "Asia", "Oseania", "Amerika"].map((r) => `<option value="${r}">${r === "all" ? "Semua wilayah" : r}</option>`).join("");
+    const tots = statKonserTotals(ids);
+    const totHTML = tots.length ? `<div class="st-mtitle" style="margin-top:14px">Total penonton per tur</div><div class="st-als">` + tots.map((t) => `
+      <div class="st-alrow" style="--ac:${esc(t._ar.color || "#8b5cf6")}" title="${esc(t.src)}">
+        <span class="st-alnum">&Sigma;</span>
+        <div class="st-almain"><b>${esc(t.tour)}</b><span>${t.shows ? NF.format(t.shows) + " show · " : ""}total resmi/arsip seluruh tur</span></div>
+        <div class="st-alval"><b>${fmtExact(t.att)}</b><span class="sub">penonton</span></div>
+      </div>`).join("") + `</div>` : "";
     const sopts = [["date", "Terdekat dulu"], ["new", "Terbaru dulu"], ["att", "Penonton terbanyak"]].map(([v, t]) => `<option value="${v}">${t}</option>`).join("");
     tabBody = `
       <div class="st-mchips" style="--ac:${esc(acol)}">
@@ -7853,7 +7870,8 @@ function renderStatPage(sec) {
         <select data-ksort class="myear" style="color:${esc(acol)};border-color:color-mix(in srgb,${esc(acol)} 45%,transparent)" aria-label="Urutkan daftar">${sopts}</select>
       </div>
       <div id="stKonserList" class="st-als" style="margin-top:12px">${statKonserRows(stops)}</div>
-      <p class="note">Seluruh tur, konser, fanmeeting &amp; fanconcert dari <b>data/konser.json</b> — attandance hanya diisi bila ada laporan resmi (KOPIS, Billboard Boxscore, media); sisanya “tidak dilaporkan”. Baris pudar = tanggal sudah lewat. Angka <span class="cellno">±</span> = perkiraan kapasitas penuh saat sold out. Kotak cari, wilayah &amp; urutan menyaring daftar langsung tanpa memuat ulang.</p>`;
+      ${totHTML}
+      <p class="note">Seluruh tur, konser, fanmeeting &amp; fanconcert dari <b>data/konser.json</b> — attandance hanya diisi bila ada laporan resmi/arsip (KOPIS, Billboard Boxscore, Pollstar via akun pemantau tur di X, media: Osen, JoyNews24, Chosun, Newsen, Harian Metro, The Straits Times); sisanya “tidak dilaporkan”. Baris pudar = tanggal sudah lewat. Angka <span class="cellno">±</span> = perkiraan (laporan parsial atau kapasitas penuh saat sold out). Blok <b>Total penonton per tur</b> memakai angka total resmi/arsip tingkat tur (tidak dijumlah ke baris per show supaya tidak dobel hitung). Kotak cari, wilayah &amp; urutan menyaring daftar langsung tanpa memuat ulang.</p>`;
   } else if (state.statTab === "live") {
     const ls = (state.livestage && state.livestage.artists) || null;
     const stages = ls ? ids.map((id) => { const ar = artistOf(id) || art; return (((ls[id] || {}).stages) || []).map((s) => ({ ...s, _ar: ar })); }).flat() : [];
@@ -7963,123 +7981,96 @@ function renderStatPage(sec) {
       </div>`;
     }
   } else {
-    /* Pembaruan pendengar (per bulan) — mirror panel album, sumber data/spotify-artists.json */
-    const series = ids.map((id) => {
-      const s = spArtistOf(id);
-      const byM = {};
-      for (const p of (s && s.history) || []) {
-        if (p.ml == null) continue;
-        const d = new Date(p.t * 1000);
-        const key = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
-        if (!byM[key] || p.t >= byM[key].t) byM[key] = p;
-      }
-      return { id, name: (s && s.name) || id, byM };
-    });
-    const months = [];
-    series.forEach((s) => Object.keys(s.byM).forEach((m) => { if (!months.includes(m)) months.push(m); }));
-    months.sort();
-    if (!months.length) {
-      tabBody = `<div class="banner">Riwayat pendengar bulanan belum terekam — jalankan sekali workflow “Kumpulkan data” (kolektor Spotify), lalu muat ulang halaman.</div>`;
+    /* Pembaruan pendengar — daftar album & lagu gaya baechella (referensi foto pengguna):
+     * chip Album (N) / Lagu (N) / Milestone + dropdown urutan "Stream terbanyak"; baris
+     * album memuat total stream kumulatif, kenaikan per hari & tombol "Halaman album". */
+    if (!state.sp.tracks) {
+      tabBody = `<div class="banner">Data Spotify sedang dimuat — tunggu sesaat atau buka lagi halaman ini.</div>`;
     } else {
-      const years = [];
-      months.forEach((m) => { const y = m.slice(0, 4); if (!years.includes(y)) years.push(y); });
-      let ySel = state.statYear && years.includes(state.statYear) ? state.statYear : years[years.length - 1];
-      const yMonths = months.filter((m) => m.slice(0, 4) === ySel);
-      let mSel = state.statMonth && yMonths.includes(ySel + "-" + String(state.statMonth).padStart(2, "0"))
-        ? state.statMonth
-        : Number(yMonths[yMonths.length - 1].slice(5, 7));
-      const mKey = ySel + "-" + String(mSel).padStart(2, "0");
-      const idx = months.indexOf(mKey);
-      const prevM = idx > 0 ? months[idx - 1] : null;
-      const nextM = idx >= 0 && idx < months.length - 1 ? months[idx + 1] : null;
-      const yearPills = years.map((y) => `<button class="mtab${y === ySel ? " active" : ""}" data-styear="${y}" style="--artist-color:${esc(acol)}" aria-pressed="${y === ySel}">${y}</button>`).join("");
-      const monthOpts = yMonths.map((m) => `<option value="${Number(m.slice(5, 7))}"${m === mKey ? " selected" : ""}>${mLabel(m)}</option>`).join("");
-      const chips = [];
-      for (let mo = 1; mo <= 12; mo++) {
-        const key = ySel + "-" + String(mo).padStart(2, "0");
-        const has = yMonths.includes(key);
-        chips.push(`<button class="st-mchip${mo === mSel ? " on" : ""}" data-stmchip="${mo}"${has ? "" : " disabled"} aria-pressed="${mo === mSel}">${esc(SMF.format(new Date(key + "-01T00:00:00")).toUpperCase())}</button>`);
-      }
-      const mlOf = (s, m) => (s.byM[m] && s.byM[m].ml != null) ? s.byM[m].ml : null;
-      const estOf = (s, m) => !!(s.byM[m] && (s.byM[m].est || s.byM[m].seed));
-      const tot = series.reduce((acc, s) => acc + (mlOf(s, mKey) || 0), 0);
-      const hasTot = series.some((s) => mlOf(s, mKey) != null);
-      const prevTot = prevM ? series.reduce((acc, s) => acc + (mlOf(s, prevM) || 0), 0) : null;
-      const hasPrev = prevM ? series.some((s) => mlOf(s, prevM) != null) : false;
-      const gain = hasTot && hasPrev ? tot - prevTot : null;
-      const gainPill = gain != null && gain !== 0
-        ? `<span class="st-gain">${gain > 0 ? "↑" : "↓"} ${gfmt(gain)} vs ${prevM ? esc(mLabel(prevM)) : "bulan lalu"}</span>`
-        : `<span class="st-gain zero">tidak ada perubahan tercatat</span>`;
-      const totalBox = `<div class="st-total" style="--ac:${esc(acol)}">
-        <div class="tl">Pendengar bulanan${artId === "all" ? " gabungan (± tumpang tindih)" : ""}</div>
-        <div class="tv">${hasTot ? fmtExact(tot) : "–"}${hasTot && artId === "all" ? ` <span class="cellno">±</span>` : ""}</div>
-        <div class="trow">${gainPill}<span class="st-nalb">${months.length} bulan terekam</span></div>
-      </div>`;
-      const rows = series.map((s) => {
-        const v = mlOf(s, mKey), pv = prevM ? mlOf(s, prevM) : null;
-        const d = (v != null && pv != null) ? v - pv : null;
-        const ar = artistOf(s.id) || {};
-        const gh = d != null && d !== 0
-          ? `<span class="st-gain st-algain">${d > 0 ? "↑" : "↓"} ${gfmt(d)} vs bulan lalu</span>`
-          : `<span class="st-gain st-algain zero">—</span>`;
-        return `<div class="st-alrow" style="--ac:${esc(ar.color || acol)}">
-          <span class="st-alnum">♪</span>
-          <div class="st-almain"><b>${esc(s.name)}</b><span>pendengar bulanan akhir ${esc(mLabel(mKey))}${estOf(s, mKey) ? " · titik estimasi" : ""}</span></div>
-          <div class="st-alval"><b>${v != null ? fmtExact(v) : "–"}${v != null && estOf(s, mKey) ? ` <span class="cellno">±</span>` : ""}</b><span class="sub">pendengar/bln</span>${gh}</div>
-        </div>`;
-      }).join("");
-      /* pembaruan per album & per lagu — Spotify tidak mempublikasi "pendengar bulanan"
-       * per album/lagu, jadi bagian ini memakai proksi resminya: STREAM BARU per bulan
-       * (selisih total stream awal vs akhir bulan) dari riwayat kworb/Spotify Charts. */
-      const mStart = new Date(Number(ySel), mSel - 1, 1).getTime() / 1000;
-      const mEnd = new Date(Number(ySel), mSel, 1).getTime() / 1000;
+      if (!["album", "lagu", "mile"].includes(statMlUI.tab)) statMlUI.tab = "album";
+      if (!["streams", "delta", "new"].includes(statMlUI.sort)) statMlUI.sort = "streams";
+      /* agregat per album: total & kenaikan/hari = penjumlahan seluruh lagu terpantau di album */
+      const albAgg = Object.values(state.sp.albums || {}).filter((al) => ids.includes(al.artistId)).map((al) => {
+        const trs = (al.tracks || []).map((r) => state.sp.tracks[r.key]).filter(Boolean);
+        const tot = trs.reduce((s, t) => s + spTrackTotal(t), 0);
+        const dl = trs.reduce((s, t) => s + (spTrackDaily(t) || 0), 0);
+        return { al, n: trs.length, tot, d: dl };
+      }).filter((x) => x.n > 0);
       const trAll = Object.values(state.sp.tracks || {}).filter((t) => ids.includes(t.artistId));
-      const deltaOf = (h) => {
-        if (!Array.isArray(h)) return null;
-        const before = h.filter((p) => p.t < mStart && p.v != null);
-        const inM = h.filter((p) => p.t >= mStart && p.t < mEnd && p.v != null);
-        if (!inM.length || !before.length) return null;
-        return inM[inM.length - 1].v - before[before.length - 1].v;
+      albAgg.sort(statMlUI.sort === "delta" ? (a, b) => b.d - a.d || b.tot - a.tot
+        : statMlUI.sort === "new" ? (a, b) => String(b.al.releaseDate || "").localeCompare(String(a.al.releaseDate || "")) || b.tot - a.tot
+        : (a, b) => b.tot - a.tot || b.d - a.d);
+      const trAgg = trAll.map((t) => ({ t, tot: spTrackTotal(t), d: spTrackDaily(t) || 0 }));
+      trAgg.sort(statMlUI.sort === "delta" ? (a, b) => b.d - a.d || b.tot - a.tot
+        : statMlUI.sort === "new" ? (a, b) => String(b.t.releaseDate || "").localeCompare(String(a.t.releaseDate || "")) || b.tot - a.tot
+        : (a, b) => b.tot - a.tot || b.d - a.d);
+      /* milestone: ambang SP_MS — tanggal tembus dihitung dari agregasi riwayat */
+      const msOf = (hist, tot) => {
+        let ach = null, next = null;
+        for (const m of SP_MS) { if (tot >= m) ach = m; else { next = m; break; } }
+        let achT = null;
+        if (ach != null) {
+          const arr = (hist || []).filter((p) => p.v != null).sort((a, b) => a.t - b.t);
+          for (const p of arr) { if (p.v >= ach) { achT = p.t; break; } }
+        }
+        return { ach, next, achT, prog: next ? Math.max(0, Math.min(100, (tot / next) * 100)) : 100 };
       };
-      const trackD = trAll.map((t) => ({ t, d: deltaOf(t.history || []) })).filter((x) => x.d != null && x.d !== 0).sort((a, b) => b.d - a.d);
-      const albName = (aid) => { const al = (state.sp.albums || {})[aid]; return al ? al.name : null; };
-      const albD = {};
-      trackD.forEach((x) => { const aid = (x.t.albumIds || [])[0] || "?"; albD[aid] = (albD[aid] || 0) + x.d; });
-      const albRows2 = Object.entries(albD).sort((a, b) => b[1] - a[1]).map(([aid, d], i) => `
-      <div class="st-alrow" style="--ac:${esc(acol)}">
+      const albMs = albAgg.map((x) => {
+        const pts = new Map();
+        (x.al.tracks || []).forEach((r) => {
+          const t = state.sp.tracks[r.key];
+          if (!t) return;
+          (t.history || []).forEach((p) => { if (p.v != null) pts.set(p.t, (pts.get(p.t) || 0) + p.v); });
+        });
+        const hist = [...pts.entries()].map(([tt, vv]) => ({ t: tt, v: vv }));
+        return { ...x, ...msOf(hist, x.tot) };
+      }).sort((a, b) => b.tot - a.tot);
+      const trMs = trAgg.filter((x) => x.tot >= 1e8).map((x) => ({ ...x, ...msOf(x.t.history || [], x.tot) }));
+      const covImg = (src, w) => src ? `<img src="${esc(src)}" alt="" loading="lazy" style="width:${w}px;height:${w}px;border-radius:8px;object-fit:cover;flex:none" onerror="this.style.visibility='hidden'">` : `<div class="hlph" style="flex:none">♪</div>`;
+      const albNameOf = (t) => { const al = (state.sp.albums || {})[(t.albumIds || [])[0]]; return al ? al.name : "–"; };
+      const albRow = (x, i) => `
+      <div class="st-alrow" style="--ac:${esc(SP_GREEN)}">
         <span class="st-alnum">${String(i + 1).padStart(2, "0")}</span>
-        <div class="st-almain"><b>${esc(albName(aid) || "Album / lagu tunggal")}</b><span>total stream album naik di ${esc(mLabel(mKey))}</span></div>
-        <div class="st-alval"><b>${gfmt(d)}</b><span class="sub">stream baru</span></div>
-      </div>`).join("");
-      const trRows = trackD.slice(0, 15).map((x, i) => `
-      <div class="st-alrow" data-spk="${esc(x.t.key)}" style="--ac:${esc(acol)}" tabindex="0" role="button" aria-label="Buka grafik ${esc(x.t.name)}">
+        ${covImg(x.al.cover, 44)}
+        <div class="st-almain"><b>${esc(x.al.name)}</b><span>${esc(SP_TYPE[x.al.type] || "Album")} · ${x.al.releaseDate ? esc(fmtDate(x.al.releaseDate)) : "–"} · ${x.n} lagu${artId === "all" ? " · " + esc((artistOf(x.al.artistId) || {}).name || "") : ""}</span></div>
+        <div class="st-alval"><b>${fmtExact(x.tot)}</b><span class="sub up">+${fmtCompact(x.d)}/hari</span></div>
+        <button class="albopen" data-albopen="${esc(x.al.id)}" title="Buka halaman album ini">Halaman album ›</button>
+      </div>`;
+      const trRow = (x, i) => `
+      <div class="st-alrow" data-spk="${esc(x.t.key)}" style="--ac:${esc(SP_GREEN)}" tabindex="0" role="button" aria-label="Buka grafik ${esc(x.t.name)}">
         <span class="st-alnum">${String(i + 1).padStart(2, "0")}</span>
-        <div class="st-almain"><b>${esc(x.t.name)}</b><span>kumulatif ${fmtCompact(spTrackTotal(x.t))} stream · ${esc((artistOf(x.t.artistId) || {}).name || "")}</span></div>
-        <div class="st-alval"><b>${gfmt(x.d)}</b><span class="sub">stream baru</span></div>
-      </div>`).join("");
-      const dSum = trackD.reduce((a, x) => a + x.d, 0);
+        ${covImg(x.t.cover, 40)}
+        <div class="st-almain"><b>${esc(x.t.name)}</b><span>${esc(albNameOf(x.t))} · ${x.t.releaseDate ? esc(fmtDate(x.t.releaseDate)) : "–"}${artId === "all" ? " · " + esc((artistOf(x.t.artistId) || {}).name || "") : ""}</span></div>
+        <div class="st-alval"><b>${fmtExact(x.tot)}</b><span class="sub up">+${fmtCompact(x.d)}/hari</span></div>
+      </div>`;
+      const msRow = (x, i, isSong) => `
+      <div class="st-alrow"${isSong ? ` data-spk="${esc(x.t.key)}" tabindex="0" role="button" aria-label="Buka grafik ${esc(x.t.name)}"` : ""} style="--ac:${esc(SP_GREEN)}">
+        <span class="st-alnum">${String(i + 1).padStart(2, "0")}</span>
+        ${covImg(isSong ? x.t.cover : x.al.cover, 40)}
+        <div class="st-almain"><b>${esc(isSong ? x.t.name : x.al.name)}</b><span>${x.ach != null ? `ambang ${fmtCompact(x.ach)} stream tercapai${x.achT != null ? " " + esc(fmtDate(new Date(x.achT * 1000).toISOString().slice(0, 10))) : ""}` : "belum menembus ambang pertama (1 juta)"}${x.next != null ? " · berikutnya " + fmtCompact(x.next) + " stream" : ""}${!isSong && artId === "all" ? " · " + esc((artistOf(x.al.artistId) || {}).name || "") : ""}</span></div>
+        <div class="st-alval"><b>${x.ach != null ? fmtCompact(x.ach) : "–"}</b><span class="sub">${x.next != null ? Math.floor(x.prog) + "% menuju " + fmtCompact(x.next) : "semua ambang terlewati"}</span></div>
+      </div>`;
+      const sopts = [["streams", "Stream terbanyak"], ["delta", "Kenaikan terbanyak"], ["new", "Terbaru rilis"]].map(([v, t]) => `<option value="${v}"${statMlUI.sort === v ? " selected" : ""}>${t}</option>`).join("");
+      let listHTML = "";
+      if (statMlUI.tab === "album") listHTML = albAgg.length ? albAgg.map(albRow).join("") : `<div class="banner">Belum ada album Spotify terpantau untuk pilihan ini.</div>`;
+      else if (statMlUI.tab === "lagu") listHTML = trAgg.length ? trAgg.map(trRow).join("") : `<div class="banner">Belum ada lagu Spotify terpantau untuk pilihan ini.</div>`;
+      else {
+        const albPart = albMs.map((x, i) => msRow(x, i, false)).join("");
+        const trPart = trMs.map((x, i) => msRow(x, i, true)).join("");
+        listHTML = albPart + (trPart ? `<div class="st-mtitle" style="margin-top:14px">Milestone lagu (sudah lewat 100 juta stream)</div>` + trPart : "");
+      }
       tabBody = `
       <div>
-        <span class="st-mlabel">Spotify · pendengar bulanan</span>
-        <div class="st-mtitle">Pembaruan pendengar (per bulan)</div>
-        <div class="st-mrow">
-          <div class="mtabs" style="margin:0">${yearPills}</div>
-          <div class="st-mnav" style="margin-left:auto">
-            ${prevM ? `<button class="st-arr" data-stmgo="${prevM}" style="--ac:${esc(acol)}" title="Bulan berdata sebelumnya" aria-label="Bulan berdata sebelumnya">←</button>` : `<button class="st-arr" disabled aria-label="Tidak ada bulan sebelumnya">←</button>`}
-            <select id="statMonthSel" class="myear" style="color:${esc(acol)};border-color:color-mix(in srgb,${esc(acol)} 45%,transparent);background-image:url(&quot;data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='${esc(acol.replace("#", "%23"))}' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E&quot;)" aria-label="Pilih bulan">${monthOpts}</select>
-            ${nextM ? `<button class="st-arr" data-stmgo="${nextM}" style="--ac:${esc(acol)}" title="Bulan berdata berikutnya" aria-label="Bulan berdata berikutnya">→</button>` : `<button class="st-arr" disabled aria-label="Tidak ada bulan berikutnya">→</button>`}
-          </div>
+        <span class="st-mlabel">Spotify · pembaruan pendengar</span>
+        <div class="st-mtitle">Pembaruan pendengar (per album &amp; lagu)</div>
+        <div class="st-mchips" style="--ac:${esc(acol)};margin-top:12px">
+          <button class="st-mchip${statMlUI.tab === "album" ? " on" : ""}" data-mltab="album" aria-pressed="${statMlUI.tab === "album"}">Album (${albAgg.length})</button>
+          <button class="st-mchip${statMlUI.tab === "lagu" ? " on" : ""}" data-mltab="lagu" aria-pressed="${statMlUI.tab === "lagu"}">Lagu (${trAll.length})</button>
+          <button class="st-mchip${statMlUI.tab === "mile" ? " on" : ""}" data-mltab="mile" aria-pressed="${statMlUI.tab === "mile"}">Milestone (${albMs.filter((x) => x.ach != null).length})</button>
+          <select data-mlsort class="myear" style="margin-left:auto;color:${esc(acol)};border-color:color-mix(in srgb,${esc(acol)} 45%,transparent)" aria-label="Urutkan daftar">${sopts}</select>
         </div>
-        <div class="st-mchips" style="--ac:${esc(acol)}">${chips.join("")}</div>
-        ${totalBox}
-        <div class="st-als">${rows}</div>
-        <div class="st-mchips" style="--ac:${esc(acol)};margin-top:16px"><span class="st-mchip on" style="cursor:default">Stream baru ${esc(mLabel(mKey))}: <b>${gfmt(dSum)}</b></span><span class="st-mchip on" style="cursor:default">Lagu terpantau: <b>${trAll.length}</b></span><span class="st-mchip on" style="cursor:default">Lagu bergerak bulan ini: <b>${trackD.length}</b></span></div>
-        <div class="st-mtitle" style="margin-top:14px">Pembaruan pendengar per album — stream baru di ${esc(mLabel(mKey))}</div>
-        <div class="st-als">${albRows2 || `<div class="banner">Belum ada data stream untuk bulan itu (butuh rekaman sebelum & sesudah bulan tercatat di riwayat kolektor).</div>`}</div>
-        <div class="st-mtitle" style="margin-top:16px">Pembaruan pendengar per lagu — stream baru di ${esc(mLabel(mKey))}</div>
-        <div class="ppwrap" style="max-height:420px">${trRows || `<div class="banner">Belum ada lagu yang tercatat bergerak di bulan ini.</div>`}</div>
-        <p class="note">Angka = pendengar bulanan Spotify (audiens unik) pada titik perekaman terakhir bulan itu — dari data/spotify-artists.json, direkam kolektor per jam. Titik sebelum kolektor berjalan adalah hasil interpolasi antar jangkar dan ditandai <span class="cellno">±</span>. Mode gabungan menjumlahkan kedua artis sehingga bisa melebihi audiens unik sesungguhnya (ada pendengar yang sama).</p>
-        <p class="note">Rincian <b>per album &amp; per lagu</b> memakai <b>stream baru</b> (selisih total stream awal vs akhir bulan) dari riwayat lagu di data/spotify-tracks.json (Spotify Charts via kworb, direkam per jam) — karena Spotify tidak mempublikasi angka “pendengar bulanan” per album/lagu, stream baru adalah ukuran resmi terdekat. Lagu yang tidak punya rekaman sebelum &amp; sesudah bulan itu tidak bisa dihitung (tampil “—”/absen). Tekan baris lagu untuk membuka grafiknya.</p>
+        <div class="st-als" style="margin-top:12px">${listHTML}</div>
+        <p class="note">Semua angka = <b>total stream kumulatif Spotify</b> dari riwayat lagu di data/spotify-tracks.json (Spotify Charts via kworb — direkam kolektor per jam; titik sebelum kolektor berjalan memakai jangkar arsip komunitas &amp; interpolasi). Kolom <b>+…/hari</b> = kecepatan stream 24 jam terakhir — inilah bentuk "pembaruan pendengar" per album &amp; per lagu, karena Spotify tidak mempublikasi pendengar bulanan per rilisan. Tab <b>Milestone</b> menghitung tanggal album menembus ambang stream (1 juta → 1 miliar; ambang sama dengan sertifikasi streaming KMCA). Tombol <b>Halaman album ›</b> membuka halaman album di dalam situs; tekan baris lagu untuk membuka grafik &amp; milestonenya.</p>
       </div>`;
     }
   }
@@ -8117,6 +8108,9 @@ function renderStatPage(sec) {
     el.addEventListener("click", go);
     el.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
   });
+  sec.querySelectorAll("[data-mltab]").forEach((b) => b.addEventListener("click", () => { statMlUI.tab = b.dataset.mltab; renderAll(); }));
+  const mlsrtEl = sec.querySelector("[data-mlsort]");
+  if (mlsrtEl) mlsrtEl.addEventListener("change", () => { statMlUI.sort = mlsrtEl.value; renderAll(); });
   const kqEl = sec.querySelector("[data-kq]");
   if (kqEl) {
     kqEl.value = statKonserUI.q;
