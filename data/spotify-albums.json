@@ -19,7 +19,7 @@
   "id": "7H2OTxkgjHasQ0M4zo7lY8",
   "name": "BATTER UP -JP Ver.",
   "artistId": "babymonster",
-  "cover": "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02fbbc19bdfa0c01f3bfcd4428",
+  "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02fbbc19bdfa0c01f3bfcd4428",
   "openUrl": "https://open.spotify.com/album/7H2OTxkgjHasQ0M4zo7lY8",
   "releaseDate": "2024-08-16",
   "type": "single",
@@ -35,7 +35,7 @@
   "id": "0eSbsl3j8jz96LC2NCLPc4",
   "name": "BABYMONS7ER",
   "artistId": "babymonster",
-  "cover": "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e024f6afc385052250c766a5683",
+  "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e024f6afc385052250c766a5683",
   "openUrl": "https://open.spotify.com/album/0eSbsl3j8jz96LC2NCLPc4",
   "releaseDate": "2024-04-01",
   "type": "ep",
@@ -76,7 +76,7 @@
   "id": "0OY9cZ5lO1htGmLYC4eX4B",
   "name": "FOREVER",
   "artistId": "babymonster",
-  "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02da2028348097f05b50319402",
+  "cover": "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02da2028348097f05b50319402",
   "openUrl": "https://open.spotify.com/album/0OY9cZ5lO1htGmLYC4eX4B",
   "releaseDate": "2024-07-01",
   "type": "single",
@@ -92,7 +92,7 @@
   "id": "6Lp82GTJXzgtIopT0g7N7k",
   "name": "DRIP",
   "artistId": "babymonster",
-  "cover": "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02119800c5fc88785ee3ed1524",
+  "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02119800c5fc88785ee3ed1524",
   "openUrl": "https://open.spotify.com/album/6Lp82GTJXzgtIopT0g7N7k",
   "releaseDate": "2024-11-01",
   "type": "album",
@@ -195,7 +195,7 @@
   "id": "0aA475GObe8VCZvHRRloxK",
   "name": "Ghost",
   "artistId": "babymonster",
-  "cover": "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02b7bd2fe6ad11b7e66117b84b",
+  "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02b7bd2fe6ad11b7e66117b84b",
   "openUrl": "https://open.spotify.com/album/0aA475GObe8VCZvHRRloxK",
   "releaseDate": "2025-05-07",
   "type": "single",
@@ -303,7 +303,7 @@
   "id": "1VmMG3mtIWHWm618Cwiku7",
   "name": "춤 (CHOOM)",
   "artistId": "babymonster",
-  "cover": "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e020fbcc1d9dc6a647af4ebdfee",
+  "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e020fbcc1d9dc6a647af4ebdfee",
   "openUrl": "https://open.spotify.com/album/1VmMG3mtIWHWm618Cwiku7",
   "releaseDate": "2026-05-04",
   "type": "ep",
@@ -483,7 +483,7 @@
   "id": "1ITJ3AY63eEUnMxZTV735E",
   "name": "THE SECOND STEP : CHAPTER TWO (JP EDITION)",
   "artistId": "treasure",
-  "cover": "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02c8a919391000e864f7cd11af",
+  "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02c8a919391000e864f7cd11af",
   "openUrl": "https://open.spotify.com/album/1ITJ3AY63eEUnMxZTV735E",
   "releaseDate": "2022-11-30",
   "type": "ep",
@@ -524,7 +524,7 @@
   "id": "2Dk2Cj8BBnJngSoOfWjyL9",
   "name": "2ND FULL ALBUM 'REBOOT'",
   "artistId": "treasure",
-  "cover": "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e02a2dfd169018506388953b0d5",
+  "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e02a2dfd169018506388953b0d5",
   "openUrl": "https://open.spotify.com/album/2Dk2Cj8BBnJngSoOfWjyL9",
   "releaseDate": "2023-07-28",
   "type": "album",
@@ -581,6 +581,47 @@
    }
   ]
  },
+ "5mS5Pyn0QRGgYChDMPQGDG": {
+  "id": "5mS5Pyn0QRGgYChDMPQGDG",
+  "name": "REBOOT (JP SPECIAL SELECTION)",
+  "artistId": "treasure",
+  "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e023a9f64498cc0cf9a3ee59415",
+  "openUrl": "https://open.spotify.com/album/5mS5Pyn0QRGgYChDMPQGDG",
+  "releaseDate": "2024-02-21",
+  "type": "ep",
+  "tracks": [
+   {
+    "key": "treasure::letitburn",
+    "title": "LET IT BURN",
+    "duration": 196
+   },
+   {
+    "key": "treasure::bonabona",
+    "title": "BONA BONA - JP Ver.",
+    "duration": 213
+   },
+   {
+    "key": "treasure::move",
+    "title": "MOVE (T5) - JP Ver.",
+    "duration": 208
+   },
+   {
+    "key": "treasure::bomb",
+    "title": "B.O.M.B - JP Ver.",
+    "duration": 201
+   },
+   {
+    "key": "treasure::stupid",
+    "title": "STUPID - JP Ver.",
+    "duration": 180
+   },
+   {
+    "key": "treasure::hereistand",
+    "title": "Here I Stand",
+    "duration": 230
+   }
+  ]
+ },
  "2vdCi7WRcjd2hRzwd4KeQ3": {
   "id": "2vdCi7WRcjd2hRzwd4KeQ3",
   "name": "3rd MINI ALBUM [LOVE PULSE]",
@@ -616,7 +657,7 @@
   "id": "3HHB9GFSCEPXsp0RaaBzzl",
   "name": "SPECIAL JP SELECTION [LOVE PULSE]",
   "artistId": "treasure",
-  "cover": "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e022895e30c890e6afa7fcfa25a",
+  "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e022895e30c890e6afa7fcfa25a",
   "openUrl": "https://open.spotify.com/album/3HHB9GFSCEPXsp0RaaBzzl",
   "releaseDate": "2025-11-10",
   "type": "single",
@@ -684,7 +725,7 @@
   "id": "1ywMenH2z1oYNjAP6FUEdz",
   "name": "TREASURE THE STAGE 2026 NEW WAV : LIVE IN JAPAN",
   "artistId": "treasure",
-  "cover": "https://image-cdn-fa.spotifycdn.com/image/ab67616d00001e025674c37c06176474f873b36d",
+  "cover": "https://image-cdn-ak.spotifycdn.com/image/ab67616d00001e025674c37c06176474f873b36d",
   "openUrl": "https://open.spotify.com/album/1ywMenH2z1oYNjAP6FUEdz",
   "releaseDate": "2026-10-23",
   "type": "live",

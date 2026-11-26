@@ -1,0 +1,242 @@
+{
+ "_info": "Angka MINGGU PERTAMA setelah rilis (total kumulatif sejak MV/lagu tayang) — semua angka nyata dari sumber publik: laporan resmi YG Entertainment (yg-life.com, ygfamily.com), media (Korea Herald, Soompi, NextShark, Korea JoongAng Daily) dan rekap penghitung komunitas di X (@bmspotiify, @TEUMEonSpotify, @treasurecharts_, @koreansales_twt) serta Facebook resmi artis. Field 'window' = jendela waktu PERSIS seperti yang dilaporkan sumbernya (sebagian 7 hari penuh, sebagian lebih pendek). Lagu tanpa laporan minggu pertama dari sumber publik sengaja tidak dimasukkan — tidak ada angka karangan. Array 'jam24' = referensi angka 24 jam pertama (tidak dipakai papan).",
+ "updated": "2026-11-26",
+ "youtube": [
+  {
+   "artist": "babymonster",
+   "song": "SHEEESH",
+   "video": "2wA_b6YHjqQ",
+   "release": "2024-03-31",
+   "views": 80000000,
+   "window": "7 hari 18 jam",
+   "src": "Korea Herald ('80 million views within a week') + rekap komunitas (80 jt pada 7 hari 18 jam); YG resmi: 71 jt dalam 6 hari pertama (yg-life.com, 8 Apr 2024)"
+  },
+  {
+   "artist": "treasure",
+   "song": "IF I",
+   "video": "QERKD90hG98",
+   "release": "2026-06-01",
+   "views": 50000000,
+   "window": "minggu pertama (±7 hari)",
+   "src": "YG Entertainment via ygfamily.com (8 Jun 2026): 'Surpasses 50 Million Views Just a Week After Release'"
+  },
+  {
+   "artist": "babymonster",
+   "song": "WE GO UP",
+   "video": "wlHwjkYpSr0",
+   "release": "2025-10-10",
+   "views": 50000000,
+   "window": "4 hari pertama",
+   "src": "YG Entertainment via yg-life.com (16 Okt 2025): 50 jt dalam 4 hari; 30 jt dalam 3 hari pertama"
+  },
+  {
+   "artist": "babymonster",
+   "song": "BATTER UP",
+   "video": "olDWm2veCrM",
+   "release": "2023-11-26",
+   "views": 50000000,
+   "window": "4 hari pertama",
+   "src": "YG Entertainment via ygfamily.com (20 Jan 2024): MV debut tercepat capai 50 jt (4 hari); NextShark: 50 jt dalam 4 hari 8 jam (1 Des 2023)"
+  },
+  {
+   "artist": "treasure",
+   "song": "PARADISE",
+   "video": "gZNQs3jA7aE",
+   "release": "2025-09-01",
+   "views": 31660000,
+   "window": "minggu pertama",
+   "src": "Rekap komunitas X/Facebook: MV minggu pertama tertinggi TREASURE (sebelum dilampaui IF I, 2026)"
+  },
+  {
+   "artist": "treasure",
+   "song": "JIKJIN",
+   "video": "ZJaKdBBzUYk",
+   "release": "2022-02-15",
+   "views": 31590000,
+   "window": "minggu pertama",
+   "src": "Rekap komunitas X/Facebook; YG resmi: 30 jt dalam 5 hari pertama (yg-life.com, 21 Feb 2022); 20 jt dalam 3 hari (JoongAng Daily)"
+  },
+  {
+   "artist": "treasure",
+   "song": "HELLO",
+   "video": "aPd9exmH17o",
+   "release": "2022-10-04",
+   "views": 30430000,
+   "window": "minggu pertama",
+   "src": "Rekap komunitas X/Facebook"
+  },
+  {
+   "artist": "treasure",
+   "song": "BONA BONA",
+   "video": "gxeyC1cPJsA",
+   "release": "2023-07-28",
+   "views": 23380000,
+   "window": "minggu pertama",
+   "src": "Rekap komunitas X/Facebook"
+  }
+ ],
+ "spotify": [
+  {
+   "artist": "babymonster",
+   "name": "WE GO UP (EP)",
+   "release": "2025-10-10",
+   "streams": 20746628,
+   "window": "minggu pertama",
+   "src": "Rekap Spotify Counter komunitas (Nov 2025) — debut album minggu pertama terbesar gen-5 grup wanita 2025"
+  },
+  {
+   "artist": "treasure",
+   "name": "REBOOT",
+   "release": "2023-09-16",
+   "streams": 19705719,
+   "window": "minggu pertama",
+   "src": "@TEUMEonSpotify (X): debut album minggu pertama terbesar TREASURE"
+  },
+  {
+   "artist": "babymonster",
+   "name": "춤 (CHOOM) (EP)",
+   "release": "2026-05-04",
+   "streams": 17516554,
+   "window": "minggu pertama",
+   "src": "Rekap komunitas (Reddit r/kpopthoughts) — debut mingguan album terbesar gen-5 grup wanita 2026"
+  },
+  {
+   "artist": "treasure",
+   "name": "THE SECOND STEP : CHAPTER ONE",
+   "release": "2022-02-15",
+   "streams": 10208872,
+   "window": "minggu pertama",
+   "src": "@TEUMEonSpotify (X): peringkat #2 debut album minggu pertama TREASURE"
+  },
+  {
+   "artist": "treasure",
+   "name": "LOVE PULSE",
+   "release": "2025",
+   "streams": 7386509,
+   "window": "minggu pertama",
+   "src": "@TEUMEonSpotify (X): debut album ke-5 terbesar TREASURE, melampaui PLEASURE (±7,1 jt)"
+  },
+  {
+   "artist": "babymonster",
+   "name": "DRIP (album)",
+   "release": "2024-11-01",
+   "streams": 5089018,
+   "window": "±20 jam pertama",
+   "src": "World Music Awards (X) & Reddit r/BABYMONSTER: 5.089.018 stream dalam 20 jam pertama penghitungan"
+  }
+ ],
+ "jam24": [
+  {
+   "artist": "babymonster",
+   "song": "SHEEESH",
+   "views": 24411874,
+   "window": "24 jam pertama",
+   "src": "Facebook resmi BABYMONSTER/YG: 24.411.874 views — terbanyak MV K-pop 2024 dalam 24 jam"
+  },
+  {
+   "artist": "babymonster",
+   "song": "BATTER UP",
+   "views": 22590000,
+   "window": "24 jam pertama",
+   "src": "Korea JoongAng Daily / YG: 22,59 jt — terbanyak MV debut K-pop grup saat itu"
+  },
+  {
+   "artist": "babymonster",
+   "song": "DESERVE",
+   "views": 12000000,
+   "window": "24 jam pertama",
+   "src": "Facebook resmi BABYMONSTER: '12 Million Views in just 24 hours'"
+  },
+  {
+   "artist": "babymonster",
+   "song": "DRIP",
+   "views": 18000000,
+   "window": "24 jam pertama",
+   "src": "@koreansales_twt (X): 18 jt views + 1 jt likes dalam 24 jam pertama"
+  },
+  {
+   "artist": "babymonster",
+   "song": "WE GO UP",
+   "views": 10200000,
+   "window": "24 jam pertama",
+   "src": "ItsPopData: MV 10,2 jt views + 656 rb likes dalam 24 jam pertama"
+  },
+  {
+   "artist": "babymonster",
+   "song": "HOT SAUCE",
+   "views": 7920000,
+   "window": "24 jam pertama",
+   "src": "YG Entertainment via media (2 Jul 2025): melampaui 7,92 jt di chart 24 jam YouTube"
+  },
+  {
+   "artist": "babymonster",
+   "song": "CHOOM (춤)",
+   "views": 14000000,
+   "window": "12 jam pertama",
+   "src": "YG Entertainment via yg-life.com (6 Mei 2026): 14 jt dalam setengah hari"
+  },
+  {
+   "artist": "treasure",
+   "song": "JIKJIN",
+   "views": 11320000,
+   "window": "24 jam pertama",
+   "src": "@teuverschart / @asahiflare (X): rekap MV TREASURE 24 jam pertama"
+  },
+  {
+   "artist": "treasure",
+   "song": "BOY",
+   "views": 9180000,
+   "window": "24 jam pertama",
+   "src": "@teuverschart (X) + @SerieTV46 (X): 9,1-9,18 jt dalam 24 jam pertama"
+  },
+  {
+   "artist": "treasure",
+   "song": "BONA BONA",
+   "views": 8450000,
+   "window": "24 jam pertama",
+   "src": "@teuverschart (X)"
+  },
+  {
+   "artist": "treasure",
+   "song": "IF I",
+   "views": 8330000,
+   "window": "24 jam pertama",
+   "src": "@teuverschart (X); @treasurecharts_: 100 rb views dalam 10 menit pertama"
+  },
+  {
+   "artist": "treasure",
+   "song": "HELLO",
+   "views": 7760000,
+   "window": "24 jam pertama",
+   "src": "@teuverschart (X)"
+  },
+  {
+   "artist": "treasure",
+   "song": "MMM (음)",
+   "views": 5400000,
+   "window": "24 jam pertama",
+   "src": "Rekap komunitas (Nov 2020): 5,4 jt dalam 24 jam pertama"
+  },
+  {
+   "artist": "treasure",
+   "song": "KING KONG",
+   "views": 5290000,
+   "window": "24 jam pertama",
+   "src": "@teuverschart (X)"
+  },
+  {
+   "artist": "treasure",
+   "song": "MY TREASURE",
+   "views": 5100000,
+   "window": "24 jam pertama",
+   "src": "@teuverschart (X)"
+  },
+  {
+   "artist": "treasure",
+   "song": "MOVE (T5)",
+   "views": 4780000,
+   "window": "24 jam pertama",
+   "src": "@teuverschart (X)"
+  }
+ ]
+}

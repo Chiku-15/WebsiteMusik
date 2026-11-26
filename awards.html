@@ -1077,6 +1077,7 @@
   .hlmain{flex:1;min-width:0}
   .hlmain b{display:block;font-size:12.5px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .hlgrp{display:inline-flex;align-items:center;gap:5px;font-size:9.5px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--gc,#6a78ff);margin-top:3px}
+  .hlgrp + .sub{margin-left:7px}
   .hlgrp i{width:6px;height:6px;border-radius:50%;background:var(--gc,#6a78ff);flex:none}
   .hlval{flex:none;font-size:11px;font-weight:800;color:var(--muted);text-align:right;white-space:nowrap}
   .ber-hlempty{font-size:11.5px;color:var(--muted);font-weight:600;background:var(--card);border:1px dashed var(--border);border-radius:12px;padding:14px 12px;text-align:center}
@@ -1969,7 +1970,7 @@ async function fetchAny(paths, bust) {
 
 async function loadData() {
   const bust = "?v=" + Date.now();
-  const [cfg, vids, chans, meta, ms, memb, trofi, jadwal, spPop, social, charts, chHist, news, anoms, mama, mamaPrev] = await Promise.all([
+  const [cfg, vids, chans, meta, ms, memb, trofi, jadwal, spPop, social, charts, chHist, news, anoms, mama, mamaPrev, ytmusic, minggu1] = await Promise.all([
     fetch("config.json" + bust).then((r) => r.json()),
     fetch("data/videos.json" + bust).then((r) => r.json()).catch(() => ({})),
     fetch("data/channels.json" + bust).then((r) => r.json()).catch(() => ({})),
@@ -1986,11 +1987,14 @@ async function loadData() {
     fetch("data/anomalies.json" + bust).then((r) => r.json()).catch(() => null),
     fetch("data/mama.json" + bust).then((r) => r.json()).catch(() => null),
     fetch("data/mama-2025.json" + bust).then((r) => r.json()).catch(() => null),
+    fetchAny(["data/ytmusic.json", "ytmusic.json"], bust),
+    fetchAny(["data/minggu-pertama.json", "minggu-pertama.json"], bust),
   ]);
   state.config = cfg; state.videos = vids; state.channels = chans; state.meta = meta;
   state.milestones = ms.videos || {};
   state.members = memb; state.trofi = trofi; state.jadwal = jadwal; state.spPop = spPop;
   state.social = social; state.charts = charts; state.chartHist = chHist; state.news = news; state.anoms = anoms; state.mama = mama;
+  state.ytmusic = ytmusic; state.minggu1 = minggu1 || {};
   /* edisi MAMA lampau (2020-2025): mama-2025.json di-load saat boot; 2020-2024 di-load saat
    * pertama dipilih lewat dropdown AWARDS (ensureMamaEdition) lalu dicache di state.mamaHist */
   if (mama && !mama.srcYear) mama.srcYear = "2026";
@@ -2374,13 +2378,14 @@ function renderBerandaPage(sec) {
   const vids = allVideosFlat();
   const grpPill = (name, color) => `<span class="hlgrp" style="--gc:${esc(color || "#6a78ff")}"><i></i>${esc(name || "–")}</span>`;
   const top3V = vids.filter((v) => lastV(v) > 0).sort((a, b) => lastV(b) - lastV(a)).slice(0, 3);
-  /* views MV terbanyak dalam 1 minggu — selisih views vs titik ~7 hari lalu (bukan rate/hari) */
-  const d7v = (v) => { const d = deltaDays(v.history, 7); return d ? Math.max(0, d.delta) : 0; };
-  const top3H = vids.map((v) => ({ v, d: d7v(v) })).sort((a, b) => b.d - a.d || lastV(b.v) - lastV(a.v)).filter((x) => x.d > 0).slice(0, 3);
+  /* minggu pertama setelah rilis — angka publik nyata dari data/minggu-pertama.json
+   * (laporan resmi YG/media + rekap penghitung komunitas di X), bukan lagi selisih 7 hari berjalan */
+  const m1 = state.minggu1 || {};
+  const m1yt = Array.isArray(m1.youtube) ? m1.youtube.slice().sort((a, b) => (b.views || 0) - (a.views || 0)) : [];
+  const m1sp = Array.isArray(m1.spotify) ? m1.spotify.slice().sort((a, b) => (b.streams || 0) - (a.streams || 0)) : [];
+  const m1aOf = (id) => artistOf(id) || {};
   const top3T = spLoaded && (state.sp.vers || []).length ? [...state.sp.vers].sort((a, b) => b.total - a.total).slice(0, 3) : [];
   /* stream Spotify terbanyak dalam 1 minggu — selisih total stream lagu vs titik ~7 hari lalu */
-  const top3W = spLoaded ? Object.values(state.sp.tracks || {}).map((t) => ({ t, d: spWeekDelta(t) }))
-    .filter((x) => x.d > 0).sort((a, b) => b.d - a.d || spTrackTotal(b.t) - spTrackTotal(a.t)).slice(0, 3) : [];
   const hlCol = (ico, color, title, rows) => `
     <div class="ber-hlcol" style="--hc:${color}">
       <div class="ber-hlchead"><span class="sic" style="--c:${color}"><svg viewBox="0 0 24 24"><path d="${ico}"/></svg></span>${title}</div>
@@ -2394,13 +2399,16 @@ function renderBerandaPage(sec) {
       <div class="hlmain"><b>${esc(rowTitleOf(v, v.art))}</b>${grpPill(v.art.name, v.art.color)}</div>
       <span class="hlval">${fmtCompact(lastV(v))} views</span>
     </div>`).join("")));
-  hl.push(hlCol(ICO_STATS, "#ff8a3d", "Views MV terbanyak 7 hari", top3H.map(({ v, d }, i) => `
-    <div class="ber-hlrow" data-id="${esc(v.id)}" tabindex="0" role="button" aria-label="Buka grafik ${esc(rowTitleOf(v, v.art))}">
+  hl.push(hlCol(ICO_STATS, "#ff8a3d", "MV minggu pertama terbanyak", m1yt.slice(0, 3).map((r, i) => {
+    const ar = m1aOf(r.artist);
+    return `
+    <div class="ber-hlrow"${r.video ? ` data-id="${esc(r.video)}"` : ` style="cursor:default"`} tabindex="0" role="button" aria-label="Buka grafik ${esc(r.song)}">
       <span class="hlrank">${i + 1}</span>
-      <img src="https://i.ytimg.com/vi/${esc(v.id)}/mqdefault.jpg" alt="" loading="lazy">
-      <div class="hlmain"><b>${esc(rowTitleOf(v, v.art))}</b>${grpPill(v.art.name, v.art.color)}</div>
-      <span class="hlval">+${fmtCompact(d)} views</span>
-    </div>`).join("")));
+      ${r.video ? `<img src="https://i.ytimg.com/vi/${esc(r.video)}/mqdefault.jpg" alt="" loading="lazy">` : `<div class="hlph">▶</div>`}
+      <div class="hlmain"><b>${esc(r.song)}</b>${grpPill(ar.name, ar.color)}<span class="sub" style="font-size:11px">${esc(r.window)} setelah rilis${r.release ? ` · ${esc(r.release)}` : ""}</span></div>
+      <span class="hlval">${fmtCompact(r.views)} views</span>
+    </div>`;
+  }).join("")));
   hl.push(hlCol(ICO_SP_TROPHY, "#1ed760", "Lagu paling di-stream", top3T.map((t, i) => {
     const ar = spArtistOf(t.artistId) || {};
     return `
@@ -2411,14 +2419,33 @@ function renderBerandaPage(sec) {
       <span class="hlval">${fmtCompact(t.total)} stream</span>
     </div>`;
   }).join("")));
-  hl.push(hlCol(ICO_FIRE, "#1ed760", "Stream Spotify terbanyak 7 hari", top3W.map(({ t, d }, i) => {
-    const ar = spArtistOf(t.artistId) || {};
+  hl.push(hlCol(ICO_FIRE, "#1ed760", "Spotify minggu pertama terbanyak", m1sp.slice(0, 3).map((r, i) => {
+    const ar = m1aOf(r.artist);
     return `
-    <div class="ber-hlrow" data-spk="${esc(t.key)}" tabindex="0" role="button" aria-label="Buka grafik ${esc(t.name)}">
+    <div class="ber-hlrow" style="cursor:default" title="${esc(r.src || "")}">
       <span class="hlrank">${i + 1}</span>
-      ${t.cover ? `<img src="${esc(t.cover)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : `<div class="hlph">♪</div>`}
-      <div class="hlmain"><b>${esc(t.name)}</b>${grpPill(ar.name, ar.color)}</div>
-      <span class="hlval">+${fmtCompact(d)} stream</span>
+      <div class="hlph">♪</div>
+      <div class="hlmain"><b>${esc(r.name)}</b>${grpPill(ar.name, ar.color)}<span class="sub" style="font-size:11px">${esc(r.window)}${r.release ? ` · ${esc(r.release)}` : ""}</span></div>
+      <span class="hlval">${fmtCompact(r.streams)} stream</span>
+    </div>`;
+  }).join("")));
+  /* papan YT Music — per versi resmi (angka = views video yang sama di YouTube) + versi minggu pertama */
+  const ytmParts = (state.ytmusic && state.ytmusic.artists) ? Object.keys(state.ytmusic.artists).flatMap((id) => (((state.ytmusic.artists[id] || {}).songs) || []).flatMap((s) => (s.parts || []).map((p) => ({ ...p, _song: s.song, _ar: artistOf(id) || {} })))) : [];
+  hl.push(hlCol(ICO_RANK, "#a78bfa", "YT Music paling banyak diputar", ytmParts.slice().sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 3).map((p, i) => `
+    <div class="ber-hlrow" data-id="${esc(p.id)}" tabindex="0" role="button" aria-label="Buka grafik ${esc(p._song)} — ${esc(p.title)}">
+      <span class="hlrank">${i + 1}</span>
+      <img src="https://i.ytimg.com/vi/${esc(p.id)}/mqdefault.jpg" alt="" loading="lazy">
+      <div class="hlmain"><b>${esc(p._song)} — ${esc(p.title)}</b>${grpPill(p._ar.name, p._ar.color)}</div>
+      <span class="hlval">${fmtCompact(p.views)} views</span>
+    </div>`).join("")));
+  hl.push(hlCol(ICO_CAL, "#38bdf8", "YT Music minggu pertama terbanyak", m1yt.slice(0, 3).map((r, i) => {
+    const ar = m1aOf(r.artist);
+    return `
+    <div class="ber-hlrow"${r.video ? ` data-id="${esc(r.video)}"` : ` style="cursor:default"`} tabindex="0" role="button" aria-label="Buka grafik ${esc(r.song)}">
+      <span class="hlrank">${i + 1}</span>
+      ${r.video ? `<img src="https://i.ytimg.com/vi/${esc(r.video)}/mqdefault.jpg" alt="" loading="lazy">` : `<div class="hlph">▶</div>`}
+      <div class="hlmain"><b>${esc(r.song)} — M/V</b>${grpPill(ar.name, ar.color)}<span class="sub" style="font-size:11px">${esc(r.window)} setelah rilis · versi M/V</span></div>
+      <span class="hlval">${fmtCompact(r.views)} views</span>
     </div>`;
   }).join("")));
   /* teaser berita — 4 teratas dari data/news.json (kolektor RSS) — dengan foto artikel */
@@ -2468,6 +2495,7 @@ function renderBerandaPage(sec) {
     <div class="ber-artists">${state.config.artists.map((a) => berArtistCard(a, artPlat)).join("")}</div>
     ${featSectHead("#38bdf8", ICO_TROPHY, "Sorotan hari ini", "top 3 tiap kategori lintas platform — nama grup di tiap baris, klik untuk grafik &amp; detail")}
     <div class="ber-hl3">${hl.join("")}</div>
+    <p class="note">Papan <b>minggu pertama</b> memakai angka publik nyata dari <b>data/minggu-pertama.json</b> — laporan resmi YG Entertainment &amp; media (Korea Herald, Soompi, yg-life) plus rekap penghitung komunitas di X (@bmspotiify, @TEUMEonSpotify) dan Facebook resmi artis. Jendela waktu tiap baris persis seperti yang dilaporkan sumbernya — sebagian minggu penuh, sebagian lebih pendek (mis. 50 jt dalam 4 hari pertama) dan itu tertera di barisnya. Angka <b>YT Music</b> = views video resmi yang sama dengan YouTube, karena YT Music memutar video resmi lagu. Lagu tanpa laporan minggu pertama dari sumber publik tidak muncul di papan.</p>
     ${featSectHead("#ffb02e", ICO_GRID, "Jelajahi fitur pilihan", "kartu terpilih — seluruh 20 fitur situs ada di halaman Fitur (tombol di samping Beranda)")}
     <div class="obgrid">${berDefs.map(featCardHTML).join("")}
     </div>
