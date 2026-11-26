@@ -1,0 +1,262 @@
+{
+ "_info": "Top lagu di YouTube Music — total views GABUNGAN seluruh versi video resmi lagu di YouTube (YouTube Music memutar video resmi lagu, jadi jumlah views seluruh versinya adalah proksi putaran lagu). Semua angka dipindai langsung dari halaman YouTube pada 26 Nov 2026. FIELD id = video YouTube resmi masing-masing versi (kanal BABYMONSTER/TREASURE/Mnet K-POP/THE FIRST TAKE/it's Live — id diverifikasi judul+kanal+views 26 Nov 2026). Kolektor GitHub Actions (collect_music.js) memperbarui views tiap id otomatis per jam via YouTube Data API videos.list (±1 unit/run) — data 26 Nov 2026 tidak lagi snapshot manual.",
+ "updated": "2026-11-26",
+ "captured": "2026-11-26",
+ "rule": "M/V + video performa resmi + THE FIRST TAKE + Band LIVE (it's Live) + panggung comeback/debut Mnet (1 video) + versi Japanese M/V",
+ "artists": {
+  "babymonster": {
+   "songs": [
+    {
+     "song": "DRIP",
+     "views": 739144489,
+     "n": 4,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 424593870,
+       "id": "Zp-Jhuhq0bQ"
+      },
+      {
+       "title": "Performance Video",
+       "views": 215651877,
+       "id": "cxhqqpVk65Q"
+      },
+      {
+       "title": "Special Performance Video",
+       "views": 27208547,
+       "id": "IApenpQjcuI"
+      },
+      {
+       "title": "THE FIRST TAKE",
+       "views": 71690195,
+       "id": "06mCrMgv0zY"
+      }
+     ]
+    },
+    {
+     "song": "SHEESH",
+     "views": 710298753,
+     "n": 5,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 427152466,
+       "id": "2wA_b6YHjqQ"
+      },
+      {
+       "title": "Performance Video",
+       "views": 241076824,
+       "id": "kOanBE5Wg24"
+      },
+      {
+       "title": "THE FIRST TAKE",
+       "views": 10283707,
+       "id": "O99aP4AvEF8"
+      },
+      {
+       "title": "Band LIVE (it's Live)",
+       "views": 20686856,
+       "id": "FpOzMBwjSK0"
+      },
+      {
+       "title": "Panggung debut Mnet M COUNTDOWN",
+       "views": 11098900,
+       "id": "DJN7Jr4FPeA"
+      }
+     ]
+    },
+    {
+     "song": "WE GO UP",
+     "views": 458355036,
+     "n": 4,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 230562872,
+       "id": "wlHwjkYpSr0"
+      },
+      {
+       "title": "Exclusive Performance Video",
+       "views": 204024606,
+       "id": "o9V8HrgJgIg"
+      },
+      {
+       "title": "THE FIRST TAKE",
+       "views": 16285358,
+       "id": "a0bc6Ownyt0"
+      },
+      {
+       "title": "Panggung comeback Mnet M COUNTDOWN",
+       "views": 7482200,
+       "id": "9gh7Lt7tdj8"
+      }
+     ]
+    },
+    {
+     "song": "FOREVER",
+     "views": 372609859,
+     "n": 4,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 273210823,
+       "id": "eJCHKjt0MPw"
+      },
+      {
+       "title": "Dance Performance Video",
+       "views": 77715998,
+       "id": "tDt7X6coxvs"
+      },
+      {
+       "title": "Band LIVE (it's Live)",
+       "views": 16643590,
+       "id": "TQfC0xdpiw4"
+      },
+      {
+       "title": "Panggung comeback Mnet M COUNTDOWN",
+       "views": 5039448,
+       "id": "AER_w-8HUMQ"
+      }
+     ]
+    },
+    {
+     "song": "HOT SAUCE",
+     "views": 212650784,
+     "n": 3,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 181248792,
+       "id": "xn8mQqz2xmM"
+      },
+      {
+       "title": "Performance Video (M/V White ver.)",
+       "views": 27210931,
+       "id": "4iw45qO3OsE"
+      },
+      {
+       "title": "Panggung comeback Mnet M COUNTDOWN",
+       "views": 4191061,
+       "id": "QQQLDjLufNo"
+      }
+     ]
+    }
+   ]
+  },
+  "treasure": {
+   "songs": [
+    {
+     "song": "직진 (JIKJIN)",
+     "views": 178733462,
+     "n": 3,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 155848779,
+       "id": "ZJaKdBBzUYk"
+      },
+      {
+       "title": "Dance Performance Video",
+       "views": 18688002,
+       "id": "Q5SIYzCRRv4"
+      },
+      {
+       "title": "Panggung comeback Mnet M COUNTDOWN",
+       "views": 4196681,
+       "id": "fyioZj6Acf0"
+      }
+     ]
+    },
+    {
+     "song": "BOY",
+     "views": 135535250,
+     "n": 2,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 130039889,
+       "id": "JSAfPh1A25E"
+      },
+      {
+       "title": "Special Performance Video",
+       "views": 5495361,
+       "id": "EKHd0OgwabY"
+      }
+     ]
+    },
+    {
+     "song": "사랑해 (I LOVE YOU)",
+     "views": 135501958,
+     "n": 3,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 122396449,
+       "id": "_hFarg-Obuc"
+      },
+      {
+       "title": "Special Performance Video",
+       "views": 8589690,
+       "id": "g2i5hKKMaS0"
+      },
+      {
+       "title": "M/V versi Japanese",
+       "views": 4515819,
+       "id": "oLstWoMF4Pc"
+      }
+     ]
+    },
+    {
+     "song": "HELLO",
+     "views": 109407505,
+     "n": 4,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 97345471,
+       "id": "aPd9exmH17o"
+      },
+      {
+       "title": "Special Performance Video",
+       "views": 5908471,
+       "id": "nDhIZIGz0xo"
+      },
+      {
+       "title": "Panggung comeback Mnet M COUNTDOWN",
+       "views": 3755733,
+       "id": "Y-D5r7U7nUs"
+      },
+      {
+       "title": "M/V versi Japanese",
+       "views": 2397830,
+       "id": "v3SQVaG7ej0"
+      }
+     ]
+    },
+    {
+     "song": "음 (MMM)",
+     "views": 90771017,
+     "n": 3,
+     "parts": [
+      {
+       "title": "M/V",
+       "views": 72858175,
+       "id": "RjbNMogQw8s"
+      },
+      {
+       "title": "Dance Performance Video (SPACE SET ver.)",
+       "views": 9061174,
+       "id": "GCPK6u39ZK0"
+      },
+      {
+       "title": "Dance Performance Video (HALLOWEEN ver.)",
+       "views": 8851668,
+       "id": "HBzzYDSDI-U"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "auto": "views di file ini diperbarui otomatis per jam oleh GitHub Actions (kolektor collect_music.js) dari YouTube Data API; jumlah = total seluruh versi resmi tiap lagu"
+}

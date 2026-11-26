@@ -1385,7 +1385,7 @@
     <button class="tab berandatab" id="berandaTab" title="Buka halaman BERANDA — garis besar seluruh situs dalam satu halaman" style="flex:none">Beranda</button>
     <button class="tab fiturtab" id="fiturTab" title="Buka halaman Semua Fitur — peta seluruh fitur situs dalam bentuk kartu" style="flex:none">Fitur</button>
     <button class="tab awardstab" id="awardsTab" title="Buka halaman MAMA — chart panggung MAMA 2020–2026 (views seluruh video panggung resmi Mnet)" style="flex:none">MAMA</button>
-    <button class="tab statstab" id="statTab" title="Buka halaman STATS — milestone karier BABYMONSTER &amp; TREASURE + pembaruan penjualan album Circle" style="flex:none">Stats</button>
+    <button class="tab statstab" id="statTab" title="Buka halaman STATS — milestone karier BABYMONSTER &amp; TREASURE + Top 10, YT Music, Shows, konser, live stages, sertifikasi &amp; pembaruan album/pendengar" style="flex:none">Stats</button>
     <button class="tab bantuantab" id="bantuanTab" title="Buka halaman Bantuan — cara kerja situs, sumber data &amp; arti tanda" style="flex:none">Bantuan</button>
     <div class="spacer"></div>
     <div class="hbtns">
@@ -1835,7 +1835,7 @@ const state = {
   awardsLines: (function () { try { return localStorage.getItem("py.awlines") !== "0"; } catch { return true; } })(), // dropdown “Garis kolab” — TAMPIL (default) atau SEMBUNYI garis berwarna panggung kolaborasi + legenda warna di grafik
   statOpen: false,        // halaman STATS — milestone karier BM & TREASURE + pembaruan penjualan album Circle
   statArt: "babymonster", // artis aktif halaman STATS: "babymonster" | "treasure"
-  statTab: "mv",          // tab STATS: "mv" (Top 5 M/Vs) | "sp" (Top 5 Spotify) | "album" (Pembaruan Album Circle)
+  statTab: "mv",          // tab STATS: "mv" | "sp" | "ytm" | "shows" | "konser" | "live" | "cert" | "album" | "ml"
   statYear: null,         // tahun terpilih di Pembaruan Album (null = tahun bulan terbaru yang berdata)
   statMonth: null,        // bulan terpilih 1-12 (null = bulan terbaru yang berdata)
   awardsYear: (function () { try { const v = localStorage.getItem("py.awyear"); return v && /^202[0-6]$/.test(v) ? v : "2026"; } catch { return "2026"; } })(), // edisi MAMA yang tampil di AWARDS: "2026" | "2025" | ... | "2020"
@@ -1975,7 +1975,7 @@ async function fetchAny(paths, bust) {
 
 async function loadData() {
   const bust = "?v=" + Date.now();
-  const [cfg, vids, chans, meta, ms, memb, trofi, jadwal, spPop, social, charts, chHist, news, anoms, mama, mamaPrev, career, circle] = await Promise.all([
+  const [cfg, vids, chans, meta, ms, memb, trofi, jadwal, spPop, social, charts, chHist, news, anoms, mama, mamaPrev, career, circle, konser, ytmusic, livestage] = await Promise.all([
     fetch("config.json" + bust).then((r) => r.json()),
     fetch("data/videos.json" + bust).then((r) => r.json()).catch(() => ({})),
     fetch("data/channels.json" + bust).then((r) => r.json()).catch(() => ({})),
@@ -1994,9 +1994,13 @@ async function loadData() {
     fetch("data/mama-2025.json" + bust).then((r) => r.json()).catch(() => null),
     fetchAny(["data/career.json", "career.json"], bust),
     fetchAny(["data/circle.json", "circle.json"], bust),
+    fetchAny(["data/konser.json", "konser.json"], bust),
+    fetchAny(["data/ytmusic.json", "ytmusic.json"], bust),
+    fetchAny(["data/livestage.json", "livestage.json"], bust),
   ]);
   state.config = cfg; state.videos = vids; state.channels = chans; state.meta = meta;
   state.career = career; state.circle = circle;
+  state.konser = konser; state.ytmusic = ytmusic; state.livestage = livestage;
   state.milestones = ms.videos || {};
   state.members = memb; state.trofi = trofi; state.jadwal = jadwal; state.spPop = spPop;
   state.social = social; state.charts = charts; state.chartHist = chHist; state.news = news; state.anoms = anoms; state.mama = mama;
@@ -2280,7 +2284,7 @@ function openStat() {
 function featDefs(isSp) {
   return [
     ["chn", "#ef4444", ICO_STATS, "Statistik Channel", "subscriber · views · pendengar bulanan — dropdown YouTube &amp; Spotify"],
-    ["stat", "#ff4d6d", ICO_GRID, "Stats Karier", "dropdown BM · TREASURE · gabungan — 10 kartu karier &amp; 9 tampilan: Top 10, rekor chart, trofi, sertifikasi, album &amp; pendengar"],
+    ["stat", "#ff4d6d", ICO_GRID, "Stats Karier", "dropdown BM · TREASURE · gabungan — 10 kartu karier &amp; 9 tampilan: Top 10 M/V, Top 10 Spotify, YT Music, Shows, All konser, Live Stages, sertifikasi, album &amp; pendengar"],
     ["bul", "#06b6d4", ICO_CAL, "Rekap 12 bulan", "view YouTube &amp; pendengar Spotify Januari–Desember per tahun"],
     ["heat", hmAccent(state.platform), HM_ICO, "Peta panas harian", "view/stream baru tiap hari dalam setahun · bisa per artis"],
     ["rec", "#ffb02e", ICO_TROPHY, "Rekor &amp; Fakta", "rekor sepanjang situs berjalan — tercepat &amp; terbesar"],
@@ -7641,11 +7645,48 @@ function renderDuelPage(sec) {
 
 /* ===================== HALAMAN STATS KARIER (Stats) =====================
  * Dropdown tiga pilihan (BABYMONSTER / TREASURE / Semua artis = gabungan) + 10 kartu identik
- * + 9 tab gaya baechella: Top 10 M/V YouTube, Top 10 Spotify, Top 10 Performance, rekor chart,
- * trofi, sertifikasi, konser & tur, Pembaruan album (Circle) + Pembaruan pendengar (per bulan).
- * Kartu yt/subs/sp/follow/spark/ig/trophy dihitung LIVE dari data kolektor situs; kartu
- * lain dari data/career.json; panel album dari data/circle.json; panel pendengar dari
- * data/spotify-artists.json (angka bulanan nyata; bulan tanpa catatan = “—”). */
+ * + 9 tab gaya baechella: Top 10 M/V YouTube, Top 10 Spotify, Top 5 YT Music, Top 5 Shows,
+ * All konser, Top 5 Live Stages, Sertifikasi (+ penjelasan ambang KMCA/RIAJ), Pembaruan album
+ * (Circle) + Pembaruan pendengar (per bulan, rincian per album & per lagu).
+ * Kartu yt/subs/sp/follow/spark/ig/trophy dihitung LIVE dari data kolektor situs; kartu lain
+ * dari data/career.json; YT Music dari data/ytmusic.json; shows & all konser dari
+ * data/konser.json; live stages dari data/livestage.json; panel album dari data/circle.json;
+ * panel pendengar dari data/spotify-artists.json + riwayat stream kworb (per album/lagu). */
+/* ---------- helper tab konser — state UI disimpan di modul (bukan state pusat) supaya
+ * pilihan cari/wilayah/urutan tidak hilang saat daftar dirender ulang ---------- */
+const statKonserUI = { q: "", region: "all", sort: "date" };
+function statKonserStops(ids) {
+  const kk = (state.konser && state.konser.artists) || null;
+  if (!kk) return [];
+  return ids.map((id) => {
+    const ar = artistOf(id) || { name: id, color: "#8b5cf6" };
+    return ((((kk[id] || {}).tours) || []) || []).flatMap((t) => (t.stops || []).map((s) => ({ ...s, _ar: ar, _tour: t.name, _type: t.type })));
+  }).flat();
+}
+function statKonserRows(stops) {
+  const today = new Date().toISOString().slice(0, 10);
+  const q = statKonserUI.q.trim().toLowerCase();
+  const rows = stops.filter((s) => {
+    if (statKonserUI.region !== "all" && (s.region || "Lainnya") !== statKonserUI.region) return false;
+    if (!q) return true;
+    const hay = [s._tour, s.venue, s.city, s.country, s.note].map((x) => String(x || "").toLowerCase()).join(" ");
+    return hay.includes(q);
+  });
+  const dkey = (s) => s.date || (s.end || "").slice(0, 10) || "9999";
+  if (statKonserUI.sort === "att") rows.sort((a, b) => (b.attendance || -1) - (a.attendance || -1) || dkey(a).localeCompare(dkey(b)));
+  else if (statKonserUI.sort === "new") rows.sort((a, b) => dkey(b).localeCompare(dkey(a)) || String(b._tour || "").localeCompare(String(a._tour || "")));
+  else rows.sort((a, b) => dkey(a).localeCompare(dkey(b)) || String(a._tour || "").localeCompare(String(b._tour || "")));
+  return rows.map((s) => {
+    const fut = s.date ? s.date >= today : true;
+    const att = s.attendance != null ? fmtExact(s.attendance) + (s.est ? ` <span class="cellno">±</span>` : "") + ` penonton` : `<span style="color:var(--muted);font-weight:600">tidak dilaporkan</span>`;
+    const per = s.date ? fmtDate(s.date) + (s.end && s.end !== s.date ? " – " + fmtDate(s.end) : "") : "—";
+    return `<div class="st-alrow" style="--ac:${esc(s._ar.color || "#8b5cf6")}${fut ? "" : ";opacity:.62"}" title="${esc(s.src || "")}${s.note ? " — " + esc(s.note) : ""}">
+      <span class="st-alnum">${esc(per)}</span>
+      <div class="st-almain"><b>${esc(s.venue || s.city || "–")}</b><span>${esc(s._tour)}${s.city ? " · " + esc(s.city) : ""}${s.country ? ", " + esc(s.country) : ""}${s.nights && s.nights > 1 ? " · " + s.nights + " malam" : ""}${fut && s.date ? " · AKAN DATANG" : ""}</span></div>
+      <div class="st-alval"><b>${att}</b><span class="sub">${esc(s._ar.name || "")}</span></div>
+    </div>`;
+  }).join("");
+}
 function statLiveVal(icon, artId) {
   /* mode "all" = gabungan BABYMONSTER + TREASURE (dijumlahkan) */
   const ids = artId === "all" ? ["babymonster", "treasure"] : [artId];
@@ -7729,10 +7770,10 @@ function renderStatPage(sec) {
       ${c.src ? `<div class="src" title="${esc(c.src)}">Sumber: ${esc(c.src)}</div>` : ""}
     </div>`;
   }).join("") : "";
-  /* tab gaya baechella — 8 statistik + 1 tab pembaruan pendengar (per bulan) = 9 tab */
+  /* tab gaya baechella — 9 tab: 2 Top 10 + 4 baru (YT Music, Shows, All konser, Live Stages) + sertifikasi + album + pendengar */
   const tabBtn = (k, t) => `<button class="mtab${state.statTab === k ? " active" : ""}" data-stattab="${k}" style="--artist-color:${esc(acol)}" aria-pressed="${state.statTab === k}">${t}</button>`;
-  const tabRow = `<div class="chiprow" style="margin:12px 0 0">${tabBtn("mv", "Top 10 M/V (YouTube)")}${tabBtn("sp", "Top 10 Spotify")}${tabBtn("perf", "Top 10 Performance")}${tabBtn("chart", "Rekor chart")}${tabBtn("trofi", "Trofi &amp; penghargaan")}${tabBtn("cert", "Sertifikasi")}${tabBtn("tour", "Konser &amp; tur")}${tabBtn("album", "Pembaruan album (Circle)")}${tabBtn("ml", "Pembaruan pendengar (per bulan)")}</div>`;
-  if (!["mv", "sp", "perf", "chart", "trofi", "cert", "tour", "album", "ml"].includes(state.statTab)) state.statTab = "mv";
+  const tabRow = `<div class="chiprow" style="margin:12px 0 0">${tabBtn("mv", "Top 10 M/V (YouTube)")}${tabBtn("sp", "Top 10 Spotify")}${tabBtn("ytm", "Top 5 YT Music")}${tabBtn("shows", "Top 5 Shows")}${tabBtn("konser", "All konser")}${tabBtn("live", "Top 5 Live Stages")}${tabBtn("cert", "Sertifikasi")}${tabBtn("album", "Pembaruan album (Circle)")}${tabBtn("ml", "Pembaruan pendengar (per bulan)")}</div>`;
+  if (!["mv", "sp", "ytm", "shows", "konser", "live", "cert", "album", "ml"].includes(state.statTab)) state.statTab = "mv";
   let tabBody = "";
   if (state.statTab === "mv") {
     const vids = allVideosFlat().filter((v) => ids.includes(v.channel) && lastV(v) > 0).sort((a, b) => lastV(b) - lastV(a)).slice(0, 10);
@@ -7761,80 +7802,102 @@ function renderStatPage(sec) {
         <span class="hlval">${fmtCompact(spTrackTotal(t))} stream</span>
       </div>`;
       }).join("") + `</div>` : `<div class="banner">Belum ada lagu Spotify terpantau untuk pilihan ini.</div>`;
-  } else if (state.statTab === "perf") {
-    const vids = allVideosFlat().filter((v) => ids.includes(v.channel) && (v.category === "dance_performance" || v.category === "dance_practice") && lastV(v) > 0).sort((a, b) => lastV(b) - lastV(a)).slice(0, 10);
-    tabBody = vids.length ? `<div class="ppwrap">` + vids.map((v, i) => {
-      const va = artistOf(v.channel) || art;
-      const cat = v.category === "dance_practice" ? "Dance Practice" : "Performance";
-      return `
-      <div class="ber-hlrow" data-id="${esc(v.id)}" style="--hc:${esc(acol)}" tabindex="0" role="button" aria-label="Buka grafik ${esc(rowTitleOf(v, v.art || va))}">
+  } else if (state.statTab === "ytm") {
+    const yt = (state.ytmusic && state.ytmusic.artists) || null;
+    const songs = yt ? ids.map((id) => (((yt[id] || {}).songs) || []).map((s) => ({ ...s, _ar: artistOf(id) || art }))).flat() : [];
+    tabBody = !songs.length ? `<div class="banner">data/ytmusic.json belum termuat — pastikan file itu ada di folder <b>data/</b> di repo.</div>`
+      : `<div class="ppwrap">` + songs.slice().sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5).map((s, i) => `
+      <div class="ber-hlrow" style="--hc:${esc(s._ar.color || acol)};cursor:default" title="Total gabungan ${(s.parts || []).length} versi resmi lagu — aturan: M/V + video performa + THE FIRST TAKE + Band LIVE + panggung Mnet + versi Japanese">
         <span class="hlrank">${i + 1}</span>
-        <img src="https://i.ytimg.com/vi/${esc(v.id)}/mqdefault.jpg" alt="" loading="lazy">
-        <div class="hlmain"><b>${esc(rowTitleOf(v, v.art || va))}</b>${grpPill(va.name, va.color)}</div>
-        <span class="hlval">${fmtCompact(lastV(v))} views <span class="sub" style="font-size:11px">· ${cat}</span></span>
-      </div>`;
-    }).join("") + `</div>` + `<p class="note">Top 10 video performa lagu sendiri yang dipantau situs (Dance Performance / Performance Video / Dance Practice) — tanpa MV, dihitung live dari data/videos.json.</p>` : `<div class="banner">Belum ada video performa yang terekam untuk pilihan ini.</div>`;
-  } else if (state.statTab === "chart") {
-    const rows = ids.map((id) => (((state.chartHist && state.chartHist.artists) || {})[id] || []).map((r) => ({ ...r, _ar: artistOf(id) || art }))).flat();
-    tabBody = rows.length ? `<div class="ppwrap">` + rows.sort((a, b) => ((chaRankNum(a) ?? 999) - (chaRankNum(b) ?? 999)) || (b.date || "").localeCompare(a.date || "")).map((r, i) => `
-      <div class="st-alrow" style="--ac:${esc(r._ar.color || acol)}" title="${esc(r.src || "")}">
-        <span class="st-alnum">${String(i + 1).padStart(2, "0")}</span>
-        <div class="st-almain"><b>${esc(r.song)}</b><span>${esc(r.chart)} · ${esc(r.metric || "puncak")}${r.date ? " · " + esc(r.date) : ""}</span></div>
-        <div class="st-alval"><b>${esc(r.value || "–")}</b><span class="sub">${esc(r._ar.name || "")}</span></div>
-      </div>`).join("") + `</div>` + `<p class="note">Rekor pencapaian chart terverifikasi dari data/chart-history.json (Wikipedia/Billboard/kurasi) — diurut dari posisi terbaik. Histori lengkap per lagu ada di halaman “Peringkat Chart”.</p>` : `<div class="banner">data/chart-history.json belum termuat.</div>`;
-  } else if (state.statTab === "trofi") {
-    const tg = state.trofi && state.trofi.groups;
-    const gser = ids.map((id) => ({ id, g: tg ? tg[id] : null, ar: artistOf(id) || art })).filter((x) => x.g);
-    if (!gser.length) tabBody = `<div class="banner">data/trofi.json belum termuat.</div>`;
+        <div class="hlph" style="font-size:18px">▶</div>
+        <div class="hlmain"><b>${esc(s.song)}</b>${grpPill(s._ar.name, s._ar.color)}<span class="sub" style="font-size:11.5px">gabungan ${(s.parts || []).length} versi resmi: ${esc((s.parts || []).map((p) => p.title + " " + fmtCompact(p.views)).join(" · "))}</span></div>
+        <span class="hlval">${fmtCompact(s.views)} views</span>
+      </div>`).join("") + `</div>` + `<p class="note">Lagu dengan total views terbanyak di YouTube Music — karena YouTube Music memutar <b>video resmi lagu</b>, angkanya = gabungan seluruh versi resmi tiap lagu di YouTube (M/V, video performa, THE FIRST TAKE, Band LIVE it's Live, panggung comeback/debut Mnet, versi Japanese). Setiap versi kini punya id video resmi tersimpan, jadi angkanya <b>diperbarui otomatis per jam</b> oleh GitHub Actions (YouTube Data API) — terakhir diperbarui <b>${esc(fmtDate(state.ytmusic.captured || "2026-11-26"))}</b>. Video praktik dansa, making film &amp; unggahan non-resmi tidak dihitung (aturan lengkap di data/ytmusic.json).</p>`;
+  } else if (state.statTab === "shows") {
+    const stops = statKonserStops(ids).filter((s) => s.attendance != null);
+    if (!stops.length) tabBody = `<div class="banner">Belum ada angka attandance yang dilaporkan untuk pilihan ini — data/konser.json belum termuat, atau sumber resmi belum menerbitkan angkanya.</div>`;
     else {
-      const sum = (f) => gser.reduce((acc, x) => acc + f(x.g), 0);
-      const nWin = sum((g) => (g.wins || []).length);
-      const nAwd = sum((g) => (g.awards || []).filter((a) => a.result === "win").length);
-      const nNom = sum((g) => (g.awards || []).filter((a) => a.result && a.result !== "win").length);
-      const nHot = sum((g) => (g.hotstage || []).length + (g.fanvote || []).length);
-      const winRows = gser.map((x) => (x.g.wins || []).map((w) => `
-      <div class="st-alrow" style="--ac:${esc(x.ar.color || acol)}" title="${esc(w.src || "")}">
-        <span class="st-alnum">${esc(String(w.date || "").slice(0, 4))}</span>
-        <div class="st-almain"><b>${esc(w.song || "–")}</b><span>${esc(w.show || "")}${w.date ? " · " + esc(fmtDate(w.date)) : ""}${w.note ? " — " + esc(w.note) : ""}${artId === "all" ? " · " + esc(x.ar.name || "") : ""}</span></div>
-        <div class="st-alval"><b>MENANG</b><span class="sub">acara musik</span></div>
-      </div>`).join("")).join("");
-      const awdRows = gser.map((x) => (x.g.awards || []).filter((a) => a.result === "win").map((a) => `
-      <div class="st-alrow" style="--ac:${esc(x.ar.color || acol)}" title="${esc(a.src || "")}">
-        <span class="st-alnum">${esc(String(a.date || "").slice(0, 4))}</span>
-        <div class="st-almain"><b>${esc(a.name || "–")}</b><span>${esc(a.cat || "")}${a.date ? " · " + esc(fmtDate(a.date)) : ""}${artId === "all" ? " · " + esc(x.ar.name || "") : ""}</span></div>
-        <div class="st-alval"><b>MENANG</b><span class="sub">penghargaan besar</span></div>
-      </div>`).join("")).join("");
-      tabBody = `
-      <div>
-        <div class="st-mchips" style="--ac:${esc(acol)}">${[["Menang acara musik", nWin], ["Penghargaan besar", nAwd], ["Nominasi besar", nNom], ["Hot Stage / fan vote", nHot]].map(([t, n]) => `<span class="st-mchip on" style="cursor:default">${esc(t)}: <b>${n}</b></span>`).join("")}</div>
-        <div class="st-mtitle" style="margin-top:14px">Daftar kemenangan acara musik</div>
-        <div class="st-als">${winRows || `<div class="banner">Belum ada kemenangan acara musik.</div>`}</div>
-        <div class="st-mtitle" style="margin-top:14px">Penghargaan besar</div>
-        <div class="ppwrap" style="max-height:420px">${awdRows || `<div class="banner">Belum ada penghargaan besar.</div>`}</div>
-        <p class="note">Dihitung live dari data/trofi.json (reviu penuh 16 Nov 2026 vs Wikipedia &amp; pengumuman resmi YG) — daftar lengkap per penghargaan &amp; nominasi ada di halaman “Trofi &amp; Penghargaan”.</p>
+      stops.sort((a, b) => (b.attendance || 0) - (a.attendance || 0));
+      tabBody = `<div class="ppwrap">` + stops.slice(0, 5).map((s, i) => {
+        const vlab = fmtExact(s.attendance) + (s.est ? ` <span class="cellno">±</span>` : "");
+        const per = s.nights && s.nights > 1 ? ` · ${s.nights} malam` : "";
+        const dt = s.date ? fmtDate(s.date) : "—";
+        return `
+      <div class="ber-hlrow" style="--hc:${esc(s._ar.color || acol)};cursor:default" title="${esc(s.src || "")}${s.note ? " — " + esc(s.note) : ""}">
+        <span class="hlrank">${i + 1}</span>
+        <div class="hlph" style="font-size:14px;font-weight:800">${esc(String(s.city || "?").slice(0, 2))}</div>
+        <div class="hlmain"><b>${esc(s.venue || s.city || "–")}</b>${grpPill(s._ar.name, s._ar.color)}<span class="sub" style="font-size:11.5px">${esc(s._tour)} · ${esc(s.city || "")}${s.country ? ", " + esc(s.country) : ""}${per} · ${dt}</span></div>
+        <span class="hlval">${vlab} penonton</span>
       </div>`;
+      }).join("") + `</div>` + `<p class="note">5 pertunjukan dengan attandance terbesar yang <b>dilaporkan resmi</b> (KOPIS Korea, Billboard Boxscore, media — sumber lengkap di tooltip). Angka bertanda <span class="cellno">±</span> = perkiraan kapasitas penuh saat sold out, bukan angka resmi. Show tanpa laporan resmi tidak masuk peringkat — daftar lengkapnya ada di tab <b>All konser</b>.</p>`;
     }
+  } else if (state.statTab === "konser") {
+    const stops = statKonserStops(ids);
+    const attSum = stops.reduce((a, s) => a + (s.attendance || 0), 0);
+    const nAtt = stops.filter((s) => s.attendance != null).length;
+    const cities = new Set(stops.map((s) => s.city).filter(Boolean)).size;
+    const tours = new Set(stops.map((s) => s._tour)).size;
+    const ropts = ["all", "Korea", "Jepang", "Asia", "Oseania", "Amerika"].map((r) => `<option value="${r}">${r === "all" ? "Semua wilayah" : r}</option>`).join("");
+    const sopts = [["date", "Terdekat dulu"], ["new", "Terbaru dulu"], ["att", "Penonton terbanyak"]].map(([v, t]) => `<option value="${v}">${t}</option>`).join("");
+    tabBody = `
+      <div class="st-mchips" style="--ac:${esc(acol)}">
+        <span class="st-mchip on" style="cursor:default">Penonton dilaporkan: <b>${fmtExact(attSum)}</b></span>
+        <span class="st-mchip on" style="cursor:default">Show tercatat: <b>${stops.length}</b></span>
+        <span class="st-mchip on" style="cursor:default">Dengan angka resmi: <b>${nAtt}</b></span>
+        <span class="st-mchip on" style="cursor:default">Kota: <b>${cities}</b></span>
+        <span class="st-mchip on" style="cursor:default">Tur/acara: <b>${tours}</b></span>
+      </div>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <input data-kq type="search" placeholder="Cari venue, kota, tur…" aria-label="Cari konser" style="flex:1 1 220px;background:var(--card);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:8px 12px;font:600 12.5px var(--font)">
+        <select data-kregion class="myear" style="color:${esc(acol)};border-color:color-mix(in srgb,${esc(acol)} 45%,transparent)" aria-label="Filter wilayah">${ropts}</select>
+        <select data-ksort class="myear" style="color:${esc(acol)};border-color:color-mix(in srgb,${esc(acol)} 45%,transparent)" aria-label="Urutkan daftar">${sopts}</select>
+      </div>
+      <div id="stKonserList" class="st-als" style="margin-top:12px">${statKonserRows(stops)}</div>
+      <p class="note">Seluruh tur, konser, fanmeeting &amp; fanconcert dari <b>data/konser.json</b> — attandance hanya diisi bila ada laporan resmi (KOPIS, Billboard Boxscore, media); sisanya “tidak dilaporkan”. Baris pudar = tanggal sudah lewat. Angka <span class="cellno">±</span> = perkiraan kapasitas penuh saat sold out. Kotak cari, wilayah &amp; urutan menyaring daftar langsung tanpa memuat ulang.</p>`;
+  } else if (state.statTab === "live") {
+    const ls = (state.livestage && state.livestage.artists) || null;
+    const stages = ls ? ids.map((id) => { const ar = artistOf(id) || art; return (((ls[id] || {}).stages) || []).map((s) => ({ ...s, _ar: ar })); }).flat() : [];
+    tabBody = !stages.length ? `<div class="banner">data/livestage.json belum termuat — pastikan file itu ada di folder <b>data/</b> di repo.</div>`
+      : `<div class="ppwrap">` + stages.slice().sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5).map((s, i) => `
+      <div class="ber-hlrow" data-lsid="${esc(s.id)}" style="--hc:${esc(s._ar.color || acol)}" tabindex="0" role="link" aria-label="Buka panggung di YouTube" title="Buka video di YouTube — sumber: ${esc(s.src || "")}">
+        <span class="hlrank">${i + 1}</span>
+        <img src="https://i.ytimg.com/vi/${esc(s.id)}/mqdefault.jpg" alt="" loading="lazy">
+        <div class="hlmain"><b>${esc(s.title)}</b><span class="sub" style="font-size:11.5px">${esc(s.show)}${s.date ? " · " + esc(s.date) : ""}</span>${grpPill(s._ar.name, s._ar.color)}</div>
+        <span class="hlval">${fmtCompact(s.views)} views</span>
+      </div>`).join("") + `</div>` + `<p class="note">5 panggung live resmi dengan views terbanyak di YouTube — angka <b>asli</b> diperbarui <b>otomatis per jam</b> dari YouTube (YouTube Data API, id video resmi tersimpan di data) — terakhir diperbarui <b>${esc(fmtDate(state.livestage.captured || "2026-11-26"))}</b> (unggahan resmi Mnet K-POP, THE FIRST TAKE, it's Live, SBS, MBC &amp; kanal artis — rincian di data/livestage.json). Tekan baris untuk membuka videonya di YouTube.</p>`;
   } else if (state.statTab === "cert") {
     const certs = career && career.certs;
+    /* penjelasan arti sertifikasi — ambang resmi KMCA/Circle (Korea) & RIAJ (Jepang) */
+    const certExpl = `
+      <div class="st-mtitle" style="margin-top:16px">Apa arti sertifikasinya?</div>
+      <div class="st-als">
+        <div class="st-alrow" style="--ac:#ffb02e">
+          <span class="st-alnum">KMCA</span>
+          <div class="st-almain"><b>Sertifikasi album (Korea)</b><span>KMCA / Circle Chart mengeluarkan sertifikasi bulanan untuk album yang lolos ambang penjualan kumulatif — dihitung <b>per format terpisah</b> (CD, KiT, Nemo, Tag). Platinum = <b>250.000 kopi</b> · 2× Platinum = 500.000 · 3× Platinum = 750.000 · Million = 1.000.000. Jadi \u201c2× Platinum (500K)\u201d berarti album itu sudah laku \u2265 500 ribu kopi format terkait.</span></div>
+          <div class="st-alval"><b>250 rb</b><span class="sub">per Platinum</span></div>
+        </div>
+        <div class="st-alrow" style="--ac:#ffb02e">
+          <span class="st-alnum">KMCA</span>
+          <div class="st-almain"><b>Sertifikasi streaming (Korea)</b><span>Untuk lagu — dihitung dari total stream kumulatif di platform musik Korea: Platinum = <b>100 juta stream</b> · 2× Platinum = 200 juta · 3× Platinum = 300 juta · Billion = 1 miliar.</span></div>
+          <div class="st-alval"><b>100 jt</b><span class="sub">per Platinum</span></div>
+        </div>
+        <div class="st-alrow" style="--ac:#f472b6">
+          <span class="st-alnum">RIAJ</span>
+          <div class="st-almain"><b>Sertifikasi album (Jepang)</b><span>Recording Industry Association of Japan menghitung pengiriman fisik kumulatif per bulan: Gold = <b>100.000 kopi</b> · Platinum = 250.000 · 2× Platinum = 500.000 · 3× Platinum = 750.000 · Million = 1.000.000. \u201cRIAJ Gold (100K)\u201d berarti versi Jepang rilisan itu lolos 100 ribu kopi.</span></div>
+          <div class="st-alval"><b>100 rb</b><span class="sub">per Gold</span></div>
+        </div>
+        <div class="st-alrow" style="--ac:#f472b6">
+          <span class="st-alnum">RIAJ</span>
+          <div class="st-almain"><b>Sertifikasi streaming (Jepang)</b><span>Berlaku sejak April 2020 — dihitung dari total putar kumulatif per lagu: Gold = <b>50 juta putar</b> · Platinum = 100 juta · 2× Platinum = 200 juta · 3× Platinum = 300 juta.</span></div>
+          <div class="st-alval"><b>50 jt</b><span class="sub">per Gold</span></div>
+        </div>
+      </div>`;
     tabBody = certs && certs.length ? `<div class="ppwrap">` + certs.map((c, i) => `
       <div class="st-alrow" style="--ac:${esc(acol)}" title="${esc(c.src || "")}">
         <span class="st-alnum">${String(i + 1).padStart(2, "0")}</span>
         <div class="st-almain"><b>${esc(c.title)}</b><span>${esc(c.type || "Rilisan")} · ${esc(c.detail || "")}</span></div>
         <div class="st-alval"><b>${esc(c.big || "tersertifikasi")}</b><span class="sub">KMCA / RIAJ</span></div>
-      </div>`).join("") + `</div>` + `<p class="note">Sertifikasi resmi dari <b>KMCA</b> (Korea Music Content Association — Korea) &amp; <b>RIAJ</b> (Recof - RIAJ, Jepang); kurasi fan-stat baechella, Nov 2026 — Platinum KMCA = 250 rb kopi per format, RIAJ Gold = 100 rb. Sertifikasi lagu &amp; streaming masuk hitungan “tersertifikasi” di kartu kanan.</p>` : `<div class="banner">Belum ada sertifikasi resmi yang tercatat untuk ${esc(art.name || "artis ini")} — akan ditambahkan begitu ada pengumuman resmi KMCA (Korea) / RIAJ (Jepang).</div>`;
-  } else if (state.statTab === "tour") {
-    const evs = ((state.jadwal && state.jadwal.events) || []).filter((e) => artId === "all" || e.group === artId || e.group === "both").slice().sort((a, b) => (a.date || "").localeCompare(b.date || ""));
-    const today = new Date().toISOString().slice(0, 10);
-    tabBody = evs.length ? `<div class="ppwrap">` + evs.map((e, i) => {
-      const ga = e.group === "both" ? { name: "BM + TREASURE", color: "#8b5cf6" } : (artistOf(e.group) || art);
-      const fut = (e.date || "") >= today;
-      return `
-      <div class="st-alrow" style="--ac:${esc(ga.color || acol)}${fut ? "" : ";opacity:.55"}" title="${esc(e.venue || "")}">
-        <span class="st-alnum">${esc(fmtDate(e.date))}</span>
-        <div class="st-almain"><b>${esc(e.title || "–")}</b><span>${esc(e.venue || "")}${e.group === "both" ? " · " + esc(ga.name || "") : ""}</span></div>
-        <div class="st-alval"><b style="font-size:12px">${fut ? "AKAN DATANG" : "SELESAI"}</b><span class="sub">${esc(e.type === "tour" ? "tur/konser" : "acara")}</span></div>
-      </div>`;
-    }).join("") + `</div>` + `<p class="note">Tur, konser &amp; acara dari data/jadwal.json (kurasi manual — tambah baris di file itu untuk memperbarui daftar). Baris pudar = tanggal sudah lewat.</p>` : `<div class="banner">Belum ada tur/acara tercatat untuk pilihan ini di data/jadwal.json.</div>`;
+      </div>`).join("") + `</div>` + certExpl + `<p class="note">Sertifikasi resmi dari <b>KMCA</b> (Korea Music Content Association / Circle Chart — Korea) &amp; <b>RIAJ</b> (Recof — Recording Industry Association of Japan). Sertifikasi = \u201cstempel\u201d resmi begitu penjualan/stream kumulatif sebuah rilisan melewati ambang di atas; dikeluarkan per bulan dan tidak bisa turun. Sertifikasi lagu &amp; streaming juga masuk hitungan \u201ctersertifikasi\u201d di kartu kanan atas.</p>` : `<div class="banner">Belum ada sertifikasi resmi yang tercatat untuk ${esc(art.name || "artis ini")} — akan ditambahkan begitu ada pengumuman resmi KMCA (Korea) / RIAJ (Jepang).</div>` + certExpl;
   } else if (state.statTab === "album") {
     const albums = circle ? circle.albums.slice() : [];
     if (!albums.length) tabBody = `<div class="banner">Data circle.json belum termuat — panel pembaruan album tidak tersedia.</div>`;
@@ -7965,6 +8028,36 @@ function renderStatPage(sec) {
           <div class="st-alval"><b>${v != null ? fmtExact(v) : "–"}${v != null && estOf(s, mKey) ? ` <span class="cellno">±</span>` : ""}</b><span class="sub">pendengar/bln</span>${gh}</div>
         </div>`;
       }).join("");
+      /* pembaruan per album & per lagu — Spotify tidak mempublikasi "pendengar bulanan"
+       * per album/lagu, jadi bagian ini memakai proksi resminya: STREAM BARU per bulan
+       * (selisih total stream awal vs akhir bulan) dari riwayat kworb/Spotify Charts. */
+      const mStart = new Date(Number(ySel), mSel - 1, 1).getTime() / 1000;
+      const mEnd = new Date(Number(ySel), mSel, 1).getTime() / 1000;
+      const trAll = Object.values(state.sp.tracks || {}).filter((t) => ids.includes(t.artistId));
+      const deltaOf = (h) => {
+        if (!Array.isArray(h)) return null;
+        const before = h.filter((p) => p.t < mStart && p.v != null);
+        const inM = h.filter((p) => p.t >= mStart && p.t < mEnd && p.v != null);
+        if (!inM.length || !before.length) return null;
+        return inM[inM.length - 1].v - before[before.length - 1].v;
+      };
+      const trackD = trAll.map((t) => ({ t, d: deltaOf(t.history || []) })).filter((x) => x.d != null && x.d !== 0).sort((a, b) => b.d - a.d);
+      const albName = (aid) => { const al = (state.sp.albums || {})[aid]; return al ? al.name : null; };
+      const albD = {};
+      trackD.forEach((x) => { const aid = (x.t.albumIds || [])[0] || "?"; albD[aid] = (albD[aid] || 0) + x.d; });
+      const albRows2 = Object.entries(albD).sort((a, b) => b[1] - a[1]).map(([aid, d], i) => `
+      <div class="st-alrow" style="--ac:${esc(acol)}">
+        <span class="st-alnum">${String(i + 1).padStart(2, "0")}</span>
+        <div class="st-almain"><b>${esc(albName(aid) || "Album / lagu tunggal")}</b><span>total stream album naik di ${esc(mLabel(mKey))}</span></div>
+        <div class="st-alval"><b>${gfmt(d)}</b><span class="sub">stream baru</span></div>
+      </div>`).join("");
+      const trRows = trackD.slice(0, 15).map((x, i) => `
+      <div class="st-alrow" data-spk="${esc(x.t.key)}" style="--ac:${esc(acol)}" tabindex="0" role="button" aria-label="Buka grafik ${esc(x.t.name)}">
+        <span class="st-alnum">${String(i + 1).padStart(2, "0")}</span>
+        <div class="st-almain"><b>${esc(x.t.name)}</b><span>kumulatif ${fmtCompact(spTrackTotal(x.t))} stream · ${esc((artistOf(x.t.artistId) || {}).name || "")}</span></div>
+        <div class="st-alval"><b>${gfmt(x.d)}</b><span class="sub">stream baru</span></div>
+      </div>`).join("");
+      const dSum = trackD.reduce((a, x) => a + x.d, 0);
       tabBody = `
       <div>
         <span class="st-mlabel">Spotify · pendengar bulanan</span>
@@ -7980,7 +8073,13 @@ function renderStatPage(sec) {
         <div class="st-mchips" style="--ac:${esc(acol)}">${chips.join("")}</div>
         ${totalBox}
         <div class="st-als">${rows}</div>
+        <div class="st-mchips" style="--ac:${esc(acol)};margin-top:16px"><span class="st-mchip on" style="cursor:default">Stream baru ${esc(mLabel(mKey))}: <b>${gfmt(dSum)}</b></span><span class="st-mchip on" style="cursor:default">Lagu terpantau: <b>${trAll.length}</b></span><span class="st-mchip on" style="cursor:default">Lagu bergerak bulan ini: <b>${trackD.length}</b></span></div>
+        <div class="st-mtitle" style="margin-top:14px">Pembaruan pendengar per album — stream baru di ${esc(mLabel(mKey))}</div>
+        <div class="st-als">${albRows2 || `<div class="banner">Belum ada data stream untuk bulan itu (butuh rekaman sebelum & sesudah bulan tercatat di riwayat kolektor).</div>`}</div>
+        <div class="st-mtitle" style="margin-top:16px">Pembaruan pendengar per lagu — stream baru di ${esc(mLabel(mKey))}</div>
+        <div class="ppwrap" style="max-height:420px">${trRows || `<div class="banner">Belum ada lagu yang tercatat bergerak di bulan ini.</div>`}</div>
         <p class="note">Angka = pendengar bulanan Spotify (audiens unik) pada titik perekaman terakhir bulan itu — dari data/spotify-artists.json, direkam kolektor per jam. Titik sebelum kolektor berjalan adalah hasil interpolasi antar jangkar dan ditandai <span class="cellno">±</span>. Mode gabungan menjumlahkan kedua artis sehingga bisa melebihi audiens unik sesungguhnya (ada pendengar yang sama).</p>
+        <p class="note">Rincian <b>per album &amp; per lagu</b> memakai <b>stream baru</b> (selisih total stream awal vs akhir bulan) dari riwayat lagu di data/spotify-tracks.json (Spotify Charts via kworb, direkam per jam) — karena Spotify tidak mempublikasi angka “pendengar bulanan” per album/lagu, stream baru adalah ukuran resmi terdekat. Lagu yang tidak punya rekaman sebelum &amp; sesudah bulan itu tidak bisa dihitung (tampil “—”/absen). Tekan baris lagu untuk membuka grafiknya.</p>
       </div>`;
     }
   }
@@ -7989,7 +8088,7 @@ function renderStatPage(sec) {
   <section style="margin-top:16px">
     <div class="st-top">${artSel}${updB}</div>
     ${career && career.cards ? featSectHead(acol, ICO_GRID, artId === "all" ? "Milestone karier gabungan (BM + TREASURE)" : "Milestone karier " + esc(art.name || ""), "10 kartu per pilihan — YouTube, Spotify, Instagram &amp; trofi dihitung LIVE dari data pemantauan situs; kartu lain dari kurasi bersumber") + `<div class="st-grid">${cardsHTML}</div>` + topNote : ""}
-    ${featSectHead(acol, ICO_RANK, "Peringkat &amp; pembaruan", esc(art.name || "") + " — 9 tampilan: Top 10 M/V, Top 10 Spotify, Top 10 Performance, rekor chart, trofi, sertifikasi, konser &amp; tur, album Circle, pendengar bulanan")}
+    ${featSectHead(acol, ICO_RANK, "Peringkat &amp; pembaruan", esc(art.name || "") + " — 9 tampilan: Top 10 M/V, Top 10 Spotify, Top 5 YT Music, Top 5 Shows, All konser, Live Stages, sertifikasi, album Circle &amp; pendengar bulanan")}
     ${tabRow}
     <div style="margin-top:14px">${tabBody}</div>
   </section>`;
@@ -8013,6 +8112,26 @@ function renderStatPage(sec) {
     el.addEventListener("click", go);
     el.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
   });
+  sec.querySelectorAll("[data-lsid]").forEach((el) => {
+    const go = () => window.open("https://www.youtube.com/watch?v=" + encodeURIComponent(el.dataset.lsid), "_blank", "noopener");
+    el.addEventListener("click", go);
+    el.addEventListener("keydown", (e) => { if (e.key === "Enter") go(); });
+  });
+  const kqEl = sec.querySelector("[data-kq]");
+  if (kqEl) {
+    kqEl.value = statKonserUI.q;
+    kqEl.addEventListener("input", () => { statKonserUI.q = kqEl.value; const list = $("#stKonserList"); if (list) list.innerHTML = statKonserRows(statKonserStops(ids)); });
+  }
+  const krEl = sec.querySelector("[data-kregion]");
+  if (krEl) {
+    krEl.value = statKonserUI.region;
+    krEl.addEventListener("change", () => { statKonserUI.region = krEl.value; const list = $("#stKonserList"); if (list) list.innerHTML = statKonserRows(statKonserStops(ids)); });
+  }
+  const ksEl = sec.querySelector("[data-ksort]");
+  if (ksEl) {
+    ksEl.value = statKonserUI.sort;
+    ksEl.addEventListener("change", () => { statKonserUI.sort = ksEl.value; const list = $("#stKonserList"); if (list) list.innerHTML = statKonserRows(statKonserStops(ids)); });
+  }
 }
 
 /* ===================== HALAMAN PAPAN PERINGKAT LAGU =====================

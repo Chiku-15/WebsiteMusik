@@ -1,0 +1,183 @@
+{
+ "_info": "Panggung live terbanyak ditonton di YouTube (seluruh video adalah unggahan resmi: Mnet K-POP, THE FIRST TAKE, it's Live, SBS, MBC, kanal resmi artis). Angka views ASLI dibaca langsung dari halaman YouTube pada tanggal capture — bukan perkiraan.",
+ "updated": "2026-11-26",
+ "captured": "2026-11-26",
+ "artists": {
+  "babymonster": {
+   "stages": [
+    {
+     "id": "06mCrMgv0zY",
+     "title": "DRIP",
+     "show": "THE FIRST TAKE",
+     "date": "2024-12",
+     "views": 71690195,
+     "src": "THE FIRST TAKE"
+    },
+    {
+     "id": "3cVroylPpvg",
+     "title": "KPop Demon Hunters · HUNTR/X (Pharita, Ahyeon, Rora) — full stage",
+     "show": "MAMA Awards 2025",
+     "date": "2025-11-29",
+     "views": 49632188,
+     "src": "Mnet K-POP"
+    },
+    {
+     "id": "FpOzMBwjSK0",
+     "title": "SHEESH (Band LIVE Concert)",
+     "show": "it's Live",
+     "date": "2024-04",
+     "views": 20686856,
+     "src": "it's Live"
+    },
+    {
+     "id": "MO3JEHcFZ90",
+     "title": "INTRO + DRIP",
+     "show": "SBS Gayo Daejeon 2024",
+     "date": "2024-12-25",
+     "views": 18604368,
+     "src": "SBS Entertainment"
+    },
+    {
+     "id": "IOd0oJUIE8o",
+     "title": "MONSTER’s NIGHT LIVE (WE GO UP + DRIP, full stage)",
+     "show": "MAMA Awards 2025",
+     "date": "2025-11-28",
+     "views": 16924317,
+     "src": "Mnet K-POP"
+    },
+    {
+     "id": "TQfC0xdpiw4",
+     "title": "FOREVER (Band LIVE Concert)",
+     "show": "it's Live",
+     "date": "2024-07",
+     "views": 16643590,
+     "src": "it's Live"
+    },
+    {
+     "id": "n_2oVnjL1y4",
+     "title": "DRIP",
+     "show": "Show! Music Core (MBC)",
+     "date": "2024-11-16",
+     "views": 16583882,
+     "src": "MBCkpop"
+    },
+    {
+     "id": "a0bc6Ownyt0",
+     "title": "WE GO UP",
+     "show": "THE FIRST TAKE",
+     "date": "2025-10",
+     "views": 16285358,
+     "src": "THE FIRST TAKE"
+    },
+    {
+     "id": "O99aP4AvEF8",
+     "title": "SHEESH",
+     "show": "THE FIRST TAKE",
+     "date": "2024-05",
+     "views": 10283707,
+     "src": "THE FIRST TAKE"
+    },
+    {
+     "id": "iIaw6HvS09Y",
+     "title": "INTRO + DESERVE + 춤 (CHOOM)",
+     "show": "MAMA Awards 2026",
+     "date": "2026-11-20",
+     "views": 6498581,
+     "src": "Mnet K-POP"
+    }
+   ]
+  },
+  "treasure": {
+   "stages": [
+    {
+     "id": "kR98d_VHG-M",
+     "title": "VolKno + JIKJIN + HELLO",
+     "show": "MAMA Awards 2022 (Kyocera Dome)",
+     "date": "2022-11-30",
+     "views": 11891316,
+     "src": "Mnet K-POP"
+    },
+    {
+     "id": "qASR46d--N4",
+     "title": "직진 (JIKJIN) — Special Stage",
+     "show": "Kanal resmi TREASURE",
+     "date": "2022-04",
+     "views": 7025797,
+     "src": "TREASURE (트레저)"
+    },
+    {
+     "id": "62q9vtyvbRg",
+     "title": "INTRO + KING KONG + RUN",
+     "show": "MAMA Awards 2024 (Kyocera Dome)",
+     "date": "2024-11-22",
+     "views": 5665418,
+     "src": "Mnet K-POP"
+    },
+    {
+     "id": "OhHuNI8lX7A",
+     "title": "음 (MMM)",
+     "show": "MAMA Awards 2020",
+     "date": "2020-12-06",
+     "views": 4280330,
+     "src": "Mnet K-POP"
+    },
+    {
+     "id": "Y-D5r7U7nUs",
+     "title": "HELLO — Comeback Stage",
+     "show": "M COUNTDOWN EP.773 (Mnet)",
+     "date": "2022-10-06",
+     "views": 3755733,
+     "src": "Mnet K-POP"
+    },
+    {
+     "id": "iao-u-yaeWI",
+     "title": "BONA BONA — 최초 공개",
+     "show": "M COUNTDOWN EP.808 (Mnet)",
+     "date": "2023-08-03",
+     "views": 3721828,
+     "src": "Mnet K-POP"
+    },
+    {
+     "id": "StwWhJIrqCE",
+     "title": "사랑해 + BOY + 미쳐가네",
+     "show": "Golden Disc Awards ke-35 (JTBC)",
+     "date": "2021-01-10",
+     "views": 3552059,
+     "src": "Golden Disc"
+    },
+    {
+     "id": "5UkQFqqSbXI",
+     "title": "BOY + I LOVE YOU",
+     "show": "MAMA Awards 2020",
+     "date": "2020-12-06",
+     "views": 3501630,
+     "src": "Mnet K-POP"
+    },
+    {
+     "id": "0WcFMIXmEF4",
+     "title": "MOVE (T5) + BONA BONA",
+     "show": "MAMA Awards 2023 (Tokyo Dome)",
+     "date": "2023-11-29",
+     "views": 3338056,
+     "src": "Mnet K-POP"
+    },
+    {
+     "id": "N6cd4MTKhJo",
+     "title": "2025 Free + PARADISE (REMIX) + I WANT YOUR LOVE (Band ver.)",
+     "show": "MAMA Awards 2025 (Kai Tak Stadium)",
+     "date": "2025-11-28",
+     "views": 2699073,
+     "src": "Mnet K-POP"
+    },
+    {
+     "id": "3D8IjUemw1c",
+     "title": "IF I (MAMA Ver.) + FREE YØUR MIND + SHOCK (full stage)",
+     "show": "MAMA Awards 2026",
+     "date": "2026-11-20",
+     "views": 1880012,
+     "src": "Mnet K-POP"
+    }
+   ]
+  }
+ }
+}
