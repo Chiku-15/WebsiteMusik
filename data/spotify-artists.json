@@ -4,9 +4,9 @@
   "name": "BABYMONSTER",
   "spotifyId": "1SIocsqdEefUTE6XKGUiVS",
   "color": "#ff4d6d",
-  "image": "https://image-cdn-fa.spotifycdn.com/image/ab676161000051747eed59dfba0a93af631a6654",
-  "monthlyListeners": 7725784,
-  "mlDelta": -48564,
+  "image": "https://image-cdn-ak.spotifycdn.com/image/ab676161000051747eed59dfba0a93af631a6654",
+  "monthlyListeners": 7671075,
+  "mlDelta": -54709,
   "followers": 9459627,
   "totalStreams": 2616255227,
   "dailyStreams": 3047733,
@@ -295,10 +295,10 @@
     "f": 9459627
    },
    {
-    "t": 1795742903,
+    "t": 1795748767,
     "total": 2616255227,
     "daily": 3047733,
-    "ml": 7725784,
+    "ml": 7671075,
     "f": 9459627
    }
   ],
@@ -873,7 +873,7 @@
     "f": 3955050
    },
    {
-    "t": 1795742909,
+    "t": 1795748777,
     "total": 1741838113,
     "daily": 662553,
     "ml": 1900000,
