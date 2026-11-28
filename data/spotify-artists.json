@@ -302,7 +302,7 @@
     "f": 9459627
    },
    {
-    "t": 1795834776,
+    "t": 1795838625,
     "total": 2628417037,
     "daily": 3040436,
     "ml": 7615821,
@@ -316,7 +316,7 @@
   "name": "TREASURE",
   "spotifyId": "3KonOYiLsU53m4yT7gNotP",
   "color": "#38bdf8",
-  "image": "https://image-cdn-fa.spotifycdn.com/image/ab67616100005174946efd7262fe76ff1f08e776",
+  "image": "https://image-cdn-ak.spotifycdn.com/image/ab67616100005174946efd7262fe76ff1f08e776",
   "monthlyListeners": 1900000,
   "mlDelta": null,
   "mlApprox": true,
@@ -887,7 +887,7 @@
     "f": 3955050
    },
    {
-    "t": 1795834785,
+    "t": 1795838632,
     "total": 1741838113,
     "daily": 662553,
     "ml": 1900000,
