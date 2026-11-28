@@ -1,6 +1,6 @@
 {
- "asOf": "28 Nov, 17:58 KST",
- "captured": 1795856335,
+ "asOf": "28 Nov, 18:58 KST",
+ "captured": 1795859885,
  "source": "Kanal YouTube Mnet (Mnet K-POP) — unggahan panggung resmi [2021 MAMA] (Shorts, kompilasi, behind, countdown & fancam tidak dihitung); viewCount real via API terbuka Return YouTube Dislike API per 24 Nov 2026",
  "srcTag": "[2021 MAMA]",
  "srcYear": 2021,
@@ -23,7 +23,7 @@
  "facts": {
   "acts": 20,
   "videos": 20,
-  "views": 67753803
+  "views": 67753963
  },
  "meta": {
   "artists": 20,
@@ -57,7 +57,7 @@
    "day": 1,
    "order": 2,
    "gorder": 2,
-   "views": 1479651,
+   "views": 1479663,
    "stage": "Wind of Wish",
    "focus": "",
    "key": "bravegirls",
@@ -65,7 +65,7 @@
     {
      "id": "j27yh2SpmXU",
      "title": "[2021 MAMA] Brave Girls - Chi Mat Ba Ram + Rollin' | Mnet 211211 방송",
-     "views": 1479651,
+     "views": 1479663,
      "dur": "",
      "full": true
     }
@@ -77,7 +77,7 @@
    "day": 1,
    "order": 3,
    "gorder": 3,
-   "views": 1334791,
+   "views": 1334790,
    "stage": "One Dream",
    "focus": "",
    "key": "ini",
@@ -85,7 +85,7 @@
     {
      "id": "vuvII4hn8oQ",
      "title": "[2021 MAMA] INI - Rocketeer | Mnet 211211 방송",
-     "views": 1334791,
+     "views": 1334790,
      "dur": "",
      "full": true
     }
@@ -117,7 +117,7 @@
    "day": 1,
    "order": 5,
    "gorder": 5,
-   "views": 1489135,
+   "views": 1489136,
    "stage": "",
    "focus": "",
    "key": "jo1",
@@ -125,7 +125,7 @@
     {
      "id": "2GAa-9CVSbc",
      "title": "[2021 MAMA] JO1 - 僕らの季節 | Mnet 211211 방송",
-     "views": 1489135,
+     "views": 1489136,
      "dur": "",
      "full": true
     }
@@ -137,7 +137,7 @@
    "day": 1,
    "order": 6,
    "gorder": 6,
-   "views": 478721,
+   "views": 478722,
    "stage": "Mission: Be A Good Kitty",
    "focus": "",
    "key": "itzy",
@@ -145,7 +145,7 @@
     {
      "id": "hKYID89dGd0",
      "title": "(ENG→KOR) “뭔 말을 해야 되냐, 이건… 걍… 오졌어” ITZY(있지) - LOCO + 마. 피. 아. In the morning [2021 MAMA 댓글 번역]",
-     "views": 478721,
+     "views": 478722,
      "dur": "",
      "full": true
     }
@@ -177,7 +177,7 @@
    "day": 1,
    "order": 8,
    "gorder": 8,
-   "views": 490626,
+   "views": 490627,
    "stage": "Shout Out If Hip Hop",
    "focus": "",
    "key": "gwangiljoxgaeko",
@@ -185,7 +185,7 @@
     {
      "id": "RkjHU14q-Sw",
      "title": "[2021 MAMA] Gwang-il Jo X Gaeko - Waterbomb + GARION (MAMA ver.) | Mnet 211211 방송",
-     "views": 490626,
+     "views": 490627,
      "dur": "",
      "full": true
     }
@@ -197,7 +197,7 @@
    "day": 1,
    "order": 9,
    "gorder": 9,
-   "views": 1294150,
+   "views": 1294141,
    "stage": "",
    "focus": "",
    "key": "showmethemoney10",
@@ -205,7 +205,7 @@
     {
      "id": "8CvfzgoT5Rc",
      "title": "[2021 MAMA] SHOW ME THE MONEY 10TH - Resume +82 (MAMA ver.) | Mnet 211211 방송",
-     "views": 1294150,
+     "views": 1294141,
      "dur": "",
      "full": true
     }
@@ -257,7 +257,7 @@
    "day": 1,
    "order": 12,
    "gorder": 12,
-   "views": 2731573,
+   "views": 2731592,
    "stage": "Break All Myself",
    "focus": "",
    "key": "tomorrowxtogether",
@@ -265,7 +265,7 @@
     {
      "id": "Sm56PnFNmqY",
      "title": "[2021 MAMA] TOMORROW X TOGETHER - Frost | Mnet 211211 방송",
-     "views": 2731573,
+     "views": 2731592,
      "dur": "",
      "full": true
     }
@@ -317,7 +317,7 @@
    "day": 1,
    "order": 18,
    "gorder": 15,
-   "views": 13936779,
+   "views": 13936831,
    "stage": "1 = 111 (I Miss You)",
    "focus": "",
    "key": "wannaone",
@@ -325,7 +325,7 @@
     {
      "id": "-OBNH4V1Gv4",
      "title": "[2021 MAMA] Wanna One - Energetic + Burn It Up | Mnet 211211 방송",
-     "views": 13936779,
+     "views": 13936831,
      "dur": "",
      "full": true
     }
@@ -337,7 +337,7 @@
    "day": 1,
    "order": 19,
    "gorder": 16,
-   "views": 6194485,
+   "views": 6194484,
    "stage": "Oh My Gosh! We Are On Another Level",
    "focus": "",
    "key": "aespa",
@@ -345,7 +345,7 @@
     {
      "id": "AATk0KprW-8",
      "title": "[2021 MAMA] aespa - Savage | Mnet 211211 방송",
-     "views": 6194485,
+     "views": 6194484,
      "dur": "",
      "full": true
     }
@@ -357,7 +357,7 @@
    "day": 1,
    "order": 20,
    "gorder": 17,
-   "views": 4361038,
+   "views": 4361048,
    "stage": "Carnival to Dilemma",
    "focus": "",
    "key": "enhypen",
@@ -365,7 +365,7 @@
     {
      "id": "iT4oZSOC5aI",
      "title": "[2021 MAMA] ENHYPEN - Tamed-Dashed (MAMA ver.) | Mnet 211211 방송",
-     "views": 4361038,
+     "views": 4361048,
      "dur": "",
      "full": true
     }
@@ -377,7 +377,7 @@
    "day": 1,
    "order": 21,
    "gorder": 18,
-   "views": 1944213,
+   "views": 1944211,
    "stage": "Eternal Love",
    "focus": "",
    "key": "nct127",
@@ -385,7 +385,7 @@
     {
      "id": "LqREocAq0To",
      "title": "[2021 MAMA] NCT 127 - Favorite (Vampire) | Mnet 211211 방송",
-     "views": 1944213,
+     "views": 1944211,
      "dur": "",
      "full": true
     }
@@ -397,7 +397,7 @@
    "day": 1,
    "order": null,
    "gorder": 19,
-   "views": 3772982,
+   "views": 3772993,
    "stage": "",
    "focus": "",
    "key": "streetwomanfighter",
@@ -405,7 +405,7 @@
     {
      "id": "GTURER3p_d4",
      "title": "[2021 MAMA] STREET WOMAN FIGHTER | Mnet 211211 방송",
-     "views": 3772982,
+     "views": 3772993,
      "dur": "",
      "full": true
     }
@@ -417,7 +417,7 @@
    "day": 1,
    "order": 22,
    "gorder": 20,
-   "views": 6326708,
+   "views": 6326774,
    "stage": "Make Some Noise with STREET WOMAN FIGHTER",
    "focus": "",
    "key": "leehyorixstreetwomanfighter",
@@ -425,7 +425,7 @@
     {
      "id": "813-ELGLvBw",
      "title": "[2021 MAMA] LEE HYORI X STREET WOMAN FIGHTER - DO THE DANCE | Mnet 211211 방송",
-     "views": 6326708,
+     "views": 6326774,
      "dur": "",
      "full": true
     }
