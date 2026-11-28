@@ -1,6 +1,6 @@
 {
- "asOf": "28 Nov, 14:09 KST",
- "captured": 1795842562,
+ "asOf": "28 Nov, 15:10 KST",
+ "captured": 1795846212,
  "source": "Kanal YouTube Mnet (Mnet K-POP) — unggahan panggung resmi [2021 MAMA] (Shorts, kompilasi, behind, countdown & fancam tidak dihitung); viewCount real via API terbuka Return YouTube Dislike API per 24 Nov 2026",
  "srcTag": "[2021 MAMA]",
  "srcYear": 2021,
@@ -23,7 +23,7 @@
  "facts": {
   "acts": 20,
   "videos": 20,
-  "views": 67752945
+  "views": 67753225
  },
  "meta": {
   "artists": 20,
@@ -37,7 +37,7 @@
    "day": 1,
    "order": 1,
    "gorder": 1,
-   "views": 7512573,
+   "views": 7512602,
    "stage": "BlooM The Sound with Stray Kids (Hyunjin), TOMORROW X TOGETHER (Yeonjun), ITZY (Yeji), ENHYPEN (Heeseung), ATEEZ (Wooyoung), aespa (Karina)",
    "focus": "",
    "key": "hyunjinyeonjunyejiheeseungwooyoungkarina",
@@ -45,7 +45,7 @@
     {
      "id": "pZQiHUKZ9aQ",
      "title": "[2021 MAMA] HYUNJIN / YEONJUN / YEJI / HEESEUNG / WOOYOUNG / KARINA - Opening Perf. | Mnet 211211 방송",
-     "views": 7512573,
+     "views": 7512602,
      "dur": "",
      "full": true
     }
@@ -57,7 +57,7 @@
    "day": 1,
    "order": 2,
    "gorder": 2,
-   "views": 1479636,
+   "views": 1479650,
    "stage": "Wind of Wish",
    "focus": "",
    "key": "bravegirls",
@@ -65,7 +65,7 @@
     {
      "id": "j27yh2SpmXU",
      "title": "[2021 MAMA] Brave Girls - Chi Mat Ba Ram + Rollin' | Mnet 211211 방송",
-     "views": 1479636,
+     "views": 1479650,
      "dur": "",
      "full": true
     }
@@ -117,7 +117,7 @@
    "day": 1,
    "order": 5,
    "gorder": 5,
-   "views": 1489123,
+   "views": 1489129,
    "stage": "",
    "focus": "",
    "key": "jo1",
@@ -125,7 +125,7 @@
     {
      "id": "2GAa-9CVSbc",
      "title": "[2021 MAMA] JO1 - 僕らの季節 | Mnet 211211 방송",
-     "views": 1489123,
+     "views": 1489129,
      "dur": "",
      "full": true
     }
@@ -197,7 +197,7 @@
    "day": 1,
    "order": 9,
    "gorder": 9,
-   "views": 1294125,
+   "views": 1294137,
    "stage": "",
    "focus": "",
    "key": "showmethemoney10",
@@ -205,7 +205,7 @@
     {
      "id": "8CvfzgoT5Rc",
      "title": "[2021 MAMA] SHOW ME THE MONEY 10TH - Resume +82 (MAMA ver.) | Mnet 211211 방송",
-     "views": 1294125,
+     "views": 1294137,
      "dur": "",
      "full": true
     }
@@ -217,7 +217,7 @@
    "day": 1,
    "order": 10,
    "gorder": 10,
-   "views": 3594412,
+   "views": 3594418,
    "stage": "Welcome to Universe",
    "focus": "",
    "key": "nctu",
@@ -225,7 +225,7 @@
     {
      "id": "eBOiX1RcKGA",
      "title": "[2021 MAMA] NCT U - Universe (Let's Play Ball) | Mnet 211211 방송",
-     "views": 3594412,
+     "views": 3594418,
      "dur": "",
      "full": true
     }
@@ -237,7 +237,7 @@
    "day": 1,
    "order": 11,
    "gorder": 11,
-   "views": 2407150,
+   "views": 2407186,
    "stage": "The Real Journey Begins",
    "focus": "",
    "key": "ateez",
@@ -245,7 +245,7 @@
     {
      "id": "IPWU_e5VX48",
      "title": "[2021 MAMA] ATEEZ - The Real (Heung ver.) | Mnet 211211 방송",
-     "views": 2407150,
+     "views": 2407186,
      "dur": "",
      "full": true
     }
@@ -257,7 +257,7 @@
    "day": 1,
    "order": 12,
    "gorder": 12,
-   "views": 2731567,
+   "views": 2731573,
    "stage": "Break All Myself",
    "focus": "",
    "key": "tomorrowxtogether",
@@ -265,7 +265,7 @@
     {
      "id": "Sm56PnFNmqY",
      "title": "[2021 MAMA] TOMORROW X TOGETHER - Frost | Mnet 211211 방송",
-     "views": 2731567,
+     "views": 2731573,
      "dur": "",
      "full": true
     }
@@ -277,7 +277,7 @@
    "day": 1,
    "order": 13,
    "gorder": 13,
-   "views": 4953366,
+   "views": 4953411,
    "stage": "Stray Kids World Domination",
    "focus": "",
    "key": "straykids",
@@ -285,7 +285,7 @@
     {
      "id": "P0dRKB3n16E",
      "title": "[2021 MAMA] Stray Kids - CHEESE | Mnet 211211 방송",
-     "views": 4953366,
+     "views": 4953411,
      "dur": "",
      "full": true
     }
@@ -297,7 +297,7 @@
    "day": 1,
    "order": 17,
    "gorder": 14,
-   "views": 2220047,
+   "views": 2220056,
    "stage": "Dipping in a Dream",
    "focus": "",
    "key": "nctdream",
@@ -305,7 +305,7 @@
     {
      "id": "2nRqRAlSXFM",
      "title": "[2021 MAMA] NCT DREAM - Hot Sauce (MAMA ver.) | Mnet 211211 방송",
-     "views": 2220047,
+     "views": 2220056,
      "dur": "",
      "full": true
     }
@@ -317,7 +317,7 @@
    "day": 1,
    "order": 18,
    "gorder": 15,
-   "views": 13936455,
+   "views": 13936542,
    "stage": "1 = 111 (I Miss You)",
    "focus": "",
    "key": "wannaone",
@@ -325,7 +325,7 @@
     {
      "id": "-OBNH4V1Gv4",
      "title": "[2021 MAMA] Wanna One - Energetic + Burn It Up | Mnet 211211 방송",
-     "views": 13936455,
+     "views": 13936542,
      "dur": "",
      "full": true
     }
@@ -357,7 +357,7 @@
    "day": 1,
    "order": 20,
    "gorder": 17,
-   "views": 4360995,
+   "views": 4361002,
    "stage": "Carnival to Dilemma",
    "focus": "",
    "key": "enhypen",
@@ -365,7 +365,7 @@
     {
      "id": "iT4oZSOC5aI",
      "title": "[2021 MAMA] ENHYPEN - Tamed-Dashed (MAMA ver.) | Mnet 211211 방송",
-     "views": 4360995,
+     "views": 4361002,
      "dur": "",
      "full": true
     }
@@ -377,7 +377,7 @@
    "day": 1,
    "order": 21,
    "gorder": 18,
-   "views": 1944177,
+   "views": 1944192,
    "stage": "Eternal Love",
    "focus": "",
    "key": "nct127",
@@ -385,7 +385,7 @@
     {
      "id": "LqREocAq0To",
      "title": "[2021 MAMA] NCT 127 - Favorite (Vampire) | Mnet 211211 방송",
-     "views": 1944177,
+     "views": 1944192,
      "dur": "",
      "full": true
     }
@@ -417,7 +417,7 @@
    "day": 1,
    "order": 22,
    "gorder": 20,
-   "views": 6326700,
+   "views": 6326708,
    "stage": "Make Some Noise with STREET WOMAN FIGHTER",
    "focus": "",
    "key": "leehyorixstreetwomanfighter",
@@ -425,7 +425,7 @@
     {
      "id": "813-ELGLvBw",
      "title": "[2021 MAMA] LEE HYORI X STREET WOMAN FIGHTER - DO THE DANCE | Mnet 211211 방송",
-     "views": 6326700,
+     "views": 6326708,
      "dur": "",
      "full": true
     }
