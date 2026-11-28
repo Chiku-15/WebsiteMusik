@@ -1,6 +1,6 @@
 {
- "asOf": "28 Nov, 13:03 KST",
- "captured": 1795838616,
+ "asOf": "28 Nov, 14:09 KST",
+ "captured": 1795842562,
  "source": "Kanal YouTube Mnet (Mnet K-POP) — unggahan panggung resmi [2021 MAMA] (Shorts, kompilasi, behind, countdown & fancam tidak dihitung); viewCount real via API terbuka Return YouTube Dislike API per 24 Nov 2026",
  "srcTag": "[2021 MAMA]",
  "srcYear": 2021,
@@ -23,7 +23,7 @@
  "facts": {
   "acts": 20,
   "videos": 20,
-  "views": 67752659
+  "views": 67752945
  },
  "meta": {
   "artists": 20,
@@ -37,7 +37,7 @@
    "day": 1,
    "order": 1,
    "gorder": 1,
-   "views": 7512542,
+   "views": 7512573,
    "stage": "BlooM The Sound with Stray Kids (Hyunjin), TOMORROW X TOGETHER (Yeonjun), ITZY (Yeji), ENHYPEN (Heeseung), ATEEZ (Wooyoung), aespa (Karina)",
    "focus": "",
    "key": "hyunjinyeonjunyejiheeseungwooyoungkarina",
@@ -45,7 +45,7 @@
     {
      "id": "pZQiHUKZ9aQ",
      "title": "[2021 MAMA] HYUNJIN / YEONJUN / YEJI / HEESEUNG / WOOYOUNG / KARINA - Opening Perf. | Mnet 211211 방송",
-     "views": 7512542,
+     "views": 7512573,
      "dur": "",
      "full": true
     }
@@ -77,7 +77,7 @@
    "day": 1,
    "order": 3,
    "gorder": 3,
-   "views": 1334783,
+   "views": 1334786,
    "stage": "One Dream",
    "focus": "",
    "key": "ini",
@@ -85,7 +85,7 @@
     {
      "id": "vuvII4hn8oQ",
      "title": "[2021 MAMA] INI - Rocketeer | Mnet 211211 방송",
-     "views": 1334783,
+     "views": 1334786,
      "dur": "",
      "full": true
     }
@@ -97,7 +97,7 @@
    "day": 1,
    "order": 4,
    "gorder": 4,
-   "views": 1031768,
+   "views": 1031772,
    "stage": "One Dream with INI (Kimura Masaya), JO1 (Kawashiri Ren)",
    "focus": "",
    "key": "kimuramasayainikawashirirenjo1",
@@ -105,7 +105,7 @@
     {
      "id": "a0DORHmq5Os",
      "title": "[2021 MAMA] INI(아이엔아이) + JO1(제이오원) -  One Dream (Rocketeer + 僕らの季節) | Mnet 211211 방송",
-     "views": 1031768,
+     "views": 1031772,
      "dur": "",
      "full": true
     }
@@ -217,7 +217,7 @@
    "day": 1,
    "order": 10,
    "gorder": 10,
-   "views": 3594405,
+   "views": 3594412,
    "stage": "Welcome to Universe",
    "focus": "",
    "key": "nctu",
@@ -225,7 +225,7 @@
     {
      "id": "eBOiX1RcKGA",
      "title": "[2021 MAMA] NCT U - Universe (Let's Play Ball) | Mnet 211211 방송",
-     "views": 3594405,
+     "views": 3594412,
      "dur": "",
      "full": true
     }
@@ -277,7 +277,7 @@
    "day": 1,
    "order": 13,
    "gorder": 13,
-   "views": 4953313,
+   "views": 4953366,
    "stage": "Stray Kids World Domination",
    "focus": "",
    "key": "straykids",
@@ -285,7 +285,7 @@
     {
      "id": "P0dRKB3n16E",
      "title": "[2021 MAMA] Stray Kids - CHEESE | Mnet 211211 방송",
-     "views": 4953313,
+     "views": 4953366,
      "dur": "",
      "full": true
     }
@@ -317,7 +317,7 @@
    "day": 1,
    "order": 18,
    "gorder": 15,
-   "views": 13936304,
+   "views": 13936455,
    "stage": "1 = 111 (I Miss You)",
    "focus": "",
    "key": "wannaone",
@@ -325,7 +325,7 @@
     {
      "id": "-OBNH4V1Gv4",
      "title": "[2021 MAMA] Wanna One - Energetic + Burn It Up | Mnet 211211 방송",
-     "views": 13936304,
+     "views": 13936455,
      "dur": "",
      "full": true
     }
@@ -357,7 +357,7 @@
    "day": 1,
    "order": 20,
    "gorder": 17,
-   "views": 4360977,
+   "views": 4360995,
    "stage": "Carnival to Dilemma",
    "focus": "",
    "key": "enhypen",
@@ -365,7 +365,7 @@
     {
      "id": "iT4oZSOC5aI",
      "title": "[2021 MAMA] ENHYPEN - Tamed-Dashed (MAMA ver.) | Mnet 211211 방송",
-     "views": 4360977,
+     "views": 4360995,
      "dur": "",
      "full": true
     }
@@ -417,7 +417,7 @@
    "day": 1,
    "order": 22,
    "gorder": 20,
-   "views": 6326681,
+   "views": 6326700,
    "stage": "Make Some Noise with STREET WOMAN FIGHTER",
    "focus": "",
    "key": "leehyorixstreetwomanfighter",
@@ -425,7 +425,7 @@
     {
      "id": "813-ELGLvBw",
      "title": "[2021 MAMA] LEE HYORI X STREET WOMAN FIGHTER - DO THE DANCE | Mnet 211211 방송",
-     "views": 6326681,
+     "views": 6326700,
      "dur": "",
      "full": true
     }
